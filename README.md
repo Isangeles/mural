@@ -4,7 +4,7 @@
 
   Currently in a very early development stage.
   
-## Installation & Run
+## Install & Run
 
   Get [Pixel](https://github.com/faiface/pixel)
   
@@ -18,8 +18,6 @@ $ go get github.com/isangeles/mural
 ```
 $ go build -o mural-gui github.com/isangeles/mural
 ```
-  Configure Mural with .mural configurtion file.
-  
   Run Mural
 ```
 $ ./mural-gui

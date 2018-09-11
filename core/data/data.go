@@ -22,41 +22,56 @@
  */
 
 // data package contains functions for loading
-// graphics/audi/text data
+// graphics/audio/text data.
 package data
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 
-	"github.com/faiface/pixel"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
+
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame"
 )
 
 var (
-	g_dir_path     = filepath.FromSlash("data/gdata")
-	g_arch_path    = filepath.FromSlash("data/gdata.zip")
+	inflog *log.Logger = log.New(flame.InfLog, "mural-data>", 0)
+	errlog *log.Logger = log.New(flame.ErrLog, "mural-data>", 0)
+	dbglog *log.Logger = log.New(flame.DbgLog, "mural-data--debug>", 0)
+	
+	g_dir_path     string
+	g_arch_path    string
 	mainFontSmall  font.Face
 	mainFontNormal font.Face
 	mainFontBig    font.Face
 )
 
 func init() {
+	flame.SaveConfig() // save config to file, in case that no config file exists  
+	if flame.Mod() == nil {
+		errlog.Print("data_load_fail:no module loaded")
+		return
+	}
+	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui", flame.Mod().Name()))
+	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip", flame.Mod().Name()))
 	var err error
-	mainFontSmall, err = Font("SIMSUN.ttd", 10)
+	mainFontSmall, err = Font("SIMSUN.ttf", 10)
 	if err != nil {
-		// TODO: log somewhere information about main font load failure.
+		errlog.Print("data_load:fail to load small font")
 		mainFontSmall = basicfont.Face7x13
 	}
 	mainFontNormal, err = Font("SIMSUN.ttf", 20)
 	if err != nil {
-		// TODO: log somewhere information about main font load failure.
+		errlog.Print("data_load:fail to load medium font")
 		mainFontNormal = basicfont.Face7x13
 	}
 	mainFontBig, err = Font("SIMSUN.ttf", 40)
 	if err != nil {
-		// TODO: log somewhere information about main font load failure.
+		errlog.Print("data_load:fail to load big font")
 		mainFontBig = basicfont.Face7x13
 	}
 }
@@ -74,14 +89,12 @@ func Font(fileName string, size float64) (font.Face, error) {
 	return loadFontFromDir(filepath.FromSlash(fullpath), size)
 }
 
-// MainFontSmall returns standard font in small
-// size.
+// MainFontSmall returns standard font in small size.
 func MainFontSmall() font.Face {
 	return mainFontSmall
 }
 
-// MainFontNormal returns standard font in normal
-// size.
+// MainFontNormal returns standard font in normal size.
 func MainFontNormal() font.Face {
 	return mainFontNormal
 }

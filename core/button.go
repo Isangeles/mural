@@ -26,19 +26,21 @@ package core
 import (
 	"fmt"
 
+	"golang.org/x/image/colornames"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
+	//"github.com/faiface/pixel/imdraw"'
+
 	"github.com/isangeles/mural/core/data"
-	//"github.com/faiface/pixel/imdraw"
-	"golang.org/x/image/colornames"
 )
 
 // Button struct for UI button.
 type Button struct {
-	bg      *pixel.Sprite
-	label   *text.Text
-	pressed bool
+	bg       *pixel.Sprite
+	label    *text.Text
+	pressed  bool
 	drawArea pixel.Rect // updated on each draw
 }
 
@@ -61,7 +63,7 @@ func NewButton(bgPic pixel.Picture, labelText string) *Button {
 // Draw draws button.
 func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	// (should be some more elegant way)
+	// (there should be some more elegant way)
 	bgBottomX := matrix[4] - (b.bg.Frame().Size().X / 2)
 	bgBottomY := matrix[5] - (b.bg.Frame().Size().Y / 2)
 	b.drawArea.Min = pixel.V(bgBottomX, bgBottomY)

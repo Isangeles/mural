@@ -47,10 +47,12 @@ func LoadConfig() error {
 	}
 
 	fullscreen = confValues[0] == "true"
+
+	dbglog.Print("config_file_loaded")
 	return nil
 }
 
-// SaveConfig saves current configuration to file
+// SaveConfig saves current configuration to file.
 func SaveConfig() error {
 	f, err := os.Create(CONF_FILE_NAME)
 	if err != nil {
@@ -59,9 +61,10 @@ func SaveConfig() error {
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
-	w.WriteString(fmt.Sprintf("%s\n", "#Mural GUI config file.")) // default header
+	w.WriteString(fmt.Sprintf("%s\n", "#Mural GUI configuration file.")) // default header
 	w.WriteString(fmt.Sprintf("fullscreen:%v;\n", fullscreen))
 	w.Flush()
 
+	dbglog.Print("config_file_saved")
 	return nil
 }

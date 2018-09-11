@@ -26,7 +26,6 @@ package main
 
 import (
 	"log"
-	"os"
 	//"time"
 
 	"golang.org/x/image/colornames"
@@ -39,17 +38,22 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 )
 
+const (
+	NAME, VERSION = "Mural", "0.0.0"
+	log_prefix    = "mural-gui"
+)
+
 var (
-	stdout *log.Logger = log.New(os.Stdout, "mural>", 0)
-	stderr *log.Logger = log.New(os.Stderr, "mural>", 0)
-	dbgout *log.Logger = log.New(os.Stdout, "mural-debug>", 0)
+	inflog *log.Logger = log.New(flame.InfLog, "mural>", 0)
+	errlog *log.Logger = log.New(flame.ErrLog, "mural>", 0)
+	dbglog *log.Logger = log.New(flame.DbgLog, "mural-debug>", 0)
 )
 
 // On init.
 func init() {
 	err := LoadConfig()
 	if err != nil {
-		stderr.Printf("fail_to_load_config_file:%v\n", err)
+		errlog.Printf("fail_to_load_config_file:%v\n", err)
 	}
 }
 
@@ -60,7 +64,7 @@ func main() {
 // All window code fired from there.
 func run() {
 	if flame.Mod() == nil {
-		stderr.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
+		errlog.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
 		return
 	}
 	monitor := pixelgl.PrimaryMonitor()

@@ -50,8 +50,8 @@ var (
 	mainFontBig    font.Face
 )
 
-func init() {
-	flame.SaveConfig() // save config to file, in case that no config file exists  
+func Load() {
+	//flame.SaveConfig() // save config to file, in case that no config file exists  
 	if flame.Mod() == nil {
 		errlog.Print("data_load_fail:no module loaded")
 		return

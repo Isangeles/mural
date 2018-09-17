@@ -26,32 +26,51 @@
 package mainmenu
 
 import (
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	
+	"github.com/isangeles/mural/core"
 )
 
 // MainMenu struct reperesents container with
-// all menu screens(settings menu, new game menu, etc.)
+// all menu screens(settings menu, new game menu, etc.).
 type MainMenu struct {
 	menu *Menu
+	console *core.Console
 }
 
 // New returns new main menu
 func New() (*MainMenu, error) {
 	mm := new(MainMenu)
+	
 	m, err := newMenu()
 	if err != nil {
 		return nil, err
 	}
 	mm.menu = m
+
+	c, err := core.NewConsole()
+	if err != nil {
+		return nil, err
+	}
+	mm.console = c
+
 	return mm, nil
 }
 
 // Draw draws current menu screen.
 func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	mm.menu.Draw(win)
+
+	if mm.console.Open() {
+		conDrawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Max.Y)
+		conDrawMax := pixel.V(win.Bounds().Max.X, win.Bounds().Center().Y)
+		mm.console.Draw(conDrawMin, conDrawMax, win)
+	}
 }
 
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *pixelgl.Window) {
 	mm.menu.Update(win)
+	mm.console.Update(win)
 }

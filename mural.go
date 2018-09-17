@@ -36,6 +36,7 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/mural/core/data"
 )
 
 const (
@@ -51,7 +52,12 @@ var (
 
 // On init.
 func init() {
-	err := LoadConfig()
+	err := flame.LoadConfig()
+	if err != nil {
+		errlog.Printf("fail_to_load_flame_config_file:%v\n", err)
+		flame.SaveConfig()
+	}
+	err = LoadConfig()
 	if err != nil {
 		errlog.Printf("fail_to_load_config_file:%v\n", err)
 	}
@@ -86,9 +92,16 @@ func run() {
 
 	win.SetSmooth(true)
 
+	data.Load()
+	
 	mainMenu, err := mainmenu.New()
 	if err != nil {
 		panic(err)
+	}
+
+	// textbox test.
+	for i := 0; i < 40; i ++ {
+		dbglog.Printf("msg_%d", i)
 	}
 
 	//last := time.Now()

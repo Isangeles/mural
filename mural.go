@@ -41,7 +41,6 @@ import (
 
 const (
 	NAME, VERSION = "Mural", "0.0.0"
-	log_prefix    = "mural-gui"
 )
 
 var (
@@ -55,7 +54,7 @@ func init() {
 	err := flame.LoadConfig()
 	if err != nil {
 		errlog.Printf("fail_to_load_flame_config_file:%v\n", err)
-		flame.SaveConfig()
+		flame.SaveConfig() // override 'corrupted' config file with default configuration
 	}
 	err = LoadConfig()
 	if err != nil {
@@ -73,15 +72,18 @@ func run() {
 		errlog.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
 		return
 	}
-	monitor := pixelgl.PrimaryMonitor()
-	mResW, mResH := monitor.Size()
-	//mPosX, mPosY := monitor.Position()
+	if resolution.X == 0 || resolution.Y == 0 {
+		monitor := pixelgl.PrimaryMonitor()
+		resolution.X, resolution.Y = monitor.Size()
+		//mPosX, mPosY := monitor.Position()
+	}
 	cfg := pixelgl.WindowConfig{
-		Title:  "Mural GUI",
-		Bounds: pixel.R(0, 0, mResW, mResH),
+		Title:  NAME + " " + VERSION,
+		Bounds: pixel.R(0, 0, resolution.X, resolution.Y),
 		VSync:  true,
 	}
 	if fullscreen {
+		monitor := pixelgl.PrimaryMonitor()
 		cfg.Monitor = monitor
 	}
 

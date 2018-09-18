@@ -27,6 +27,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
+
+	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/data/text"
 )
@@ -37,17 +41,28 @@ const (
 
 var (
 	fullscreen bool
+	resolution pixel.Vec
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen")
+	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen", "resolution")
 	if err != nil {
 		return err
 	}
 
 	fullscreen = confValues[0] == "true"
-
+	
+	resValue := confValues[1]
+	resolution.X, err = strconv.ParseFloat(strings.Split(resValue,
+		"x")[0], 64)
+	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue,
+		"x")[1], 64)
+	if err != nil {
+		errlog.Printf("fail_to_set_custom_resolution:%s",
+			resValue)
+	}
+	
 	dbglog.Print("config_file_loaded")
 	return nil
 }
@@ -63,6 +78,8 @@ func SaveConfig() error {
 	w := bufio.NewWriter(f)
 	w.WriteString(fmt.Sprintf("%s\n", "#Mural GUI configuration file.")) // default header
 	w.WriteString(fmt.Sprintf("fullscreen:%v;\n", fullscreen))
+	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X,
+		resolution.Y))
 	w.Flush()
 
 	dbglog.Print("config_file_saved")

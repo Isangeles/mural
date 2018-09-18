@@ -72,7 +72,7 @@ func (t *Textbox) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
 	t.bgHeight = drawMax.Y
 
 	// Text content.
-	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(win.Bounds().Min.X, win.Bounds().Max.Y - 50)))
+	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(win.Bounds().Min.X, win.Bounds().Max.Y - 50))) // TODO: don't use raw values for position
 }
 
 // Update handles key events.
@@ -91,7 +91,7 @@ func (t *Textbox) Update(win *pixelgl.Window) {
 	}
 }
 
-// Clears textbox and inserts specified text.
+// Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
 	t.textContent = text
 	t.updateTextVisibility()
@@ -106,7 +106,7 @@ func (t *Textbox) updateTextVisibility() {
 		visibleTextHeight float64 
 	)
 	
-	for i, line := range t.textContent {
+	for i := 0; i < len(t.textContent)-1; i++ {
 		if i < t.startID {
 			continue
 		}
@@ -114,6 +114,7 @@ func (t *Textbox) updateTextVisibility() {
 			break;
 		}
 		
+		line := t.textContent[i]
 		visibleText = append(visibleText, line.String())
 		visibleTextHeight += t.textarea.BoundsOf(line.String()).W()
 	}

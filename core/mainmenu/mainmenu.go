@@ -28,15 +28,13 @@ package mainmenu
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	
-	"github.com/isangeles/mural/core"
 )
 
 // MainMenu struct reperesents container with
 // all menu screens(settings menu, new game menu, etc.).
 type MainMenu struct {
 	menu *Menu
-	console *core.Console
+	console *Console
 }
 
 // New returns new main menu
@@ -49,7 +47,7 @@ func New() (*MainMenu, error) {
 	}
 	mm.menu = m
 
-	c, err := core.NewConsole()
+	c, err := newConsole()
 	if err != nil {
 		return nil, err
 	}

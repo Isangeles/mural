@@ -102,9 +102,11 @@ func run() {
 	}
 
 	// textbox test.
+	/*
 	for i := 0; i < 40; i ++ {
 		dbglog.Printf("msg_%d", i)
 	}
+        */
 
 	//last := time.Now()
 	for !win.Closed() {

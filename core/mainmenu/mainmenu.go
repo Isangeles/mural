@@ -28,13 +28,16 @@ package mainmenu
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+
+	"github.com/isangeles/mural/core"
 )
 
 // MainMenu struct reperesents container with
 // all menu screens(settings menu, new game menu, etc.).
 type MainMenu struct {
-	menu *Menu
+	menu    *Menu
 	console *Console
+	msgs    []*core.MessageWindow
 }
 
 // New returns new main menu
@@ -53,17 +56,35 @@ func New() (*MainMenu, error) {
 	}
 	mm.console = c
 
+	msg, err := core.NewMessageWindow("TEST TEST TEST")
+	if err != nil {
+		return nil, err
+	}
+	msg.Show(true)
+	mm.msgs = append(mm.msgs, msg)
+
 	return mm, nil
 }
 
 // Draw draws current menu screen.
 func (mm *MainMenu) Draw(win *pixelgl.Window) {
+	// Menu.
 	mm.menu.Draw(win)
-
+	// Console.
 	if mm.console.Open() {
-		conDrawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Max.Y)
-		conDrawMax := pixel.V(win.Bounds().Max.X, win.Bounds().Center().Y)
+		conDrawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
+		conDrawMax := pixel.V(win.Bounds().Max.X, win.Bounds().Max.Y)
 		mm.console.Draw(conDrawMin, conDrawMax, win)
+	}
+	// Messages.
+	for _, msg := range mm.msgs {
+		if msg.Open() {
+			msgDrawMin := pixel.V(win.Bounds().Min.X + (win.Bounds().Max.X / 3),
+				win.Bounds().Min.Y + (win.Bounds().Max.Y / 3))
+			msgDrawMax := pixel.V(win.Bounds().Max.X - (win.Bounds().Max.X / 3),
+				win.Bounds().Max.Y - (win.Bounds().Max.Y / 3))
+			msg.Draw(msgDrawMin, msgDrawMax, win)
+		}
 	}
 }
 
@@ -71,4 +92,12 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 func (mm *MainMenu) Update(win *pixelgl.Window) {
 	mm.menu.Update(win)
 	mm.console.Update(win)
+	for i, msg := range mm.msgs {
+		if msg.Open() {
+			msg.Update(win)
+		}
+		if msg.Dismissed() {
+			mm.msgs = append(mm.msgs[:i], mm.msgs[i+1:]...) // remove dismissed message
+		}
+	}
 }

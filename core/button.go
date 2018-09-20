@@ -31,7 +31,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	//"github.com/faiface/pixel/imdraw"'
+	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/mural/core/data"
 )
@@ -39,6 +39,7 @@ import (
 // Button struct for UI button.
 type Button struct {
 	bg       *pixel.Sprite
+	bgDraw   *imdraw.IMDraw
 	label    *text.Text
 	pressed  bool
 	drawArea pixel.Rect // updated on each draw
@@ -47,10 +48,23 @@ type Button struct {
 // NewButton returns new instance of button with specified
 // background image and label text.
 func NewButton(bgPic pixel.Picture, labelText string) *Button {
-	// Backround.
 	button := new(Button)
+	// Backround.
 	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
 	button.bg = bg
+	// Label.
+	font := data.MainFontSmall()
+	atlas := text.NewAtlas(font, text.ASCII)
+	button.label = text.New(pixel.V(0, 0), atlas)
+	fmt.Fprint(button.label, labelText)
+
+	return button
+}
+
+func NewButtonDraw(labelText string) *Button {
+	button := new(Button)
+	// Background.
+	button.bgDraw = imdraw.New(nil)
 	// Label.
 	font := data.MainFontSmall()
 	atlas := text.NewAtlas(font, text.ASCII)
@@ -64,15 +78,21 @@ func NewButton(bgPic pixel.Picture, labelText string) *Button {
 func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
 	// (there should be some more elegant way)
-	bgBottomX := matrix[4] - (b.bg.Frame().Size().X / 2)
-	bgBottomY := matrix[5] - (b.bg.Frame().Size().Y / 2)
-	b.drawArea.Min = pixel.V(bgBottomX, bgBottomY)
-	b.drawArea.Max = b.drawArea.Min.Add(b.bg.Frame().Size())
+	if b.bg != nil {
+		bgBottomX := matrix[4] - (b.bg.Frame().Size().X / 2)
+		bgBottomY := matrix[5] - (b.bg.Frame().Size().Y / 2)
+		b.drawArea.Min = pixel.V(bgBottomX, bgBottomY)
+		b.drawArea.Max = b.drawArea.Min.Add(b.bg.Frame().Size())
+	}
 	// Drawing background.
 	if b.pressed {
-		b.bg.DrawColorMask(t, matrix, colornames.Gray)
+		if b.bg != nil {
+			b.bg.DrawColorMask(t, matrix, colornames.Gray)
+		}
 	} else {
-		b.bg.Draw(t, matrix)
+		if b.bg != nil {
+			b.bg.Draw(t, matrix)
+		}
 	}
 	// Drawing label.
 	if b.label != nil {

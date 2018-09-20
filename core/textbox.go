@@ -40,7 +40,7 @@ type Textbox struct {
 	bg          *imdraw.IMDraw
 	textarea    *text.Text
 	bgHeight    float64
-	textContent []fmt.Stringer
+	textContent []string
 	visibleText []string
 	startID     int
 }
@@ -72,7 +72,7 @@ func (t *Textbox) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
 	t.bgHeight = drawMax.Y
 
 	// Text content.
-	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(win.Bounds().Min.X, win.Bounds().Max.Y - 50))) // TODO: don't use raw values for position
+	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(drawMin.X, drawMax.Y - t.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.
@@ -93,7 +93,21 @@ func (t *Textbox) Update(win *pixelgl.Window) {
 
 // Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
+	for _, txt := range text {
+		t.textContent = append(t.textContent, txt.String())
+	}
+	t.updateTextVisibility()
+}
+
+// InsertText clears textbox and inserts specified text.
+func (t *Textbox) InsertText(text []string) {
 	t.textContent = text
+	t.updateTextVisibility()
+}
+
+// Add adds specified text to box.
+func (t *Textbox) Add(line string) {
+	t.textContent = append(t.textContent, line)
 	t.updateTextVisibility()
 }
 
@@ -106,7 +120,7 @@ func (t *Textbox) updateTextVisibility() {
 		visibleTextHeight float64 
 	)
 	
-	for i := 0; i < len(t.textContent)-1; i++ {
+	for i := 0; i < len(t.textContent); i++ {
 		if i < t.startID {
 			continue
 		}
@@ -115,8 +129,8 @@ func (t *Textbox) updateTextVisibility() {
 		}
 		
 		line := t.textContent[i]
-		visibleText = append(visibleText, line.String())
-		visibleTextHeight += t.textarea.BoundsOf(line.String()).W()
+		visibleText = append(visibleText, line)
+		visibleTextHeight += t.textarea.BoundsOf(line).W()
 	}
 	for _, txt := range visibleText {
 		fmt.Fprintln(t.textarea, txt)

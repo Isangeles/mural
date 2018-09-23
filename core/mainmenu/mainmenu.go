@@ -19,7 +19,7 @@
  * MA 02110-1301, USA.
  *
  *
-*/
+ */
 
 // mainmenu package contains main menu, settings,
 // load/save and new game screens.
@@ -43,7 +43,7 @@ type MainMenu struct {
 // New returns new main menu
 func New() (*MainMenu, error) {
 	mm := new(MainMenu)
-	
+
 	m, err := newMenu()
 	if err != nil {
 		return nil, err
@@ -56,7 +56,8 @@ func New() (*MainMenu, error) {
 	}
 	mm.console = c
 
-	msg, err := core.NewMessageWindow("TEST TEST TEST")
+	msg, err := core.NewMessageWindow(
+		"This is test UI message.\nClick 'Ok' to dismiss.") // test
 	if err != nil {
 		return nil, err
 	}
@@ -70,21 +71,16 @@ func New() (*MainMenu, error) {
 func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	// Menu.
 	mm.menu.Draw(win)
-	// Console.
-	if mm.console.Open() {
-		conDrawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-		conDrawMax := pixel.V(win.Bounds().Max.X, win.Bounds().Max.Y)
-		mm.console.Draw(conDrawMin, conDrawMax, win)
-	}
 	// Messages.
 	for _, msg := range mm.msgs {
 		if msg.Open() {
-			msgDrawMin := pixel.V(win.Bounds().Min.X + (win.Bounds().Max.X / 3),
-				win.Bounds().Min.Y + (win.Bounds().Max.Y / 3))
-			msgDrawMax := pixel.V(win.Bounds().Max.X - (win.Bounds().Max.X / 3),
-				win.Bounds().Max.Y - (win.Bounds().Max.Y / 3))
-			msg.Draw(msgDrawMin, msgDrawMax, win)
+			msg.Draw(core.BottomLeftDis3(win.Bounds()), core.TopRightDis3(win.Bounds()), win)
 		}
+	}
+	// Console.
+	if mm.console.Open() {
+		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
+		mm.console.Draw(conBottomLeft, core.DisTR(win.Bounds(), 0), win)
 	}
 }
 

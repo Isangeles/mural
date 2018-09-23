@@ -27,20 +27,28 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
+
+	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/mural/core/data"
 )
 
 // MessageWindow struct represents UI message window.
 type MessageWindow struct {
-	bg        *imdraw.IMDraw
-	textbox   *Textbox
-	open      bool
-	dismissed bool
+	bg           *imdraw.IMDraw
+	textbox      *Textbox
+	acceptButton *Button
+	size         pixel.Rect
+	open         bool
+	dismissed    bool
 }
 
 // NewMessageWindow return new message window instance.
 func NewMessageWindow(msg string) (*MessageWindow, error) {
 	mw := new(MessageWindow)
+	// Background.
 	mw.bg = imdraw.New(nil)
+	// Textbox.
 	textbox, err := NewTextbox()
 	if err != nil {
 		return nil, err
@@ -48,6 +56,14 @@ func NewMessageWindow(msg string) (*MessageWindow, error) {
 	mw.textbox = textbox
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)
+	// Buttons.
+	buttonBG, err := data.Picture("buttonS.png")
+	if err != nil {
+		return nil, err
+	}
+	acceptB := NewButton(buttonBG, lang.Text("gui", "accept_b_label"))
+	mw.acceptButton = acceptB
+
 	return mw, nil
 }
 
@@ -67,18 +83,20 @@ func (mw *MessageWindow) Dismissed() bool {
 }
 
 // Draw draws window.
-func (mw *MessageWindow) Draw(topLeft, bottomRight pixel.Vec, win *pixelgl.Window) {
+func (mw *MessageWindow) Draw(bottomLeft, topRight pixel.Vec, win *pixelgl.Window) {
+	mw.size = pixel.R(bottomLeft.X, bottomLeft.Y, topRight.X, topRight.Y)
+	bottomRight := pixel.V(topRight.X, bottomLeft.Y)
 	// Background.
-	/*
 	mw.bg.Color = pixel.RGB(0.6, 0.6, 0.6)
-	mw.bg.Push(topLeft)
+	mw.bg.Push(bottomLeft)
 	mw.bg.Color = pixel.RGB(0.6, 0.6, 0.6)
-	mw.bg.Push(bottomRight)
+	mw.bg.Push(topRight)
 	mw.bg.Rectangle(0)
 	mw.bg.Draw(win)
-        */
 	// Textbox.
-	mw.textbox.Draw(topLeft, bottomRight, win)
+	mw.textbox.Draw(DisTR(mw.size, 0.45), DisBL(mw.size, 0.45), win)
+	// Buttons.
+	mw.acceptButton.Draw(win, pixel.IM.Moved(PosBR(mw.acceptButton.Frame(), bottomRight)))
 }
 
 // Update handles key events.
@@ -87,6 +105,13 @@ func (mw *MessageWindow) Update(win *pixelgl.Window) {
 		mw.open = false;
 		mw.dismissed = true;
 	}
+	if win.JustReleased(pixelgl.MouseButtonLeft) {
+		if mw.acceptButton.ContainsPosition(win.MousePosition()) {
+			mw.open = false
+			mw.dismissed = true
+		}
+	}
 
 	mw.textbox.Update(win)
+	mw.acceptButton.Update(win)
 }

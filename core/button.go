@@ -117,6 +117,11 @@ func (b *Button) DrawArea() pixel.Rect {
 	return b.drawArea
 }
 
+// Frame returns button background size.
+func (b *Button) Frame() pixel.Rect {
+	return b.bg.Frame()
+}
+
 // ContainsPosition checks if specified position is
 // within current draw area.
 func (b *Button) ContainsPosition(pos pixel.Vec) bool {

@@ -61,18 +61,18 @@ func NewTextbox() (*Textbox, error) {
 }
 
 // Draw draws textbox.
-func (t *Textbox) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
+func (t *Textbox) Draw(bottomLeft, topRight pixel.Vec, win *pixelgl.Window) {
 	// Background.
 	t.bg.Color = pixel.RGB(0.4, 0.4, 0.4)
-	t.bg.Push(drawMin)
+	t.bg.Push(bottomLeft)
 	t.bg.Color = pixel.RGB(0.4, 0.4, 0.4)
-	t.bg.Push(drawMax)
+	t.bg.Push(topRight)
 	t.bg.Rectangle(0)
 	t.bg.Draw(win)
-	t.bgHeight = drawMax.Y
+	t.bgHeight = topRight.Y
 
 	// Text content.
-	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(drawMin.X, drawMax.Y - t.textarea.BoundsOf("AA").H()))) 
+	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(bottomLeft.X, topRight.Y - t.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.

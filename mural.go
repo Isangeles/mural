@@ -25,7 +25,6 @@
 package main
 
 import (
-	"log"
 	//"time"
 
 	"golang.org/x/image/colornames"
@@ -36,6 +35,9 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
+
+	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/data"
 )
 
@@ -43,22 +45,16 @@ const (
 	NAME, VERSION = "Mural", "0.0.0"
 )
 
-var (
-	inflog *log.Logger = log.New(flame.InfLog, "mural>", 0)
-	errlog *log.Logger = log.New(flame.ErrLog, "mural>", 0)
-	dbglog *log.Logger = log.New(flame.DbgLog, "mural-debug>", 0)
-)
-
 // On init.
 func init() {
 	err := flame.LoadConfig()
 	if err != nil {
-		errlog.Printf("fail_to_load_flame_config_file:%v\n", err)
+		log.Err.Printf("fail_to_load_flame_config_file:%v\n", err)
 		flame.SaveConfig() // override 'corrupted' config file with default configuration
 	}
-	err = LoadConfig()
+	err = config.LoadConfig()
 	if err != nil {
-		errlog.Printf("fail_to_load_config_file:%v\n", err)
+		log.Err.Printf("fail_to_load_config_file:%v\n", err)
 	}
 }
 
@@ -69,9 +65,10 @@ func main() {
 // All window code fired from there.
 func run() {
 	if flame.Mod() == nil {
-		errlog.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
+		log.Err.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
 		return
 	}
+	resolution := config.Resolution()
 	if resolution.X == 0 || resolution.Y == 0 {
 		monitor := pixelgl.PrimaryMonitor()
 		resolution.X, resolution.Y = monitor.Size()
@@ -82,7 +79,7 @@ func run() {
 		Bounds: pixel.R(0, 0, resolution.X, resolution.Y),
 		VSync:  true,
 	}
-	if fullscreen {
+	if config.Fullscreen() {
 		monitor := pixelgl.PrimaryMonitor()
 		cfg.Monitor = monitor
 	}
@@ -123,7 +120,7 @@ func run() {
 
 	// On exit.
 	if win.Closed() {
-		SaveConfig()
+		config.SaveConfig()
 		flame.SaveConfig()
 	}
 }

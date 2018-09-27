@@ -1,5 +1,5 @@
 /*
- * mainmenu.go
+ * coords.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -24,8 +24,26 @@
 package core
 
 import (
+	"math"
+	
 	"github.com/faiface/pixel"
+
+	"github.com/isangeles/mural/config"
 )
+
+const (
+	def_res_x, def_res_y float64 = 1920, 1080
+)
+
+
+// Scale return scale value for current resolution.
+func Scale() float64 {
+	res := config.Resolution()
+	scaleX := res.X / def_res_x;
+	scaleY := res.Y / def_res_y;
+	scale := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+	return scale
+}
 
 // DisBL returns bottom left position of specified rect
 // multiplied by specified value.
@@ -63,6 +81,12 @@ func PosBL(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 // in specified rectangle.
 func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X - (size.Size().X / 2), pos.Y + (size.Size().Y / 2))
+}
+
+// Size converts specified default size value(for 1080p)
+// to value for current resolution.
+func ConvSize(size1080p float64) float64 {
+	return size1080p * Scale()
 }
 
 

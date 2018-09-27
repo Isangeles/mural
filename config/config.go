@@ -21,7 +21,8 @@
  *
  */
 
-package main
+// Config package with configuration values.
+package config
 
 import (
 	"bufio"
@@ -32,6 +33,8 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/mural/log"
+	
 	"github.com/isangeles/flame/core/data/text"
 )
 
@@ -59,11 +62,11 @@ func LoadConfig() error {
 	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue,
 		"x")[1], 64)
 	if err != nil {
-		errlog.Printf("fail_to_set_custom_resolution:%s",
-			resValue)
+		//errlog.Printf("fail_to_set_custom_resolution:%s",
+		//	resValue)
 	}
 	
-	dbglog.Print("config_file_loaded")
+	log.Dbg.Print("config_file_loaded")
 	return nil
 }
 
@@ -82,6 +85,16 @@ func SaveConfig() error {
 		resolution.Y))
 	w.Flush()
 
-	dbglog.Print("config_file_saved")
+	log.Dbg.Print("config_file_saved")
 	return nil
+}
+
+// Fullscreen returns fullscreen config value.
+func Fullscreen() bool {
+	return fullscreen
+}
+
+// Returns current resolution width and height.
+func Resolution() pixel.Vec {
+	return resolution
 }

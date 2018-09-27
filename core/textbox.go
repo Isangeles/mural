@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	//"golang.org/x/image/colornames"
+	"golang.org/x/image/colornames"
 	
 	"github.com/isangeles/mural/core/data"
 )
@@ -63,9 +63,9 @@ func NewTextbox() (*Textbox, error) {
 // Draw draws textbox.
 func (t *Textbox) Draw(bottomLeft, topRight pixel.Vec, win *pixelgl.Window) {
 	// Background.
-	t.bg.Color = pixel.RGB(0.4, 0.4, 0.4)
+	t.bg.Color = pixel.ToRGBA(colornames.Grey)
 	t.bg.Push(bottomLeft)
-	t.bg.Color = pixel.RGB(0.4, 0.4, 0.4)
+	t.bg.Color = pixel.ToRGBA(colornames.Grey)
 	t.bg.Push(topRight)
 	t.bg.Rectangle(0)
 	t.bg.Draw(win)

@@ -1,5 +1,5 @@
 /*
- * core.go
+ * log.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -19,33 +19,19 @@
  * MA 02110-1301, USA.
  *
  *
-*/
+ */
 
-package core
+// Package with app log.
+package log
 
 import (
-	//"fmt"
+	"log"
 
-	"github.com/faiface/pixel"
+	"github.com/isangeles/flame"
 )
 
-// Size type.
-// Sizes: small(0), normal(1), big(2).
-type Size int
-
-const (
-	SMALL Size = iota
-	NORMAL
-	BIG
+var (
+	Inf *log.Logger = log.New(flame.InfLog, "mural>", 0)
+	Err *log.Logger = log.New(flame.ErrLog, "mural>", 0)
+	Dbg *log.Logger = log.New(flame.DbgLog, "mural-debug>", 0)
 )
-
-// ButtonSize returns button rectange parameters
-// for this size.
-func (s Size) ButtonSize() pixel.Rect {
-	switch(s) {
-	case SMALL:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
-	default:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
-	}
-}

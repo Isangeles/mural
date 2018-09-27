@@ -1,5 +1,5 @@
 /*
- * core.go
+ * settings.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -19,33 +19,25 @@
  * MA 02110-1301, USA.
  *
  *
-*/
+ */
 
-package core
+package mainmenu
 
 import (
-	//"fmt"
-
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
+
+	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/mural/core"
+	"github.com/isangeles/mural/core/data"
 )
 
-// Size type.
-// Sizes: small(0), normal(1), big(2).
-type Size int
-
-const (
-	SMALL Size = iota
-	NORMAL
-	BIG
-)
-
-// ButtonSize returns button rectange parameters
-// for this size.
-func (s Size) ButtonSize() pixel.Rect {
-	switch(s) {
-	case SMALL:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
-	default:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
-	}
+// Settings struct represents main menu
+// settings screen.
+type Settings struct {
+	backB *core.Button
+	open  bool
 }
+

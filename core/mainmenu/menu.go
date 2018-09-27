@@ -41,7 +41,7 @@ import (
 type Menu struct {
 	title    *text.Text
 	exitB    *core.Button
-	CloseReq bool
+	open bool
 }
 
 // newMenu returns new menu.
@@ -53,11 +53,12 @@ func newMenu() (*Menu, error) {
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Exit button.
-	exitBBg, err := data.Picture("buttonS.png")
-	if err != nil {
-		return nil, err
-	}
-	m.exitB = core.NewButton(exitBBg, lang.Text("gui", "exit_b_label"))
+	//buttonExitBG, err := data.Picture("buttonS.png")
+	//if err != nil {
+	//	return nil, err
+	//}
+	//m.exitB = core.NewButton(buttonExitBG, lang.Text("gui", "exit_b_label"))
+	m.exitB = core.NewButtonDraw(core.SMALL, lang.Text("gui", "exit_b_label"))
 
 	return m, nil
 }
@@ -67,7 +68,7 @@ func newMenu() (*Menu, error) {
 func (m *Menu) Draw(win *pixelgl.Window) {
 	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
-	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X, titlePos.Y - m.exitB.DrawArea().Size().Y)))
+	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X, titlePos.Y - m.exitB.Frame().Size().Y)))
 }
 
 // Update updates all menu elements.

@@ -1,3 +1,5 @@
 exit_b_label:Exit;
 accept_b_label:Ok;
+back_b_label:Back;
+settings_menu_title:Settings;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

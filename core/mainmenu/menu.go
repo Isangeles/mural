@@ -39,9 +39,11 @@ import (
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
-	title    *text.Text
-	exitB    *core.Button
-	open bool
+	title     *text.Text
+	settingsB *core.Button
+	exitB     *core.Button
+	open      bool
+	exitReq   bool
 }
 
 // newMenu returns new menu.
@@ -52,13 +54,16 @@ func newMenu() (*Menu, error) {
 	atlas := text.NewAtlas(font, text.ASCII)
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
-	// Exit button.
+	// Buttons.
+	m.settingsB = core.NewButtonDraw(core.SIZE_SMALL,
+		lang.Text("gui", "settings_b_label"))
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
 	//m.exitB = core.NewButton(buttonExitBG, lang.Text("gui", "exit_b_label"))
-	m.exitB = core.NewButtonDraw(core.SMALL, lang.Text("gui", "exit_b_label"))
+	m.exitB = core.NewButtonDraw(core.SIZE_SMALL, lang.Text("gui", "exit_b_label"))
+	m.exitB.OnClick(m.onExitButtonClicked)
 
 	return m, nil
 }
@@ -68,16 +73,38 @@ func newMenu() (*Menu, error) {
 func (m *Menu) Draw(win *pixelgl.Window) {
 	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
-	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X, titlePos.Y - m.exitB.Frame().Size().Y)))
+	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		titlePos.Y - m.exitB.Frame().Size().Y)))
+	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		m.settingsB.DrawArea().Min.Y - m.settingsB.Frame().Size().Y)))
 }
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *pixelgl.Window) {
+	m.settingsB.Update(win)
 	m.exitB.Update(win)
 
-	if win.JustReleased(pixelgl.MouseButtonLeft) {
-		if m.exitB.ContainsPosition(win.MousePosition()) {
-			win.SetClosed(true)
-		}
+	if m.exitReq {
+		win.SetClosed(true)
 	}
+}
+
+// Open checks if menu should be displayed.
+func (m *Menu) Open() bool {
+	return m.open
+}
+
+// Toggles menu visibility.
+func (m *Menu) Show(show bool) {
+	m.open = show
+}
+
+// Triggered on settings button clicked.
+func (m *Menu) onSettingsButtonClicked(b *core.Button) {
+	// TODO: settings toggle.
+}
+
+// Triggered on exit button clicked.
+func (m *Menu) onExitButtonClicked(b *core.Button) {
+	m.exitReq = true
 }

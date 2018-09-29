@@ -19,7 +19,7 @@
  * MA 02110-1301, USA.
  *
  *
-*/
+ */
 
 package core
 
@@ -34,16 +34,16 @@ import (
 type Size int
 
 const (
-	SMALL Size = iota
-	NORMAL
-	BIG
+	SIZE_SMALL Size = iota
+	SIZE_NORMAL
+	SIZE_BIG
 )
 
 // ButtonSize returns button rectange parameters
 // for this size.
 func (s Size) ButtonSize() pixel.Rect {
 	switch(s) {
-	case SMALL:
+	case SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))

@@ -62,6 +62,7 @@ func NewMessageWindow(msg string) (*MessageWindow, error) {
 		return nil, err
 	}
 	acceptB := NewButton(buttonBG, lang.Text("gui", "accept_b_label"))
+	acceptB.OnClick(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 
 	return mw, nil
@@ -105,13 +106,13 @@ func (mw *MessageWindow) Update(win *pixelgl.Window) {
 		mw.open = false;
 		mw.dismissed = true;
 	}
-	if win.JustReleased(pixelgl.MouseButtonLeft) {
-		if mw.acceptButton.ContainsPosition(win.MousePosition()) {
-			mw.open = false
-			mw.dismissed = true
-		}
-	}
 
 	mw.textbox.Update(win)
 	mw.acceptButton.Update(win)
+}
+
+// Triggered on accept button click.
+func (mw *MessageWindow) onAcceptButtonClicked(b *Button) {
+	mw.open = false
+	mw.dismissed = true
 }

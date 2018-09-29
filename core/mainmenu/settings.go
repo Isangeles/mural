@@ -46,7 +46,7 @@ type Settings struct {
 
 // newSettings returns new settings screen
 // instance.
-func newSettings(win *pixelgl.Window) (*Settings, error) {
+func newSettings() (*Settings, error) {
 	s := new(Settings)
 	// Title.
 	font := data.MainFontBig()
@@ -54,11 +54,7 @@ func newSettings(win *pixelgl.Window) (*Settings, error) {
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons.
-	buttonBackBG, err := data.Picture("buttonS.png")
-	if err != nil {
-		return nil, err
-	}
-	s.backB = core.NewButton(buttonBackBG, lang.Text("gui", "back_b_label"))
+	s.backB = core.NewButtonDraw(core.SIZE_SMALL, lang.Text("gui", "back_b_label"))
 
 	return s, nil
 }
@@ -75,5 +71,18 @@ func (s *Settings) Show(show bool) {
 
 // Draw draws all menu elements.
 func (s *Settings) Draw(win *pixelgl.Window) {
-	// TODO: draw function.
+	titlePos :=pixel.V(win.Bounds().Center().X,
+		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
+	s.title.Draw(win, pixel.IM.Moved(titlePos))
+	s.backB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		titlePos.Y - s.backB.Frame().Size().Y)))
+}
+
+// Update updates all menu elements.
+func (s *Settings) Update(win *pixelgl.Window) {
+	s.backB.Update(win)
+
+	if s.backB.ContainsPosition(win.MousePosition()) {
+		s.Show(false)
+	}
 }

@@ -45,6 +45,7 @@ type Button struct {
 	size     Size
 	pressed  bool
 	drawArea pixel.Rect // updated on each draw
+	onClick  func(b *Button)
 }
 
 // NewButton returns new instance of button with specified
@@ -85,7 +86,6 @@ func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	bgBottomY := matrix[5] - (b.Frame().Size().Y / 2)
 	b.drawArea.Min = pixel.V(bgBottomX, bgBottomY)
 	b.drawArea.Max = b.drawArea.Min.Add(b.Frame().Size())
-	fmt.Printf("\nb_draw_area:%s\n", b.drawArea) // test
 	// Drawing background.
 	if b.pressed {
 		if b.bg != nil {
@@ -125,7 +125,16 @@ func (b *Button) Update(win *pixelgl.Window) {
 	}
 	if win.JustReleased(pixelgl.MouseButtonLeft) {
 		b.pressed = false
+		if b.onClick != nil {
+			b.onClick(b)
+		}
 	}
+}
+
+// OnClick sets specified function as on-click
+// callback function.
+func (b *Button) OnClick(callback func(b *Button)) {
+	b.onClick = callback
 }
 
 // DrawArea returns button background position and size.

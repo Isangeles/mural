@@ -32,15 +32,15 @@ import (
 
 	//"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/mural/core"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 // Settings struct represents main menu
 // settings screen.
 type Settings struct {
 	title *text.Text
-	backB *core.Button
+	backB *mtk.Button
 	open  bool
 }
 
@@ -54,19 +54,9 @@ func newSettings() (*Settings, error) {
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons.
-	s.backB = core.NewButtonDraw(core.SIZE_SMALL, lang.Text("gui", "back_b_label"))
+	s.backB = mtk.NewButtonDraw(mtk.SIZE_SMALL, lang.Text("gui", "back_b_label"))
 
 	return s, nil
-}
-
-// Open checks whether menu should be drawn or not.
-func (s *Settings) Open() bool {
-	return s.open
-}
-
-// Show toggles menu visibility.
-func (s *Settings) Show(show bool) {
-	s.open = show
 }
 
 // Draw draws all menu elements.
@@ -80,9 +70,24 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 
 // Update updates all menu elements.
 func (s *Settings) Update(win *pixelgl.Window) {
-	s.backB.Update(win)
-
-	if s.backB.ContainsPosition(win.MousePosition()) {
-		s.Show(false)
+	if s.open {
+		s.backB.Update(win)
 	}
+}
+
+// Open checks whether menu should be drawn or not.
+func (s *Settings) Open() bool {
+	return s.open
+}
+
+// Show toggles menu visibility.
+func (s *Settings) Show(show bool) {
+	//fmt.Printf("\ns_open:%b\n", show)
+	s.open = show
+}
+
+// Sets specified function as back button on-click
+// callback function.
+func (s *Settings) OnBackButtonClickedFunc(f func(b *mtk.Button)) {
+	s.backB.OnClickFunc(f)
 }

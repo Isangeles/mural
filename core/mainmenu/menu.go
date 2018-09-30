@@ -25,23 +25,23 @@ package mainmenu
 
 import (
 	"fmt"
-
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/mural/core"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
 	title     *text.Text
-	settingsB *core.Button
-	exitB     *core.Button
+	settingsB *mtk.Button
+	exitB     *mtk.Button
 	open      bool
 	exitReq   bool
 }
@@ -55,15 +55,15 @@ func newMenu() (*Menu, error) {
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.
-	m.settingsB = core.NewButtonDraw(core.SIZE_SMALL,
+	m.settingsB = mtk.NewButtonDraw(mtk.SIZE_SMALL,
 		lang.Text("gui", "settings_b_label"))
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
-	//m.exitB = core.NewButton(buttonExitBG, lang.Text("gui", "exit_b_label"))
-	m.exitB = core.NewButtonDraw(core.SIZE_SMALL, lang.Text("gui", "exit_b_label"))
-	m.exitB.OnClick(m.onExitButtonClicked)
+	//m.exitB = mtk.NewButton(buttonExitBG, lang.Text("gui", "exit_b_label"))
+	m.exitB = mtk.NewButtonDraw(mtk.SIZE_SMALL, lang.Text("gui", "exit_b_label"))
+	m.exitB.OnClickFunc(m.onExitButtonClicked)
 
 	return m, nil
 }
@@ -81,9 +81,10 @@ func (m *Menu) Draw(win *pixelgl.Window) {
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *pixelgl.Window) {
-	m.settingsB.Update(win)
-	m.exitB.Update(win)
-
+	if m.open {
+		m.settingsB.Update(win)
+		m.exitB.Update(win)
+	}
 	if m.exitReq {
 		win.SetClosed(true)
 	}
@@ -99,12 +100,13 @@ func (m *Menu) Show(show bool) {
 	m.open = show
 }
 
-// Triggered on settings button clicked.
-func (m *Menu) onSettingsButtonClicked(b *core.Button) {
-	// TODO: settings toggle.
+// Sets specified function as settings button
+// on-click callback function.
+func (m *Menu) OnSettingsButtonClickedFunc(f func(b *mtk.Button)) {
+	m.settingsB.OnClickFunc(f)
 }
 
 // Triggered on exit button clicked.
-func (m *Menu) onExitButtonClicked(b *core.Button) {
+func (m *Menu) onExitButtonClicked(b *mtk.Button) {
 	m.exitReq = true
 }

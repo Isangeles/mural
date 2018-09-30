@@ -1,5 +1,5 @@
 /*
- * log.go
+ * mtk.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,17 +21,32 @@
  *
  */
 
-// Package with app log.
-package log
+// Tool kid package for mural GUI.
+package mtk
 
 import (
-	"log"
+	//"fmt"
 
-	"github.com/isangeles/flame"
+	"github.com/faiface/pixel"
 )
 
-var (
-	Inflog *log.Logger = log.New(flame.InfLog, "mural>", 0)
-	Errlog *log.Logger = log.New(flame.ErrLog, "mural>", 0)
-	Dbglog *log.Logger = log.New(flame.DbgLog, "mural-debug>", 0)
+// Size type.
+// Sizes: small(0), normal(1), big(2).
+type Size int
+
+const (
+	SIZE_SMALL Size = iota
+	SIZE_NORMAL
+	SIZE_BIG
 )
+
+// ButtonSize returns button rectange parameters
+// for this size.
+func (s Size) ButtonSize() pixel.Rect {
+	switch(s) {
+	case SIZE_SMALL:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	default:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	}
+}

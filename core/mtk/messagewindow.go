@@ -21,7 +21,7 @@
  *
  */
 
-package core
+package mtk
 
 import (
 	"github.com/faiface/pixel"
@@ -29,8 +29,6 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	
-	"github.com/isangeles/mural/core/data"
 )
 
 // MessageWindow struct represents UI message window.
@@ -57,12 +55,8 @@ func NewMessageWindow(msg string) (*MessageWindow, error) {
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)
 	// Buttons.
-	buttonBG, err := data.Picture("buttonS.png")
-	if err != nil {
-		return nil, err
-	}
-	acceptB := NewButton(buttonBG, lang.Text("gui", "accept_b_label"))
-	acceptB.OnClick(mw.onAcceptButtonClicked)
+	acceptB := NewButtonDraw(SIZE_SMALL, lang.Text("gui", "accept_b_label"))
+	acceptB.OnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 
 	return mw, nil

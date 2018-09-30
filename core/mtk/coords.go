@@ -21,7 +21,7 @@
  *
  */
 
-package core
+package mtk
 
 import (
 	"math"

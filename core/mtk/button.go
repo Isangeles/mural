@@ -21,7 +21,7 @@
  *
  */
 
-package core
+package mtk
 
 import (
 	"fmt"
@@ -119,21 +119,23 @@ func (b *Button) drawIMBackground(t pixel.Target, color color.Color, matrix pixe
 // Update updates button.
 func (b *Button) Update(win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		if b.drawArea.Contains(win.MousePosition()) {
+		if b.ContainsPosition(win.MousePosition()) {
 			b.pressed = true
 		}
 	}
 	if win.JustReleased(pixelgl.MouseButtonLeft) {
-		b.pressed = false
-		if b.onClick != nil {
-			b.onClick(b)
+		if b.pressed && b.ContainsPosition(win.MousePosition()) {
+			if b.onClick != nil {
+				b.onClick(b)
+			}
 		}
+		b.pressed = false
 	}
 }
 
 // OnClick sets specified function as on-click
 // callback function.
-func (b *Button) OnClick(callback func(b *Button)) {
+func (b *Button) OnClickFunc(callback func(b *Button)) {
 	b.onClick = callback
 }
 

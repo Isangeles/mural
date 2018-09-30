@@ -29,7 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/mural/core"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 // MainMenu struct reperesents container with
@@ -38,7 +38,7 @@ type MainMenu struct {
 	menu     *Menu
 	settings *Settings
 	console  *Console
-	msgs     []*core.MessageWindow
+	msgs     []*mtk.MessageWindow
 }
 
 // New returns new main menu
@@ -49,12 +49,14 @@ func New() (*MainMenu, error) {
 	if err != nil {
 		return nil, err
 	}
+	m.OnSettingsButtonClickedFunc(mm.OpenSettings)
 	mm.menu = m
 	// Settings.
 	s, err := newSettings()
 	if err != nil {
 		return nil, err
 	}
+	s.OnBackButtonClickedFunc(mm.OpenMenu)
 	mm.settings = s
 	// Console.
 	c, err := newConsole()
@@ -63,7 +65,7 @@ func New() (*MainMenu, error) {
 	}
 	mm.console = c
 	
-	msg, err := core.NewMessageWindow(
+	msg, err := mtk.NewMessageWindow(
 		"This is test UI message.\nClick 'Ok' to dismiss.") // test
 	if err != nil {
 		return nil, err
@@ -88,14 +90,14 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	// Messages.
 	for _, msg := range mm.msgs {
 		if msg.Open() {
-			msg.Draw(core.DisBL(win.Bounds(), 0.3),
-				core.DisTR(win.Bounds(), 0.3), win)
+			msg.Draw(mtk.DisBL(win.Bounds(), 0.3),
+				mtk.DisTR(win.Bounds(), 0.3), win)
 		}
 	}
 	// Console.
 	if mm.console.Open() {
 		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-		mm.console.Draw(conBottomLeft, core.DisTR(win.Bounds(), 0), win)
+		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0), win)
 	}
 }
 
@@ -112,6 +114,24 @@ func (mm *MainMenu) Update(win *pixelgl.Window) {
 			mm.msgs = append(mm.msgs[:i], mm.msgs[i+1:]...) // remove dismissed message
 		}
 	}
+}
 
-	
+// CloseMenus closes all menus.
+func (mm *MainMenu) CloseMenus() {
+	mm.menu.Show(false)
+	mm.settings.Show(false)
+}
+
+// OpenMenu closes all currently open
+// menus and opens main menu.
+func (mm *MainMenu) OpenMenu(b *mtk.Button) {
+	mm.CloseMenus()
+	mm.menu.Show(true)
+}
+
+// OpenSettings closes all currently open
+// menus and opens settings menu.
+func (mm *MainMenu) OpenSettings(b *mtk.Button) { 
+	mm.CloseMenus()
+	mm.settings.Show(true) 
 }

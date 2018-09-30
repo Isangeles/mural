@@ -32,13 +32,13 @@ import (
 
 	"github.com/isangeles/flame/core/enginelog"
 
-	"github.com/isangeles/mural/core"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 // Struct for game console.
 // TODO: very slow while open.
 type Console struct {
-	textbox *core.Textbox
+	textbox *mtk.Textbox
 	open    bool
 }
 
@@ -47,7 +47,7 @@ func newConsole() (*Console, error) {
 	c := new(Console)
 	
 	// Text box.
-	textbox, err := core.NewTextbox()
+	textbox, err := mtk.NewTextbox()
 	if err != nil {
 		return nil, err
 	}

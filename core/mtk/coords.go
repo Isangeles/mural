@@ -35,7 +35,6 @@ const (
 	def_res_x, def_res_y float64 = 1920, 1080
 )
 
-
 // Scale return scale value for current resolution.
 func Scale() float64 {
 	res := config.Resolution()
@@ -77,4 +76,12 @@ func ConvSize(size1080p float64) float64 {
 	return size1080p * Scale()
 }
 
-
+// MatrixToDrawArea calculates draw area based on specified
+// matrix and rectangle.
+func MatrixToDrawArea(matrix pixel.Matrix, rect pixel.Rect) (drawArea pixel.Rect) {
+	bgBottomX := matrix[4] - (rect.Size().X / 2)
+	bgBottomY := matrix[5] - (rect.Size().Y / 2)
+	drawArea.Min = pixel.V(bgBottomX, bgBottomY)
+	drawArea.Max = drawArea.Min.Add(rect.Size())
+	return
+}

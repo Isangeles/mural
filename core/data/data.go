@@ -27,7 +27,6 @@ package data
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
 	"golang.org/x/image/font"
@@ -36,13 +35,11 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+
+	"github.com/isangeles/mural/log"
 )
 
 var (
-	inflog *log.Logger = log.New(flame.InfLog, "mural-data>", 0)
-	errlog *log.Logger = log.New(flame.ErrLog, "mural-data>", 0)
-	dbglog *log.Logger = log.New(flame.DbgLog, "mural-data--debug>", 0)
-	
 	g_dir_path     string
 	g_arch_path    string
 	mainFontSmall  font.Face
@@ -53,7 +50,7 @@ var (
 func Load() {
 	//flame.SaveConfig() // save config to file, in case that no config file exists  
 	if flame.Mod() == nil {
-		errlog.Print("data_load_fail:no module loaded")
+		log.Err.Print("data_load_fail:no module loaded")
 		return
 	}
 	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui", flame.Mod().Name()))
@@ -61,17 +58,17 @@ func Load() {
 	var err error
 	mainFontSmall, err = Font("SIMSUN.ttf", 10)
 	if err != nil {
-		errlog.Print("data_load:fail to load small font")
+		log.Err.Print("data_load:fail to load small font")
 		mainFontSmall = basicfont.Face7x13
 	}
 	mainFontNormal, err = Font("SIMSUN.ttf", 20)
 	if err != nil {
-		errlog.Print("data_load:fail to load medium font")
+		log.Err.Print("data_load:fail to load medium font")
 		mainFontNormal = basicfont.Face7x13
 	}
 	mainFontBig, err = Font("SIMSUN.ttf", 40)
 	if err != nil {
-		errlog.Print("data_load:fail to load big font")
+		log.Err.Print("data_load:fail to load big font")
 		mainFontBig = basicfont.Face7x13
 	}
 }

@@ -40,12 +40,23 @@ const (
 	SIZE_BIG
 )
 
-// ButtonSize returns button rectange parameters
-// for this size.
+// ButtonSize returns rectange parameters for button
+// with this size.
 func (s Size) ButtonSize() pixel.Rect {
 	switch(s) {
 	case SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	default:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	}
+}
+
+// SwitchSize return rectangele parameters for switch
+// with this size.
+func (s Size) SwitchSize() pixel.Rect {
+	switch(s) {
+	case SIZE_SMALL:
+		return pixel.R(0, 0, ConvSize(130), ConvSize(50))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	}

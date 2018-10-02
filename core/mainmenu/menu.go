@@ -25,6 +25,8 @@ package mainmenu
 
 import (
 	"fmt"
+
+	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -55,14 +57,15 @@ func newMenu() (*Menu, error) {
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.
-	m.settingsB = mtk.NewButtonDraw(mtk.SIZE_SMALL,
+	m.settingsB = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red, 
 		lang.Text("gui", "settings_b_label"))
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
-	//m.exitB = mtk.NewButton(buttonExitBG, lang.Text("gui", "exit_b_label"))
-	m.exitB = mtk.NewButtonDraw(mtk.SIZE_SMALL, lang.Text("gui", "exit_b_label"))
+	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"))
+	m.exitB = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red,
+		lang.Text("gui", "exit_b_label"))
 	m.exitB.OnClickFunc(m.onExitButtonClicked)
 
 	return m, nil
@@ -71,8 +74,10 @@ func newMenu() (*Menu, error) {
 // Draw draws all menu elements in specified
 // window.
 func (m *Menu) Draw(win *pixelgl.Window) {
+	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
+	// Buttons.
 	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		titlePos.Y - m.exitB.Frame().Size().Y)))
 	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,

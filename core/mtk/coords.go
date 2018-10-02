@@ -44,6 +44,13 @@ func Scale() float64 {
 	return scale
 }
 
+// DisBR returns bottom right position of specified rectangle
+// multiplied by specified value.
+func DisBR(rect pixel.Rect, scale float64) pixel.Vec {
+	return pixel.V(rect.Min.X - (rect.Max.X * scale),
+		rect.Min.Y + (rect.Max.Y * scale))
+}
+
 // DisBL returns bottom left position of specified rectangle
 // multiplied by specified value.
 func DisBL(rect pixel.Rect, scale float64) pixel.Vec {
@@ -56,6 +63,13 @@ func DisBL(rect pixel.Rect, scale float64) pixel.Vec {
 func DisTR(rect pixel.Rect, scale float64) pixel.Vec {
 	return pixel.V(rect.Max.X - (rect.Max.X * scale),
 		rect.Max.Y - (rect.Max.Y * scale))
+}
+
+// DisTL returns top left position of specified rectangle
+// multiplied by specified value.
+func DisTL(rect pixel.Rect, scale float64) pixel.Vec {
+	return pixel.V(rect.Min.X + (rect.Max.X * scale),
+	        rect.Max.Y - (rect.Max.Y * scale))
 }
 
 // PosBL return bottom left point for specified position

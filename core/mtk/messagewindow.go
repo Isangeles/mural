@@ -24,6 +24,8 @@
 package mtk
 
 import (
+	"golang.org/x/image/colornames"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
@@ -55,7 +57,7 @@ func NewMessageWindow(msg string) (*MessageWindow, error) {
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)
 	// Buttons.
-	acceptB := NewButtonDraw(SIZE_SMALL, lang.Text("gui", "accept_b_label"))
+	acceptB := NewButton(SIZE_SMALL, colornames.Red, lang.Text("gui", "accept_b_label"))
 	acceptB.OnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 

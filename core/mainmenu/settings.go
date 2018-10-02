@@ -25,6 +25,8 @@ package mainmenu
 
 import (
 	"fmt"
+
+	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -39,9 +41,10 @@ import (
 // Settings struct represents main menu
 // settings screen.
 type Settings struct {
-	title *text.Text
-	backB *mtk.Button
-	open  bool
+	title      *text.Text
+	backButton *mtk.Button
+	resSwitch  *mtk.Switch
+	open        bool
 }
 
 // newSettings returns new settings screen
@@ -53,25 +56,32 @@ func newSettings() (*Settings, error) {
 	atlas := text.NewAtlas(font, text.ASCII)
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
-	// Buttons.
-	s.backB = mtk.NewButtonDraw(mtk.SIZE_SMALL, lang.Text("gui", "back_b_label"))
-
+	// Buttons & switches.
+	s.backButton = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red,
+		lang.Text("gui", "back_b_label"))
+	s.resSwitch = mtk.NewSwitch(mtk.SIZE_SMALL, colornames.Blue,
+		lang.Text("gui", "resolution_s_label"), []string{"1920x1010", "860x600"})
 	return s, nil
 }
 
 // Draw draws all menu elements.
 func (s *Settings) Draw(win *pixelgl.Window) {
+	// Title.
 	titlePos :=pixel.V(win.Bounds().Center().X,
 		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
 	s.title.Draw(win, pixel.IM.Moved(titlePos))
-	s.backB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		titlePos.Y - s.backB.Frame().Size().Y)))
+	// Buttons & switches.
+	s.resSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		titlePos.Y - s.resSwitch.Frame().Size().Y)))
+	s.backButton.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		s.resSwitch.DrawArea().Min.Y - s.backButton.Frame().Size().Y)))
 }
 
 // Update updates all menu elements.
 func (s *Settings) Update(win *pixelgl.Window) {
 	if s.open {
-		s.backB.Update(win)
+		s.resSwitch.Update(win)
+		s.backButton.Update(win)
 	}
 }
 
@@ -89,5 +99,5 @@ func (s *Settings) Show(show bool) {
 // Sets specified function as back button on-click
 // callback function.
 func (s *Settings) OnBackButtonClickedFunc(f func(b *mtk.Button)) {
-	s.backB.OnClickFunc(f)
+	s.backButton.OnClickFunc(f)
 }

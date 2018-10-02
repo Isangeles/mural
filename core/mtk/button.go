@@ -50,13 +50,15 @@ type Button struct {
 	onClick   func(b *Button)
 }
 
-// NewButton returns new instance of button with specified
-// background image and label text.
-func NewButton(bgPic pixel.Picture, labelText string) *Button {
+// NewButton creates new instance of button with specified size, color and
+// label text.
+func NewButton(size Size, color color.Color, labelText string) *Button {
 	button := new(Button)
-	// Backround.
-	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
-	button.bgSpr = bg
+	// Background.
+	button.bgDraw = imdraw.New(nil)
+	button.size = size
+	button.color = color
+	button.colorPush = colornames.Grey
 	// Label.
 	font := data.MainFontSmall()
 	atlas := text.NewAtlas(font, text.ASCII)
@@ -66,13 +68,13 @@ func NewButton(bgPic pixel.Picture, labelText string) *Button {
 	return button
 }
 
-func NewButtonDraw(size Size, labelText string) *Button {
+// NewButtonSprite creates new instance of button with specified
+// background image and label text.
+func NewButtonSprite(bgPic pixel.Picture, labelText string) *Button {
 	button := new(Button)
-	// Background.
-	button.bgDraw = imdraw.New(nil)
-	button.size = size
-	button.color = colornames.Red
-	button.colorPush = colornames.Grey
+	// Backround.
+	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
+	button.bgSpr = bg
 	// Label.
 	font := data.MainFontSmall()
 	atlas := text.NewAtlas(font, text.ASCII)
@@ -139,7 +141,7 @@ func (b *Button) OnClickFunc(callback func(b *Button)) {
 	b.onClick = callback
 }
 
-// DrawArea returns button background position and size.
+// DrawArea returns current button background position and size.
 func (b *Button) DrawArea() pixel.Rect {
 	return b.drawArea
 }

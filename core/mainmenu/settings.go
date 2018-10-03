@@ -57,9 +57,9 @@ func newSettings() (*Settings, error) {
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons & switches.
-	s.backButton = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red,
+	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, colornames.Red,
 		lang.Text("gui", "back_b_label"))
-	s.resSwitch = mtk.NewSwitch(mtk.SIZE_SMALL, colornames.Blue,
+	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
 		lang.Text("gui", "resolution_s_label"), []string{"1920x1010", "860x600"})
 	return s, nil
 }

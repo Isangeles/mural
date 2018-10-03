@@ -60,7 +60,7 @@ func NewButton(size Size, color color.Color, labelText string) *Button {
 	button.color = color
 	button.colorPush = colornames.Grey
 	// Label.
-	font := data.MainFontSmall()
+	font := MainFont(button.size)
 	atlas := text.NewAtlas(font, text.ASCII)
 	button.label = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(button.label, labelText)

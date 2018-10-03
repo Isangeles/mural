@@ -27,7 +27,11 @@ package mtk
 import (
 	//"fmt"
 
+	"golang.org/x/image/font"
+
 	"github.com/faiface/pixel"
+
+	"github.com/isangeles/mural/core/data"
 )
 
 // Size type.
@@ -37,7 +41,7 @@ type Size int
 const (
 	SIZE_MINI Size = iota
 	SIZE_SMALL 
-	SIZE_NORMAL
+	SIZE_MEDIUM
 	SIZE_BIG
 )
 
@@ -49,6 +53,8 @@ func (s Size) ButtonSize() pixel.Rect {
 		return pixel.R(0, 0, ConvSize(30), ConvSize(15))
 	case SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	case SIZE_MEDIUM:
+		return pixel.R(0, 0, ConvSize(100), ConvSize(50))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	}
@@ -60,7 +66,24 @@ func (s Size) SwitchSize() pixel.Rect {
 	switch(s) {
 	case SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(170), ConvSize(50))
+	case SIZE_MEDIUM:
+		return pixel.R(0, 0, ConvSize(200), ConvSize(70))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	}
+}
+
+// Font returns main font in specified size from
+// data package. 
+func MainFont(s Size) font.Face {
+	switch(s) {
+	case SIZE_SMALL:
+		return data.MainFontSmall()
+	case SIZE_MEDIUM:
+		return data.MainFontNormal();
+	case SIZE_BIG:
+		return data.MainFontBig();
+	default:
+		return data.MainFontSmall()
 	}
 }

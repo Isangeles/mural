@@ -33,8 +33,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/faiface/pixel/imdraw"
-
-	"github.com/isangeles/mural/core/data"
 )
 
 // Switch struct represents graphical switch for values.
@@ -47,7 +45,7 @@ type Switch struct {
 	drawArea                pixel.Rect // updated on each draw
 	size                    Size
 	color                   color.Color
-	value                   string
+	index                   int
 	values                  []string
 }
 
@@ -62,16 +60,18 @@ func NewSwitch(size Size, color color.Color, label string, values []string) *Swi
 	// Buttons.
 	s.prevButton = NewButton(SIZE_MINI, colornames.Red, "-")
 	s.nextButton = NewButton(SIZE_MINI, colornames.Red, "+")
+	s.prevButton.OnClickFunc(s.onPrevButtonClicked)
+	s.nextButton.OnClickFunc(s.onNextButtonClicked)
 	// Label.
-	font := data.MainFontSmall()
+	font := MainFont(s.size)
 	atlas := text.NewAtlas(font, text.ASCII)
 	s.label = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(s.label, label)
 	// Values.
 	s.values = values
-	s.value = s.values[0]
+	s.index = 0
 	s.valueText = text.New(pixel.V(0,0), atlas)
-	fmt.Fprintf(s.valueText, s.value)
+	s.updateValueText()
 	return s 
 }
 
@@ -87,8 +87,7 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 	// Value & label.
 	s.valueText.Draw(t, matrix)
-	// TODO: draw label.
-	//s.label.Draw(t, pixel.IM.Moved(PosBL(s.Frame(), s.drawArea.Min)))
+	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
 	// Buttons.
 	s.prevButton.Draw(t, pixel.IM.Moved(DisTL(s.drawArea, 0.02)))
 	s.nextButton.Draw(t, pixel.IM.Moved(DisTR(s.drawArea, 0.02)))
@@ -123,4 +122,32 @@ func (s *Switch) Frame() pixel.Rect {
 // DrawArea returns current switch background position and size.
 func (s *Switch) DrawArea() pixel.Rect {
 	return s.drawArea
+}
+
+// updateValueText updates text with current switch value.
+func (s *Switch) updateValueText() {
+	s.valueText.Clear()
+	fmt.Fprintf(s.valueText, s.values[s.index])
+}
+
+// Triggered after next button clicked.
+func (s *Switch) onNextButtonClicked(b *Button) {
+	if s.index < len(s.values)-1 {
+		s.index++
+		s.updateValueText()
+	} else {
+		s.index = 0
+		s.updateValueText()
+	}
+}
+
+// Triggered after prev button clicked.
+func (s *Switch) onPrevButtonClicked(b *Button) {
+	if s.index > 0 {
+		s.index--
+		s.updateValueText()
+	} else {
+		s.index = len(s.values)-1
+		s.updateValueText()
+	}
 }

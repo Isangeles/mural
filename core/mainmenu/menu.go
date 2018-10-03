@@ -57,14 +57,14 @@ func newMenu() (*Menu, error) {
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.
-	m.settingsB = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red, 
+	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, colornames.Red, 
 		lang.Text("gui", "settings_b_label"))
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
 	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"))
-	m.exitB = mtk.NewButton(mtk.SIZE_SMALL, colornames.Red,
+	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, colornames.Red,
 		lang.Text("gui", "exit_b_label"))
 	m.exitB.OnClickFunc(m.onExitButtonClicked)
 

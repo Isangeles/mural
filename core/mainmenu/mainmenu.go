@@ -120,6 +120,7 @@ func (mm *MainMenu) Update(win *pixelgl.Window) {
 func (mm *MainMenu) CloseMenus() {
 	mm.menu.Show(false)
 	mm.settings.Show(false)
+	mm.settings.ApplySettings()
 }
 
 // OpenMenu closes all currently open

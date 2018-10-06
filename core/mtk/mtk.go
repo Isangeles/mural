@@ -34,26 +34,39 @@ import (
 	"github.com/isangeles/mural/core/data"
 )
 
-// Size type.
+// Type for sizes of UI elements, like buttons, switches, etc.
 // Sizes: small(0), normal(1), big(2).
 type Size int
+
+// Type for shapes of UI elements.
+// Shapes: rectangle(0), square(1).
+type Shape int
 
 const (
 	SIZE_MINI Size = iota
 	SIZE_SMALL 
 	SIZE_MEDIUM
 	SIZE_BIG
+
+	SHAPE_RECTANGLE Shape = iota
+	SHAPE_SQUARE 
 )
 
-// ButtonSize returns rectange parameters for button
-// with this size.
-func (s Size) ButtonSize() pixel.Rect {
-	switch(s) {
-	case SIZE_MINI:
+// ButtonSize returns rectange parameters for button with
+// this size and with specifed shape.
+func (s Size) ButtonSize(sh Shape) pixel.Rect {
+	switch {
+	case s <= SIZE_MINI && sh == SHAPE_SQUARE:
+		return pixel.R(0, 0, ConvSize(30), ConvSize(30))
+	case s == SIZE_SMALL && sh == SHAPE_SQUARE:
+		return pixel.R(0, 0, ConvSize(45), ConvSize(45))
+	case s == SIZE_MEDIUM && sh == SHAPE_SQUARE:
+		return pixel.R(0, 0, ConvSize(100), ConvSize(100))
+	case s <= SIZE_MINI && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(30), ConvSize(15))
-	case SIZE_SMALL:
+	case s == SIZE_SMALL && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
-	case SIZE_MEDIUM:
+	case s == SIZE_MEDIUM && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(100), ConvSize(50))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
@@ -63,10 +76,10 @@ func (s Size) ButtonSize() pixel.Rect {
 // SwitchSize return rectangele parameters for switch
 // with this size.
 func (s Size) SwitchSize() pixel.Rect {
-	switch(s) {
-	case SIZE_SMALL:
+	switch {
+	case s <= SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(170), ConvSize(50))
-	case SIZE_MEDIUM:
+	case s == SIZE_MEDIUM:
 		return pixel.R(0, 0, ConvSize(200), ConvSize(70))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
@@ -76,12 +89,12 @@ func (s Size) SwitchSize() pixel.Rect {
 // Font returns main font in specified size from
 // data package. 
 func MainFont(s Size) font.Face {
-	switch(s) {
-	case SIZE_SMALL:
+	switch {
+	case s == SIZE_SMALL:
 		return data.MainFontSmall()
-	case SIZE_MEDIUM:
+	case s == SIZE_MEDIUM:
 		return data.MainFontNormal();
-	case SIZE_BIG:
+	case s >= SIZE_BIG:
 		return data.MainFontBig();
 	default:
 		return data.MainFontSmall()

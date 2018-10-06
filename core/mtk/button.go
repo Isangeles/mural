@@ -43,6 +43,7 @@ type Button struct {
 	bgDraw    *imdraw.IMDraw
 	label     *text.Text
 	size      Size
+	shape     Shape
 	color     color.Color
 	colorPush color.Color
 	pressed   bool
@@ -52,17 +53,21 @@ type Button struct {
 
 // NewButton creates new instance of button with specified size, color and
 // label text.
-func NewButton(size Size, color color.Color, labelText string) *Button {
+func NewButton(size Size, shape Shape, color color.Color, labelText string) *Button {
 	button := new(Button)
 	// Background.
 	button.bgDraw = imdraw.New(nil)
 	button.size = size
+	button.shape = shape
 	button.color = color
 	button.colorPush = colornames.Grey
 	// Label.
 	font := MainFont(button.size)
 	atlas := text.NewAtlas(font, text.ASCII)
 	button.label = text.New(pixel.V(0, 0), atlas)
+	labelMariginX := (-button.label.BoundsOf(labelText).Max.X) / 2
+	button.label.Orig = pixel.V(labelMariginX, 0)
+	button.label.Clear()
 	fmt.Fprint(button.label, labelText)
 
 	return button
@@ -79,6 +84,9 @@ func NewButtonSprite(bgPic pixel.Picture, labelText string) *Button {
 	font := data.MainFontSmall()
 	atlas := text.NewAtlas(font, text.ASCII)
 	button.label = text.New(pixel.V(0, 0), atlas)
+	labelMarigin := (-button.label.BoundsOf(labelText).Max.X) / 2
+	button.label.Orig = pixel.V(labelMarigin, 0)
+	button.label.Clear()
 	fmt.Fprint(button.label, labelText)
 
 	return button
@@ -152,7 +160,7 @@ func (b *Button) Frame() pixel.Rect {
 	if b.bgSpr != nil {
 		return b.bgSpr.Frame()
 	} else {
-		return b.size.ButtonSize()
+		return b.size.ButtonSize(b.shape)
 	}
 }
 

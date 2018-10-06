@@ -57,7 +57,8 @@ func NewMessageWindow(msg string) (*MessageWindow, error) {
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)
 	// Buttons.
-	acceptB := NewButton(SIZE_SMALL, colornames.Red, lang.Text("gui", "accept_b_label"))
+	acceptB := NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
+		lang.Text("gui", "accept_b_label"))
 	acceptB.OnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 

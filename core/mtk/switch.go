@@ -58,8 +58,8 @@ func NewSwitch(size Size, color color.Color, label string, values []string) *Swi
 	s.size = size
 	s.color = color
 	// Buttons.
-	s.prevButton = NewButton(SIZE_MINI, colornames.Red, "-")
-	s.nextButton = NewButton(SIZE_MINI, colornames.Red, "+")
+	s.prevButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "-")
+	s.nextButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "+")
 	s.prevButton.OnClickFunc(s.onPrevButtonClicked)
 	s.nextButton.OnClickFunc(s.onNextButtonClicked)
 	// Label.
@@ -89,8 +89,8 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	s.valueText.Draw(t, matrix)
 	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
 	// Buttons.
-	s.prevButton.Draw(t, pixel.IM.Moved(DisTL(s.drawArea, 0.02)))
-	s.nextButton.Draw(t, pixel.IM.Moved(DisTR(s.drawArea, 0.02)))
+	s.prevButton.Draw(t, pixel.IM.Moved(DisTL(s.drawArea, 0.03)))
+	s.nextButton.Draw(t, pixel.IM.Moved(DisTR(s.drawArea, 0.03)))
 }
 
 // Update updates switch and all elements.
@@ -124,10 +124,32 @@ func (s *Switch) DrawArea() pixel.Rect {
 	return s.drawArea
 }
 
+// Value returns current switch value.
+func (s *Switch) Value() string {
+	return s.values[s.index]
+}
+
+// SetIndex sets value with specified index as current value
+// of this switch. If specified value is bigger than maximal
+// possible index then index of last value is set, if specified
+// index is smaller than minimal then index of first value is set. 
+func (s *Switch) SetIndex(index int) {
+	if index > len(s.values)-1 {
+		s.index = len(s.values)-1
+	} else if index < 0 {
+		s.index = 0
+	} else {
+		s.index = index
+	}
+	s.updateValueText()
+}
+
 // updateValueText updates text with current switch value.
 func (s *Switch) updateValueText() {
+	valueMariginX := (-s.valueText.BoundsOf(s.Value()).Max.X) / 2
+	s.valueText.Orig.X = valueMariginX
 	s.valueText.Clear()
-	fmt.Fprintf(s.valueText, s.values[s.index])
+	fmt.Fprintf(s.valueText, s.Value())
 }
 
 // Triggered after next button clicked.

@@ -62,8 +62,7 @@ func LoadConfig() error {
 	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue,
 		"x")[1], 64)
 	if err != nil {
-		//errlog.Printf("fail_to_set_custom_resolution:%s",
-		//	resValue)
+		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
 	}
 	
 	log.Dbg.Print("config_file_loaded")
@@ -97,4 +96,15 @@ func Fullscreen() bool {
 // Returns current resolution width and height.
 func Resolution() pixel.Vec {
 	return resolution
+}
+
+// SetResolution sets specified XY size as current
+// resolution.
+func SetResolution(res pixel.Vec) {
+	resolution = res
+}
+
+// SupportedResolutions returns all resolutions supported by UI.
+func SupportedResolutions() []pixel.Vec {
+	return []pixel.Vec{pixel.V(1920, 1080), pixel.V(1300, 720)}
 }

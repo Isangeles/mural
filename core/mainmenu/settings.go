@@ -25,7 +25,9 @@ package mainmenu
 
 import (
 	"fmt"
-
+	"strings"
+	"strconv"
+	
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
@@ -36,6 +38,8 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/log"
 )
 
 // Settings struct represents main menu
@@ -57,10 +61,20 @@ func newSettings() (*Settings, error) {
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons & switches.
-	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, colornames.Red,
+	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "back_b_label"))
+	var resSwitchValues []string
+	var resSwitchIndex int
+	for i, res := range config.SupportedResolutions() {
+		resSwitchValues = append(resSwitchValues,
+			fmt.Sprintf("%vx%v", res.X, res.Y))
+		if res == config.Resolution() {
+			resSwitchIndex = i
+		}
+	}
 	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
-		lang.Text("gui", "resolution_s_label"), []string{"1920x1010", "860x600"})
+		lang.Text("gui", "resolution_s_label"), resSwitchValues)
+	s.resSwitch.SetIndex(resSwitchIndex)
 	return s, nil
 }
 
@@ -92,7 +106,6 @@ func (s *Settings) Open() bool {
 
 // Show toggles menu visibility.
 func (s *Settings) Show(show bool) {
-	//fmt.Printf("\ns_open:%b\n", show)
 	s.open = show
 }
 
@@ -100,4 +113,22 @@ func (s *Settings) Show(show bool) {
 // callback function.
 func (s *Settings) OnBackButtonClickedFunc(f func(b *mtk.Button)) {
 	s.backButton.OnClickFunc(f)
+}
+
+// applySettings applies current settings values.
+func (s *Settings) ApplySettings() {
+	// Resolution.
+	resText := strings.Split(s.resSwitch.Value(), "x")
+	resValueX, err := strconv.ParseFloat(resText[0], 64)
+	if err != nil {
+		resValueX = 1920
+		log.Err.Printf("settings_menu:fail_to_conv_res_switch_value_x:%v", err)
+	}
+	resValueY, err := strconv.ParseFloat(resText[1], 64)
+	if err != nil {
+		resValueY = 1080
+		log.Err.Printf("settings_menu:fail_to_conv_res_switch_value_y:%v", err)
+	}
+	resValue := pixel.V(resValueX, resValueY)
+	config.SetResolution(resValue)
 }

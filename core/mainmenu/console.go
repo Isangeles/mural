@@ -45,7 +45,6 @@ type Console struct {
 // newConsole creates game console.
 func newConsole() (*Console, error) {
 	c := new(Console)
-	
 	// Text box.
 	textbox, err := mtk.NewTextbox()
 	if err != nil {

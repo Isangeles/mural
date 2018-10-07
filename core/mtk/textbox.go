@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
-	"golang.org/x/image/colornames"
+	//"golang.org/x/image/colornames"
 	
 	"github.com/isangeles/mural/core/data"
 )
@@ -48,10 +48,8 @@ type Textbox struct {
 // NewTextbox creates new textbox.
 func NewTextbox() (*Textbox, error) {
 	t := new(Textbox)
-	
 	// Background.
 	t.bg = imdraw.New(nil)
-
 	// Text.
 	font := data.MainFontNormal()
 	atlas := text.NewAtlas(font, text.ASCII)
@@ -61,18 +59,19 @@ func NewTextbox() (*Textbox, error) {
 }
 
 // Draw draws textbox.
-func (t *Textbox) Draw(bottomLeft, topRight pixel.Vec, win *pixelgl.Window) {
+func (tb *Textbox) Draw(bottomLeft, topRight pixel.Vec, t pixel.Target) {
 	// Background.
-	t.bg.Color = pixel.ToRGBA(colornames.Grey)
-	t.bg.Push(bottomLeft)
-	t.bg.Color = pixel.ToRGBA(colornames.Grey)
-	t.bg.Push(topRight)
-	t.bg.Rectangle(0)
-	t.bg.Draw(win)
-	t.bgHeight = topRight.Y
+	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	tb.bg.Push(bottomLeft)
+	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	tb.bg.Push(topRight)
+	tb.bg.Rectangle(0)
+	tb.bg.Draw(t)
+	tb.bgHeight = topRight.Y
 
 	// Text content.
-	t.textarea.Draw(win, pixel.IM.Moved(pixel.V(bottomLeft.X, topRight.Y - t.textarea.BoundsOf("AA").H()))) 
+	tb.textarea.Draw(t, pixel.IM.Moved(pixel.V(bottomLeft.X,
+		topRight.Y - tb.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.

@@ -52,7 +52,7 @@ const (
 	SHAPE_SQUARE 
 )
 
-// ButtonSize returns rectange parameters for button with
+// ButtonSize returns szie parameters for button with
 // this size and with specifed shape.
 func (s Size) ButtonSize(sh Shape) pixel.Rect {
 	switch {
@@ -83,6 +83,16 @@ func (s Size) SwitchSize() pixel.Rect {
 		return pixel.R(0, 0, ConvSize(200), ConvSize(70))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
+	}
+}
+
+// MessageWindowSize returns size parameters for message window. 
+func (s Size) MessageWindowSize() pixel.Rect {
+	switch {
+	case s <= SIZE_SMALL:
+		return pixel.R(0, 0, ConvSize(400), ConvSize(300))
+	default:
+		return pixel.R(0, 0, ConvSize(400), ConvSize(300))
 	}
 }
 

@@ -29,6 +29,9 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -49,14 +52,14 @@ func New() (*MainMenu, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.OnSettingsButtonClickedFunc(mm.OpenSettings)
+	m.SetOnSettingsButtonClickedFunc(mm.OpenSettings)
 	mm.menu = m
 	// Settings.
 	s, err := newSettings()
 	if err != nil {
 		return nil, err
 	}
-	s.OnBackButtonClickedFunc(mm.OpenMenu)
+	s.SetOnBackButtonClickedFunc(mm.CloseSettings)
 	mm.settings = s
 	// Console.
 	c, err := newConsole()
@@ -64,9 +67,9 @@ func New() (*MainMenu, error) {
 		return nil, err
 	}
 	mm.console = c
-	
-	msg, err := mtk.NewMessageWindow(
-		"This is test UI message.\nClick 'Ok' to dismiss.") // test
+	// Test message.
+	msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+		"This is test UI message.\nClick 'Ok' to dismiss.")
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +93,7 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	// Messages.
 	for _, msg := range mm.msgs {
 		if msg.Open() {
-			msg.Draw(mtk.DisBL(win.Bounds(), 0.3),
-				mtk.DisTR(win.Bounds(), 0.3), win)
+			msg.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 		}
 	}
 	// Console.
@@ -120,7 +122,23 @@ func (mm *MainMenu) Update(win *pixelgl.Window) {
 func (mm *MainMenu) CloseMenus() {
 	mm.menu.Show(false)
 	mm.settings.Show(false)
-	mm.settings.ApplySettings()
+}
+
+// CloseSettings displays confirm dialog and closes settings.
+func (mm *MainMenu) CloseSettings(b *mtk.Button) {
+	if mm.settings.Changed() {
+		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_reset_msg"))
+		if err != nil {
+			log.Err.Printf("mainmenu:fail_to_create_settings_confirm_dialog")
+			mm.OpenMenu(nil)
+			return
+		}
+		msg.Show(true)
+		mm.msgs = append(mm.msgs, msg)
+		mm.settings.Apply()
+	}
+	mm.OpenMenu(nil)
 }
 
 // OpenMenu closes all currently open

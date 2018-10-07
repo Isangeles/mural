@@ -34,6 +34,7 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
+	
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 )
@@ -66,7 +67,7 @@ func newMenu() (*Menu, error) {
 	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"))
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "exit_b_label"))
-	m.exitB.OnClickFunc(m.onExitButtonClicked)
+	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
 
 	return m, nil
 }
@@ -107,8 +108,8 @@ func (m *Menu) Show(show bool) {
 
 // Sets specified function as settings button
 // on-click callback function.
-func (m *Menu) OnSettingsButtonClickedFunc(f func(b *mtk.Button)) {
-	m.settingsB.OnClickFunc(f)
+func (m *Menu) SetOnSettingsButtonClickedFunc(f func(b *mtk.Button)) {
+	m.settingsB.SetOnClickFunc(f)
 }
 
 // Triggered on exit button clicked.

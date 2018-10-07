@@ -47,6 +47,7 @@ type Switch struct {
 	color                   color.Color
 	index                   int
 	values                  []string
+	onChange                func(s *Switch)
 }
 
 // NewSwitch return new instance of switch with IMDraw
@@ -60,8 +61,8 @@ func NewSwitch(size Size, color color.Color, label string, values []string) *Swi
 	// Buttons.
 	s.prevButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "-")
 	s.nextButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "+")
-	s.prevButton.OnClickFunc(s.onPrevButtonClicked)
-	s.nextButton.OnClickFunc(s.onNextButtonClicked)
+	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
+	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label.
 	font := MainFont(s.size)
 	atlas := text.NewAtlas(font, text.ASCII)
@@ -144,6 +145,11 @@ func (s *Switch) SetIndex(index int) {
 	s.updateValueText()
 }
 
+// Sets specified function as function triggered on on switch value change.
+func (s *Switch) SetOnChangeFunc(f func(s *Switch)) {
+	s.onChange = f
+}
+
 // updateValueText updates text with current switch value.
 func (s *Switch) updateValueText() {
 	valueMariginX := (-s.valueText.BoundsOf(s.Value()).Max.X) / 2
@@ -161,6 +167,9 @@ func (s *Switch) onNextButtonClicked(b *Button) {
 		s.index = 0
 		s.updateValueText()
 	}
+	if s.onChange != nil {
+		s.onChange(s)
+	}
 }
 
 // Triggered after prev button clicked.
@@ -171,5 +180,8 @@ func (s *Switch) onPrevButtonClicked(b *Button) {
 	} else {
 		s.index = len(s.values)-1
 		s.updateValueText()
+	}
+	if s.onChange != nil {
+		s.onChange(s)
 	}
 }

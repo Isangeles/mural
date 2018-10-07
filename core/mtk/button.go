@@ -145,7 +145,7 @@ func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
 
 // OnClick sets specified function as on-click
 // callback function.
-func (b *Button) OnClickFunc(callback func(b *Button)) {
+func (b *Button) SetOnClickFunc(callback func(b *Button)) {
 	b.onClick = callback
 }
 

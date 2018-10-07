@@ -48,7 +48,8 @@ type Settings struct {
 	title      *text.Text
 	backButton *mtk.Button
 	resSwitch  *mtk.Switch
-	open        bool
+	open       bool
+	changed    bool
 }
 
 // newSettings returns new settings screen
@@ -75,6 +76,7 @@ func newSettings() (*Settings, error) {
 	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
 		lang.Text("gui", "resolution_s_label"), resSwitchValues)
 	s.resSwitch.SetIndex(resSwitchIndex)
+	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	return s, nil
 }
 
@@ -111,12 +113,12 @@ func (s *Settings) Show(show bool) {
 
 // Sets specified function as back button on-click
 // callback function.
-func (s *Settings) OnBackButtonClickedFunc(f func(b *mtk.Button)) {
-	s.backButton.OnClickFunc(f)
+func (s *Settings) SetOnBackButtonClickedFunc(f func(b *mtk.Button)) {
+	s.backButton.SetOnClickFunc(f)
 }
 
-// applySettings applies current settings values.
-func (s *Settings) ApplySettings() {
+// Apply applies current settings values.
+func (s *Settings) Apply() {
 	// Resolution.
 	resText := strings.Split(s.resSwitch.Value(), "x")
 	resValueX, err := strconv.ParseFloat(resText[0], 64)
@@ -131,4 +133,14 @@ func (s *Settings) ApplySettings() {
 	}
 	resValue := pixel.V(resValueX, resValueY)
 	config.SetResolution(resValue)
+}
+
+// Changed checks if any settings value was changed.
+func (s *Settings) Changed() bool {
+	return s.changed
+}
+
+// Triggered after settings change.
+func (s *Settings) onSettingsChanged(sw *mtk.Switch) {
+	s.changed = true
 }

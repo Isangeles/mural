@@ -25,13 +25,13 @@
 package main
 
 import (
+	"fmt"
 	//"time"
 
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/isangeles/mural/core/mainmenu"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -39,6 +39,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/mainmenu"
 )
 
 const (
@@ -91,7 +92,10 @@ func run() {
 
 	win.SetSmooth(true)
 
-	data.Load()
+	err = data.Load()
+	if err != nil {
+		panic(fmt.Errorf("data_load_fail:%v", err))
+	}
 	
 	mainMenu, err := mainmenu.New()
 	if err != nil {

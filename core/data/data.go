@@ -30,47 +30,36 @@ import (
 	"path/filepath"
 
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
+
+	"github.com/golang/freetype/truetype"
 
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-
-	"github.com/isangeles/mural/log"
 )
 
 var (
-	g_dir_path     string
-	g_arch_path    string
-	mainFontSmall  font.Face
-	mainFontNormal font.Face
-	mainFontBig    font.Face
+	g_dir_path  string
+	g_arch_path string
+	mainFont    *truetype.Font
 )
 
-func Load() {
-	//flame.SaveConfig() // save config to file, in case that no config file exists  
+// Called by GUI before creating any GUI elements.
+func Load() error {
 	if flame.Mod() == nil {
-		log.Err.Print("data_load_fail:no module loaded")
-		return
+		return fmt.Errorf("no module loaded")
 	}
-	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui", flame.Mod().Name()))
-	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip", flame.Mod().Name()))
+	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
+		flame.Mod().Name()))
+	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
+		flame.Mod().Name()))
 	var err error
-	mainFontSmall, err = Font("SIMSUN.ttf", 10)
+	mainFont, err = Font("SIMSUN.ttf")
 	if err != nil {
-		log.Err.Print("data_load:fail to load small font")
-		mainFontSmall = basicfont.Face7x13
+		return fmt.Errorf("fail to load main font")
+		//mainFont = basicfont.Face7x13
 	}
-	mainFontNormal, err = Font("SIMSUN.ttf", 20)
-	if err != nil {
-		log.Err.Print("data_load:fail to load medium font")
-		mainFontNormal = basicfont.Face7x13
-	}
-	mainFontBig, err = Font("SIMSUN.ttf", 40)
-	if err != nil {
-		log.Err.Print("data_load:fail to load big font")
-		mainFontBig = basicfont.Face7x13
-	}
+	return nil
 }
 
 // Sprite loads image with specified name from gdata
@@ -81,22 +70,15 @@ func Picture(filePath string) (pixel.Picture, error) {
 
 // Font loads font with specified name from gdata
 // directory.
-func Font(fileName string, size float64) (font.Face, error) {
+func Font(fileName string) (*truetype.Font, error) {
 	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
-	return loadFontFromDir(filepath.FromSlash(fullpath), size)
+	return loadFontFromDir(filepath.FromSlash(fullpath))
 }
 
-// MainFontSmall returns standard font in small size.
-func MainFontSmall() font.Face {
-	return mainFontSmall
-}
-
-// MainFontNormal returns standard font in normal size.
-func MainFontNormal() font.Face {
-	return mainFontNormal
-}
-
-// MainFontBig returns standard in big size.
-func MainFontBig() font.Face {
-	return mainFontBig
+// MainFont returns standard font in specified size.
+func MainFont(size float64) font.Face {
+	return truetype.NewFace(mainFont, &truetype.Options{
+		Size:              size,
+		GlyphCacheEntries: 1,
+	})
 }

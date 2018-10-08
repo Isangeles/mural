@@ -46,6 +46,8 @@ type MessageWindow struct {
 	open         bool
 	accepted     bool
 	dismissed    bool
+	onAccept     func(msg *MessageWindow)
+	onCancel     func(msg *MessageWindow)
 }
 
 // NewMessageWindow creates new message window instance.
@@ -137,8 +139,9 @@ func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
 // Update handles key press events.
 func (mw *MessageWindow) Update(win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.KeyEscape) {
-		mw.open = false;
-		mw.dismissed = true;
+		if mw.onCancel != nil {
+			mw.cancel()
+		}
 	}
 
 	mw.textbox.Update(win)
@@ -153,16 +156,44 @@ func (mw *MessageWindow) Frame() pixel.Rect {
 	return mw.size.MessageWindowSize()
 }
 
+// SetOnAcceptFunc sets specified function as function triggered after
+// message was accepted.
+func (mw *MessageWindow) SetOnAcceptFunc(f func(msg *MessageWindow)) {
+	mw.onAccept = f;
+}
+
+// SetOnCancelFunc sets specified function as function triggered after
+// message was canceled.
+func (mw *MessageWindow) SetOnCancelFunc(f func(msg *MessageWindow)) {
+	mw.onCancel = f
+}
+
 // Triggered after accept button clicked.
 func (mw *MessageWindow) onAcceptButtonClicked(b *Button) {
-	mw.open = false
-	mw.dismissed = true
-	mw.accepted = true
+	mw.accept()
 }
 
 // Triggered after cancel button clicked.
 func (mw *MessageWindow) onCancelButtonClicked(b *Button) {
+	mw.cancel()
+}
+
+// accept sets message as accepted.
+func (mw *MessageWindow) accept() {
+	mw.open = false
+	mw.dismissed = true
+	mw.accepted = true
+	if mw.onAccept != nil {
+		mw.onAccept(mw)
+	}
+}
+
+// cancel sets message as canceld.
+func (mw *MessageWindow) cancel() {
 	mw.open = false
 	mw.dismissed = true
 	mw.accepted = false
+	if mw.onCancel != nil {
+		mw.onCancel(mw)
+	}
 }

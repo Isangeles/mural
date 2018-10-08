@@ -36,7 +36,7 @@ import (
 
 	//"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/mural/core/data"
+	//"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
@@ -57,7 +57,7 @@ type Settings struct {
 func newSettings() (*Settings, error) {
 	s := new(Settings)
 	// Title.
-	font := data.MainFontBig()
+	font := mtk.MainFont(mtk.SIZE_BIG)
 	atlas := text.NewAtlas(font, text.ASCII)
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))

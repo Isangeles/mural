@@ -24,17 +24,17 @@
 package data
 
 import (
+	_ "image/png"
+
 	"archive/zip"
 	"fmt"
 	"image"
 	"io/ioutil"
 	"os"
-	
-	_ "image/png"
+
+	"github.com/golang/freetype/truetype"
 
 	"github.com/faiface/pixel"
-	"github.com/golang/freetype/truetype"
-	"golang.org/x/image/font"
 )
 
 // loadPictureFromArch loads picture from ZIP archive from specified
@@ -46,7 +46,7 @@ func loadPictureFromArch(archPath, filePath string) (pixel.Picture, error) {
 		return nil, err
 	}
 	defer r.Close()
-	
+
 	for _, f := range r.File {
 		if f.Name == filePath {
 			rc, err := f.Open()
@@ -80,7 +80,7 @@ func loadPictureFromDir(path string) (pixel.Picture, error) {
 }
 
 // loadFontFromDir loads font from specified system path.
-func loadFontFromDir(path string, size float64) (font.Face, error) {
+func loadFontFromDir(path string) (*truetype.Font, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -97,8 +97,5 @@ func loadFontFromDir(path string, size float64) (font.Face, error) {
 		return nil, err
 	}
 
-	return truetype.NewFace(font, &truetype.Options{
-		Size:              size,
-		GlyphCacheEntries: 1,
-	}), nil
+	return font, nil
 }

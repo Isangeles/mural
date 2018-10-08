@@ -96,17 +96,17 @@ func (s Size) MessageWindowSize() pixel.Rect {
 	}
 }
 
-// Font returns main font in specified size from
+// MainFont returns main font in specified size from
 // data package. 
 func MainFont(s Size) font.Face {
 	switch {
 	case s == SIZE_SMALL:
-		return data.MainFontSmall()
+		return data.MainFont(ConvSize(10))
 	case s == SIZE_MEDIUM:
-		return data.MainFontNormal();
+		return data.MainFont(ConvSize(20))
 	case s >= SIZE_BIG:
-		return data.MainFontBig();
+		return data.MainFont(ConvSize(40))
 	default:
-		return data.MainFontSmall()
+		return data.MainFont(ConvSize(10))
 	}
 }

@@ -35,7 +35,7 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
-	"github.com/isangeles/mural/core/data"
+	//"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -53,7 +53,7 @@ type Menu struct {
 func newMenu() (*Menu, error) {
 	m := new(Menu)
 	// Title.
-	font := data.MainFontBig()
+	font := mtk.MainFont(mtk.SIZE_BIG)
 	atlas := text.NewAtlas(font, text.ASCII)
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())

@@ -31,8 +31,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	//"golang.org/x/image/colornames"
-	
-	"github.com/isangeles/mural/core/data"
 )
 
 // Struct for textboxes
@@ -51,7 +49,7 @@ func NewTextbox() (*Textbox, error) {
 	// Background.
 	t.bg = imdraw.New(nil)
 	// Text.
-	font := data.MainFontNormal()
+	font := MainFont(SIZE_MEDIUM)
 	atlas := text.NewAtlas(font, text.ASCII)
 	t.textarea = text.New(pixel.V(0, 0), atlas)
 	

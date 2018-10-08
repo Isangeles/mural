@@ -52,14 +52,14 @@ func New() (*MainMenu, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.SetOnSettingsButtonClickedFunc(mm.OpenSettings)
+	m.SetOnSettingsButtonClickedFunc(mm.onSettingsButtonClicked)
 	mm.menu = m
 	// Settings.
 	s, err := newSettings()
 	if err != nil {
 		return nil, err
 	}
-	s.SetOnBackButtonClickedFunc(mm.CloseSettings)
+	s.SetOnBackButtonClickedFunc(mm.onCloseSettingsButtonClicked)
 	mm.settings = s
 	// Console.
 	c, err := newConsole()
@@ -124,33 +124,71 @@ func (mm *MainMenu) CloseMenus() {
 	mm.settings.Show(false)
 }
 
-// CloseSettings displays confirm dialog and closes settings.
-func (mm *MainMenu) CloseSettings(b *mtk.Button) {
+// closeSettingsConfirm displays dialog window with settings save
+// confirmation.
+func (mm *MainMenu) onCloseSettingsButtonClicked(b *mtk.Button) {
+	if mm.settings.Changed() {
+		dlg, err := mtk.NewDialogWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_save_msg"))
+		if err != nil {
+			log.Err.Printf("mainmenu:fail_to_create_settings_confirm_dialog")
+			mm.onSettingsApplyAccept(nil)
+			return
+		}
+		dlg.SetOnAcceptFunc(mm.onSettingsApplyAccept)
+		dlg.SetOnCancelFunc(mm.onSettingsApplyCancel)
+		dlg.Show(true)
+		mm.msgs = append(mm.msgs, dlg)
+	} else {
+		mm.onSettingsApplyAccept(nil)
+	}
+}
+
+// onSettingsApplyAccept closes and applies settings. Triggered after
+// accepting settings confirm dialog.
+func (mm *MainMenu) onSettingsApplyAccept(m *mtk.MessageWindow) {
 	if mm.settings.Changed() {
 		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 			lang.Text("gui", "settings_reset_msg"))
 		if err != nil {
-			log.Err.Printf("mainmenu:fail_to_create_settings_confirm_dialog")
-			mm.OpenMenu(nil)
+			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
+			mm.onMenuButtonClicked(nil)
 			return
 		}
 		msg.Show(true)
 		mm.msgs = append(mm.msgs, msg)
 		mm.settings.Apply()
 	}
-	mm.OpenMenu(nil)
+	mm.onMenuButtonClicked(nil)
 }
 
-// OpenMenu closes all currently open
+// onSettingsApplyCancel displays confirm dialog and closes settings
+// without saving. Triggered after rejecting settings confirm dialog.
+func (mm *MainMenu) onSettingsApplyCancel(m *mtk.MessageWindow) {
+	if mm.settings.Changed() {
+		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_reset_msg"))
+		if err != nil {
+			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
+			mm.onMenuButtonClicked(nil)
+			return
+		}
+		msg.Show(true)
+		mm.msgs = append(mm.msgs, msg)
+	}
+	mm.onMenuButtonClicked(nil)
+}
+
+// onMenuButtonClicked closes all currently open
 // menus and opens main menu.
-func (mm *MainMenu) OpenMenu(b *mtk.Button) {
+func (mm *MainMenu) onMenuButtonClicked(b *mtk.Button) {
 	mm.CloseMenus()
 	mm.menu.Show(true)
 }
 
-// OpenSettings closes all currently open
+// onSettingsButtonClicked closes all currently open
 // menus and opens settings menu.
-func (mm *MainMenu) OpenSettings(b *mtk.Button) { 
+func (mm *MainMenu) onSettingsButtonClicked(b *mtk.Button) { 
 	mm.CloseMenus()
 	mm.settings.Show(true) 
 }

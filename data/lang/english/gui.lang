@@ -5,5 +5,6 @@ back_b_label:Back;
 settings_b_label:Settings;
 settings_menu_title:Settings;
 resolution_s_label:Resolution;
+settings_save_msg:Save settings?;
 settings_reset_msg:Some changes need game restart.;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

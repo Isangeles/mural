@@ -33,8 +33,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/faiface/pixel/imdraw"
-
-	"github.com/isangeles/mural/core/data"
 )
 
 // Button struct for UI button.
@@ -81,7 +79,7 @@ func NewButtonSprite(bgPic pixel.Picture, labelText string) *Button {
 	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
 	button.bgSpr = bg
 	// Label.
-	font := data.MainFontSmall()
+	font := MainFont(SIZE_SMALL)
 	atlas := text.NewAtlas(font, text.ASCII)
 	button.label = text.New(pixel.V(0, 0), atlas)
 	labelMarigin := (-button.label.BoundsOf(labelText).Max.X) / 2

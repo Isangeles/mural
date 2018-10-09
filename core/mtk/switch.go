@@ -35,6 +35,18 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
+// Plain string for regular string to satisfy stringer
+// interface.
+type SwitchValue struct {
+	Label string
+	Value interface{}
+}
+
+// String returns label of switch value.
+func (s SwitchValue) String() string {
+	return s.Label
+}
+
 // Switch struct represents graphical switch for values.
 type Switch struct {
 	bgDraw                  *imdraw.IMDraw
@@ -46,13 +58,13 @@ type Switch struct {
 	size                    Size
 	color                   color.Color
 	index                   int
-	values                  []string
+	values                  []SwitchValue
 	onChange                func(s *Switch)
 }
 
-// NewSwitch return new instance of switch with IMDraw
+// NewSwitch creates new instance of switch with IMDraw
 // background with specified values to switch.
-func NewSwitch(size Size, color color.Color, label string, values []string) *Switch {
+func NewSwitch(size Size, color color.Color, label string, values []SwitchValue) *Switch {
 	s := new(Switch)
 	// Background.
 	s.bgDraw = imdraw.New(nil)
@@ -65,7 +77,7 @@ func NewSwitch(size Size, color color.Color, label string, values []string) *Swi
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label.
 	font := MainFont(s.size)
-	atlas := text.NewAtlas(font, text.ASCII)
+	atlas := Atlas(&font)
 	s.label = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(s.label, label)
 	// Values.
@@ -74,6 +86,20 @@ func NewSwitch(size Size, color color.Color, label string, values []string) *Swi
 	s.valueText = text.New(pixel.V(0,0), atlas)
 	s.updateValueText()
 	return s 
+}
+
+// NewStringSwitch creates new instance of switch with IMDraw
+// background with specified string values to switch.
+func NewStringSwitch(size Size, color color.Color, label string, values []string) *Switch {
+	// All string values to switchString helper struct.
+	strValues := make([]SwitchValue, len(values))
+	for i, v := range values {
+		ss := SwitchValue{Label: v, Value: v}
+		strValues[i] = ss
+	}
+	
+	s := NewSwitch(size, color, label, strValues)
+	return s
 }
 
 // Draw draws switch.
@@ -126,8 +152,20 @@ func (s *Switch) DrawArea() pixel.Rect {
 }
 
 // Value returns current switch value.
-func (s *Switch) Value() string {
+func (s *Switch) Value() SwitchValue {
 	return s.values[s.index]
+}
+
+// Find if switch constains specified value and returns
+// index of this value or -1 if switch does not contains
+// such value.
+func (s *Switch) Find(value interface{}) int {
+	for i, v := range s.values {
+		if value == v.Value {
+			return i
+		}
+	}
+	return -1
 }
 
 // SetIndex sets value with specified index as current value
@@ -152,21 +190,15 @@ func (s *Switch) SetOnChangeFunc(f func(s *Switch)) {
 
 // updateValueText updates text with current switch value.
 func (s *Switch) updateValueText() {
-	valueMariginX := (-s.valueText.BoundsOf(s.Value()).Max.X) / 2
+	valueMariginX := (-s.valueText.BoundsOf(s.Value().String()).Max.X) / 2
 	s.valueText.Orig.X = valueMariginX
 	s.valueText.Clear()
-	fmt.Fprintf(s.valueText, s.Value())
+	fmt.Fprintf(s.valueText, s.Value().String())
 }
 
 // Triggered after next button clicked.
 func (s *Switch) onNextButtonClicked(b *Button) {
-	if s.index < len(s.values)-1 {
-		s.index++
-		s.updateValueText()
-	} else {
-		s.index = 0
-		s.updateValueText()
-	}
+	s.SetIndex(s.index+1)
 	if s.onChange != nil {
 		s.onChange(s)
 	}
@@ -174,13 +206,7 @@ func (s *Switch) onNextButtonClicked(b *Button) {
 
 // Triggered after prev button clicked.
 func (s *Switch) onPrevButtonClicked(b *Button) {
-	if s.index > 0 {
-		s.index--
-		s.updateValueText()
-	} else {
-		s.index = len(s.values)-1
-		s.updateValueText()
-	}
+	s.SetIndex(s.index-1)
 	if s.onChange != nil {
 		s.onChange(s)
 	}

@@ -54,7 +54,7 @@ func newMenu() (*Menu, error) {
 	m := new(Menu)
 	// Title.
 	font := mtk.MainFont(mtk.SIZE_BIG)
-	atlas := text.NewAtlas(font, text.ASCII)
+	atlas := mtk.Atlas(&font)
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.

@@ -50,7 +50,7 @@ func NewTextbox() (*Textbox, error) {
 	t.bg = imdraw.New(nil)
 	// Text.
 	font := MainFont(SIZE_MEDIUM)
-	atlas := text.NewAtlas(font, text.ASCII)
+	atlas := Atlas(&font)
 	t.textarea = text.New(pixel.V(0, 0), atlas)
 	
 	return t, nil

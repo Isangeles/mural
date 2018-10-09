@@ -34,7 +34,8 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/mural/log"
-	
+
+	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text"
 )
 
@@ -45,6 +46,7 @@ const (
 var (
 	fullscreen bool
 	resolution pixel.Vec
+	lang = flame.LangID()
 )
 
 // LoadConfig loads configuration file.
@@ -98,13 +100,28 @@ func Resolution() pixel.Vec {
 	return resolution
 }
 
+// Lang returns current language ID.
+func Lang() string {
+	return lang
+}
+
 // SetResolution sets specified XY size as current
 // resolution.
 func SetResolution(res pixel.Vec) {
 	resolution = res
 }
 
+// SetLang sets language with specified ID as current language.
+func SetLang(langID string) {
+	// TODO: set flame lang ID.
+}
+
 // SupportedResolutions returns all resolutions supported by UI.
 func SupportedResolutions() []pixel.Vec {
 	return []pixel.Vec{pixel.V(1920, 1080), pixel.V(1300, 720)}
+}
+
+// SuportedLangs retruns all languages supported by UI.
+func SupportedLangs() []string {
+	return []string{"english"}
 }

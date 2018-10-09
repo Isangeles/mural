@@ -105,7 +105,7 @@ func run() {
 	// textbox test.
 	/*
 	for i := 0; i < 40; i ++ {
-		dbglog.Printf("msg_%d", i)
+		log.Dbg.Printf("msg_%d", i)
 	}
         */
 

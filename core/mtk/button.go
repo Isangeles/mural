@@ -61,7 +61,7 @@ func NewButton(size Size, shape Shape, color color.Color, labelText string) *But
 	button.colorPush = colornames.Grey
 	// Label.
 	font := MainFont(button.size)
-	atlas := text.NewAtlas(font, text.ASCII)
+	atlas := Atlas(&font)
 	button.label = text.New(pixel.V(0, 0), atlas)
 	labelMariginX := (-button.label.BoundsOf(labelText).Max.X) / 2
 	button.label.Orig = pixel.V(labelMariginX, 0)

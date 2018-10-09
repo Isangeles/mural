@@ -165,17 +165,6 @@ func (mm *MainMenu) onSettingsApplyAccept(m *mtk.MessageWindow) {
 // onSettingsApplyCancel displays confirm dialog and closes settings
 // without saving. Triggered after rejecting settings confirm dialog.
 func (mm *MainMenu) onSettingsApplyCancel(m *mtk.MessageWindow) {
-	if mm.settings.Changed() {
-		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_reset_msg"))
-		if err != nil {
-			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
-			mm.onMenuButtonClicked(nil)
-			return
-		}
-		msg.Show(true)
-		mm.msgs = append(mm.msgs, msg)
-	}
 	mm.onMenuButtonClicked(nil)
 }
 

@@ -25,8 +25,8 @@ package mainmenu
 
 import (
 	"fmt"
-	"strings"
-	"strconv"
+	//"strings"
+	//"strconv"
 	
 	"golang.org/x/image/colornames"
 	
@@ -44,10 +44,12 @@ import (
 
 // Settings struct represents main menu
 // settings screen.
+// TODO: lang switch.
 type Settings struct {
 	title      *text.Text
 	backButton *mtk.Button
 	resSwitch  *mtk.Switch
+	langSwitch *mtk.Switch
 	open       bool
 	changed    bool
 }
@@ -58,25 +60,28 @@ func newSettings() (*Settings, error) {
 	s := new(Settings)
 	// Title.
 	font := mtk.MainFont(mtk.SIZE_BIG)
-	atlas := text.NewAtlas(font, text.ASCII)
+	atlas := mtk.Atlas(&font)
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons & switches.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "back_b_label"))
-	var resSwitchValues []string
-	var resSwitchIndex int
-	for i, res := range config.SupportedResolutions() {
+	var resSwitchValues []mtk.SwitchValue
+	for _, res := range config.SupportedResolutions() {
 		resSwitchValues = append(resSwitchValues,
-			fmt.Sprintf("%vx%v", res.X, res.Y))
-		if res == config.Resolution() {
-			resSwitchIndex = i
-		}
+			mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res})
 	}
 	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
 		lang.Text("gui", "resolution_s_label"), resSwitchValues)
+	resSwitchIndex := s.resSwitch.Find(config.Resolution())
 	s.resSwitch.SetIndex(resSwitchIndex)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
+	s.langSwitch = mtk.NewStringSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
+		lang.Text("gui", "lang_s_label"), config.SupportedLangs())
+	langSwitchIndex := s.langSwitch.Find(config.Lang())
+	s.langSwitch.SetIndex(langSwitchIndex)
+	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
+	
 	return s, nil
 }
 
@@ -89,14 +94,17 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 	// Buttons & switches.
 	s.resSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		titlePos.Y - s.resSwitch.Frame().Size().Y)))
+	s.langSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		s.resSwitch.DrawArea().Min.Y - s.langSwitch.Frame().Size().Y)))
 	s.backButton.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		s.resSwitch.DrawArea().Min.Y - s.backButton.Frame().Size().Y)))
+		s.langSwitch.DrawArea().Min.Y - s.backButton.Frame().Size().Y)))
 }
 
 // Update updates all menu elements.
 func (s *Settings) Update(win *pixelgl.Window) {
 	if s.open {
 		s.resSwitch.Update(win)
+		s.langSwitch.Update(win)
 		s.backButton.Update(win)
 	}
 }
@@ -120,19 +128,19 @@ func (s *Settings) SetOnBackButtonClickedFunc(f func(b *mtk.Button)) {
 // Apply applies current settings values.
 func (s *Settings) Apply() {
 	// Resolution.
-	resText := strings.Split(s.resSwitch.Value(), "x")
-	resValueX, err := strconv.ParseFloat(resText[0], 64)
-	if err != nil {
-		resValueX = 1920
-		log.Err.Printf("settings_menu:fail_to_conv_res_switch_value_x:%v", err)
+	res, ok := s.resSwitch.Value().Value.(pixel.Vec)
+	if !ok {
+		log.Err.Printf("settings_menu:fail_to_retrive_res_switch_value")
+		return
 	}
-	resValueY, err := strconv.ParseFloat(resText[1], 64)
-	if err != nil {
-		resValueY = 1080
-		log.Err.Printf("settings_menu:fail_to_conv_res_switch_value_y:%v", err)
+	lang, ok := s.langSwitch.Value().Value.(string)
+	if !ok {
+		log.Err.Printf("settings_menu:fail_to_retrive_lang_switch_value")
+		return
 	}
-	resValue := pixel.V(resValueX, resValueY)
-	config.SetResolution(resValue)
+	
+	config.SetLang(lang)
+	config.SetResolution(res)
 }
 
 // Changed checks if any settings value was changed.

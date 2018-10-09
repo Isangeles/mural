@@ -30,6 +30,7 @@ import (
 	"golang.org/x/image/font"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/mural/core/data"
 )
@@ -109,4 +110,10 @@ func MainFont(s Size) font.Face {
 	default:
 		return data.MainFont(ConvSize(10))
 	}
+}
+
+// UIAtlas returns atlas for UI text with specified
+// font.
+func Atlas(f *font.Face) *text.Atlas {
+	return text.NewAtlas(*f, text.ASCII)
 }

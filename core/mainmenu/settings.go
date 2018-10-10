@@ -65,7 +65,7 @@ func newSettings() (*Settings, error) {
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
 	// Buttons & switches.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "back_b_label"))
+		lang.Text("gui", "back_b_label"), "")
 	var resSwitchValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		resSwitchValues = append(resSwitchValues,

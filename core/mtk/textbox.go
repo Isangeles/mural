@@ -25,6 +25,7 @@ package mtk
 
 import (
 	"fmt"
+	"image/color"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -36,6 +37,7 @@ import (
 // Struct for textboxes
 type Textbox struct {
 	bg          *imdraw.IMDraw
+	color       color.Color
 	textarea    *text.Text
 	bgHeight    float64
 	textContent []string
@@ -44,32 +46,35 @@ type Textbox struct {
 }
 
 // NewTextbox creates new textbox.
-func NewTextbox() (*Textbox, error) {
+func NewTextbox(fontSize Size, color color.Color) (*Textbox) {
 	t := new(Textbox)
 	// Background.
 	t.bg = imdraw.New(nil)
+	t.color = color
 	// Text.
-	font := MainFont(SIZE_MEDIUM)
+	font := MainFont(fontSize)
 	atlas := Atlas(&font)
 	t.textarea = text.New(pixel.V(0, 0), atlas)
 	
-	return t, nil
+	return t
 }
 
 // Draw draws textbox.
-func (tb *Textbox) Draw(bottomLeft, topRight pixel.Vec, t pixel.Target) {
+func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	// Background.
+	// TODO: use color from constructor.
+	tb.bg.Clear()
 	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	tb.bg.Push(bottomLeft)
+	tb.bg.Push(drawArea.Min)
 	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	tb.bg.Push(topRight)
+	tb.bg.Push(drawArea.Max)
 	tb.bg.Rectangle(0)
 	tb.bg.Draw(t)
-	tb.bgHeight = topRight.Y
+	tb.bgHeight = drawArea.Max.Y
 
 	// Text content.
-	tb.textarea.Draw(t, pixel.IM.Moved(pixel.V(bottomLeft.X,
-		topRight.Y - tb.textarea.BoundsOf("AA").H()))) 
+	tb.textarea.Draw(t, pixel.IM.Moved(pixel.V(drawArea.Min.X,
+		drawArea.Max.Y - tb.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.
@@ -86,6 +91,11 @@ func (t *Textbox) Update(win *pixelgl.Window) {
 			t.updateTextVisibility()
 		}
 	}
+}
+
+// Bounds returns size parameters of textbox textarea.
+func (t *Textbox) Bounds() pixel.Rect {
+	return t.textarea.Bounds()
 }
 
 // Insert clears textbox and inserts specified text.

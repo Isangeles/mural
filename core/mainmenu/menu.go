@@ -59,14 +59,16 @@ func newMenu() (*Menu, error) {
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "settings_b_label"))
+		colornames.Red, lang.Text("gui", "settings_b_label"),
+		lang.Text("gui", "settings_b_info"))
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
 	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"))
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "exit_b_label"))
+		colornames.Red, lang.Text("gui", "exit_b_label"),
+		lang.Text("gui", "exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
 
 	return m, nil
@@ -76,7 +78,8 @@ func newMenu() (*Menu, error) {
 // window.
 func (m *Menu) Draw(win *pixelgl.Window) {
 	// Title.
-	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y - m.title.Bounds().Size().Y)
+	titlePos := pixel.V(win.Bounds().Center().X,
+		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Buttons.
 	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,

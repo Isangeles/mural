@@ -57,16 +57,13 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow, error) {
 	mw.bg = imdraw.New(nil)
 	mw.size = size
 	// Textbox.
-	textbox, err := NewTextbox()
-	if err != nil {
-		return nil, err
-	}
+	textbox := NewTextbox(SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)
 	// Buttons.
 	acceptB := NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "accept_b_label"))
+		lang.Text("gui", "accept_b_label"), "")
 	acceptB.SetOnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 
@@ -82,7 +79,7 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow, error) {
 	}
 	// Buttons.
 	mw.cancelButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "cancel_b_label"))
+		lang.Text("gui", "cancel_b_label"), "")
 	mw.cancelButton.SetOnClickFunc(mw.onCancelButtonClicked)
 	
 	return mw, nil
@@ -122,8 +119,9 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 		mw.drawArea.Min)))
 	}
 	// Textbox.
-	mw.textbox.Draw(pixel.V(mw.drawArea.Min.X, mw.acceptButton.DrawArea().Max.Y),
-		mw.drawArea.Max, t)
+	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
+		mw.acceptButton.DrawArea().Max.Y, mw.drawArea.Max.X, mw.drawArea.Max.Y)
+	mw.textbox.Draw(textboxDrawArea, t)
 }
 
 // drawIMBackround Draws IMDraw background.

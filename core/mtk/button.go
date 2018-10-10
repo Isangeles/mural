@@ -40,18 +40,21 @@ type Button struct {
 	bgSpr     *pixel.Sprite
 	bgDraw    *imdraw.IMDraw
 	label     *text.Text
+	info      *InfoWindow
 	size      Size
 	shape     Shape
 	color     color.Color
 	colorPush color.Color
 	pressed   bool
+	focused   bool
 	drawArea  pixel.Rect // updated on each draw
 	onClick   func(b *Button)
 }
 
 // NewButton creates new instance of button with specified size, color and
 // label text.
-func NewButton(size Size, shape Shape, color color.Color, labelText string) *Button {
+func NewButton(size Size, shape Shape, color color.Color,
+	labelText, infoText string) *Button {
 	button := new(Button)
 	// Background.
 	button.bgDraw = imdraw.New(nil)
@@ -67,13 +70,17 @@ func NewButton(size Size, shape Shape, color color.Color, labelText string) *But
 	button.label.Orig = pixel.V(labelMariginX, 0)
 	button.label.Clear()
 	fmt.Fprint(button.label, labelText)
+	// Info window.
+	if len(infoText) > 0 {	
+		button.info = NewInfoWindow(infoText)
+	}
 
 	return button
 }
 
 // NewButtonSprite creates new instance of button with specified
 // background image and label text.
-func NewButtonSprite(bgPic pixel.Picture, labelText string) *Button {
+func NewButtonSprite(bgPic pixel.Picture, labelText, infoText string) *Button {
 	button := new(Button)
 	// Backround.
 	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
@@ -86,6 +93,10 @@ func NewButtonSprite(bgPic pixel.Picture, labelText string) *Button {
 	button.label.Orig = pixel.V(labelMarigin, 0)
 	button.label.Clear()
 	fmt.Fprint(button.label, labelText)
+	// Info window.
+	if len(infoText) > 0 {	
+		button.info = NewInfoWindow(infoText)
+	}
 
 	return button
 }
@@ -112,6 +123,10 @@ func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if b.label != nil {
 		b.label.Draw(t, matrix)
 	}
+	// Info window.
+	if b.info != nil && b.focused {
+		b.info.Draw(t)
+	}
 }
 
 // Update updates button.
@@ -129,10 +144,19 @@ func (b *Button) Update(win *pixelgl.Window) {
 		}
 		b.pressed = false
 	}
+	if b.ContainsPosition(win.MousePosition()) {
+		b.focused = true
+		if b.info != nil {	
+			b.info.Update(win)
+		}
+	} else {
+		b.focused = false
+	}
 }
 
 // Draws button background with IMDraw.
 func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
+	b.bgDraw.Clear()
 	b.bgDraw.Color = pixel.ToRGBA(color)
 	b.bgDraw.Push(b.drawArea.Min)
 	b.bgDraw.Color = pixel.ToRGBA(color)

@@ -1,8 +1,10 @@
 exit_b_label:Exit;
+exit_b_info:Exit game.;
 accept_b_label:Ok;
 cancel_b_label:Cancel;
 back_b_label:Back;
 settings_b_label:Settings;
+settings_b_info:Open settings menu.;
 settings_menu_title:Settings;
 resolution_s_label:Resolution;
 lang_s_label:Language;

@@ -71,8 +71,8 @@ func NewSwitch(size Size, color color.Color, label string, values []SwitchValue)
 	s.size = size
 	s.color = color
 	// Buttons.
-	s.prevButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "-")
-	s.nextButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "+")
+	s.prevButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "-", "")
+	s.nextButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "+", "")
 	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label.

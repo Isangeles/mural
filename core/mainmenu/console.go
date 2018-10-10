@@ -28,7 +28,7 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	//"golang.org/x/image/colornames"
+	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame/core/enginelog"
 
@@ -36,7 +36,6 @@ import (
 )
 
 // Struct for game console.
-// TODO: very slow while open.
 type Console struct {
 	textbox *mtk.Textbox
 	open    bool
@@ -46,18 +45,14 @@ type Console struct {
 func newConsole() (*Console, error) {
 	c := new(Console)
 	// Text box.
-	textbox, err := mtk.NewTextbox()
-	if err != nil {
-		return nil, err
-	}
-	c.textbox = textbox
+	c.textbox = mtk.NewTextbox(mtk.SIZE_MEDIUM, colornames.Grey)
 	
 	return c, nil
 }
 
 // Draw draws console.
 func (c *Console) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
-	c.textbox.Draw(drawMin, drawMax, win)
+	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
 }
 
 // Update handles key events and updates console.

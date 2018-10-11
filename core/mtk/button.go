@@ -165,6 +165,16 @@ func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
 	b.bgDraw.Draw(t)
 }
 
+// Focus sets/removes focus from button
+func (b *Button) Focus(focus bool) {
+	b.focused = focus
+}
+
+// Focused checks whether buttons is focused.
+func (b *Button) Focused() bool {
+	return b.focused
+}
+
 // OnClick sets specified function as on-click
 // callback function.
 func (b *Button) SetOnClickFunc(callback func(b *Button)) {

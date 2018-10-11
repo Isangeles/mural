@@ -21,11 +21,13 @@
  *
  */
 
-// mainmenu package contains main menu, settings,
-// load/save and new game screens.
+// mainmenu package contains main menu and also settings,
+// load/save and new game menus.
 package mainmenu
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
@@ -37,11 +39,13 @@ import (
 
 // MainMenu struct reperesents container with
 // all menu screens(settings menu, new game menu, etc.).
+// Handles switching betwen menus.
 type MainMenu struct {
-	menu     *Menu
-	settings *Settings
-	console  *Console
-	msgs     []*mtk.MessageWindow
+	menu      *Menu
+	settings  *Settings
+	console   *Console
+	msgs      []*mtk.MessageWindow
+	userFocus *mtk.Focus
 }
 
 // New returns new main menu
@@ -67,15 +71,18 @@ func New() (*MainMenu, error) {
 		return nil, err
 	}
 	mm.console = c
-	// Test message.
-	msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-		"This is test UI message.\nClick 'Ok' to dismiss.")
-	if err != nil {
-		return nil, err
+	// Messages & focus test.
+	for i := 0; i < 2; i++ {
+		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+			fmt.Sprintf("This is test UI message.\n%d", i))
+		if err != nil {
+			return nil, err
+		}
+		msg.Show(true)
+		mm.msgs = append(mm.msgs, msg)
 	}
-	msg.Show(true)
-	mm.msgs = append(mm.msgs, msg)
 
+	mm.userFocus = new(mtk.Focus)
 	mm.menu.Show(true)
 	return mm, nil
 }
@@ -92,7 +99,8 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	}
 	// Messages.
 	for _, msg := range mm.msgs {
-		if msg.Open() {
+		if msg.Opened() {
+			mm.userFocus.Focus(msg)
 			msg.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 		}
 	}
@@ -109,7 +117,7 @@ func (mm *MainMenu) Update(win *pixelgl.Window) {
 	mm.settings.Update(win)
 	mm.console.Update(win)
 	for i, msg := range mm.msgs {
-		if msg.Open() {
+		if msg.Opened() {
 			msg.Update(win)
 		}
 		if msg.Dismissed() {
@@ -118,21 +126,51 @@ func (mm *MainMenu) Update(win *pixelgl.Window) {
 	}
 }
 
-// CloseMenus closes all menus.
-func (mm *MainMenu) CloseMenus() {
+// OpenMenu opens menu.
+func (mm *MainMenu) OpenMenu() {
+	mm.HideMenus()
+	mm.menu.Show(true)
+}
+
+// OpenSettings opens settings menu.
+func (mm *MainMenu) OpenSettings() {
+	mm.HideMenus()
+	mm.settings.Show(true) 
+}
+
+// HideMenus hides all menus.
+func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
 	mm.settings.Show(false)
 }
 
-// closeSettingsConfirm displays dialog window with settings save
-// confirmation.
-func (mm *MainMenu) onCloseSettingsButtonClicked(b *mtk.Button) {
+// CloseSettings closes settings menu. Also displays message
+// about required game restart if settings was changed.
+func (mm *MainMenu) CloseSettings() {
+	if mm.settings.Changed() {
+		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_reset_msg"))
+		if err != nil {
+			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
+			mm.OpenMenu()
+			return
+		}
+		msg.Show(true)
+		mm.msgs = append(mm.msgs, msg)
+		mm.settings.Apply()
+	}
+	mm.OpenMenu()
+}
+
+// CloseSettingsWithDialog creates settings apply dialog and puts it on
+// main menu messages list.
+func (mm *MainMenu) CloseSettingsWithDialog() {
 	if mm.settings.Changed() {
 		dlg, err := mtk.NewDialogWindow(mtk.SIZE_SMALL,
 			lang.Text("gui", "settings_save_msg"))
 		if err != nil {
 			log.Err.Printf("mainmenu:fail_to_create_settings_confirm_dialog")
-			mm.onSettingsApplyAccept(nil)
+			mm.CloseSettings() 
 			return
 		}
 		dlg.SetOnAcceptFunc(mm.onSettingsApplyAccept)
@@ -140,44 +178,36 @@ func (mm *MainMenu) onCloseSettingsButtonClicked(b *mtk.Button) {
 		dlg.Show(true)
 		mm.msgs = append(mm.msgs, dlg)
 	} else {
-		mm.onSettingsApplyAccept(nil)
-	}
+		mm.CloseSettings()
+	}	
+}
+
+// closeSettingsConfirm displays dialog window with settings save
+// confirmation.
+func (mm *MainMenu) onCloseSettingsButtonClicked(b *mtk.Button) {
+	mm.CloseSettingsWithDialog()
 }
 
 // onSettingsApplyAccept closes and applies settings. Triggered after
 // accepting settings confirm dialog.
 func (mm *MainMenu) onSettingsApplyAccept(m *mtk.MessageWindow) {
-	if mm.settings.Changed() {
-		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_reset_msg"))
-		if err != nil {
-			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
-			mm.onMenuButtonClicked(nil)
-			return
-		}
-		msg.Show(true)
-		mm.msgs = append(mm.msgs, msg)
-		mm.settings.Apply()
-	}
-	mm.onMenuButtonClicked(nil)
+	mm.CloseSettings()
 }
 
 // onSettingsApplyCancel displays confirm dialog and closes settings
 // without saving. Triggered after rejecting settings confirm dialog.
 func (mm *MainMenu) onSettingsApplyCancel(m *mtk.MessageWindow) {
-	mm.onMenuButtonClicked(nil)
+	mm.OpenMenu()
 }
 
 // onMenuButtonClicked closes all currently open
 // menus and opens main menu.
 func (mm *MainMenu) onMenuButtonClicked(b *mtk.Button) {
-	mm.CloseMenus()
-	mm.menu.Show(true)
+	mm.OpenMenu()
 }
 
 // onSettingsButtonClicked closes all currently open
 // menus and opens settings menu.
-func (mm *MainMenu) onSettingsButtonClicked(b *mtk.Button) { 
-	mm.CloseMenus()
-	mm.settings.Show(true) 
+func (mm *MainMenu) onSettingsButtonClicked(b *mtk.Button) {
+	mm.OpenSettings()
 }

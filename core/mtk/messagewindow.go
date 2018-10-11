@@ -43,7 +43,8 @@ type MessageWindow struct {
 	textbox      *Textbox
 	acceptButton *Button
 	cancelButton *Button
-	open         bool
+	opened       bool
+	focused      bool
 	accepted     bool
 	dismissed    bool
 	onAccept     func(msg *MessageWindow)
@@ -86,21 +87,31 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow, error) {
 }
 
 // Show toggles window visibility.
-func (mw *MessageWindow) Show(open bool) {
-	mw.open = open
+func (mw *MessageWindow) Show(show bool) {
+	mw.opened = show
 }
 
-// Open checks if window should be open.
-func (mw *MessageWindow) Open() bool {
-	return mw.open
+// Focus sets or removes focus from window.
+func (mw *MessageWindow) Focus(focus bool) {
+	mw.focused = focus
 }
 
-// Dismissed checks if window was dismised.
+// Opened checks whether window should be open.
+func (mw *MessageWindow) Opened() bool {
+	return mw.opened
+}
+
+// Focused checks whether window is focused.
+func (mw *MessageWindow) Focused() bool {
+	return mw.focused
+}
+
+// Dismissed checks whether window was dismised.
 func (mw *MessageWindow) Dismissed() bool {
 	return mw.dismissed
 }
 
-// Accepted checks if message was accepted.
+// Accepted checks whether message was accepted.
 func (mw *MessageWindow) Accepted() bool {
 	return mw.accepted
 }
@@ -136,8 +147,8 @@ func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
 
 // Update handles key press events.
 func (mw *MessageWindow) Update(win *pixelgl.Window) {
-	if win.JustPressed(pixelgl.KeyEscape) {
-		if mw.onCancel != nil {
+	if mw.Focused() {
+		if win.JustPressed(pixelgl.KeyEscape) {
 			mw.cancel()
 		}
 	}
@@ -176,9 +187,15 @@ func (mw *MessageWindow) onCancelButtonClicked(b *Button) {
 	mw.cancel()
 }
 
+// reset resets window to default state(closed, unfocused).
+func (mw *MessageWindow) reset() {
+	mw.opened = false
+	mw.focused = false
+}
+
 // accept sets message as accepted.
 func (mw *MessageWindow) accept() {
-	mw.open = false
+	mw.reset()
 	mw.dismissed = true
 	mw.accepted = true
 	if mw.onAccept != nil {
@@ -186,9 +203,9 @@ func (mw *MessageWindow) accept() {
 	}
 }
 
-// cancel sets message as canceld.
+// cancel sets message as canceled.
 func (mw *MessageWindow) cancel() {
-	mw.open = false
+	mw.reset()
 	mw.dismissed = true
 	mw.accepted = false
 	if mw.onCancel != nil {

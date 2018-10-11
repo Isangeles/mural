@@ -54,5 +54,5 @@ func (iw *InfoWindow) Draw(t pixel.Target) {
 func (iw *InfoWindow) Update(win *pixelgl.Window) {
 	iw.drawArea = pixel.R(win.MousePosition().X, win.MousePosition().Y,
 		win.MousePosition().X + iw.text.Bounds().Size().X,
-		win.MousePosition().Y + ConvSize(15))
+		win.MousePosition().Y + iw.text.Bounds().Size().Y * 1.5)
 }

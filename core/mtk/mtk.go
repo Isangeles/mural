@@ -21,7 +21,7 @@
  *
  */
 
-// Tool kid package for mural GUI.
+// Tool kit package for mural GUI.
 package mtk
 
 import (
@@ -35,14 +35,6 @@ import (
 	"github.com/isangeles/mural/core/data"
 )
 
-// Type for sizes of UI elements, like buttons, switches, etc.
-// Sizes: small(0), normal(1), big(2).
-type Size int
-
-// Type for shapes of UI elements.
-// Shapes: rectangle(0), square(1).
-type Shape int
-
 const (
 	SIZE_MINI Size = iota
 	SIZE_SMALL 
@@ -52,6 +44,37 @@ const (
 	SHAPE_RECTANGLE Shape = iota
 	SHAPE_SQUARE 
 )
+
+// Type for shapes of UI elements.
+// Shapes: rectangle(0), square(1).
+type Shape int
+
+// Interface for all 'focusable' UI elements, like buttons,
+// switches, etc.
+type Focuser interface {
+	Focus(focus bool)
+	Focused() bool
+}
+
+// Focus represents user focus on UI element.
+type Focus struct {
+	element Focuser
+}
+
+// Focus sets focus on specified focusable element.
+// Previously focused element(if exists) is unfocused before
+// focusing specified one. 
+func (f *Focus) Focus(e Focuser) {
+	if f.element != nil {
+		f.element.Focus(false)
+	}
+	f.element = e
+	f.element.Focus(true)
+}
+
+// Type for sizes of UI elements, like buttons, switches, etc.
+// Sizes: small(0), normal(1), big(2).
+type Size int
 
 // ButtonSize returns szie parameters for button with
 // this size and with specifed shape.

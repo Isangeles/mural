@@ -45,7 +45,7 @@ type Menu struct {
 	title     *text.Text
 	settingsB *mtk.Button
 	exitB     *mtk.Button
-	open      bool
+	opened    bool
 	exitReq   bool
 }
 
@@ -90,7 +90,7 @@ func (m *Menu) Draw(win *pixelgl.Window) {
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *pixelgl.Window) {
-	if m.open {
+	if m.Opened() {
 		m.settingsB.Update(win)
 		m.exitB.Update(win)
 	}
@@ -100,13 +100,13 @@ func (m *Menu) Update(win *pixelgl.Window) {
 }
 
 // Open checks if menu should be displayed.
-func (m *Menu) Open() bool {
-	return m.open
+func (m *Menu) Opened() bool {
+	return m.opened
 }
 
 // Toggles menu visibility.
 func (m *Menu) Show(show bool) {
-	m.open = show
+	m.opened = show
 }
 
 // Sets specified function as settings button

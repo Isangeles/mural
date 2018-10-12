@@ -90,11 +90,11 @@ func New() (*MainMenu, error) {
 // Draw draws current menu screen.
 func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	// Menu.
-	if mm.menu.Open() {
+	if mm.menu.Opened() {
 		mm.menu.Draw(win)
 	}
 	// Settings.
-	if mm.settings.Open() {
+	if mm.settings.Opened() {
 		mm.settings.Draw(win)
 	}
 	// Messages.
@@ -105,7 +105,7 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 		}
 	}
 	// Console.
-	if mm.console.Open() {
+	if mm.console.Opened() {
 		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
 		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0), win)
 	}

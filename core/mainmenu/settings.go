@@ -50,7 +50,7 @@ type Settings struct {
 	backButton *mtk.Button
 	resSwitch  *mtk.Switch
 	langSwitch *mtk.Switch
-	open       bool
+	opened     bool
 	changed    bool
 }
 
@@ -102,21 +102,21 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 
 // Update updates all menu elements.
 func (s *Settings) Update(win *pixelgl.Window) {
-	if s.open {
+	if s.Opened() {
 		s.resSwitch.Update(win)
 		s.langSwitch.Update(win)
 		s.backButton.Update(win)
 	}
 }
 
-// Open checks whether menu should be drawn or not.
-func (s *Settings) Open() bool {
-	return s.open
+// Opened checks whether menu should be drawn or not.
+func (s *Settings) Opened() bool {
+	return s.opened
 }
 
 // Show toggles menu visibility.
 func (s *Settings) Show(show bool) {
-	s.open = show
+	s.opened = show
 }
 
 // Sets specified function as back button on-click

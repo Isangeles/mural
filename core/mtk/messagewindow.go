@@ -179,12 +179,16 @@ func (mw *MessageWindow) SetOnCancelFunc(f func(msg *MessageWindow)) {
 
 // Triggered after accept button clicked.
 func (mw *MessageWindow) onAcceptButtonClicked(b *Button) {
-	mw.accept()
+	if mw.Focused() {	
+		mw.accept()
+	}
 }
 
 // Triggered after cancel button clicked.
 func (mw *MessageWindow) onCancelButtonClicked(b *Button) {
-	mw.cancel()
+	if mw.Focused() {
+		mw.cancel()
+	}
 }
 
 // reset resets window to default state(closed, unfocused).

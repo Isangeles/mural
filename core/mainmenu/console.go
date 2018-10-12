@@ -25,7 +25,7 @@ package mainmenu
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
@@ -37,8 +37,9 @@ import (
 
 // Struct for game console.
 type Console struct {
-	textbox *mtk.Textbox
-	open    bool
+	textbox  *mtk.Textbox
+	textedit *mtk.Textedit
+	opened   bool
 }
 
 // newConsole creates game console.
@@ -46,40 +47,58 @@ func newConsole() (*Console, error) {
 	c := new(Console)
 	// Text box.
 	c.textbox = mtk.NewTextbox(mtk.SIZE_MEDIUM, colornames.Grey)
-	
+	// Text input.
+	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textedit.SetOnInputFunc(c.onTexteditInput)
+
 	return c, nil
 }
 
 // Draw draws console.
 func (c *Console) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
 	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
+	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X, drawMin.Y), win)
 }
 
 // Update handles key events and updates console.
 func (c *Console) Update(win *pixelgl.Window) {
 	if win.JustPressed(pixelgl.KeyGraveAccent) {
-		if !c.open {
-			c.open = true
+		if !c.opened {
+			c.Show(true)
 		} else {
-			c.open = false
+			c.Show(false)
 		}
 	}
-
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
 	/*
-	for i := len(engineMsgs)-1; i >= 0; i-- {
-		msgs = append(msgs, engineMsgs[i])
-	}
-        */
+		for i := len(engineMsgs)-1; i >= 0; i-- {
+			msgs = append(msgs, engineMsgs[i])
+		}
+	*/
 	for _, msg := range engineMsgs {
 		msgs = append(msgs, msg)
 	}
 	c.textbox.Insert(msgs)
+	
 	c.textbox.Update(win)
+	c.textedit.Update(win)
 }
 
-// Checks if console is open(should be open).
-func (c *Console) Open() bool {
-	return c.open
+// Show toggles console visibility.
+func (c *Console) Show(show bool) {
+	c.opened = show
+	c.textedit.Focus(show)
+	c.textedit.Clear()
+}
+
+// Checks if console is open.
+func (c *Console) Opened() bool {
+	return c.opened
+}
+
+// Triggered after accept input in text edit.
+func (c *Console) onTexteditInput(t *mtk.Textedit) {
+	// TODO: handle user input.
+	t.Clear()
 }

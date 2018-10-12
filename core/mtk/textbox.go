@@ -34,12 +34,12 @@ import (
 	//"golang.org/x/image/colornames"
 )
 
-// Struct for textboxes
+// Struct for textboxes.
 type Textbox struct {
 	bg          *imdraw.IMDraw
 	color       color.Color
 	textarea    *text.Text
-	bgHeight    float64
+	drawArea    pixel.Rect // updated at every draw
 	textContent []string
 	visibleText []string
 	startID     int
@@ -62,16 +62,8 @@ func NewTextbox(fontSize Size, color color.Color) (*Textbox) {
 // Draw draws textbox.
 func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	// Background.
-	// TODO: use color from constructor.
-	tb.bg.Clear()
-	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	tb.bg.Push(drawArea.Min)
-	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	tb.bg.Push(drawArea.Max)
-	tb.bg.Rectangle(0)
-	tb.bg.Draw(t)
-	tb.bgHeight = drawArea.Max.Y
-
+	tb.drawArea = drawArea
+	tb.drawIMBackground(t)
 	// Text content.
 	tb.textarea.Draw(t, pixel.IM.Moved(pixel.V(drawArea.Min.X,
 		drawArea.Max.Y - tb.textarea.BoundsOf("AA").H()))) 
@@ -91,6 +83,18 @@ func (t *Textbox) Update(win *pixelgl.Window) {
 			t.updateTextVisibility()
 		}
 	}
+}
+
+// drawIMBackground draws IMDraw background in size of draw area.
+func (tb *Textbox) drawIMBackground(t pixel.Target) {
+	// TODO: use color from constructor.
+	tb.bg.Clear()
+	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	tb.bg.Push(tb.drawArea.Min)
+	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	tb.bg.Push(tb.drawArea.Max)
+	tb.bg.Rectangle(0)
+	tb.bg.Draw(t)
 }
 
 // Bounds returns size parameters of textbox textarea.
@@ -131,7 +135,7 @@ func (t *Textbox) updateTextVisibility() {
 		if i < t.startID {
 			continue
 		}
-		if visibleTextHeight > t.bgHeight {
+		if visibleTextHeight > t.drawArea.Max.Y {
 			break;
 		}
 		

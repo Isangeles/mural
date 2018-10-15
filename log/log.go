@@ -21,17 +21,18 @@
  *
  */
 
-// Package with app log.
+// Package with loggers for flame engine log.
 package log
 
 import (
 	"log"
 
-	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core/enginelog"
 )
 
 var (
-	Inf *log.Logger = log.New(flame.InfLog, "mural>", 0)
-	Err *log.Logger = log.New(flame.ErrLog, "mural>", 0)
-	Dbg *log.Logger = log.New(flame.DbgLog, "mural-debug>", 0)
+	Inf *log.Logger = log.New(enginelog.InfLog, "mural>", 0)
+	Err *log.Logger = log.New(enginelog.ErrLog, "mural-error>", 0)
+	Dbg *log.Logger = log.New(enginelog.DbgLog, "mural-debug>", 0)
+	Cli *log.Logger = log.New(enginelog.InfLog, "mural-cli", 0)
 )

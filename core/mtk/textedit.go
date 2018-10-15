@@ -104,6 +104,11 @@ func (te *Textedit) Clear() {
 	te.text = ""
 }
 
+// Text return current value of text edit.
+func (te *Textedit) Text() string {
+	return te.text
+}
+
 // SetOnInputFunc sets callback function triggered after
 // input in text edit was accepted(i.e. enter key was pressed).
 func (te *Textedit) SetOnInputFunc(f func(t *Textedit)) {

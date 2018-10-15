@@ -30,9 +30,12 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
+	"github.com/isangeles/flame/cmd/ci"
 	"github.com/isangeles/flame/core/enginelog"
 
+	"github.com/isangeles/mural/core/cli"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for game console.
@@ -71,7 +74,7 @@ func (c *Console) Update(win *pixelgl.Window) {
 	}
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
-	/*
+	/* 
 		for i := len(engineMsgs)-1; i >= 0; i-- {
 			msgs = append(msgs, engineMsgs[i])
 		}
@@ -97,8 +100,20 @@ func (c *Console) Opened() bool {
 	return c.opened
 }
 
+// Execute executes specified text command.
+func (c *Console) Execute(line string) {
+	log.Cli.Printf(">%s", line)
+	cmd, err := cli.NewCommand(line)
+	if err != nil {
+		log.Err.Printf("invalid_input:%s", line)
+		return
+	}
+	res, out := ci.HandleCommand(cmd)
+	log.Cli.Printf("[%d]:%s", res, out)
+}
+
 // Triggered after accept input in text edit.
 func (c *Console) onTexteditInput(t *mtk.Textedit) {
-	// TODO: handle user input.
+	c.Execute(t.Text())
 	t.Clear()
 }

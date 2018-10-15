@@ -104,8 +104,9 @@ func (t *Textbox) Bounds() pixel.Rect {
 
 // Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
+	t.Clear()
 	for _, txt := range text {
-		t.textContent = append(t.textContent, txt.String())
+		t.Add(txt.String())
 	}
 	t.updateTextVisibility()
 }
@@ -122,6 +123,12 @@ func (t *Textbox) Add(line string) {
 	t.updateTextVisibility()
 }
 
+// Clear clears textbox.
+func (t *Textbox) Clear() {
+	t.textContent = []string{}
+	t.textarea.Clear()
+}
+
 // updateTextVisibility updates content of visible
 // text area.
 func (t *Textbox) updateTextVisibility() {
@@ -132,6 +139,7 @@ func (t *Textbox) updateTextVisibility() {
 	)
 	
 	for i := 0; i < len(t.textContent); i++ {
+		line := t.textContent[i]
 		if i < t.startID {
 			continue
 		}
@@ -139,11 +147,10 @@ func (t *Textbox) updateTextVisibility() {
 			break;
 		}
 		
-		line := t.textContent[i]
 		visibleText = append(visibleText, line)
-		visibleTextHeight += t.textarea.BoundsOf(line).W()
+		visibleTextHeight += t.textarea.BoundsOf(line).W()/2
 	}
 	for _, txt := range visibleText {
-		fmt.Fprintln(t.textarea, txt)
+		fmt.Fprintln(t.textarea, ">" + txt)
 	}
 }

@@ -58,6 +58,8 @@ type Switch struct {
 	size                    Size
 	color                   color.Color
 	index                   int
+	focused                 bool
+	disabled                bool
 	values                  []SwitchValue
 	onChange                func(s *Switch)
 }
@@ -122,6 +124,9 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates switch and all elements.
 func (s *Switch) Update(win *pixelgl.Window) {
+	if s.Disabled() {
+		return
+	}
 	s.prevButton.Update(win)
 	s.nextButton.Update(win)
 }
@@ -134,6 +139,28 @@ func (s *Switch) drawIMBackground(t pixel.Target) {
 	s.bgDraw.Push(s.drawArea.Max)
 	s.bgDraw.Rectangle(0)
 	s.bgDraw.Draw(t)
+}
+
+// Focus toggles focus on element.
+func (s *Switch) Focus(focus bool) {
+	s.focused = focus
+}
+
+// Focused checks whether switch is focused.
+func (s *Switch) Focused() bool {
+	return s.focused
+}
+
+// Active toggles switch activity.
+func (s *Switch) Active(active bool) {
+	s.prevButton.Active(active)
+	s.nextButton.Active(active)
+	s.disabled = !active
+}
+
+// Disabled checks whether switch is active.
+func (s *Switch) Disabled() bool {
+	return s.disabled
 }
 
 // Frame returns switch background size, in form

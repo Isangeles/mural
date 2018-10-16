@@ -26,6 +26,7 @@ package mtk
 import (
 	"fmt"
 	"image/color"
+	"strings"
 
 	"golang.org/x/image/colornames"
 
@@ -37,18 +38,21 @@ import (
 
 // Button struct for UI button.
 type Button struct {
-	bgSpr     *pixel.Sprite
-	bgDraw    *imdraw.IMDraw
-	label     *text.Text
-	info      *InfoWindow
-	size      Size
-	shape     Shape
-	color     color.Color
-	colorPush color.Color
-	pressed   bool
-	focused   bool
-	drawArea  pixel.Rect // updated on each draw
-	onClick   func(b *Button)
+	bgSpr      *pixel.Sprite
+	bgDraw     *imdraw.IMDraw
+	label      *text.Text
+	info       *InfoWindow
+	size       Size
+	shape      Shape
+	color      color.Color
+	colorPush  color.Color
+	colorHover color.Color
+	pressed    bool
+	focused    bool
+	hovered    bool
+	disabled   bool
+	drawArea   pixel.Rect // updated on each draw
+	onClick    func(b *Button)
 }
 
 // NewButton creates new instance of button with specified size, color and
@@ -62,10 +66,15 @@ func NewButton(size Size, shape Shape, color color.Color,
 	button.shape = shape
 	button.color = color
 	button.colorPush = colornames.Grey
+	button.colorHover = colornames.Crimson
 	// Label.
 	font := MainFont(button.size)
 	atlas := Atlas(&font)
 	button.label = text.New(pixel.V(0, 0), atlas)
+	// If label too wide, then split to more lines.
+	if button.label.BoundsOf(labelText).W() > button.Frame().W() {
+		labelText = strings.Replace(labelText, " ", "\n", 1)
+	}
 	labelMariginX := (-button.label.BoundsOf(labelText).Max.X) / 2
 	button.label.Orig = pixel.V(labelMariginX, 0)
 	button.label.Clear()
@@ -106,31 +115,37 @@ func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
 	b.drawArea = MatrixToDrawArea(matrix, b.Frame())
 	// Drawing background.
-	if b.pressed {
-		if b.bgSpr != nil {
-			b.bgSpr.DrawColorMask(t, matrix, colornames.Gray)
-		} else {
-			b.drawIMBackground(t, b.colorPush)
-		}
-	} else {
-		if b.bgSpr != nil {
+	bgColor := b.color
+	if b.pressed || b.Disabled() {
+		bgColor = b.colorPush
+	} else if b.hovered {
+		bgColor = b.colorHover
+	}
+	if b.bgSpr != nil {
+		if bgColor == nil {
 			b.bgSpr.Draw(t, matrix)
 		} else {
-			b.drawIMBackground(t, b.color)
+			b.bgSpr.DrawColorMask(t, matrix, bgColor)
 		}
+	} else {
+		b.drawIMBackground(t, bgColor)
 	}
 	// Drawing label.
 	if b.label != nil {
 		b.label.Draw(t, matrix)
 	}
 	// Info window.
-	if b.info != nil && b.focused {
+	if b.info != nil && b.hovered {
 		b.info.Draw(t)
 	}
 }
 
 // Update updates button.
 func (b *Button) Update(win *pixelgl.Window) {
+	if b.Disabled() {
+		return
+	}
+	
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		if b.ContainsPosition(win.MousePosition()) {
 			b.pressed = true
@@ -145,12 +160,12 @@ func (b *Button) Update(win *pixelgl.Window) {
 		b.pressed = false
 	}
 	if b.ContainsPosition(win.MousePosition()) {
-		b.focused = true
+		b.hovered = true
 		if b.info != nil {	
 			b.info.Update(win)
 		}
 	} else {
-		b.focused = false
+		b.hovered = false
 	}
 }
 
@@ -173,6 +188,16 @@ func (b *Button) Focus(focus bool) {
 // Focused checks whether buttons is focused.
 func (b *Button) Focused() bool {
 	return b.focused
+}
+
+// Active toggles button active state.
+func (b *Button) Active(active  bool) {
+	b.disabled = !active
+}
+
+// Disabled checks whether button is disabled.
+func (b *Button) Disabled() bool {
+	return b.disabled
 }
 
 // OnClick sets specified function as on-click

@@ -43,6 +43,7 @@ import (
 // with buttons to other menus.
 type Menu struct {
 	title     *text.Text
+	newcharB  *mtk.Button
 	settingsB *mtk.Button
 	exitB     *mtk.Button
 	opened    bool
@@ -58,6 +59,9 @@ func newMenu() (*Menu, error) {
 	m.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(m.title, flame.Mod().Name())
 	// Buttons.
+	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "newchar_b_label"),
+		lang.Text("gui", "newchar_b_info"))
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "settings_b_label"),
 		lang.Text("gui", "settings_b_info"))
@@ -82,8 +86,10 @@ func (m *Menu) Draw(win *pixelgl.Window) {
 		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Buttons.
-	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+	m.newcharB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		titlePos.Y - m.exitB.Frame().Size().Y)))
+	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		m.newcharB.DrawArea().Min.Y - m.newcharB.Frame().Size().Y)))
 	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		m.settingsB.DrawArea().Min.Y - m.settingsB.Frame().Size().Y)))
 }
@@ -91,6 +97,7 @@ func (m *Menu) Draw(win *pixelgl.Window) {
 // Update updates all menu elements.
 func (m *Menu) Update(win *pixelgl.Window) {
 	if m.Opened() {
+		m.newcharB.Update(win)
 		m.settingsB.Update(win)
 		m.exitB.Update(win)
 	}

@@ -40,6 +40,8 @@ type MessageWindow struct {
 	bg           *imdraw.IMDraw
 	drawArea     pixel.Rect
 	size         Size
+	color        color.Color
+	colorDisable color.Color
 	textbox      *Textbox
 	acceptButton *Button
 	cancelButton *Button
@@ -47,6 +49,7 @@ type MessageWindow struct {
 	focused      bool
 	accepted     bool
 	dismissed    bool
+	disabled     bool
 	onAccept     func(msg *MessageWindow)
 	onCancel     func(msg *MessageWindow)
 }
@@ -57,6 +60,8 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow, error) {
 	// Background.
 	mw.bg = imdraw.New(nil)
 	mw.size = size
+	mw.color = colornames.Grey
+	mw.colorDisable = colornames.Darkgrey
 	// Textbox.
 	textbox := NewTextbox(SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
@@ -86,9 +91,69 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow, error) {
 	return mw, nil
 }
 
+// Draw draws window.
+func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
+	// Calculating draw area.
+	mw.drawArea = MatrixToDrawArea(matrix, mw.Frame())
+	// Background.
+	if mw.Disabled() {
+		mw.drawIMBackground(t, mw.colorDisable)
+	} else {
+		mw.drawIMBackground(t, mw.color)
+	}
+	// Buttons.
+	mw.acceptButton.Draw(t, pixel.IM.Moved(PosBR(mw.acceptButton.Frame(),
+		pixel.V(mw.drawArea.Max.X, mw.drawArea.Min.Y))))
+	if mw.cancelButton != nil {
+		mw.cancelButton.Draw(t, pixel.IM.Moved(PosBL(mw.acceptButton.Frame(),
+		mw.drawArea.Min)))
+	}
+	// Textbox.
+	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
+		mw.acceptButton.DrawArea().Max.Y, mw.drawArea.Max.X, mw.drawArea.Max.Y)
+	mw.textbox.Draw(textboxDrawArea, t)
+}
+
+// drawIMBackround Draws IMDraw background.
+func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
+	mw.bg.Color = pixel.ToRGBA(color)
+	mw.bg.Push(mw.drawArea.Min)
+	mw.bg.Color = pixel.ToRGBA(color)
+	mw.bg.Push(mw.drawArea.Max)
+	mw.bg.Rectangle(0)
+	mw.bg.Draw(t)
+}
+
+// Update handles key press events.
+func (mw *MessageWindow) Update(win *pixelgl.Window) {
+	if mw.Disabled() {
+		return
+	}
+	
+	if mw.Focused() {
+		if win.JustPressed(pixelgl.KeyEscape) {
+			mw.cancel()
+		}
+		if win.JustPressed(pixelgl.KeyEnter) {
+			mw.accept()
+		}
+	}
+
+	mw.textbox.Update(win)
+	mw.acceptButton.Update(win)
+	if mw.cancelButton != nil {
+		mw.cancelButton.Update(win)
+	}
+}
+
 // Show toggles window visibility.
 func (mw *MessageWindow) Show(show bool) {
 	mw.opened = show
+}
+
+// Active toggles message active state.
+func (mw *MessageWindow) Active(active bool) {
+	mw.disabled = !active
 }
 
 // Focus sets or removes focus from window.
@@ -116,48 +181,9 @@ func (mw *MessageWindow) Accepted() bool {
 	return mw.accepted
 }
 
-// Draw draws window.
-func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
-	// Calculating draw area.
-	mw.drawArea = MatrixToDrawArea(matrix, mw.Frame())
-	// Background.
-	mw.drawIMBackground(t, colornames.Grey)
-	// Buttons.
-	mw.acceptButton.Draw(t, pixel.IM.Moved(PosBR(mw.acceptButton.Frame(),
-		pixel.V(mw.drawArea.Max.X, mw.drawArea.Min.Y))))
-	if mw.cancelButton != nil {
-		mw.cancelButton.Draw(t, pixel.IM.Moved(PosBL(mw.acceptButton.Frame(),
-		mw.drawArea.Min)))
-	}
-	// Textbox.
-	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
-		mw.acceptButton.DrawArea().Max.Y, mw.drawArea.Max.X, mw.drawArea.Max.Y)
-	mw.textbox.Draw(textboxDrawArea, t)
-}
-
-// drawIMBackround Draws IMDraw background.
-func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
-	mw.bg.Color = pixel.ToRGBA(color)
-	mw.bg.Push(mw.drawArea.Min)
-	mw.bg.Color = pixel.ToRGBA(color)
-	mw.bg.Push(mw.drawArea.Max)
-	mw.bg.Rectangle(0)
-	mw.bg.Draw(t)
-}
-
-// Update handles key press events.
-func (mw *MessageWindow) Update(win *pixelgl.Window) {
-	if mw.Focused() {
-		if win.JustPressed(pixelgl.KeyEscape) {
-			mw.cancel()
-		}
-	}
-
-	mw.textbox.Update(win)
-	mw.acceptButton.Update(win)
-	if mw.cancelButton != nil {
-		mw.cancelButton.Update(win)
-	}
+// Disabled checks whether message is unactive.
+func (mw *MessageWindow) Disabled() bool {
+	return mw.disabled
 }
 
 // Frame resturns message window size bounds.

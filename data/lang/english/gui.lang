@@ -5,6 +5,8 @@ cancel_b_label:Cancel;
 back_b_label:Back;
 settings_b_label:Settings;
 settings_b_info:Open settings menu.;
+newchar_b_label:New character;
+newchar_b_info:Create new character.;
 settings_menu_title:Settings;
 resolution_s_label:Resolution;
 lang_s_label:Language;

@@ -111,7 +111,7 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 }
 
 // Update updates current menu screen.
-func (mm *MainMenu) Update(win *pixelgl.Window) {
+func (mm *MainMenu) Update(win *pixelgl.Window) {gg
 	mm.menu.Update(win)
 	mm.settings.Update(win)
 	mm.console.Update(win)

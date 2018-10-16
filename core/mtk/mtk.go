@@ -92,6 +92,8 @@ func (s Size) ButtonSize(sh Shape) pixel.Rect {
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	case s == SIZE_MEDIUM && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(100), ConvSize(50))
+	case s == SIZE_BIG && sh == SHAPE_RECTANGLE:
+		return pixel.R(0, 0, ConvSize(120), ConvSize(70))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	}

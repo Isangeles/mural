@@ -131,6 +131,8 @@ func (t *Textbox) Clear() {
 
 // updateTextVisibility updates content of visible
 // text area.
+// TODO: height of visible text is calculated wrong,
+// value is too big.
 func (t *Textbox) updateTextVisibility() {
 	t.textarea.Clear()
 	var (
@@ -143,14 +145,14 @@ func (t *Textbox) updateTextVisibility() {
 		if i < t.startID {
 			continue
 		}
-		if visibleTextHeight > t.drawArea.Max.Y {
+		if visibleTextHeight > t.drawArea.H() {
 			break;
 		}
 		
 		visibleText = append(visibleText, line)
-		visibleTextHeight += t.textarea.BoundsOf(line).W()/2
+		visibleTextHeight += t.textarea.BoundsOf(line).H()
 	}
 	for _, txt := range visibleText {
-		fmt.Fprintln(t.textarea, ">" + txt)
+		fmt.Fprintln(t.textarea, txt)
 	}
 }

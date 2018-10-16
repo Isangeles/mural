@@ -41,6 +41,7 @@ type Textedit struct {
 	input    *text.Text
 	text     string
 	focused  bool
+	disabled bool
 	onInput  func(t *Textedit)
 }
 
@@ -70,6 +71,9 @@ func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 
 // Update updates text edit.
 func (te *Textedit) Update(win *pixelgl.Window) {
+	if te.Disabled() {
+		return
+	}
 	if te.focused {
 		if win.JustPressed(pixelgl.KeyEnter) {
 			if te.onInput != nil {	
@@ -96,6 +100,16 @@ func (te *Textedit) Focus(focus bool) {
 // Focused checks whether text edit is focused.
 func (te *Textedit) Focused() bool {
 	return te.focused
+}
+
+// Active toggles field activity.
+func (te *Textedit) Active(active bool) {
+	te.disabled = !active
+}
+
+// Disabled checks whether field is disabled.
+func (te *Textedit) Disabled() bool {
+	return te.disabled
 }
 
 // Clear clears text edit input.

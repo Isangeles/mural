@@ -50,7 +50,7 @@ type Menu struct {
 	exitReq   bool
 }
 
-// newMenu returns new menu.
+// newMenu creates new menu.
 func newMenu() (*Menu, error) {
 	m := new(Menu)
 	// Title.
@@ -106,12 +106,12 @@ func (m *Menu) Update(win *pixelgl.Window) {
 	}
 }
 
-// Open checks if menu should be displayed.
+// Opened checks whether menu is open.
 func (m *Menu) Opened() bool {
 	return m.opened
 }
 
-// Toggles menu visibility.
+// Show toggles menu visibility.
 func (m *Menu) Show(show bool) {
 	m.opened = show
 }
@@ -120,6 +120,12 @@ func (m *Menu) Show(show bool) {
 // on-click callback function.
 func (m *Menu) SetOnSettingsButtonClickedFunc(f func(b *mtk.Button)) {
 	m.settingsB.SetOnClickFunc(f)
+}
+
+// Sets specified function as new character button
+// on-click callback function.
+func (m *Menu) SetOnNewCharButtonClickedFunc(f func(b *mtk.Button)) {
+	m.newcharB.SetOnClickFunc(f)
 }
 
 // Triggered on exit button clicked.

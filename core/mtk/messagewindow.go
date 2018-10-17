@@ -139,6 +139,11 @@ func (mw *MessageWindow) Update(win *pixelgl.Window) {
 		}
 	}
 
+	if mw.DrawArea().Contains(win.MousePosition()) {
+		if win.JustPressed(pixelgl.MouseButtonLeft) {
+			mw.Focus(true)
+		}
+	}
 	mw.textbox.Update(win)
 	mw.acceptButton.Update(win)
 	if mw.cancelButton != nil {
@@ -189,6 +194,11 @@ func (mw *MessageWindow) Disabled() bool {
 // Frame resturns message window size bounds.
 func (mw *MessageWindow) Frame() pixel.Rect {
 	return mw.size.MessageWindowSize()
+}
+
+// DrawArea returns size of current draw area.
+func (mw *MessageWindow) DrawArea() pixel.Rect {
+	return mw.drawArea
 }
 
 // SetOnAcceptFunc sets specified function as function triggered after

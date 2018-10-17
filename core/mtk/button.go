@@ -200,7 +200,7 @@ func (b *Button) Disabled() bool {
 	return b.disabled
 }
 
-// OnClick sets specified function as on-click
+// SetOnClickFunc sets specified function as on-click
 // callback function.
 func (b *Button) SetOnClickFunc(callback func(b *Button)) {
 	b.onClick = callback

@@ -40,10 +40,15 @@ import (
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mainmenu"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 const (
 	NAME, VERSION = "Mural", "0.0.0"
+)
+
+var (
+	focus = new(mtk.Focus)
 )
 
 // On init.
@@ -113,9 +118,9 @@ func run() {
 	for !win.Closed() {
 		//dt := time.Since(last).Seconds()
 		//last = time.Now()
-
+		// Update.
 		mainMenu.Update(win)
-
+		// Draw.
 		win.Clear(colornames.Black)
 		mainMenu.Draw(win)
 

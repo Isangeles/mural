@@ -121,7 +121,7 @@ func (s *Settings) Show(show bool) {
 
 // Sets specified function as back button on-click
 // callback function.
-func (s *Settings) SetOnBackButtonClickedFunc(f func(b *mtk.Button)) {
+func (s *Settings) SetOnBackFunc(f func(b *mtk.Button)) {
 	s.backButton.SetOnClickFunc(f)
 }
 

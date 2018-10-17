@@ -197,8 +197,8 @@ func (s *Switch) Find(value interface{}) int {
 
 // SetIndex sets value with specified index as current value
 // of this switch. If specified value is bigger than maximal
-// possible index then index of last value is set, if specified
-// index is smaller than minimal then index of first value is set. 
+// possible index, then index of last value is set, if specified
+// index is smaller than minimal, then index of first value is set. 
 func (s *Switch) SetIndex(index int) {
 	if index > len(s.values)-1 {
 		s.index = len(s.values)-1

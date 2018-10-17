@@ -123,6 +123,12 @@ func (te *Textedit) Text() string {
 	return te.text
 }
 
+// SetText sets specified text as current value of
+// text edit field.
+func (te *Textedit) SetText(text string) {
+	te.text = text
+}
+
 // SetOnInputFunc sets callback function triggered after
 // input in text edit was accepted(i.e. enter key was pressed).
 func (te *Textedit) SetOnInputFunc(f func(t *Textedit)) {

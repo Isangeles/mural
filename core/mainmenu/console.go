@@ -40,9 +40,10 @@ import (
 
 // Struct for game console.
 type Console struct {
-	textbox  *mtk.Textbox
-	textedit *mtk.Textedit
-	opened   bool
+	textbox   *mtk.Textbox
+	textedit  *mtk.Textedit
+	opened    bool
+	lastInput string
 }
 
 // newConsole creates game console.
@@ -71,6 +72,9 @@ func (c *Console) Update(win *pixelgl.Window) {
 		} else {
 			c.Show(false)
 		}
+	}
+	if win.JustPressed(pixelgl.KeyDown) {
+		c.textedit.SetText(c.lastInput)
 	}
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
@@ -103,6 +107,7 @@ func (c *Console) Opened() bool {
 // Execute executes specified text command.
 func (c *Console) Execute(line string) {
 	log.Cli.Printf(">%s", line)
+	c.lastInput = line
 	cmd, err := cli.NewCommand(line)
 	if err != nil {
 		log.Err.Printf("invalid_input:%s", line)

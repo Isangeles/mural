@@ -41,11 +41,12 @@ import (
 // all menu screens(settings menu, new game menu, etc.).
 // Handles switching betwen menus.
 type MainMenu struct {
-	menu      *Menu
-	settings  *Settings
-	console   *Console
-	msgs      []*mtk.MessageWindow
-	userFocus *mtk.Focus
+	menu        *Menu
+	newcharmenu *NewCharacterMenu
+	settings    *Settings
+	console     *Console
+	msgs        *mtk.MessagesQueue
+	userFocus   *mtk.Focus
 }
 
 // New returns new main menu
@@ -54,24 +55,39 @@ func New() (*MainMenu, error) {
 	// Menu.
 	m, err := newMenu()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail_to_create_main_menu:%v",
+			err)
 	}
+	m.SetOnNewCharButtonClickedFunc(mm.onNewCharButtonClicked)
 	m.SetOnSettingsButtonClickedFunc(mm.onSettingsButtonClicked)
 	mm.menu = m
+	// New character menu.
+	ncm, err := newNewCharacterMenu()
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_new_character_menu:%v",
+			err)
+	}
+	ncm.SetOnBackFunc(mm.onNewCharBackButtonClicked)
+	mm.newcharmenu = ncm
 	// Settings.
 	s, err := newSettings()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail_to_create_settings_menu:%v",
+			err)
 	}
-	s.SetOnBackButtonClickedFunc(mm.onCloseSettingsButtonClicked)
+	s.SetOnBackFunc(mm.onCloseSettingsButtonClicked)
 	mm.settings = s
 	// Console.
 	c, err := newConsole()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail_to_create_console:%v",
+			err)
 	}
 	mm.console = c
 	// Messages & focus test.
+	mm.userFocus = new(mtk.Focus)
+	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
+	/*
 	for i := 0; i < 2; i++ {
 		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 			fmt.Sprintf("This is test UI message.\n%d", i))
@@ -79,10 +95,10 @@ func New() (*MainMenu, error) {
 			return nil, err
 		}
 		msg.Show(true)
-		mm.msgs = append(mm.msgs, msg)
+		mm.msgs.Append(msg)
 	}
+        */
 
-	mm.userFocus = new(mtk.Focus)
 	mm.menu.Show(true)
 	return mm, nil
 }
@@ -93,16 +109,16 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	if mm.menu.Opened() {
 		mm.menu.Draw(win)
 	}
+	// New character menu.
+	if mm.newcharmenu.Opened() {
+		mm.newcharmenu.Draw(win)
+	}
 	// Settings.
 	if mm.settings.Opened() {
 		mm.settings.Draw(win)
 	}
 	// Messages.
-	for _, msg := range mm.msgs {
-		if msg.Opened() {
-			msg.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
-		}
-	}
+	mm.msgs.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
 	// Console.
 	if mm.console.Opened() {
 		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
@@ -113,28 +129,22 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *pixelgl.Window) {
 	mm.menu.Update(win)
+	mm.newcharmenu.Update(win)
 	mm.settings.Update(win)
 	mm.console.Update(win)
-	for i, msg := range mm.msgs {
-		if msg.Opened() {
-			if i == len(mm.msgs)-1 {
-				msg.Active(true)
-				mm.userFocus.Focus(msg)
-			} else {
-				msg.Active(false)
-			}
-			msg.Update(win)
-		}
-		if msg.Dismissed() {
-			mm.msgs = append(mm.msgs[:i], mm.msgs[i+1:]...) // remove dismissed message
-		}
-	}
+	mm.msgs.Update(win)
 }
 
 // OpenMenu opens menu.
 func (mm *MainMenu) OpenMenu() {
 	mm.HideMenus()
 	mm.menu.Show(true)
+}
+
+// OpenNewCharMenu opens new character creation menu.
+func (mm *MainMenu) OpenNewCharMenu() {
+	mm.HideMenus()
+	mm.newcharmenu.Show(true)
 }
 
 // OpenSettings opens settings menu.
@@ -146,6 +156,7 @@ func (mm *MainMenu) OpenSettings() {
 // HideMenus hides all menus.
 func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
+	mm.newcharmenu.Show(false)
 	mm.settings.Show(false)
 }
 
@@ -161,7 +172,7 @@ func (mm *MainMenu) CloseSettings() {
 			return
 		}
 		msg.Show(true)
-		mm.msgs = append(mm.msgs, msg)
+		mm.msgs.Append(msg)
 		mm.settings.Apply()
 	}
 	mm.OpenMenu()
@@ -181,7 +192,7 @@ func (mm *MainMenu) CloseSettingsWithDialog() {
 		dlg.SetOnAcceptFunc(mm.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(mm.onSettingsApplyCancel)
 		dlg.Show(true)
-		mm.msgs = append(mm.msgs, dlg)
+		mm.msgs.Append(dlg)
 	} else {
 		mm.CloseSettings()
 	}	
@@ -205,10 +216,16 @@ func (mm *MainMenu) onSettingsApplyCancel(m *mtk.MessageWindow) {
 	mm.OpenMenu()
 }
 
-// onMenuButtonClicked closes all currently open
+// onNewCharBackButtonClicked closes all currently open
 // menus and opens main menu.
-func (mm *MainMenu) onMenuButtonClicked(b *mtk.Button) {
+func (mm *MainMenu) onNewCharBackButtonClicked(b *mtk.Button) {
 	mm.OpenMenu()
+}
+
+// onNewCharButtonClicked closes all currently open
+// menus and opens new character creation  menu.
+func (mm *MainMenu) onNewCharButtonClicked(b *mtk.Button) {
+	mm.OpenNewCharMenu()
 }
 
 // onSettingsButtonClicked closes all currently open

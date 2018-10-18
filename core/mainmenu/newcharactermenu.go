@@ -40,14 +40,16 @@ import (
 // NewCharacterMenu struct represents new game character
 // creation screen.
 type NewCharacterMenu struct {
+	mainmenu   *MainMenu  
 	title      *text.Text
 	backButton *mtk.Button
-	opened    bool
+	opened     bool
 }
 
 // newNewCharacterMenu creates new character creation menu.
-func newNewCharacterMenu() (*NewCharacterMenu, error) {
+func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm := new(NewCharacterMenu)
+	ncm.mainmenu = mainmenu
 	// Title.
 	font := mtk.MainFont(mtk.SIZE_BIG)
 	atlas := mtk.Atlas(&font)
@@ -56,6 +58,7 @@ func newNewCharacterMenu() (*NewCharacterMenu, error) {
 	// Button.
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
+	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
 	
 	return ncm, nil
 }
@@ -88,8 +91,7 @@ func (ncm *NewCharacterMenu) Opened() bool {
 	return ncm.opened
 }
 
-// Sets scpecified function as back button on-click callback
-// function.
-func (ncm *NewCharacterMenu) SetOnBackFunc(f func(b *mtk.Button)) {
-	ncm.backButton.SetOnClickFunc(f)
+// Triggered after back button clicked.
+func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
+	ncm.mainmenu.OpenMenu()
 }

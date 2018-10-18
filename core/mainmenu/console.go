@@ -30,10 +30,10 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
-	"github.com/isangeles/flame/cmd/ci"
+	"github.com/isangeles/flame/cmd/command"
 	"github.com/isangeles/flame/core/enginelog"
 
-	"github.com/isangeles/mural/core/cli"
+	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -108,7 +108,7 @@ func (c *Console) Opened() bool {
 func (c *Console) Execute(line string) {
 	log.Cli.Printf(">%s", line)
 	c.lastInput = line
-	cmd, err := cli.NewCommand(line)
+	cmd, err := command.NewStdCommand(line)
 	if err != nil {
 		log.Err.Printf("invalid_input:%s", line)
 		return

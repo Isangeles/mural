@@ -25,8 +25,6 @@ package mainmenu
 
 import (
 	"fmt"
-	//"strings"
-	//"strconv"
 	
 	"golang.org/x/image/colornames"
 	
@@ -34,9 +32,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 
-	//"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
-	//"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
@@ -44,8 +40,8 @@ import (
 
 // Settings struct represents main menu
 // settings screen.
-// TODO: lang switch.
 type Settings struct {
+	mainmenu   *MainMenu
 	title      *text.Text
 	backButton *mtk.Button
 	resSwitch  *mtk.Switch
@@ -56,8 +52,9 @@ type Settings struct {
 
 // newSettings returns new settings screen
 // instance.
-func newSettings() (*Settings, error) {
+func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s := new(Settings)
+	s.mainmenu = mainmenu
 	// Title.
 	font := mtk.MainFont(mtk.SIZE_BIG)
 	atlas := mtk.Atlas(&font)
@@ -66,6 +63,7 @@ func newSettings() (*Settings, error) {
 	// Buttons & switches.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "back_b_label"), "")
+	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	var resSwitchValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		resSwitchValues = append(resSwitchValues,
@@ -119,12 +117,6 @@ func (s *Settings) Show(show bool) {
 	s.opened = show
 }
 
-// Sets specified function as back button on-click
-// callback function.
-func (s *Settings) SetOnBackFunc(f func(b *mtk.Button)) {
-	s.backButton.SetOnClickFunc(f)
-}
-
 // Apply applies current settings values.
 func (s *Settings) Apply() {
 	// Resolution.
@@ -148,7 +140,58 @@ func (s *Settings) Changed() bool {
 	return s.changed
 }
 
+// close closes settings menu and displays message
+// about required game restart if settings was changed.
+func (s *Settings) close() {
+	if s.Changed() {
+		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_reset_msg"))
+		if err != nil {
+			log.Err.Printf("settings:fail_to_create_settings_change_message")
+			s.mainmenu.OpenMenu()
+			return
+		}
+		s.mainmenu.ShowMessage(msg)
+		s.Apply()
+	}
+	s.mainmenu.OpenMenu()
+}
+
+// closeWithDialog creates settings apply dialog and puts it on
+// main menu messages list.
+func (s *Settings) closeWithDialog() {
+	if s.Changed() {
+		dlg, err := mtk.NewDialogWindow(mtk.SIZE_SMALL,
+			lang.Text("gui", "settings_save_msg"))
+		if err != nil {
+			log.Err.Printf("settings:fail_to_create_settings_confirm_dialog")
+			s.close() 
+			return
+		}
+		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
+		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
+		s.mainmenu.ShowMessage(dlg)
+	} else {
+		s.close()
+	}	
+}
+
 // Triggered after settings change.
 func (s *Settings) onSettingsChanged(sw *mtk.Switch) {
 	s.changed = true
+}
+
+// Triggered after back button clicked.
+func (s *Settings) onBackButtonClicked(b *mtk.Button) {
+	s.closeWithDialog()
+}
+
+// Triggered after settings apply dialog accepted.
+func (s *Settings) onSettingsApplyAccept(m *mtk.MessageWindow) {
+	s.close()
+}
+
+// Triggered after settings apply dialog dismissed.
+func (s *Settings) onSettingsApplyCancel(m *mtk.MessageWindow) {
+	s.close()
 }

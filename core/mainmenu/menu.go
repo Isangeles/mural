@@ -42,6 +42,7 @@ import (
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
+	mainmenu  *MainMenu
 	title     *text.Text
 	newcharB  *mtk.Button
 	settingsB *mtk.Button
@@ -51,8 +52,9 @@ type Menu struct {
 }
 
 // newMenu creates new menu.
-func newMenu() (*Menu, error) {
+func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m := new(Menu)
+	m.mainmenu = mainmenu
 	// Title.
 	font := mtk.MainFont(mtk.SIZE_BIG)
 	atlas := mtk.Atlas(&font)
@@ -62,9 +64,11 @@ func newMenu() (*Menu, error) {
 	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newchar_b_label"),
 		lang.Text("gui", "newchar_b_info"))
+	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "settings_b_label"),
 		lang.Text("gui", "settings_b_info"))
+	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
 	//buttonExitBG, err := data.Picture("buttonS.png")
 	//if err != nil {
 	//	return nil, err
@@ -116,16 +120,16 @@ func (m *Menu) Show(show bool) {
 	m.opened = show
 }
 
-// Sets specified function as settings button
-// on-click callback function.
-func (m *Menu) SetOnSettingsButtonClickedFunc(f func(b *mtk.Button)) {
-	m.settingsB.SetOnClickFunc(f)
+// onNewCharButtonClicked closes all currently open
+// menus and opens new character creation  menu.
+func (m *Menu) onNewCharButtonClicked(b *mtk.Button) {
+	m.mainmenu.OpenNewCharMenu()
 }
 
-// Sets specified function as new character button
-// on-click callback function.
-func (m *Menu) SetOnNewCharButtonClickedFunc(f func(b *mtk.Button)) {
-	m.newcharB.SetOnClickFunc(f)
+// onSettingsButtonClicked closes all currently open
+// menus and opens settings menu.
+func (m *Menu) onSettingsButtonClicked(b *mtk.Button) {
+	m.mainmenu.OpenSettings()
 }
 
 // Triggered on exit button clicked.

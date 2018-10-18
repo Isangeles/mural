@@ -31,51 +31,44 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/core/data/text/lang"
-	
-	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/mtk"
 )
 
 // MainMenu struct reperesents container with
 // all menu screens(settings menu, new game menu, etc.).
-// Handles switching betwen menus.
+// Wraps all main menu screens.
 type MainMenu struct {
 	menu        *Menu
 	newcharmenu *NewCharacterMenu
 	settings    *Settings
 	console     *Console
-	msgs        *mtk.MessagesQueue
 	userFocus   *mtk.Focus
+	msgs        *mtk.MessagesQueue
 }
 
 // New returns new main menu
 func New() (*MainMenu, error) {
 	mm := new(MainMenu)
 	// Menu.
-	m, err := newMenu()
+	m, err := newMenu(mm)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_main_menu:%v",
 			err)
 	}
-	m.SetOnNewCharButtonClickedFunc(mm.onNewCharButtonClicked)
-	m.SetOnSettingsButtonClickedFunc(mm.onSettingsButtonClicked)
 	mm.menu = m
 	// New character menu.
-	ncm, err := newNewCharacterMenu()
+	ncm, err := newNewCharacterMenu(mm)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_new_character_menu:%v",
 			err)
 	}
-	ncm.SetOnBackFunc(mm.onNewCharBackButtonClicked)
 	mm.newcharmenu = ncm
 	// Settings.
-	s, err := newSettings()
+	s, err := newSettings(mm)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_settings_menu:%v",
 			err)
 	}
-	s.SetOnBackFunc(mm.onCloseSettingsButtonClicked)
 	mm.settings = s
 	// Console.
 	c, err := newConsole()
@@ -84,9 +77,10 @@ func New() (*MainMenu, error) {
 			err)
 	}
 	mm.console = c
-	// Messages & focus test.
+	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
+	// Messages test.
 	/*
 	for i := 0; i < 2; i++ {
 		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
@@ -160,76 +154,10 @@ func (mm *MainMenu) HideMenus() {
 	mm.settings.Show(false)
 }
 
-// CloseSettings closes settings menu. Also displays message
-// about required game restart if settings was changed.
-func (mm *MainMenu) CloseSettings() {
-	if mm.settings.Changed() {
-		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_reset_msg"))
-		if err != nil {
-			log.Err.Printf("mainmenu:fail_to_create_settings_change_message")
-			mm.OpenMenu()
-			return
-		}
-		msg.Show(true)
-		mm.msgs.Append(msg)
-		mm.settings.Apply()
-	}
-	mm.OpenMenu()
+// ShowMessage adds specified message to messages queue
+// and turns message visible(if not visible already).
+func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
+	m.Show(true)
+	mm.msgs.Append(m)
 }
 
-// CloseSettingsWithDialog creates settings apply dialog and puts it on
-// main menu messages list.
-func (mm *MainMenu) CloseSettingsWithDialog() {
-	if mm.settings.Changed() {
-		dlg, err := mtk.NewDialogWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_save_msg"))
-		if err != nil {
-			log.Err.Printf("mainmenu:fail_to_create_settings_confirm_dialog")
-			mm.CloseSettings() 
-			return
-		}
-		dlg.SetOnAcceptFunc(mm.onSettingsApplyAccept)
-		dlg.SetOnCancelFunc(mm.onSettingsApplyCancel)
-		dlg.Show(true)
-		mm.msgs.Append(dlg)
-	} else {
-		mm.CloseSettings()
-	}	
-}
-
-// closeSettingsConfirm displays dialog window with settings save
-// confirmation.
-func (mm *MainMenu) onCloseSettingsButtonClicked(b *mtk.Button) {
-	mm.CloseSettingsWithDialog()
-}
-
-// onSettingsApplyAccept closes and applies settings. Triggered after
-// accepting settings confirm dialog.
-func (mm *MainMenu) onSettingsApplyAccept(m *mtk.MessageWindow) {
-	mm.CloseSettings()
-}
-
-// onSettingsApplyCancel displays confirm dialog and closes settings
-// without saving. Triggered after rejecting settings confirm dialog.
-func (mm *MainMenu) onSettingsApplyCancel(m *mtk.MessageWindow) {
-	mm.OpenMenu()
-}
-
-// onNewCharBackButtonClicked closes all currently open
-// menus and opens main menu.
-func (mm *MainMenu) onNewCharBackButtonClicked(b *mtk.Button) {
-	mm.OpenMenu()
-}
-
-// onNewCharButtonClicked closes all currently open
-// menus and opens new character creation  menu.
-func (mm *MainMenu) onNewCharButtonClicked(b *mtk.Button) {
-	mm.OpenNewCharMenu()
-}
-
-// onSettingsButtonClicked closes all currently open
-// menus and opens settings menu.
-func (mm *MainMenu) onSettingsButtonClicked(b *mtk.Button) {
-	mm.OpenSettings()
-}

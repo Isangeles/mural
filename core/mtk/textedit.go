@@ -38,6 +38,7 @@ type Textedit struct {
 	bg       *imdraw.IMDraw
 	drawArea pixel.Rect
 	color    color.Color
+	label    *text.Text
 	input    *text.Text
 	text     string
 	focused  bool
@@ -46,15 +47,19 @@ type Textedit struct {
 }
 
 // NewTextecit creates new instance of textedit with specified
-// font size and background color.
-func NewTextedit(fontSize Size, color color.Color) *Textedit {
+// font size, background color and optional label(empty string == no label).
+func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 	t := new(Textedit)
 	// Background.
 	t.bg = imdraw.New(nil)
 	t.color = color
-	// Text input.
+	// Label & Text input.
 	font := MainFont(fontSize)
 	atlas := Atlas(&font)
+	if len(label) > 0 {	
+		t.label = text.New(pixel.V(0, 0), atlas)
+		t.label.WriteString(label)
+	}
 	t.input = text.New(pixel.V(0, 0), atlas)
 
 	return t
@@ -63,9 +68,15 @@ func NewTextedit(fontSize Size, color color.Color) *Textedit {
 // Draw draws text edit.
 func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 	// Background.
-	te.drawArea = drawArea
+	if te.input != nil {
+		te.label.Draw(t, pixel.IM.Moved(drawArea.Min))
+		te.drawArea = pixel.R(drawArea.Min.X, drawArea.Min.Y - te.label.Bounds().H(),
+			drawArea.Max.X, drawArea.Min.Y)
+	} else {	
+		te.drawArea = drawArea
+	}
 	te.drawIMBackground(t)
-	// Text input.
+	// Label & Text input.
 	te.input.Draw(t, pixel.IM.Moved(te.drawArea.Min))
 }
 
@@ -73,6 +84,13 @@ func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 func (te *Textedit) Update(win *pixelgl.Window) {
 	if te.Disabled() {
 		return
+	}
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		if te.DrawArea().Contains(win.MousePosition()) {
+			te.Focus(true)
+		} else {
+			te.Focus(false)
+		}
 	}
 	if te.focused {
 		if win.JustPressed(pixelgl.KeyEnter) {
@@ -127,6 +145,11 @@ func (te *Textedit) Text() string {
 // text edit field.
 func (te *Textedit) SetText(text string) {
 	te.text = text
+}
+
+// DrawArea returns current draw area rectangle.
+func (te *Textedit) DrawArea() pixel.Rect {
+	return te.drawArea
 }
 
 // SetOnInputFunc sets callback function triggered after

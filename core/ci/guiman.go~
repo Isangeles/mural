@@ -1,5 +1,5 @@
 /*
- * interpreter.go
+ * guiman.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -20,30 +20,3 @@
  *
  *
  */
-
-// ci package provides GUI specific command line tools and
-// connection to flame engine commands interpreter.
-package ci
-
-import (
-	flameci "github.com/isangeles/flame/cmd/ci"
-)
-
-const (
-	GUI_MAN = "guiman"
-)
-
-// Handles specified command,
-// returns response code and message.
-func HandleCommand(cmd flameci.Command) (int, string) {
-	switch cmd.Tool() {
-	case GUI_MAN:
-		return handleGUICommand(cmd)
-	case flameci.ENGINE_MAN:
-		return 2, "tool_unavalible:" + cmd.Tool()
-	default:
-		return flameci.HandleCommand(cmd)
-	}
-}
-
-

@@ -42,6 +42,7 @@ import (
 type NewCharacterMenu struct {
 	mainmenu   *MainMenu  
 	title      *text.Text
+	nameEdit   *mtk.Textedit
 	backButton *mtk.Button
 	opened     bool
 }
@@ -55,7 +56,10 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	atlas := mtk.Atlas(&font)
 	ncm.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprint(ncm.title, lang.Text("gui", "newchar_menu_title"))
-	// Button.
+	// Edit fields.
+	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey,
+		lang.Text("gui", "newchar_name_edit_label"))
+	// Buttons.
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
@@ -69,6 +73,9 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 	titlePos := pixel.V(win.Bounds().Center().X,
 		win.Bounds().Max.Y - ncm.title.Bounds().Size().Y)
 	ncm.title.Draw(win, pixel.IM.Moved(titlePos))
+	// Text fields.
+	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(20),
+		titlePos.X + mtk.ConvSize(140), titlePos.Y - mtk.ConvSize(50)), win)
 	// Buttons.
 	ncm.backButton.Draw(win, pixel.IM.Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
@@ -77,6 +84,7 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 // Update updates all menu elements.
 func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 	if ncm.Opened() {
+		ncm.nameEdit.Update(win)
 		ncm.backButton.Update(win)
 	}
 }
@@ -84,6 +92,7 @@ func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 // Show toggles menu visibility.
 func (ncm *NewCharacterMenu) Show(show bool) {
 	ncm.opened = show
+	ncm.nameEdit.Focus(show)
 }
 
 // Opened checks whether menu is open.

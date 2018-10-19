@@ -40,6 +40,7 @@ import (
 )
 
 const (
+	NAME, VERSION = "Mural", "0.0.0"
 	CONF_FILE_NAME string = ".mural"
 )
 

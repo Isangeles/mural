@@ -52,7 +52,7 @@ func newConsole() (*Console, error) {
 	// Text box.
 	c.textbox = mtk.NewTextbox(mtk.SIZE_MEDIUM, colornames.Grey)
 	// Text input.
-	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 
 	return c, nil

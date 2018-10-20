@@ -27,11 +27,20 @@ package mainmenu
 
 import (
 	"fmt"
+	"image/color"
+
+	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/core/mtk"
+)
+
+var (
+	main_color   color.Color = colornames.Grey
+	sec_color    color.Color = colornames.Blue
+	accent_color color.Color = colornames.Red
 )
 
 // MainMenu struct reperesents container with

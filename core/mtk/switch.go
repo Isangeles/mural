@@ -104,6 +104,19 @@ func NewStringSwitch(size Size, color color.Color, label string, values []string
 	return s
 }
 
+// NewIntSwitch creates new instance of switch with IMDraw
+// background and with specified int values to switch.
+func NewIntSwitch(size Size, color color.Color, label string, max int) *Switch {
+	// All int values up to specified max.
+	intValues := make([]SwitchValue, max)
+	for i := 0; i <  max; i++ {
+		intValues[i] = SwitchValue{Label:fmt.Sprint(i+1), Value: i+1}
+	}
+
+	s := NewSwitch(size, color, label, intValues)
+	return s
+}
+
 // Draw draws switch.
 func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.

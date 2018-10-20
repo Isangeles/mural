@@ -14,4 +14,5 @@ settings_save_msg:Save settings?;
 settings_reset_msg:Some changes need game restart.;
 newchar_menu_title:Create new character;
 newchar_name_edit_label:Name:;
+newchar_str_switch_label:Strength;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

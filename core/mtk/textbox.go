@@ -102,9 +102,14 @@ func (t *Textbox) Bounds() pixel.Rect {
 	return t.textarea.Bounds()
 }
 
+// DrawArea returns current draw area of text box
+// background.
+func (t *Textbox) DrawArea() pixel.Rect {
+	return t.drawArea
+}
+
 // Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
-	t.Clear()
 	for _, txt := range text {
 		t.Add(txt.String())
 	}

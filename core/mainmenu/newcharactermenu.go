@@ -25,12 +25,11 @@ package mainmenu
 
 import (
 	"fmt"
-
+	
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 
@@ -41,10 +40,14 @@ import (
 // creation screen.
 type NewCharacterMenu struct {
 	mainmenu   *MainMenu  
-	title      *text.Text
+	title      *mtk.Text
 	nameEdit   *mtk.Textedit
+	pointsBox  *mtk.Textbox
+	strSwitch  *mtk.Switch
 	backButton *mtk.Button
 	opened     bool
+	// Character.
+	attrPoints int
 }
 
 // newNewCharacterMenu creates new character creation menu.
@@ -52,17 +55,19 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm := new(NewCharacterMenu)
 	ncm.mainmenu = mainmenu
 	// Title.
-	font := mtk.MainFont(mtk.SIZE_BIG)
-	atlas := mtk.Atlas(&font)
-	ncm.title = text.New(pixel.V(0, 0), atlas)
-	fmt.Fprint(ncm.title, lang.Text("gui", "newchar_menu_title"))
-	// Edit fields.
-	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey,
+	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"), mtk.SIZE_BIG, 0)
+	// Text fields.
+	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
-	// Buttons.
+	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
+	// Buttons & switches.
+	ncm.strSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_str_switch_label"), 5)
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
+	// Character.
+	ncm.attrPoints = 5
 	
 	return ncm, nil
 }
@@ -74,9 +79,14 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 		win.Bounds().Max.Y - ncm.title.Bounds().Size().Y)
 	ncm.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Text fields.
-	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(20),
-		titlePos.X + mtk.ConvSize(140), titlePos.Y - mtk.ConvSize(50)), win)
-	// Buttons.
+	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
+		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win)
+	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(10),
+		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(50),
+		win.Bounds().Center().Y + mtk.ConvSize(40)), win)
+	// Buttons && switches.
+	ncm.strSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
+		ncm.strSwitch.Frame(), 0)))
 	ncm.backButton.Draw(win, pixel.IM.Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
 }
@@ -86,6 +96,9 @@ func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 	if ncm.Opened() {
 		ncm.nameEdit.Update(win)
 		ncm.backButton.Update(win)
+		ncm.pointsBox.Update(win)
+		ncm.strSwitch.Update(win)
+		ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
 	}
 }
 

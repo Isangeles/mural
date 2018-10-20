@@ -24,15 +24,12 @@
 package mtk
 
 import (
-	"fmt"
 	"image/color"
-	"strings"
 
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"github.com/faiface/pixel/imdraw"
 )
 
@@ -40,7 +37,7 @@ import (
 type Button struct {
 	bgSpr      *pixel.Sprite
 	bgDraw     *imdraw.IMDraw
-	label      *text.Text
+	label      *Text
 	info       *InfoWindow
 	size       Size
 	shape      Shape
@@ -68,17 +65,7 @@ func NewButton(size Size, shape Shape, color color.Color,
 	button.colorPush = colornames.Grey
 	button.colorHover = colornames.Crimson
 	// Label.
-	font := MainFont(button.size)
-	atlas := Atlas(&font)
-	button.label = text.New(pixel.V(0, 0), atlas)
-	// If label too wide, then split to more lines.
-	if button.label.BoundsOf(labelText).W() > button.Frame().W() {
-		labelText = strings.Replace(labelText, " ", "\n", 1)
-	}
-	labelMariginX := (-button.label.BoundsOf(labelText).Max.X) / 2
-	button.label.Orig = pixel.V(labelMariginX, 0)
-	button.label.Clear()
-	fmt.Fprint(button.label, labelText)
+	button.label = NewText(labelText, size, button.Frame().W()) 
 	// Info window.
 	if len(infoText) > 0 {	
 		button.info = NewInfoWindow(infoText)
@@ -95,13 +82,7 @@ func NewButtonSprite(bgPic pixel.Picture, labelText, infoText string) *Button {
 	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
 	button.bgSpr = bg
 	// Label.
-	font := MainFont(SIZE_SMALL)
-	atlas := text.NewAtlas(font, text.ASCII)
-	button.label = text.New(pixel.V(0, 0), atlas)
-	labelMarigin := (-button.label.BoundsOf(labelText).Max.X) / 2
-	button.label.Orig = pixel.V(labelMarigin, 0)
-	button.label.Clear()
-	fmt.Fprint(button.label, labelText)
+	button.label = NewText(labelText, SIZE_SMALL, button.Frame().W()) 
 	// Info window.
 	if len(infoText) > 0 {	
 		button.info = NewInfoWindow(infoText)

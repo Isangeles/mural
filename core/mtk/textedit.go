@@ -68,9 +68,10 @@ func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 // Draw draws text edit.
 func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 	// Background.
-	if te.input != nil {
+	if te.label != nil {
 		te.label.Draw(t, pixel.IM.Moved(drawArea.Min))
-		te.drawArea = pixel.R(drawArea.Min.X, drawArea.Min.Y - te.label.Bounds().H(),
+		te.drawArea = pixel.R(drawArea.Min.X,
+			drawArea.Min.Y - te.label.Bounds().H(),
 			drawArea.Max.X, drawArea.Min.Y)
 	} else {	
 		te.drawArea = drawArea

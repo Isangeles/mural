@@ -177,7 +177,7 @@ func (s *Settings) closeWithDialog() {
 }
 
 // Triggered after settings change.
-func (s *Settings) onSettingsChanged(sw *mtk.Switch) {
+func (s *Settings) onSettingsChanged(sw *mtk.Switch, old, new *mtk.SwitchValue) {
 	s.changed = true
 }
 

@@ -33,6 +33,7 @@ import (
 
 	"github.com/isangeles/flame/core/data/text/lang"
 
+	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -47,27 +48,30 @@ type NewCharacterMenu struct {
 	backButton *mtk.Button
 	opened     bool
 	// Character.
-	attrPoints int
+	attrPoints, attrPointsMax int
 }
 
 // newNewCharacterMenu creates new character creation menu.
 func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm := new(NewCharacterMenu)
 	ncm.mainmenu = mainmenu
+	// Character.
+	ncm.attrPointsMax = 5
+	ncm.attrPoints = ncm.attrPointsMax
 	// Title.
-	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"), mtk.SIZE_BIG, 0)
+	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
+		mtk.SIZE_BIG, 0)
 	// Text fields.
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
 	// Buttons & switches.
 	ncm.strSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_str_switch_label"), 5)
+		lang.Text("gui", "newchar_str_switch_label"), 0, ncm.attrPointsMax)
+	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
-	// Character.
-	ncm.attrPoints = 5
 	
 	return ncm, nil
 }
@@ -116,4 +120,22 @@ func (ncm *NewCharacterMenu) Opened() bool {
 // Triggered after back button clicked.
 func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 	ncm.mainmenu.OpenMenu()
+}
+
+// Triggered after strength value switch changed.
+func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
+	old, new *mtk.SwitchValue) {
+	str, ok := ncm.strSwitch.Value().Value.(int)
+	if !ok {
+		log.Err.Print("new_char_menu:fail_to_retrieve_str_switch_value")
+		return
+	}
+	pts := ncm.attrPointsMax
+	pts -= str
+	if pts >= 0 && pts <= ncm.attrPointsMax {
+		ncm.attrPoints = pts
+	} else {
+		s.SetIndex(s.Find(old.Value))
+	}
+	ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
 }

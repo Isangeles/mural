@@ -110,6 +110,7 @@ func (t *Textbox) DrawArea() pixel.Rect {
 
 // Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
+	t.Clear()
 	for _, txt := range text {
 		t.Add(txt.String())
 	}
@@ -118,6 +119,7 @@ func (t *Textbox) Insert(text []fmt.Stringer) {
 
 // InsertText clears textbox and inserts specified text.
 func (t *Textbox) InsertText(text []string) {
+	t.Clear()
 	t.textContent = text
 	t.updateTextVisibility()
 }
@@ -131,7 +133,7 @@ func (t *Textbox) Add(line string) {
 // Clear clears textbox.
 func (t *Textbox) Clear() {
 	t.textContent = []string{}
-	t.textarea.Clear()
+	t.updateTextVisibility()
 }
 
 // updateTextVisibility updates content of visible

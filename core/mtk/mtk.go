@@ -107,6 +107,8 @@ func (s Size) SwitchSize() pixel.Rect {
 		return pixel.R(0, 0, ConvSize(170), ConvSize(50))
 	case s == SIZE_MEDIUM:
 		return pixel.R(0, 0, ConvSize(200), ConvSize(70))
+	case s == SIZE_BIG:
+		return pixel.R(0, 0, ConvSize(250), ConvSize(110))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	}
@@ -119,6 +121,18 @@ func (s Size) MessageWindowSize() pixel.Rect {
 		return pixel.R(0, 0, ConvSize(400), ConvSize(300))
 	default:
 		return pixel.R(0, 0, ConvSize(400), ConvSize(300))
+	}
+}
+
+// PictureSize returns size parameters for picture view.
+func (s Size) PictureSize() pixel.Rect {
+	switch {
+	case s <= SIZE_MEDIUM:
+		return pixel.R(0, 0, ConvSize(40), ConvSize(40))
+	case s <= SIZE_BIG:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(70))
+	default:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(70))
 	}
 }
 

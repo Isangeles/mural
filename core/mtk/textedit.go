@@ -26,6 +26,8 @@ package mtk
 import (
 	//"fmt"
 	"image/color"
+
+	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -35,15 +37,16 @@ import (
 
 // Struct for text edit fields.
 type Textedit struct {
-	bg       *imdraw.IMDraw
-	drawArea pixel.Rect
-	color    color.Color
-	label    *text.Text
-	input    *text.Text
-	text     string
-	focused  bool
-	disabled bool
-	onInput  func(t *Textedit)
+	bg         *imdraw.IMDraw
+	drawArea   pixel.Rect
+	color      color.Color
+	colorFocus color.Color
+	label      *text.Text
+	input      *text.Text
+	text       string
+	focused    bool
+	disabled   bool
+	onInput    func(t *Textedit)
 }
 
 // NewTextecit creates new instance of textedit with specified
@@ -53,6 +56,7 @@ func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 	// Background.
 	t.bg = imdraw.New(nil)
 	t.color = color
+	t.colorFocus = colornames.Crimson
 	// Label & Text input.
 	font := MainFont(fontSize)
 	atlas := Atlas(&font)
@@ -67,7 +71,7 @@ func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 
 // Draw draws text edit.
 func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
-	// Background.
+	// Background & label.
 	if te.label != nil {
 		te.label.Draw(t, pixel.IM.Moved(drawArea.Min))
 		te.drawArea = pixel.R(drawArea.Min.X,
@@ -76,8 +80,12 @@ func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 	} else {	
 		te.drawArea = drawArea
 	}
-	te.drawIMBackground(t)
-	// Label & Text input.
+	color := te.color
+	if te.Focused() {
+		color = te.colorFocus
+	}
+	te.drawIMBackground(t, color)
+	// Text input.
 	te.input.Draw(t, pixel.IM.Moved(te.drawArea.Min))
 }
 
@@ -159,12 +167,13 @@ func (te *Textedit) SetOnInputFunc(f func(t *Textedit)) {
 	te.onInput = f
 }
 
-// drawIMBackground draws IMDraw background in size of draw area.
-func (te *Textedit) drawIMBackground(t pixel.Target) {
+// drawIMBackground draws IMDraw background in size of current draw area
+// on specified target and with specified color.
+func (te *Textedit) drawIMBackground(t pixel.Target, color color.Color) {
 	te.bg.Clear()
-	te.bg.Color = pixel.ToRGBA(te.color)
+	te.bg.Color = pixel.ToRGBA(color)
 	te.bg.Push(te.drawArea.Min)
-	te.bg.Color = pixel.ToRGBA(te.color)
+	te.bg.Color = pixel.ToRGBA(color)
 	te.bg.Push(te.drawArea.Max)
 	te.bg.Rectangle(0)
 	te.bg.Draw(t)

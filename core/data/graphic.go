@@ -30,6 +30,7 @@ import (
 	"fmt"
 	"image"
 	"io/ioutil"
+	"path/filepath"
 	"os"
 
 	"github.com/golang/freetype/truetype"
@@ -77,6 +78,27 @@ func loadPictureFromDir(path string) (pixel.Picture, error) {
 		return nil, err
 	}
 	return pixel.PictureDataFromImage(img), nil
+}
+
+// loadPicturesFromDir loads all pictures from speicified
+// directory.x
+func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+	var pics []pixel.Picture
+	for _, f := range files {
+		if !f.IsDir() {
+			img, err := loadPictureFromDir(
+				filepath.FromSlash(path + "/" + f.Name()))
+			if err != nil {
+				continue
+			}
+			pics = append(pics, img)	
+		}
+	}
+	return pics, nil
 }
 
 // loadFontFromDir loads font from specified system path.

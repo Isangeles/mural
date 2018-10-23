@@ -34,6 +34,7 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -43,6 +44,7 @@ type NewCharacterMenu struct {
 	mainmenu   *MainMenu  
 	title      *mtk.Text
 	nameEdit   *mtk.Textedit
+	faceSwitch *mtk.Switch
 	pointsBox  *mtk.Textbox
 	strSwitch  *mtk.Switch
 	backButton *mtk.Button
@@ -66,6 +68,12 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
 	// Buttons & switches.
+	faces, err := data.PlayablePortraits()
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
+	}
+	ncm.faceSwitch = mtk.NewPictureSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_face_switch_label"), faces) 
 	ncm.strSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_str_switch_label"), 0, ncm.attrPointsMax)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
@@ -85,12 +93,14 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 	// Text fields.
 	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
 		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win)
-	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(10),
-		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(50),
+	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(110),
+		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(140),
 		win.Bounds().Center().Y + mtk.ConvSize(40)), win)
 	// Buttons && switches.
+	ncm.faceSwitch.Draw(win, pixel.IM.Moved(mtk.TopOf(ncm.pointsBox.DrawArea(),
+		ncm.faceSwitch.Frame(), 100)))
 	ncm.strSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
-		ncm.strSwitch.Frame(), 0)))
+		ncm.strSwitch.Frame(), 15)))
 	ncm.backButton.Draw(win, pixel.IM.Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
 }
@@ -101,6 +111,7 @@ func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 		ncm.nameEdit.Update(win)
 		ncm.backButton.Update(win)
 		ncm.pointsBox.Update(win)
+		ncm.faceSwitch.Update(win)
 		ncm.strSwitch.Update(win)
 		ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
 	}
@@ -109,7 +120,6 @@ func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 // Show toggles menu visibility.
 func (ncm *NewCharacterMenu) Show(show bool) {
 	ncm.opened = show
-	ncm.nameEdit.Focus(show)
 }
 
 // Opened checks whether menu is open.
@@ -122,7 +132,7 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 	ncm.mainmenu.OpenMenu()
 }
 
-// Triggered after strength value switch changed.
+// Triggered after any attribute switch value changed.
 func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 	old, new *mtk.SwitchValue) {
 	str, ok := ncm.strSwitch.Value().Value.(int)

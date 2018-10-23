@@ -28,6 +28,7 @@ package data
 import (
 	"fmt"
 	"path/filepath"
+	"io/ioutil"
 
 	"golang.org/x/image/font"
 
@@ -66,6 +67,28 @@ func Load() error {
 // archive.
 func Picture(filePath string) (pixel.Picture, error) {
 	return loadPictureFromArch(g_arch_path, filePath)
+}
+
+// PlayablePortraits returns map with names of portraits as keys
+// and portraits pictures as values avalible for player character.
+func PlayablePortraits() (map[string]pixel.Picture, error) {
+	path :=	flame.Mod().FullPath() + "/gui/portraits"
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+	portraits := make(map[string]pixel.Picture)
+	for _, f := range files {
+		if !f.IsDir() {
+			img, err := loadPictureFromDir(filepath.FromSlash(
+				path + "/" + f.Name()))
+			if err != nil {
+				continue
+			}
+			portraits[f.Name()] = img
+		}
+	}
+	return portraits, nil
 }
 
 // Font loads font with specified name from gdata

@@ -40,14 +40,16 @@ import (
 
 // Settings struct represents main menu
 // settings screen.
+// TODO: fullscreen switch.
 type Settings struct {
-	mainmenu   *MainMenu
-	title      *text.Text
-	backButton *mtk.Button
-	resSwitch  *mtk.Switch
-	langSwitch *mtk.Switch
-	opened     bool
-	changed    bool
+	mainmenu      *MainMenu
+	title         *text.Text
+	backButton    *mtk.Button
+	fullscrSwitch *mtk.Switch
+	resSwitch     *mtk.Switch
+	langSwitch    *mtk.Switch
+	opened        bool
+	changed       bool
 }
 
 // newSettings returns new settings screen
@@ -60,10 +62,17 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	atlas := mtk.Atlas(&font)
 	s.title = text.New(pixel.V(0, 0), atlas)
 	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
-	// Buttons & switches.
-	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE, colornames.Red,
+	// Buttons.
+	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM,
+		mtk.SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "back_b_label"), "")
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
+	// Switches.
+	fullscrValues := []string{lang.Text("ui", "com_no"),
+		lang.Text("ui", "com_yes")}
+	s.fullscrSwitch = mtk.NewStringSwitch(mtk.SIZE_MEDIUM, colornames.Grey,
+		lang.Text("gui", "settings_fullscr_switch_label"), fullscrValues)
+	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	var resSwitchValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		resSwitchValues = append(resSwitchValues,

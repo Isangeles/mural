@@ -35,16 +35,30 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
-// Plain string for regular string to satisfy stringer
-// interface.
+// Tuple for switch values, contains value to display and
+// real value.
 type SwitchValue struct {
-	Label string
+	View interface{}
 	Value interface{}
 }
 
-// String returns label of switch value.
-func (s SwitchValue) String() string {
-	return s.Label
+// Label returns string representation of switch value.
+func (s SwitchValue) Label() string {
+	switch v := s.View.(type) {
+	case string:
+		return v
+	default:
+		return "none"
+	}
+}
+
+// Sprite returns graphical representation of switch value.
+func (s SwitchValue) Sprite() (*pixel.Sprite, error) {
+	spr, ok := s.View.(*pixel.Sprite)
+	if !ok {
+		return nil, fmt.Errorf("fail_to_retrieve_view_sprite")
+	}
+	return spr, nil
 }
 
 // Switch struct represents graphical switch for values.
@@ -53,6 +67,7 @@ type Switch struct {
 	bgSpr                   *pixel.Sprite
 	prevButton, nextButton  *Button
 	valueText               *text.Text
+	valueSprite             *pixel.Sprite
 	label                   *Text
 	drawArea                pixel.Rect // updated on each draw
 	size                    Size
@@ -86,7 +101,7 @@ func NewSwitch(size Size, color color.Color, label string,
 	font := MainFont(size)
 	atlas := Atlas(&font)
 	s.valueText = text.New(pixel.V(0,0), atlas)
-	s.updateValueText()
+	s.updateValueView()
 	return s 
 }
 
@@ -97,7 +112,7 @@ func NewStringSwitch(size Size, color color.Color, label string,
 	// All string values to switchString helper struct.
 	strValues := make([]SwitchValue, len(values))
 	for i, v := range values {
-		ss := SwitchValue{Label: v, Value: v}
+		ss := SwitchValue{v, v}
 		strValues[i] = ss
 	}
 	
@@ -114,10 +129,25 @@ func NewIntSwitch(size Size, color color.Color, label string,
 	intValues := make([]SwitchValue, length)
 	for i := min; i <=  max; i++ {
 		value := i //+ 1
-		intValues[i] = SwitchValue{Label:fmt.Sprint(value), Value: value}
+		intValues[i] = SwitchValue{fmt.Sprint(value), value}
 	}
 
 	s := NewSwitch(size, color, label, intValues)
+	return s
+}
+
+// NewPictureSwitch creates new switch with IMDraw background
+// and with specified pictures as switch values.
+func NewPictureSwitch(size Size, color color.Color, label string,
+	pics map[string]pixel.Picture) *Switch {
+	var picValues []SwitchValue
+	for name, pic := range pics {
+		spr := pixel.NewSprite(pic, size.PictureSize())
+		val := SwitchValue{spr, name}
+		picValues = append(picValues, val)
+	}
+
+	s := NewSwitch(size, color, label, picValues)
 	return s
 }
 
@@ -131,8 +161,12 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	} else {
 		s.drawIMBackground(t)
 	}
-	// Value & label.
-	s.valueText.Draw(t, matrix)
+	// Value & value view.
+	if s.valueSprite == nil {
+		s.valueText.Draw(t, matrix)
+	} else {
+		s.valueSprite.Draw(t, matrix)
+	}
 	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
 	// Buttons.
 	s.prevButton.Draw(t, pixel.IM.Moved(DisTL(s.drawArea, 0.03)))
@@ -169,7 +203,7 @@ func (s *Switch) SetIntValues(min, max int) {
 	intValues := make([]SwitchValue, max)
 	for i := min; i < max; i ++ {
 		value := i+1
-		intVal := SwitchValue{fmt.Sprint(value), &value}
+		intVal := SwitchValue{fmt.Sprint(value), value}
 		intValues[i] = intVal
 	}
 	s.SetValues(intValues)
@@ -253,7 +287,7 @@ func (s *Switch) SetIndex(index int) {
 	} else {
 		s.index = index
 	}
-	s.updateValueText()
+	s.updateValueView()
 }
 
 // Sets specified function as function triggered on on switch value change.
@@ -261,12 +295,16 @@ func (s *Switch) SetOnChangeFunc(f func(s *Switch, old, new *SwitchValue)) {
 	s.onChange = f
 }
 
-// updateValueText updates text with current switch value.
-func (s *Switch) updateValueText() {
-	valueMariginX := (-s.valueText.BoundsOf(s.Value().String()).Max.X) / 2
-	s.valueText.Orig.X = valueMariginX
-	s.valueText.Clear()
-	fmt.Fprintf(s.valueText, s.Value().String())
+// updateValueView updates value view with current switch value.
+func (s *Switch) updateValueView() {
+	if spr, err := s.Value().Sprite(); err != nil {
+		valueMariginX := (-s.valueText.BoundsOf(s.Value().Label()).Max.X) / 2
+		s.valueText.Orig.X = valueMariginX
+		s.valueText.Clear()
+		fmt.Fprintf(s.valueText, s.Value().Label())
+	} else {
+		s.valueSprite = spr
+	}
 }
 
 // Triggered after next button clicked.

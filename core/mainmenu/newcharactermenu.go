@@ -92,7 +92,7 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 	ncm.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Text fields.
 	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
-		titlePos.X + mtk.ConvSize(160), titlePos.Y - mtk.ConvSize(180)), win)
+		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win)
 	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(110),
 		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(140),
 		win.Bounds().Center().Y + mtk.ConvSize(40)), win)

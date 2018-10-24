@@ -52,7 +52,8 @@ var (
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen", "resolution")
+	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
+		"resolution")
 	if err != nil {
 		return err
 	}
@@ -104,6 +105,11 @@ func Resolution() pixel.Vec {
 // Lang returns current language ID.
 func Lang() string {
 	return lang
+}
+
+// SetFullscreen toggles fullscreen mode.
+func SetFullscreen(fs bool) {
+	fullscreen = fs
 }
 
 // SetResolution sets specified XY size as current

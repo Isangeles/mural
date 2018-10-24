@@ -40,7 +40,7 @@ import (
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mainmenu"
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/mtk"
 )
 
 const (

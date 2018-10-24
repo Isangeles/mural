@@ -31,7 +31,6 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	"github.com/faiface/pixel/imdraw"
 )
 
@@ -66,7 +65,7 @@ type Switch struct {
 	bgDraw                  *imdraw.IMDraw
 	bgSpr                   *pixel.Sprite
 	prevButton, nextButton  *Button
-	valueText               *text.Text
+	valueText               *Text
 	valueSprite             *pixel.Sprite
 	label                   *Text
 	drawArea                pixel.Rect // updated on each draw
@@ -98,9 +97,7 @@ func NewSwitch(size Size, color color.Color, label string,
 	// Values.
 	s.values = values
 	s.index = 0
-	font := MainFont(size)
-	atlas := Atlas(&font)
-	s.valueText = text.New(pixel.V(0,0), atlas)
+	s.valueText = NewText("", size, 100)
 	s.updateValueView()
 	return s 
 }
@@ -142,7 +139,7 @@ func NewPictureSwitch(size Size, color color.Color, label string,
 	pics map[string]pixel.Picture) *Switch {
 	var picValues []SwitchValue
 	for name, pic := range pics {
-		spr := pixel.NewSprite(pic, size.PictureSize())
+		spr := pixel.NewSprite(pic, pic.Bounds())
 		val := SwitchValue{spr, name}
 		picValues = append(picValues, val)
 	}
@@ -162,15 +159,20 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 		s.drawIMBackground(t)
 	}
 	// Value & value view.
+	valueDA := s.valueText.DrawArea()
 	if s.valueSprite == nil {
 		s.valueText.Draw(t, matrix)
 	} else {
-		s.valueSprite.Draw(t, matrix)
+		s.valueSprite.Draw(t, matrix.Scaled(s.DrawArea().Center(), Scale()))
+		valueDA = MatrixToDrawArea(matrix.Scaled(s.DrawArea().Center(),
+			Scale()), s.valueSprite.Frame())
 	}
 	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
 	// Buttons.
-	s.prevButton.Draw(t, pixel.IM.Moved(DisTL(s.drawArea, 0.03)))
-	s.nextButton.Draw(t, pixel.IM.Moved(DisTR(s.drawArea, 0.03)))
+	s.prevButton.Draw(t, pixel.IM.Moved(LeftOf(valueDA, s.prevButton.Frame(),
+		10)))
+	s.nextButton.Draw(t, pixel.IM.Moved(RightOf(valueDA, s.nextButton.Frame(),
+		10)))
 }
 
 // Update updates switch and all elements.
@@ -281,9 +283,9 @@ func (s *Switch) FindValue(index int) *SwitchValue {
 // index is smaller than minimal, then index of first value is set. 
 func (s *Switch) SetIndex(index int) {
 	if index > len(s.values)-1 {
-		s.index = len(s.values)-1
-	} else if index < 0 {
 		s.index = 0
+	} else if index < 0 {
+		s.index = len(s.values)-1
 	} else {
 		s.index = index
 	}
@@ -298,10 +300,7 @@ func (s *Switch) SetOnChangeFunc(f func(s *Switch, old, new *SwitchValue)) {
 // updateValueView updates value view with current switch value.
 func (s *Switch) updateValueView() {
 	if spr, err := s.Value().Sprite(); err != nil {
-		valueMariginX := (-s.valueText.BoundsOf(s.Value().Label()).Max.X) / 2
-		s.valueText.Orig.X = valueMariginX
-		s.valueText.Clear()
-		fmt.Fprintf(s.valueText, s.Value().Label())
+		s.valueText.SetText(s.Value().Label())
 	} else {
 		s.valueSprite = spr
 	}

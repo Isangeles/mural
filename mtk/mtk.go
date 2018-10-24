@@ -40,6 +40,7 @@ const (
 	SIZE_SMALL 
 	SIZE_MEDIUM
 	SIZE_BIG
+	SIZE_HUGE
 
 	SHAPE_RECTANGLE Shape = iota
 	SHAPE_SQUARE 
@@ -92,7 +93,7 @@ func (s Size) ButtonSize(sh Shape) pixel.Rect {
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	case s == SIZE_MEDIUM && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(100), ConvSize(50))
-	case s == SIZE_BIG && sh == SHAPE_RECTANGLE:
+	case s >= SIZE_BIG && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(120), ConvSize(70))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
@@ -106,9 +107,11 @@ func (s Size) SwitchSize() pixel.Rect {
 	case s <= SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(170), ConvSize(50))
 	case s == SIZE_MEDIUM:
-		return pixel.R(0, 0, ConvSize(200), ConvSize(70))
+		return pixel.R(0, 0, ConvSize(210), ConvSize(80))
 	case s == SIZE_BIG:
-		return pixel.R(0, 0, ConvSize(250), ConvSize(110))
+		return pixel.R(0, 0, ConvSize(260), ConvSize(140))
+	case s >= SIZE_HUGE:
+		return pixel.R(0, 0, ConvSize(270), ConvSize(130))
 	default:
 		return pixel.R(0, 0, ConvSize(70), ConvSize(35))
 	}
@@ -124,28 +127,16 @@ func (s Size) MessageWindowSize() pixel.Rect {
 	}
 }
 
-// PictureSize returns size parameters for picture view.
-func (s Size) PictureSize() pixel.Rect {
-	switch {
-	case s <= SIZE_MEDIUM:
-		return pixel.R(0, 0, ConvSize(40), ConvSize(40))
-	case s <= SIZE_BIG:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(70))
-	default:
-		return pixel.R(0, 0, ConvSize(70), ConvSize(70))
-	}
-}
-
 // MainFont returns main font in specified size from
 // data package. 
 func MainFont(s Size) font.Face {
 	switch {
-	case s == SIZE_SMALL:
+	case s <= SIZE_SMALL:
 		return data.MainFont(ConvSize(10))
 	case s == SIZE_MEDIUM:
 		return data.MainFont(ConvSize(20))
 	case s >= SIZE_BIG:
-		return data.MainFont(ConvSize(40))
+		return data.MainFont(ConvSize(30))
 	default:
 		return data.MainFont(ConvSize(10))
 	}

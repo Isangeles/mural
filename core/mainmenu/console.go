@@ -34,7 +34,7 @@ import (
 	"github.com/isangeles/flame/core/enginelog"
 
 	"github.com/isangeles/mural/core/ci"
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/mtk"
 	"github.com/isangeles/mural/log"
 )
 

@@ -91,10 +91,17 @@ func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 		(rect.Max.Y / 2) + ConvSize(offset))
 }
 
-// ReightOf returns position for specified rect at the left side of specified
+// ReightOf returns position for specified rect at the right side of specified
 // draw area, with specified offset value.
 func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Max.X + (rect.Max.X / 2) + ConvSize(offset),
+		drawArea.Max.Y)
+}
+
+// LeftOf returns position for specified rect at the left side of specified
+// draw area, with specified offset value.
+func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Min.X - (rect.Max.X / 2) - ConvSize(offset),
 		drawArea.Max.Y)
 }
 

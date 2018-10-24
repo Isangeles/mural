@@ -33,7 +33,7 @@ import (
 	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/mtk"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
 )
@@ -68,9 +68,10 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 		lang.Text("gui", "back_b_label"), "")
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
-	fullscrValues := []string{lang.Text("ui", "com_no"),
-		lang.Text("ui", "com_yes")}
-	s.fullscrSwitch = mtk.NewStringSwitch(mtk.SIZE_MEDIUM, colornames.Grey,
+	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
+	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
+	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
+	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Grey,
 		lang.Text("gui", "settings_fullscr_switch_label"), fullscrValues)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	var resSwitchValues []mtk.SwitchValue
@@ -80,13 +81,9 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	}
 	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
 		lang.Text("gui", "resolution_s_label"), resSwitchValues)
-	resSwitchIndex := s.resSwitch.Find(config.Resolution())
-	s.resSwitch.SetIndex(resSwitchIndex)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	s.langSwitch = mtk.NewStringSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
 		lang.Text("gui", "lang_s_label"), config.SupportedLangs())
-	langSwitchIndex := s.langSwitch.Find(config.Lang())
-	s.langSwitch.SetIndex(langSwitchIndex)
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	
 	return s, nil
@@ -99,8 +96,10 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
 	s.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Buttons & switches.
+	s.fullscrSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
+		titlePos.Y - s.fullscrSwitch.Frame().Size().Y)))
 	s.resSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		titlePos.Y - s.resSwitch.Frame().Size().Y)))
+		s.fullscrSwitch.DrawArea().Min.Y - s.resSwitch.Frame().Size().Y)))
 	s.langSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		s.resSwitch.DrawArea().Min.Y - s.langSwitch.Frame().Size().Y)))
 	s.backButton.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
@@ -110,6 +109,7 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 // Update updates all menu elements.
 func (s *Settings) Update(win *pixelgl.Window) {
 	if s.Opened() {
+		s.fullscrSwitch.Update(win)
 		s.resSwitch.Update(win)
 		s.langSwitch.Update(win)
 		s.backButton.Update(win)
@@ -124,29 +124,49 @@ func (s *Settings) Opened() bool {
 // Show toggles menu visibility.
 func (s *Settings) Show(show bool) {
 	s.opened = show
+	s.updateValues()
 }
 
 // Apply applies current settings values.
 func (s *Settings) Apply() {
+	// Fullscreen.
+	fscr, ok := s.fullscrSwitch.Value().Value.(bool)
+	if !ok {
+		log.Err.Printf(
+			"settings_menu:fail_to_retrive_fullscreen_switch_value")
+		return
+	}
 	// Resolution.
 	res, ok := s.resSwitch.Value().Value.(pixel.Vec)
 	if !ok {
 		log.Err.Printf("settings_menu:fail_to_retrive_res_switch_value")
 		return
 	}
+	// Language.
 	lang, ok := s.langSwitch.Value().Value.(string)
 	if !ok {
 		log.Err.Printf("settings_menu:fail_to_retrive_lang_switch_value")
 		return
 	}
-	
-	config.SetLang(lang)
+
+	config.SetFullscreen(fscr)
 	config.SetResolution(res)
+	config.SetLang(lang)
 }
 
 // Changed checks if any settings value was changed.
 func (s *Settings) Changed() bool {
 	return s.changed
+}
+
+// updateValues values of all settings elements.
+func (s *Settings) updateValues() {
+	fullscrSwitchIndex := s.fullscrSwitch.Find(config.Fullscreen())
+	s.fullscrSwitch.SetIndex(fullscrSwitchIndex)
+	resSwitchIndex := s.resSwitch.Find(config.Resolution())
+	s.resSwitch.SetIndex(resSwitchIndex)
+	langSwitchIndex := s.langSwitch.Find(config.Lang())
+	s.langSwitch.SetIndex(langSwitchIndex)
 }
 
 // close closes settings menu and displays message

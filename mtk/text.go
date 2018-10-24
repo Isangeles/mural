@@ -34,6 +34,7 @@ import (
 type Text struct {
 	text     *text.Text
 	content  string
+	drawArea pixel.Rect // updated on each draw
 	fontSize Size
 	width    float64
 }
@@ -65,6 +66,19 @@ func NewText(content string, fontSize Size, width float64) *Text {
 	return t
 }
 
+// SetText sets specified text as text to display.
+func (tx *Text) SetText(text string) {
+	tx.content = text
+	// If text too wide, then split to more lines.
+	if tx.width != 0 && tx.text.BoundsOf(tx.content).W() > tx.width {
+		tx.content = strings.Replace(tx.content, " ", "\n", 1)
+	}
+	mariginX := (-tx.text.BoundsOf(tx.content).Max.X) / 2
+	tx.text.Orig = pixel.V(mariginX, 0)
+	tx.text.Clear()
+	tx.text.WriteString(tx.content)
+}
+
 // Adjust text origin position to center.
 // TODO: don't work well.
 func (tx *Text) JustCenter() {
@@ -76,10 +90,16 @@ func (tx *Text) JustCenter() {
 
 // Draw draws text.
 func (tx *Text) Draw(t pixel.Target, matrix pixel.Matrix) {
+	tx.drawArea = MatrixToDrawArea(matrix, tx.Bounds())
 	tx.text.Draw(t, matrix)
 }
 
 // Bounds return size of text.
 func (tx *Text) Bounds() pixel.Rect {
 	return tx.text.Bounds()
+}
+
+// DrawArea returns current draw area of text.
+func (tx *Text) DrawArea() pixel.Rect {
+	return tx.drawArea
 }

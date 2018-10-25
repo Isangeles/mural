@@ -87,7 +87,7 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 // TopOf returns position for specified rect at the top of specified
 // draw area, with specified offset value.
 func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Max.X, drawArea.Max.Y +
+	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y +
 		(rect.Max.Y / 2) + ConvSize(offset))
 }
 
@@ -95,14 +95,21 @@ func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 // draw area, with specified offset value.
 func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Max.X + (rect.Max.X / 2) + ConvSize(offset),
-		drawArea.Max.Y)
+		drawArea.Min.Y + (rect.H() / 2))
+}
+
+// BottomOf returns position of specified rect at the bottom side of speicified
+// draw area, width specified offset value.
+func BottomOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y -
+		(rect.Max.Y / 2) - ConvSize(offset))
 }
 
 // LeftOf returns position for specified rect at the left side of specified
 // draw area, with specified offset value.
 func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Min.X - (rect.Max.X / 2) - ConvSize(offset),
-		drawArea.Max.Y)
+		drawArea.Min.Y + (rect.H() / 2))
 }
 
 // Size converts specified default size value(for 1080p)

@@ -47,6 +47,7 @@ type NewCharacterMenu struct {
 	faceSwitch *mtk.Switch
 	pointsBox  *mtk.Textbox
 	strSwitch  *mtk.Switch
+	conSwitch  *mtk.Switch
 	backButton *mtk.Button
 	opened     bool
 	// Character.
@@ -77,6 +78,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.strSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_str_switch_label"), 0, ncm.attrPointsMax)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	ncm.conSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_con_switch_label"), 0, ncm.attrPointsMax)
+	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
@@ -101,6 +105,8 @@ func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
 		ncm.faceSwitch.Frame(), 100)))
 	ncm.strSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
 		ncm.strSwitch.Frame(), 15)))
+	ncm.conSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.strSwitch.DrawArea(),
+		ncm.conSwitch.Frame(), 15)))
 	ncm.backButton.Draw(win, pixel.IM.Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
 }
@@ -113,7 +119,8 @@ func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
 		ncm.pointsBox.Update(win)
 		ncm.faceSwitch.Update(win)
 		ncm.strSwitch.Update(win)
-		ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
+		ncm.conSwitch.Update(win)
+		ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
 	}
 }
 
@@ -140,6 +147,7 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 		log.Err.Print("new_char_menu:fail_to_retrieve_str_switch_value")
 		return
 	}
+	// TODO: handle constitution switch change.
 	pts := ncm.attrPointsMax
 	pts -= str
 	if pts >= 0 && pts <= ncm.attrPointsMax {

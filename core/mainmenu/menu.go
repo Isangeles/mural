@@ -24,13 +24,10 @@
 package mainmenu
 
 import (
-	"fmt"
-
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -43,7 +40,7 @@ import (
 // with buttons to other menus.
 type Menu struct {
 	mainmenu  *MainMenu
-	title     *text.Text
+	title     *mtk.Text
 	newcharB  *mtk.Button
 	settingsB *mtk.Button
 	exitB     *mtk.Button
@@ -56,10 +53,7 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m := new(Menu)
 	m.mainmenu = mainmenu
 	// Title.
-	font := mtk.MainFont(mtk.SIZE_BIG)
-	atlas := mtk.Atlas(&font)
-	m.title = text.New(pixel.V(0, 0), atlas)
-	fmt.Fprint(m.title, flame.Mod().Name())
+	m.title = mtk.NewText(flame.Mod().Name(), mtk.SIZE_BIG, mtk.ConvSize(900)) 
 	// Buttons.
 	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newchar_b_label"),
@@ -90,8 +84,8 @@ func (m *Menu) Draw(win *pixelgl.Window) {
 		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win, pixel.IM.Moved(titlePos))
 	// Buttons.
-	m.newcharB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		titlePos.Y - m.exitB.Frame().Size().Y)))
+	m.newcharB.Draw(win, pixel.IM.Moved(mtk.BottomOf(m.title.DrawArea(),
+		m.newcharB.Frame(), 50)))
 	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
 		m.newcharB.DrawArea().Min.Y - m.newcharB.Frame().Size().Y)))
 	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,

@@ -158,7 +158,7 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	} else {
 		s.drawIMBackground(t)
 	}
-	// Value & value view.
+	// Value view.
 	valueDA := s.valueText.DrawArea()
 	if s.valueSprite == nil {
 		s.valueText.Draw(t, matrix)
@@ -269,18 +269,13 @@ func (s *Switch) Find(value interface{}) int {
 // and returns this value or nil if switch does not contains
 // value with such index.
 func (s *Switch) FindValue(index int) *SwitchValue {
-	for i, v := range s.values {
-		if i == index {
-			return &v
-		}
-	}
-	return nil
+	return &s.values[index]
 }
 
 // SetIndex sets value with specified index as current value
 // of this switch. If specified value is bigger than maximal
-// possible index, then index of last value is set, if specified
-// index is smaller than minimal, then index of first value is set. 
+// possible index, then index of first value is set, if specified
+// index is smaller than minimal, then index of last value is set. 
 func (s *Switch) SetIndex(index int) {
 	if index > len(s.values)-1 {
 		s.index = 0

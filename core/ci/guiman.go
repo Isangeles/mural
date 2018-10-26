@@ -25,6 +25,10 @@ package ci
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/faiface/pixel"
 
 	flameci "github.com/isangeles/flame/cmd/ci"
 
@@ -41,8 +45,42 @@ func handleGUICommand(cmd flameci.Command) (int, string) {
 	switch cmd.OptionArgs()[0] {
 	case "version":
 		return 0, config.VERSION
+	case "set":
+		return setGUIOption(cmd)
 	default:
-		return 4, fmt.Sprintf("%s:no_such_option:%s", GUI_MAN, cmd.OptionArgs()[0])
+		return 4, fmt.Sprintf("%s:no_such_option:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+}
+
+// setGUIOption Handles set coptions for guiman commands.
+func setGUIOption(cmd flameci.Command) (int, string) {
+	if len(cmd.TargetArgs()) < 1 {
+		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+
+	switch cmd.TargetArgs()[0] {
+	case "resolution":
+		if len(cmd.Args()) < 1 {
+                        return 7, fmt.Sprintf("%s:no_enought_args_for:%s", GUI_MAN,
+				cmd.OptionArgs()[1])
+                }
+		
+		resInput := cmd.Args()[0]
+		resX, err := strconv.ParseFloat(strings.Split(resInput,
+			"x")[0], 64)
+		resY, err := strconv.ParseFloat(strings.Split(resInput,
+			"x")[1], 64)
+		if err != nil {
+			return 8, fmt.Sprintf("%s:invalid_input:%s", GUI_MAN,
+				cmd.OptionArgs()[0])
+		}
+		config.SetResolution(pixel.V(resX, resY))
+		return 0, ""
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
 	}
 }
 

@@ -28,16 +28,16 @@ import (
 	"image/color"
 
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 // Tuple for switch values, contains value to display and
 // real value.
 type SwitchValue struct {
-	View interface{}
+	View  interface{}
 	Value interface{}
 }
 
@@ -62,20 +62,20 @@ func (s SwitchValue) Sprite() (*pixel.Sprite, error) {
 
 // Switch struct represents graphical switch for values.
 type Switch struct {
-	bgDraw                  *imdraw.IMDraw
-	bgSpr                   *pixel.Sprite
-	prevButton, nextButton  *Button
-	valueText               *Text
-	valueSprite             *pixel.Sprite
-	label                   *Text
-	drawArea                pixel.Rect // updated on each draw
-	size                    Size
-	color                   color.Color
-	index                   int
-	focused                 bool
-	disabled                bool
-	values                  []SwitchValue
-	onChange                func(s *Switch, old, new *SwitchValue)
+	bgDraw                 *imdraw.IMDraw
+	bgSpr                  *pixel.Sprite
+	prevButton, nextButton *Button
+	valueText              *Text
+	valueSprite            *pixel.Sprite
+	label                  *Text
+	drawArea               pixel.Rect // updated on each draw
+	size                   Size
+	color                  color.Color
+	index                  int
+	focused                bool
+	disabled               bool
+	values                 []SwitchValue
+	onChange               func(s *Switch, old, new *SwitchValue)
 }
 
 // NewSwitch creates new instance of switch with IMDraw
@@ -93,13 +93,13 @@ func NewSwitch(size Size, color color.Color, label string,
 	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label.
-	s.label = NewText(label, size, s.Frame().W())
+	s.label = NewText(label, size-1, s.Frame().W())
 	// Values.
 	s.values = values
 	s.index = 0
 	s.valueText = NewText("", size, 100)
 	s.updateValueView()
-	return s 
+	return s
 }
 
 // NewStringSwitch creates new instance of switch with IMDraw
@@ -112,7 +112,7 @@ func NewStringSwitch(size Size, color color.Color, label string,
 		ss := SwitchValue{v, v}
 		strValues[i] = ss
 	}
-	
+
 	s := NewSwitch(size, color, label, strValues)
 	return s
 }
@@ -124,7 +124,7 @@ func NewIntSwitch(size Size, color color.Color, label string,
 	// All int values from specified min max range.
 	length := max - min + 1
 	intValues := make([]SwitchValue, length)
-	for i := min; i <=  max; i++ {
+	for i := min; i <= max; i++ {
 		value := i //+ 1
 		intValues[i] = SwitchValue{fmt.Sprint(value), value}
 	}
@@ -203,8 +203,8 @@ func (s *Switch) SetValues(values []SwitchValue) {
 // switch values.
 func (s *Switch) SetIntValues(min, max int) {
 	intValues := make([]SwitchValue, max)
-	for i := min; i < max; i ++ {
-		value := i+1
+	for i := min; i < max; i++ {
+		value := i + 1
 		intVal := SwitchValue{fmt.Sprint(value), value}
 		intValues[i] = intVal
 	}
@@ -275,12 +275,12 @@ func (s *Switch) FindValue(index int) *SwitchValue {
 // SetIndex sets value with specified index as current value
 // of this switch. If specified value is bigger than maximal
 // possible index, then index of first value is set, if specified
-// index is smaller than minimal, then index of last value is set. 
+// index is smaller than minimal, then index of last value is set.
 func (s *Switch) SetIndex(index int) {
 	if index > len(s.values)-1 {
 		s.index = 0
 	} else if index < 0 {
-		s.index = len(s.values)-1
+		s.index = len(s.values) - 1
 	} else {
 		s.index = index
 	}
@@ -304,7 +304,7 @@ func (s *Switch) updateValueView() {
 // Triggered after next button clicked.
 func (s *Switch) onNextButtonClicked(b *Button) {
 	oldIndex := s.index
-	s.SetIndex(s.index+1)
+	s.SetIndex(s.index + 1)
 	if s.onChange != nil {
 		oldValue := s.FindValue(oldIndex)
 		s.onChange(s, oldValue, s.Value())
@@ -314,7 +314,7 @@ func (s *Switch) onNextButtonClicked(b *Button) {
 // Triggered after prev button clicked.
 func (s *Switch) onPrevButtonClicked(b *Button) {
 	oldIndex := s.index
-	s.SetIndex(s.index-1)
+	s.SetIndex(s.index - 1)
 	if s.onChange != nil {
 		s.onChange(s, s.FindValue(oldIndex), s.Value())
 	}

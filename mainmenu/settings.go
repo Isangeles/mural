@@ -30,7 +30,6 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/mural/core/mtk"
@@ -40,10 +39,9 @@ import (
 
 // Settings struct represents main menu
 // settings screen.
-// TODO: fullscreen switch.
 type Settings struct {
 	mainmenu      *MainMenu
-	title         *text.Text
+	title         *mtk.Text
 	backButton    *mtk.Button
 	fullscrSwitch *mtk.Switch
 	resSwitch     *mtk.Switch
@@ -58,10 +56,7 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
-	font := mtk.MainFont(mtk.SIZE_BIG)
-	atlas := mtk.Atlas(&font)
-	s.title = text.New(pixel.V(0, 0), atlas)
-	fmt.Fprintf(s.title, lang.Text("gui", "settings_menu_title"))
+	s.title = mtk.NewText(lang.Text("gui", "settings_menu_title"), mtk.SIZE_BIG, 900)
 	// Buttons.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM,
 		mtk.SHAPE_RECTANGLE, colornames.Red,
@@ -94,16 +89,16 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 	// Title.
 	titlePos :=pixel.V(win.Bounds().Center().X,
 		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
-	s.title.Draw(win, pixel.IM.Moved(titlePos))
+	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons & switches.
-	s.fullscrSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		titlePos.Y - s.fullscrSwitch.Frame().Size().Y)))
-	s.resSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		s.fullscrSwitch.DrawArea().Min.Y - s.resSwitch.Frame().Size().Y)))
-	s.langSwitch.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		s.resSwitch.DrawArea().Min.Y - s.langSwitch.Frame().Size().Y)))
-	s.backButton.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		s.langSwitch.DrawArea().Min.Y - s.backButton.Frame().Size().Y)))
+	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.title.DrawArea(),
+		s.fullscrSwitch.Frame(), 50)))
+	s.resSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.fullscrSwitch.DrawArea(),
+		s.resSwitch.Frame(), 90)))
+	s.langSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.resSwitch.DrawArea(),
+		s.langSwitch.Frame(), 90)))
+	s.backButton.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.langSwitch.DrawArea(),
+		s.backButton.Frame(), 90)))
 }
 
 // Update updates all menu elements.

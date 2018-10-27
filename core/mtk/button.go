@@ -81,6 +81,8 @@ func NewButtonSprite(bgPic pixel.Picture, labelText, infoText string) *Button {
 	// Backround.
 	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
 	button.bgSpr = bg
+	button.colorPush = colornames.Grey
+	button.colorHover = colornames.Crimson
 	// Label.
 	button.label = NewText(labelText, SIZE_SMALL, button.Frame().W()) 
 	// Info window.

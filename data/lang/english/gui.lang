@@ -18,4 +18,7 @@ newchar_name_edit_label:Name:;
 newchar_face_switch_label:Portrait;
 newchar_str_switch_label:Strength;
 newchar_con_switch_label:Constitution;
+newchar_dex_switch_label:Dexterity;
+newchar_int_switch_label:Inteligence;
+newchar_wis_switch_label:Wisdom;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

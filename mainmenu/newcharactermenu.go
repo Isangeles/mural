@@ -29,7 +29,6 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 
@@ -48,6 +47,9 @@ type NewCharacterMenu struct {
 	pointsBox  *mtk.Textbox
 	strSwitch  *mtk.Switch
 	conSwitch  *mtk.Switch
+	dexSwitch  *mtk.Switch
+	intSwitch  *mtk.Switch
+	wisSwitch  *mtk.Switch
 	backButton *mtk.Button
 	opened     bool
 	// Character.
@@ -68,7 +70,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
-	// Buttons & switches.
+	// Switches.
 	faces, err := data.PlayablePortraits()
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
@@ -81,6 +83,16 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.conSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_con_switch_label"), 0, ncm.attrPointsMax)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	ncm.dexSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_dex_switch_label"), 0, ncm.attrPointsMax)
+	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	ncm.intSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_int_switch_label"), 0, ncm.attrPointsMax) 
+	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	ncm.wisSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_wis_switch_label"), 0, ncm.attrPointsMax)
+	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	// Buttons.
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
@@ -89,39 +101,54 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 }
 
 // Draw draws all menu elements in specified window.
-func (ncm *NewCharacterMenu) Draw(win *pixelgl.Window) {
+func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
 		win.Bounds().Max.Y - ncm.title.Bounds().Size().Y)
-	ncm.title.Draw(win, pixel.IM.Moved(titlePos))
+	ncm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Text fields.
 	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
-		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win)
+		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win.Window)
 	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(110),
 		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(140),
-		win.Bounds().Center().Y + mtk.ConvSize(40)), win)
-	// Buttons && switches.
-	ncm.faceSwitch.Draw(win, pixel.IM.Moved(mtk.TopOf(ncm.pointsBox.DrawArea(),
+		win.Bounds().Center().Y + mtk.ConvSize(40)), win.Window)
+	// Switches.
+	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(ncm.pointsBox.DrawArea(),
 		ncm.faceSwitch.Frame(), 100)))
-	ncm.strSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
-		ncm.strSwitch.Frame(), 15)))
-	ncm.conSwitch.Draw(win, pixel.IM.Moved(mtk.RightOf(ncm.strSwitch.DrawArea(),
+	ncm.strSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
+		ncm.strSwitch.Frame(), 5)))
+	ncm.conSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.strSwitch.DrawArea(),
 		ncm.conSwitch.Frame(), 15)))
-	ncm.backButton.Draw(win, pixel.IM.Moved(mtk.PosBL(ncm.backButton.Frame(),
+	ncm.dexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.conSwitch.DrawArea(),
+		ncm.dexSwitch.Frame(), 15)))
+	ncm.intSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.dexSwitch.DrawArea(),
+		ncm.intSwitch.Frame(), 15)))
+	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.intSwitch.DrawArea(),
+		ncm.wisSwitch.Frame(), 15)))
+	// Button.
+	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
 }
 
 // Update updates all menu elements.
-func (ncm *NewCharacterMenu) Update(win *pixelgl.Window) {
+func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	if ncm.Opened() {
-		ncm.nameEdit.Update(win)
-		ncm.backButton.Update(win)
-		ncm.pointsBox.Update(win)
-		ncm.faceSwitch.Update(win)
-		ncm.strSwitch.Update(win)
-		ncm.conSwitch.Update(win)
-		ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
+		ncm.nameEdit.Update(win.Window)
+		ncm.backButton.Update(win.Window)
+		ncm.pointsBox.Update(win.Window)
+		ncm.faceSwitch.Update(win.Window)
+		ncm.strSwitch.Update(win.Window)
+		ncm.conSwitch.Update(win.Window)
+		ncm.dexSwitch.Update(win.Window)
+		ncm.intSwitch.Update(win.Window)
+		ncm.wisSwitch.Update(win.Window)
+		ncm.updatePoints()
 	}
+}
+
+// updatePoints updates points box value.
+func (ncm *NewCharacterMenu) updatePoints() {
+	ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
 }
 
 // Show toggles menu visibility.
@@ -147,13 +174,32 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 		log.Err.Print("new_char_menu:fail_to_retrieve_str_switch_value")
 		return
 	}
-	// TODO: handle constitution switch change.
+	con, ok := ncm.conSwitch.Value().Value.(int)
+	if !ok {
+		log.Err.Print("new_char_menu:fail_to_retrieve_con_switch_value")
+		return
+	}
+	dex, ok := ncm.dexSwitch.Value().Value.(int)
+	if !ok {
+		log.Err.Print("new_char_menu:fail_to_retrieve_con_switch_value")
+		return
+	}
+	inte, ok := ncm.intSwitch.Value().Value.(int)
+	if !ok {
+		log.Err.Print("new_char_menu:fail_to_retrieve_int_switch_value")
+		return
+	}
+	wis, ok := ncm.wisSwitch.Value().Value.(int)
+	if !ok {
+		log.Err.Print("new_char_menu:fail_to_retrieve_wis_switch_value")
+		return
+	}
 	pts := ncm.attrPointsMax
-	pts -= str
+	pts -= str + con + dex + inte + wis
 	if pts >= 0 && pts <= ncm.attrPointsMax {
 		ncm.attrPoints = pts
 	} else {
 		s.SetIndex(s.Find(old.Value))
 	}
-	ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
+	ncm.updatePoints()
 }

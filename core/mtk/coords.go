@@ -28,19 +28,26 @@ import (
 	
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/mural/config"
+	//"github.com/isangeles/mural/config"
 )
 
 const (
 	def_res_x, def_res_y float64 = 1920, 1080
 )
 
+var (
+	scale float64 = 0.0
+)
+
 // Scale return scale value for current resolution.
 func Scale() float64 {
+	/*
 	res := config.Resolution()
 	scaleX := res.X / def_res_x;
 	scaleY := res.Y / def_res_y;
-	scale := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+	s := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+	return s
+        */
 	return scale
 }
 
@@ -88,7 +95,7 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 // draw area, with specified offset value.
 func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y +
-		(rect.Max.Y / 2) + ConvSize(offset))
+		(rect.Max.Y) + ConvSize(offset))
 }
 
 // ReightOf returns position for specified rect at the right side of specified
@@ -102,7 +109,7 @@ func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 // draw area, width specified offset value.
 func BottomOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y -
-		(rect.Max.Y / 2) - ConvSize(offset))
+		(rect.Max.Y) - ConvSize(offset))
 }
 
 // LeftOf returns position for specified rect at the left side of specified
@@ -126,4 +133,13 @@ func MatrixToDrawArea(matrix pixel.Matrix, rect pixel.Rect) (drawArea pixel.Rect
 	drawArea.Min = pixel.V(bgBottomX, bgBottomY)
 	drawArea.Max = drawArea.Min.Add(rect.Size())
 	return
+}
+
+// initScale calculates global scale for MTK elements for specified
+// resolution.
+// Called on new MTK window create.
+func initScale(res pixel.Vec) {
+	scaleX := res.X / def_res_x;
+	scaleY := res.Y / def_res_y;
+	scale = math.Round(math.Min(scaleX, scaleY) * 10) / 10;
 }

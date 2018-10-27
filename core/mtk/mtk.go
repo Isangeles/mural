@@ -37,13 +37,13 @@ import (
 
 const (
 	SIZE_MINI Size = iota
-	SIZE_SMALL 
+	SIZE_SMALL
 	SIZE_MEDIUM
 	SIZE_BIG
 	SIZE_HUGE
 
 	SHAPE_RECTANGLE Shape = iota
-	SHAPE_SQUARE 
+	SHAPE_SQUARE
 )
 
 // Type for shapes of UI elements.
@@ -64,7 +64,7 @@ type Focus struct {
 
 // Focus sets focus on specified focusable element.
 // Previously focused element(if exists) is unfocused before
-// focusing specified one. 
+// focusing specified one.
 func (f *Focus) Focus(e Focuser) {
 	if f.element != nil {
 		f.element.Focus(false)
@@ -117,7 +117,7 @@ func (s Size) SwitchSize() pixel.Rect {
 	}
 }
 
-// MessageWindowSize returns size parameters for message window. 
+// MessageWindowSize returns size parameters for message window.
 func (s Size) MessageWindowSize() pixel.Rect {
 	switch {
 	case s <= SIZE_SMALL:
@@ -128,17 +128,17 @@ func (s Size) MessageWindowSize() pixel.Rect {
 }
 
 // MainFont returns main font in specified size from
-// data package. 
+// data package.
 func MainFont(s Size) font.Face {
 	switch {
 	case s <= SIZE_SMALL:
-		return data.MainFont(ConvSize(10))
+		return data.MainFont((10))
 	case s == SIZE_MEDIUM:
-		return data.MainFont(ConvSize(20))
+		return data.MainFont((20))
 	case s >= SIZE_BIG:
-		return data.MainFont(ConvSize(30))
+		return data.MainFont((30))
 	default:
-		return data.MainFont(ConvSize(10))
+		return data.MainFont((10))
 	}
 }
 
@@ -146,4 +146,9 @@ func MainFont(s Size) font.Face {
 // font.
 func Atlas(f *font.Face) *text.Atlas {
 	return text.NewAtlas(*f, text.ASCII)
+}
+
+// Matrix return scaled identity matrix.
+func Matrix() pixel.Matrix {
+	return pixel.IM.Scaled(pixel.V(0, 0), Scale())
 }

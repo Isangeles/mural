@@ -90,7 +90,7 @@ func run() {
 		cfg.Monitor = monitor
 	}
 
-	win, err := pixelgl.NewWindow(cfg)
+	win, err := mtk.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}

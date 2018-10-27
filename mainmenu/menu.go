@@ -27,7 +27,6 @@ import (
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -67,7 +66,8 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	//if err != nil {
 	//	return nil, err
 	//}
-	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"))
+	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"),
+	//	lang.Text("gui", "exit_b_info"))
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "exit_b_label"),
 		lang.Text("gui", "exit_b_info"))
@@ -78,26 +78,26 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 
 // Draw draws all menu elements in specified
 // window.
-func (m *Menu) Draw(win *pixelgl.Window) {
+func (m *Menu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
 		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
-	m.title.Draw(win, pixel.IM.Moved(titlePos))
+	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
-	m.newcharB.Draw(win, pixel.IM.Moved(mtk.BottomOf(m.title.DrawArea(),
+	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.title.DrawArea(),
 		m.newcharB.Frame(), 50)))
-	m.settingsB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		m.newcharB.DrawArea().Min.Y - m.newcharB.Frame().Size().Y)))
-	m.exitB.Draw(win, pixel.IM.Moved(pixel.V(titlePos.X,
-		m.settingsB.DrawArea().Min.Y - m.settingsB.Frame().Size().Y)))
+	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.newcharB.DrawArea(),
+		m.settingsB.Frame(), 30)))
+	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.settingsB.DrawArea(),
+		m.exitB.Frame(), 30)))
 }
 
 // Update updates all menu elements.
-func (m *Menu) Update(win *pixelgl.Window) {
+func (m *Menu) Update(win *mtk.Window) {
 	if m.Opened() {
-		m.newcharB.Update(win)
-		m.settingsB.Update(win)
-		m.exitB.Update(win)
+		m.newcharB.Update(win.Window)
+		m.settingsB.Update(win.Window)
+		m.exitB.Update(win.Window)
 	}
 	if m.exitReq {
 		win.SetClosed(true)

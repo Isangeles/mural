@@ -32,7 +32,7 @@ import (
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	//"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/core/mtk"
 )
@@ -107,7 +107,7 @@ func New() (*MainMenu, error) {
 }
 
 // Draw draws current menu screen.
-func (mm *MainMenu) Draw(win *pixelgl.Window) {
+func (mm *MainMenu) Draw(win *mtk.Window) {
 	// Menu.
 	if mm.menu.Opened() {
 		mm.menu.Draw(win)
@@ -118,24 +118,24 @@ func (mm *MainMenu) Draw(win *pixelgl.Window) {
 	}
 	// Settings.
 	if mm.settings.Opened() {
-		mm.settings.Draw(win)
+		mm.settings.Draw(win.Window)
 	}
 	// Messages.
-	mm.msgs.Draw(win, pixel.IM.Moved(win.Bounds().Center()))
+	mm.msgs.Draw(win.Window, mtk.Matrix().Moved(win.Bounds().Center()))
 	// Console.
 	if mm.console.Opened() {
 		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0), win)
+		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0), win.Window)
 	}
 }
 
 // Update updates current menu screen.
-func (mm *MainMenu) Update(win *pixelgl.Window) {
+func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.menu.Update(win)
 	mm.newcharmenu.Update(win)
-	mm.settings.Update(win)
-	mm.console.Update(win)
-	mm.msgs.Update(win)
+	mm.settings.Update(win.Window)
+	mm.console.Update(win.Window)
+	mm.msgs.Update(win.Window)
 }
 
 // OpenMenu opens menu.

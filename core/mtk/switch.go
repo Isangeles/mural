@@ -253,6 +253,12 @@ func (s *Switch) Value() *SwitchValue {
 	return &s.values[s.index]
 }
 
+// Reset sets value with first index as current
+// value.
+func (s *Switch) Reset() {
+	s.SetIndex(0)
+}
+
 // Find checks if switch constains specified value and returns
 // index of this value or -1 if switch does not contains
 // such value.

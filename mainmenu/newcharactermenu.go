@@ -25,11 +25,14 @@ package mainmenu
 
 import (
 	"fmt"
+	"time"
+	"math/rand"
 	
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/log"
@@ -50,8 +53,11 @@ type NewCharacterMenu struct {
 	dexSwitch  *mtk.Switch
 	intSwitch  *mtk.Switch
 	wisSwitch  *mtk.Switch
+	doneButton *mtk.Button
 	backButton *mtk.Button
+	rollButton *mtk.Button
 	opened     bool
+	rng        *rand.Rand
 	// Character.
 	attrPoints, attrPointsMax int
 }
@@ -60,8 +66,10 @@ type NewCharacterMenu struct {
 func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm := new(NewCharacterMenu)
 	ncm.mainmenu = mainmenu
+	rngSrc := rand.NewSource(time.Now().UnixNano())
+	ncm.rng = rand.New(rngSrc)
 	// Character.
-	ncm.attrPointsMax = 5
+	ncm.attrPointsMax = ncm.rollPoints()
 	ncm.attrPoints = ncm.attrPointsMax
 	// Title.
 	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
@@ -93,9 +101,16 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		lang.Text("gui", "newchar_wis_switch_label"), 0, ncm.attrPointsMax)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Buttons.
+	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "done_b_label"), "")
+	ncm.doneButton.SetOnClickFunc(ncm.onDoneButtonClicked)
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "back_b_label"), "")
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
+	ncm.rollButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "newchar_roll_b_label"),
+		lang.Text("gui", "newchar_roll_b_info"))
+	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	
 	return ncm, nil
 }
@@ -109,8 +124,8 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	// Text fields.
 	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
 		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win.Window)
-	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(110),
-		win.Bounds().Center().Y, win.Bounds().Min.X + mtk.ConvSize(140),
+	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(90),
+		win.Bounds().Center().Y - mtk.ConvSize(40), win.Bounds().Min.X + mtk.ConvSize(140),
 		win.Bounds().Center().Y + mtk.ConvSize(40)), win.Window)
 	// Switches.
 	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(ncm.pointsBox.DrawArea(),
@@ -125,16 +140,22 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 		ncm.intSwitch.Frame(), 15)))
 	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.intSwitch.DrawArea(),
 		ncm.wisSwitch.Frame(), 15)))
-	// Button.
+	// Buttons.
+	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(ncm.doneButton.Frame(),
+		pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y))))
 	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(ncm.backButton.Frame(),
 		win.Bounds().Min)))
+	ncm.rollButton.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.pointsBox.DrawArea(),
+		ncm.rollButton.Frame(), 5)))
 }
 
 // Update updates all menu elements.
 func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	if ncm.Opened() {
 		ncm.nameEdit.Update(win.Window)
+		ncm.doneButton.Update(win.Window)
 		ncm.backButton.Update(win.Window)
+		ncm.rollButton.Update(win.Window)
 		ncm.pointsBox.Update(win.Window)
 		ncm.faceSwitch.Update(win.Window)
 		ncm.strSwitch.Update(win.Window)
@@ -146,9 +167,21 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	}
 }
 
+// rollPoints draws random amount of attribute points for new character
+// from range specified in Flame config.
+func (ncm *NewCharacterMenu) rollPoints() int {
+	return ncm.rng.Intn(flame.NewCharAttrMax() -
+		flame.NewCharAttrMin()) + flame.NewCharAttrMin()
+}
+
 // updatePoints updates points box value.
 func (ncm *NewCharacterMenu) updatePoints() {
-	ncm.pointsBox.InsertText([]string{fmt.Sprint(ncm.attrPoints)})
+	ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
+}
+
+// createChar creates new game character.
+func (ncm *NewCharacterMenu) createChar() {
+	// TODO: new character create.
 }
 
 // Show toggles menu visibility.
@@ -164,6 +197,23 @@ func (ncm *NewCharacterMenu) Opened() bool {
 // Triggered after back button clicked.
 func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 	ncm.mainmenu.OpenMenu()
+}
+
+// Triggered after done button clicked.
+func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
+	ncm.createChar()
+}
+
+// Triggered after roll button clicked.
+func (ncm *NewCharacterMenu) onRollButtonClicked(b *mtk.Button) {
+	ncm.strSwitch.Reset()
+	ncm.conSwitch.Reset()
+	ncm.dexSwitch.Reset()
+	ncm.intSwitch.Reset()
+	ncm.wisSwitch.Reset()
+	ncm.attrPointsMax = ncm.rollPoints()
+	ncm.attrPoints = ncm.attrPointsMax
+	ncm.updatePoints()
 }
 
 // Triggered after any attribute switch value changed.

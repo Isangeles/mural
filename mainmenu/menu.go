@@ -85,11 +85,11 @@ func (m *Menu) Draw(win *mtk.Window) {
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
 	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.title.DrawArea(),
-		m.newcharB.Frame(), 50)))
+		m.newcharB.Frame(), 10)))
 	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.newcharB.DrawArea(),
-		m.settingsB.Frame(), 30)))
+		m.settingsB.Frame(), 5)))
 	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.settingsB.DrawArea(),
-		m.exitB.Frame(), 30)))
+		m.exitB.Frame(), 5)))
 }
 
 // Update updates all menu elements.

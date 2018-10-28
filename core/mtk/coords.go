@@ -95,7 +95,7 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 // draw area, with specified offset value.
 func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y +
-		(rect.Max.Y) + ConvSize(offset))
+		(rect.H() / 2) + ConvSize(offset))
 }
 
 // ReightOf returns position for specified rect at the right side of specified
@@ -108,8 +108,8 @@ func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 // BottomOf returns position of specified rect at the bottom side of speicified
 // draw area, width specified offset value.
 func BottomOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y -
-		(rect.Max.Y) - ConvSize(offset))
+	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Min.Y -
+		(rect.H() / 2) - ConvSize(offset))
 }
 
 // LeftOf returns position for specified rect at the left side of specified

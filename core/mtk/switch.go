@@ -31,7 +31,6 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
-	"github.com/faiface/pixel/pixelgl"
 )
 
 // Tuple for switch values, contains value to display and
@@ -102,52 +101,6 @@ func NewSwitch(size Size, color color.Color, label string,
 	return s
 }
 
-// NewStringSwitch creates new instance of switch with IMDraw
-// background with specified string values to switch.
-func NewStringSwitch(size Size, color color.Color, label string,
-	values []string) *Switch {
-	// All string values to switchString helper struct.
-	strValues := make([]SwitchValue, len(values))
-	for i, v := range values {
-		ss := SwitchValue{v, v}
-		strValues[i] = ss
-	}
-
-	s := NewSwitch(size, color, label, strValues)
-	return s
-}
-
-// NewIntSwitch creates new instance of switch with IMDraw
-// background and with specified int values to switch.
-func NewIntSwitch(size Size, color color.Color, label string,
-	min, max int) *Switch {
-	// All int values from specified min max range.
-	length := max - min + 1
-	intValues := make([]SwitchValue, length)
-	for i := min; i <= max; i++ {
-		value := i //+ 1
-		intValues[i] = SwitchValue{fmt.Sprint(value), value}
-	}
-
-	s := NewSwitch(size, color, label, intValues)
-	return s
-}
-
-// NewPictureSwitch creates new switch with IMDraw background
-// and with specified pictures as switch values.
-func NewPictureSwitch(size Size, color color.Color, label string,
-	pics map[string]pixel.Picture) *Switch {
-	var picValues []SwitchValue
-	for name, pic := range pics {
-		spr := pixel.NewSprite(pic, pic.Bounds())
-		val := SwitchValue{spr, name}
-		picValues = append(picValues, val)
-	}
-
-	s := NewSwitch(size, color, label, picValues)
-	return s
-}
-
 // Draw draws switch.
 func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
@@ -176,7 +129,7 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 }
 
 // Update updates switch and all elements.
-func (s *Switch) Update(win *pixelgl.Window) {
+func (s *Switch) Update(win *Window) {
 	if s.Disabled() {
 		return
 	}
@@ -199,6 +152,18 @@ func (s *Switch) SetValues(values []SwitchValue) {
 	s.values = values
 }
 
+// SetTextValues sets specified textual values as switch
+// values
+func (s *Switch) SetTextValues(values []string) {
+	// All string values to switchString helper struct.
+	strValues := make([]SwitchValue, len(values))
+	for i, v := range values {
+		ss := SwitchValue{v, v}
+		strValues[i] = ss
+	}
+	s.SetValues(strValues)
+}
+
 // SetIntValue sets all integer values from specified range as
 // switch values.
 func (s *Switch) SetIntValues(min, max int) {
@@ -209,6 +174,18 @@ func (s *Switch) SetIntValues(min, max int) {
 		intValues[i] = intVal
 	}
 	s.SetValues(intValues)
+}
+
+// SetPictureValues sets specified pictures as switch values.
+func (s *Switch) SetPictureValues(pics map[string]pixel.Picture) {
+	var picValues []SwitchValue
+	for name, pic := range pics {
+		spr := pixel.NewSprite(pic, pic.Bounds())
+		val := SwitchValue{spr, name}
+		picValues = append(picValues, val)
+	}
+	s.SetValues(picValues)
+	s.updateValueView()
 }
 
 // Focus toggles focus on element.
@@ -300,6 +277,9 @@ func (s *Switch) SetOnChangeFunc(f func(s *Switch, old, new *SwitchValue)) {
 
 // updateValueView updates value view with current switch value.
 func (s *Switch) updateValueView() {
+	if s.values == nil {
+		return
+	}
 	if spr, err := s.Value().Sprite(); err != nil {
 		s.valueText.SetText(s.Value().Label())
 	} else {

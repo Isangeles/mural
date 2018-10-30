@@ -84,20 +84,20 @@ func (m *Menu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
-	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.title.DrawArea(),
-		m.newcharB.Frame(), 10)))
-	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.newcharB.DrawArea(),
-		m.settingsB.Frame(), 5)))
-	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(m.settingsB.DrawArea(),
-		m.exitB.Frame(), 5)))
+	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		m.title.DrawArea(), m.newcharB.Frame(), 10)))
+	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		m.newcharB.DrawArea(), m.settingsB.Frame(), 5)))
+	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		m.settingsB.DrawArea(), m.exitB.Frame(), 5)))
 }
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
 	if m.Opened() {
-		m.newcharB.Update(win.Window)
-		m.settingsB.Update(win.Window)
-		m.exitB.Update(win.Window)
+		m.newcharB.Update(win)
+		m.settingsB.Update(win)
+		m.exitB.Update(win)
 	}
 	if m.exitReq {
 		win.SetClosed(true)

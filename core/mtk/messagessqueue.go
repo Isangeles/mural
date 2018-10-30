@@ -25,7 +25,6 @@ package mtk
 
 import (
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 )
 
 // MessagesQueue struct for list with messages to display.
@@ -52,7 +51,7 @@ func (mq *MessagesQueue) Draw(t pixel.Target, matrix pixel.Matrix) {
 }
 
 // Update updates all messages in queue.
-func (mq *MessagesQueue) Update(win *pixelgl.Window) {
+func (mq *MessagesQueue) Update(win *Window) {
 	for i, m := range mq.queue {
 		if m.Opened() {
 			if i == len(mq.queue)-1 {

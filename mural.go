@@ -101,6 +101,11 @@ func run() {
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
 	}
+	uiFont, err := data.Font("SIMSUN.ttf")
+	if err != nil {
+		panic(fmt.Errorf("fail_to_load_ui_font:%v", err))
+	}
+	mtk.SetMainFont(uiFont)
 	
 	mainMenu, err := mainmenu.New()
 	if err != nil {

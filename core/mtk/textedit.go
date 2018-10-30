@@ -90,7 +90,7 @@ func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 }
 
 // Update updates text edit.
-func (te *Textedit) Update(win *pixelgl.Window) {
+func (te *Textedit) Update(win *Window) {
 	if te.Disabled() {
 		return
 	}

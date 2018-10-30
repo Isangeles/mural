@@ -65,12 +65,12 @@ func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	tb.drawArea = drawArea
 	tb.drawIMBackground(t)
 	// Text content.
-	tb.textarea.Draw(t, pixel.IM.Moved(pixel.V(drawArea.Min.X,
+	tb.textarea.Draw(t, Matrix().Moved(pixel.V(drawArea.Min.X,
 		drawArea.Max.Y - tb.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.
-func (t *Textbox) Update(win *pixelgl.Window) {
+func (t *Textbox) Update(win *Window) {
 	if win.JustPressed(pixelgl.KeyDown) {
 		if t.startID < len(t.textContent) - 1 {
 			t.startID ++

@@ -29,10 +29,10 @@ import (
 
 	"golang.org/x/image/font"
 
+	"github.com/golang/freetype/truetype"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
-
-	"github.com/isangeles/mural/core/data"
 )
 
 const (
@@ -46,9 +46,17 @@ const (
 	SHAPE_SQUARE
 )
 
+var (
+	main_font_base *truetype.Font
+)
+
 // Type for shapes of UI elements.
 // Shapes: rectangle(0), square(1).
 type Shape int
+
+// Type for sizes of UI elements, like buttons, switches, etc.
+// Sizes: small(0), normal(1), big(2).
+type Size int
 
 // Interface for all 'focusable' UI elements, like buttons,
 // switches, etc.
@@ -72,10 +80,6 @@ func (f *Focus) Focus(e Focuser) {
 	f.element = e
 	f.element.Focus(true)
 }
-
-// Type for sizes of UI elements, like buttons, switches, etc.
-// Sizes: small(0), normal(1), big(2).
-type Size int
 
 // ButtonSize returns szie parameters for button with
 // this size and with specifed shape.
@@ -127,22 +131,28 @@ func (s Size) MessageWindowSize() pixel.Rect {
 	}
 }
 
+// Sets specified truetype font as current main font of
+// the interface.
+func SetMainFont(font *truetype.Font) {
+	main_font_base = font
+}
+
 // MainFont returns main font in specified size from
 // data package.
 func MainFont(s Size) font.Face {
 	switch {
 	case s <= SIZE_SMALL:
-		return data.MainFont((10))
+		return createMainFont(10)
 	case s == SIZE_MEDIUM:
-		return data.MainFont((20))
+		return createMainFont(20)
 	case s >= SIZE_BIG:
-		return data.MainFont((30))
+		return createMainFont(30)
 	default:
-		return data.MainFont((10))
+		return createMainFont(10)
 	}
 }
 
-// UIAtlas returns atlas for UI text with specified
+// Atlas returns atlas for UI text with specified
 // font.
 func Atlas(f *font.Face) *text.Atlas {
 	return text.NewAtlas(*f, text.ASCII)
@@ -151,4 +161,14 @@ func Atlas(f *font.Face) *text.Atlas {
 // Matrix return scaled identity matrix.
 func Matrix() pixel.Matrix {
 	return pixel.IM.Scaled(pixel.V(0, 0), Scale())
+}
+
+// createMainFont creates new main font face with
+// specified size.
+// TODO: fallback font for  UI(if main font base was not set).
+func createMainFont(size float64) font.Face {
+	return truetype.NewFace(main_font_base, &truetype.Options{
+		Size:              size,
+		GlyphCacheEntries: 1,
+	})
 }

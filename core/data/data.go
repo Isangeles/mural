@@ -30,8 +30,6 @@ import (
 	"path/filepath"
 	"io/ioutil"
 
-	"golang.org/x/image/font"
-
 	"github.com/golang/freetype/truetype"
 
 	"github.com/faiface/pixel"
@@ -42,7 +40,6 @@ import (
 var (
 	g_dir_path  string
 	g_arch_path string
-	mainFont    *truetype.Font
 )
 
 // Called by GUI before creating any GUI elements.
@@ -54,12 +51,6 @@ func Load() error {
 		flame.Mod().Name()))
 	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
 		flame.Mod().Name()))
-	var err error
-	mainFont, err = Font("SIMSUN.ttf")
-	if err != nil {
-		return fmt.Errorf("fail to load main font")
-		//mainFont = basicfont.Face7x13
-	}
 	return nil
 }
 
@@ -96,12 +87,4 @@ func PlayablePortraits() (map[string]pixel.Picture, error) {
 func Font(fileName string) (*truetype.Font, error) {
 	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
-}
-
-// MainFont returns standard font in specified size.
-func MainFont(size float64) font.Face {
-	return truetype.NewFace(mainFont, &truetype.Options{
-		Size:              size,
-		GlyphCacheEntries: 1,
-	})
 }

@@ -25,25 +25,26 @@ package mainmenu
 
 import (
 	"fmt"
-	"time"
 	"math/rand"
-	
+	"time"
+
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/game/object/character"
 
-	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/log"
 )
 
 // NewCharacterMenu struct represents new game character
 // creation screen.
 type NewCharacterMenu struct {
-	mainmenu   *MainMenu  
+	mainmenu   *MainMenu
 	title      *mtk.Text
 	nameEdit   *mtk.Textedit
 	faceSwitch *mtk.Switch
@@ -53,6 +54,8 @@ type NewCharacterMenu struct {
 	dexSwitch  *mtk.Switch
 	intSwitch  *mtk.Switch
 	wisSwitch  *mtk.Switch
+	sexSwitch  *mtk.Switch
+	raceSwitch *mtk.Switch
 	doneButton *mtk.Button
 	backButton *mtk.Button
 	rollButton *mtk.Button
@@ -68,9 +71,6 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.mainmenu = mainmenu
 	rngSrc := rand.NewSource(time.Now().UnixNano())
 	ncm.rng = rand.New(rngSrc)
-	// Character.
-	ncm.attrPointsMax = ncm.rollPoints()
-	ncm.attrPoints = ncm.attrPointsMax
 	// Title.
 	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
 		mtk.SIZE_BIG, 0)
@@ -78,28 +78,53 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
-	// Switches.
+	// Portrait switch.
 	faces, err := data.PlayablePortraits()
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
 	}
-	ncm.faceSwitch = mtk.NewPictureSwitch(mtk.SIZE_BIG, main_color,
-		lang.Text("gui", "newchar_face_switch_label"), faces) 
-	ncm.strSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_str_switch_label"), 0, ncm.attrPointsMax)
+	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color,
+		lang.Text("gui", "newchar_face_switch_label"), nil)
+	ncm.faceSwitch.SetPictureValues(faces)
+	// Attributes switches.
+	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_str_switch_label"), nil)
+	ncm.strSwitch.SetIntValues(0, 90)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.conSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_con_switch_label"), 0, ncm.attrPointsMax)
+	ncm.conSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_con_switch_label"), nil)
+	ncm.conSwitch.SetIntValues(0, 90)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.dexSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_dex_switch_label"), 0, ncm.attrPointsMax)
+	ncm.dexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_dex_switch_label"), nil)
+	ncm.dexSwitch.SetIntValues(0, 90)
 	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.intSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_int_switch_label"), 0, ncm.attrPointsMax) 
+	ncm.intSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_int_switch_label"), nil)
+	ncm.intSwitch.SetIntValues(0, 90)
 	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.wisSwitch = mtk.NewIntSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_wis_switch_label"), 0, ncm.attrPointsMax)
+	ncm.wisSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_wis_switch_label"), nil)
+	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
+	// Gender & alligment switches.
+	maleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_male"),
+		character.MALE}
+	femaleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_female"),
+		character.FEMALE}
+	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
+	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_sex_switch_label"), gens)
+	// Race switch.
+	rNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
+		"race_gnome")
+	races := []mtk.SwitchValue{mtk.SwitchValue{rNames[0], character.HUMAN},
+		mtk.SwitchValue{rNames[1], character.ELF,}, mtk.SwitchValue{
+			rNames[2], character.DWARF}, mtk.SwitchValue{rNames[3],
+				character.GNOME}}
+	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_race_switch_label"), races)
+	// TODO: alligement switch.
 	// Buttons.
 	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "done_b_label"), "")
@@ -111,7 +136,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		colornames.Red, lang.Text("gui", "newchar_roll_b_label"),
 		lang.Text("gui", "newchar_roll_b_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
-	
+	// Character.
+	ncm.rollPoints()
+
 	return ncm, nil
 }
 
@@ -119,69 +146,80 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y - ncm.title.Bounds().Size().Y)
+		win.Bounds().Max.Y-ncm.title.Bounds().Size().Y)
 	ncm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Text fields.
-	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y - mtk.ConvSize(30),
-		titlePos.X + mtk.ConvSize(150), titlePos.Y - mtk.ConvSize(50)), win.Window)
-	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X + mtk.ConvSize(90),
-		win.Bounds().Center().Y - mtk.ConvSize(40), win.Bounds().Min.X + mtk.ConvSize(140),
-		win.Bounds().Center().Y + mtk.ConvSize(40)), win.Window)
+	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y-mtk.ConvSize(30),
+		titlePos.X+mtk.ConvSize(150), titlePos.Y-mtk.ConvSize(50)),
+		win.Window)
+	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X+mtk.ConvSize(90),
+		win.Bounds().Center().Y-mtk.ConvSize(40),
+		win.Bounds().Min.X+mtk.ConvSize(140),
+		win.Bounds().Center().Y+mtk.ConvSize(40)), win.Window)
 	// Switches.
-	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(ncm.pointsBox.DrawArea(),
-		ncm.faceSwitch.Frame(), 100)))
-	ncm.strSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.pointsBox.DrawArea(),
-		ncm.strSwitch.Frame(), 5)))
-	ncm.conSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.strSwitch.DrawArea(),
-		ncm.conSwitch.Frame(), 15)))
-	ncm.dexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.conSwitch.DrawArea(),
-		ncm.dexSwitch.Frame(), 15)))
-	ncm.intSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.dexSwitch.DrawArea(),
-		ncm.intSwitch.Frame(), 15)))
-	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(ncm.intSwitch.DrawArea(),
-		ncm.wisSwitch.Frame(), 15)))
+	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(
+		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Frame(), 100)))
+	ncm.strSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.pointsBox.DrawArea(), ncm.strSwitch.Frame(), 5)))
+	ncm.conSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.strSwitch.DrawArea(), ncm.conSwitch.Frame(), 15)))
+	ncm.dexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.conSwitch.DrawArea(), ncm.dexSwitch.Frame(), 15)))
+	ncm.intSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.dexSwitch.DrawArea(), ncm.intSwitch.Frame(), 15)))
+	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.intSwitch.DrawArea(), ncm.wisSwitch.Frame(), 15)))
+	ncm.sexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
+		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Frame(), 30)))
+	ncm.raceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Frame(), 10)))
 	// Buttons.
-	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(ncm.doneButton.Frame(),
-		pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y))))
-	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(ncm.backButton.Frame(),
-		win.Bounds().Min)))
-	ncm.rollButton.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.pointsBox.DrawArea(),
-		ncm.rollButton.Frame(), 5)))
+	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
+		ncm.doneButton.Frame(), pixel.V(win.Bounds().Max.X,
+			win.Bounds().Min.Y))))
+	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
+		ncm.backButton.Frame(), win.Bounds().Min)))
+	ncm.rollButton.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		ncm.pointsBox.DrawArea(), ncm.rollButton.Frame(), 5)))
 }
 
 // Update updates all menu elements.
 func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	if ncm.Opened() {
-		ncm.nameEdit.Update(win.Window)
-		ncm.doneButton.Update(win.Window)
-		ncm.backButton.Update(win.Window)
-		ncm.rollButton.Update(win.Window)
-		ncm.pointsBox.Update(win.Window)
-		ncm.faceSwitch.Update(win.Window)
-		ncm.strSwitch.Update(win.Window)
-		ncm.conSwitch.Update(win.Window)
-		ncm.dexSwitch.Update(win.Window)
-		ncm.intSwitch.Update(win.Window)
-		ncm.wisSwitch.Update(win.Window)
+		ncm.nameEdit.Update(win)
+		ncm.doneButton.Update(win)
+		ncm.backButton.Update(win)
+		ncm.rollButton.Update(win)
+		ncm.pointsBox.Update(win)
+		ncm.faceSwitch.Update(win)
+		ncm.strSwitch.Update(win)
+		ncm.conSwitch.Update(win)
+		ncm.dexSwitch.Update(win)
+		ncm.intSwitch.Update(win)
+		ncm.wisSwitch.Update(win)
+		ncm.sexSwitch.Update(win)
+		ncm.raceSwitch.Update(win)
 		ncm.updatePoints()
+		if ncm.nameEdit.Text() == "" || ncm.attrPoints > 0 {
+			ncm.doneButton.Active(false)
+		} else {
+			ncm.doneButton.Active(true)
+		}
 	}
 }
 
 // rollPoints draws random amount of attribute points for new character
 // from range specified in Flame config.
-func (ncm *NewCharacterMenu) rollPoints() int {
-	return ncm.rng.Intn(flame.NewCharAttrMax() -
-		flame.NewCharAttrMin()) + flame.NewCharAttrMin()
-}
-
-// updatePoints updates points box value.
-func (ncm *NewCharacterMenu) updatePoints() {
-	ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
-}
-
-// createChar creates new game character.
-func (ncm *NewCharacterMenu) createChar() {
-	// TODO: new character create.
+func (ncm *NewCharacterMenu) rollPoints() {
+	ncm.strSwitch.Reset()
+	ncm.conSwitch.Reset()
+	ncm.dexSwitch.Reset()
+	ncm.intSwitch.Reset()
+	ncm.wisSwitch.Reset()
+	ncm.attrPointsMax = ncm.rng.Intn(flame.Mod().NewcharAttrsMax()-
+		flame.Mod().NewcharAttrsMin()) + flame.Mod().NewcharAttrsMin()
+	ncm.attrPoints = ncm.attrPointsMax
+	ncm.updatePoints()
 }
 
 // Show toggles menu visibility.
@@ -192,6 +230,16 @@ func (ncm *NewCharacterMenu) Show(show bool) {
 // Opened checks whether menu is open.
 func (ncm *NewCharacterMenu) Opened() bool {
 	return ncm.opened
+}
+
+// updatePoints updates points box value.
+func (ncm *NewCharacterMenu) updatePoints() {
+	ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
+}
+
+// createChar creates new game character.
+func (ncm *NewCharacterMenu) createChar() {
+	// TODO: create new character.
 }
 
 // Triggered after back button clicked.
@@ -206,14 +254,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 
 // Triggered after roll button clicked.
 func (ncm *NewCharacterMenu) onRollButtonClicked(b *mtk.Button) {
-	ncm.strSwitch.Reset()
-	ncm.conSwitch.Reset()
-	ncm.dexSwitch.Reset()
-	ncm.intSwitch.Reset()
-	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rollPoints()
-	ncm.attrPoints = ncm.attrPointsMax
-	ncm.updatePoints()
+	ncm.rollPoints()
 }
 
 // Triggered after any attribute switch value changed.

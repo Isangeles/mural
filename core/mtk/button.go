@@ -124,7 +124,7 @@ func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 }
 
 // Update updates button.
-func (b *Button) Update(win *pixelgl.Window) {
+func (b *Button) Update(win *Window) {
 	if b.Disabled() {
 		return
 	}
@@ -145,7 +145,7 @@ func (b *Button) Update(win *pixelgl.Window) {
 	if b.ContainsPosition(win.MousePosition()) {
 		b.hovered = true
 		if b.info != nil {	
-			b.info.Update(win)
+			b.info.Update(win.Window)
 		}
 	} else {
 		b.hovered = false

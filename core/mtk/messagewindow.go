@@ -125,11 +125,10 @@ func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
 }
 
 // Update handles key press events.
-func (mw *MessageWindow) Update(win *pixelgl.Window) {
+func (mw *MessageWindow) Update(win *Window) {
 	if mw.Disabled() {
 		return
 	}
-	
 	if mw.Focused() {
 		if win.JustPressed(pixelgl.KeyEscape) {
 			mw.cancel()

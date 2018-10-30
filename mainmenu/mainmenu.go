@@ -32,7 +32,6 @@ import (
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
-	//"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/core/mtk"
 )
@@ -124,8 +123,10 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 	mm.msgs.Draw(win.Window, mtk.Matrix().Moved(win.Bounds().Center()))
 	// Console.
 	if mm.console.Opened() {
-		conBottomLeft := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0), win.Window)
+		conBottomLeft := pixel.V(win.Bounds().Min.X,
+			win.Bounds().Center().Y)
+		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0),
+			win.Window)
 	}
 }
 
@@ -133,9 +134,9 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.menu.Update(win)
 	mm.newcharmenu.Update(win)
-	mm.settings.Update(win.Window)
-	mm.console.Update(win.Window)
-	mm.msgs.Update(win.Window)
+	mm.settings.Update(win)
+	mm.console.Update(win)
+	mm.msgs.Update(win)
 }
 
 // OpenMenu opens menu.

@@ -61,11 +61,12 @@ func newConsole() (*Console, error) {
 // Draw draws console.
 func (c *Console) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
 	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
-	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X, drawMin.Y), win)
+	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X,
+		drawMin.Y), win)
 }
 
 // Update handles key events and updates console.
-func (c *Console) Update(win *pixelgl.Window) {
+func (c *Console) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.KeyGraveAccent) {
 		if !c.opened {
 			c.Show(true)

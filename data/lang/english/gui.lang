@@ -24,4 +24,6 @@ newchar_int_switch_label:Inteligence;
 newchar_wis_switch_label:Wisdom;
 newchar_roll_b_label:Roll;
 newchar_roll_b_info:Roll attributes points;
+newchar_sex_switch_label:Gender;
+newchar_race_switch_label:Race;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

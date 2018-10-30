@@ -56,7 +56,8 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
-	s.title = mtk.NewText(lang.Text("gui", "settings_menu_title"), mtk.SIZE_BIG, 900)
+	s.title = mtk.NewText(lang.Text("gui", "settings_menu_title"),
+		mtk.SIZE_BIG, 900)
 	// Buttons.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM,
 		mtk.SHAPE_RECTANGLE, colornames.Red,
@@ -66,7 +67,7 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
 	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
 	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
-	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Grey,
+	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "settings_fullscr_switch_label"), fullscrValues)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	var resSwitchValues []mtk.SwitchValue
@@ -74,11 +75,12 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 		resSwitchValues = append(resSwitchValues,
 			mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res})
 	}
-	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
+	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "resolution_s_label"), resSwitchValues)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
-	s.langSwitch = mtk.NewStringSwitch(mtk.SIZE_MEDIUM, colornames.Blue,
-		lang.Text("gui", "lang_s_label"), config.SupportedLangs())
+	s.langSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "lang_s_label"), nil)
+	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	
 	return s, nil
@@ -91,18 +93,18 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
 	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons & switches.
-	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.title.DrawArea(),
-		s.fullscrSwitch.Frame(), 50)))
-	s.resSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.fullscrSwitch.DrawArea(),
-		s.resSwitch.Frame(), 90)))
-	s.langSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.resSwitch.DrawArea(),
-		s.langSwitch.Frame(), 90)))
-	s.backButton.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(s.langSwitch.DrawArea(),
-		s.backButton.Frame(), 90)))
+	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
+		s.title.DrawArea(), s.fullscrSwitch.Frame(), 50)))
+	s.resSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
+		s.fullscrSwitch.DrawArea(), s.resSwitch.Frame(), 30)))
+	s.langSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
+		s.resSwitch.DrawArea(), s.langSwitch.Frame(), 30)))
+	s.backButton.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
+		s.langSwitch.DrawArea(), s.backButton.Frame(), 30)))
 }
 
 // Update updates all menu elements.
-func (s *Settings) Update(win *pixelgl.Window) {
+func (s *Settings) Update(win *mtk.Window) {
 	if s.Opened() {
 		s.fullscrSwitch.Update(win)
 		s.resSwitch.Update(win)

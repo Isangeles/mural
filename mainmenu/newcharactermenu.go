@@ -39,6 +39,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/objects"
 )
 
 // NewCharacterMenu struct represents new game character
@@ -119,16 +120,18 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	// Race switch.
 	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
 		"race_gnome")
-	races := []mtk.SwitchValue{mtk.SwitchValue{raceNames[0], character.HUMAN},
-		mtk.SwitchValue{raceNames[1], character.ELF,}, mtk.SwitchValue{
-			raceNames[2], character.DWARF}, mtk.SwitchValue{raceNames[3],
-				character.GNOME}}
+	races := []mtk.SwitchValue{
+		mtk.SwitchValue{raceNames[0], character.HUMAN},
+		mtk.SwitchValue{raceNames[1], character.ELF},
+		mtk.SwitchValue{raceNames[2], character.DWARF},
+		mtk.SwitchValue{raceNames[3], character.GNOME},
+	}
 	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_race_switch_label"), "", races)
 	// Alignment switch.
 	aliNames := lang.Texts("ui", "ali_law_good", "ali_neu_good", "ali_cha_good",
 		"ali_law_neutral", "ali_tru_neutral", "ali_cha_neutral",
-		"ali_law_evli", "ali_neu_evil", "ali_cha_evil")
+		"ali_law_evil", "ali_neu_evil", "ali_cha_evil")
 	alis := []mtk.SwitchValue{
 		mtk.SwitchValue{aliNames[0], character.Lawful_good},
 		mtk.SwitchValue{aliNames[1], character.Neutral_good},
@@ -220,7 +223,7 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 		ncm.raceSwitch.Update(win)
 		ncm.aliSwitch.Update(win)
 		ncm.updatePoints()
-		if ncm.nameEdit.Text() == "" || ncm.attrPoints > 0 {
+		if ncm.canCreate() {
 			ncm.doneButton.Active(false)
 		} else {
 			ncm.doneButton.Active(true)
@@ -252,14 +255,55 @@ func (ncm *NewCharacterMenu) Opened() bool {
 	return ncm.opened
 }
 
+// canCreate checks whether its possible to create new character.
+func (ncm *NewCharacterMenu) canCreate() bool {
+	return ncm.nameEdit.Text() == "" || ncm.attrPoints > 0
+}
+
 // updatePoints updates points box value.
 func (ncm *NewCharacterMenu) updatePoints() {
 	ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
 }
 
 // createChar creates new game character.
-func (ncm *NewCharacterMenu) createChar() {
-	// TODO: create new character.
+func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
+	name := ncm.nameEdit.Text()
+	str, err := ncm.strSwitch.Value().IntValue()
+	if err != nil {
+		return nil, err
+	}
+	con, err := ncm.conSwitch.Value().IntValue()
+	if err != nil {
+		return nil, err
+	}
+	dex, err := ncm.dexSwitch.Value().IntValue()
+	if err != nil {
+		return nil, err
+	}
+	inte, err := ncm.intSwitch.Value().IntValue()
+	if err != nil {
+		return nil, err
+	}
+	wis, err := ncm.wisSwitch.Value().IntValue()
+	if err != nil {
+		return nil, err
+	}
+	attrs := character.Attributes{str, con, dex, inte, wis}
+	gender, ok := ncm.sexSwitch.Value().Value.(character.Gender)
+	if !ok {
+		return nil, fmt.Errorf("fail_to_retrive_gender")
+	}
+	race, ok := ncm.raceSwitch.Value().Value.(character.Race)
+	if !ok {
+		return nil, fmt.Errorf("fail_to_retrieve_race")
+	}
+	alignment, ok := ncm.aliSwitch.Value().Value.(character.Alignment)
+	if !ok {
+		return nil, fmt.Errorf("fail_to_retrieve_alignment")
+	}
+	char := character.NewCharacter("player_01", name, 1, gender, race, character.Friendly,
+		character.NewGuild("none"), attrs, alignment)
+	return &char, nil
 }
 
 // Triggered after back button clicked.
@@ -269,7 +313,26 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 
 // Triggered after done button clicked.
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
-	ncm.createChar()
+	char, err := ncm.createChar()
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_create_character:%v\n", err)
+		return
+	}
+	faceName, err := ncm.faceSwitch.Value().TextValue()
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_retrieve_avatar_portrait_name:%v\n", err)
+		return 
+	}
+	av, err := objects.NewAvatar(char, faceName)
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_create_character_avatar:%v\n", err)
+		return
+	}
+	ncm.mainmenu.AddPlayableChar(av)
+	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+		lang.Text("gui", "newchar_create_msg"))
+	ncm.mainmenu.ShowMessage(msg)
+	ncm.mainmenu.OpenMenu()
 }
 
 // Triggered after roll button clicked.

@@ -170,13 +170,8 @@ func (s *Settings) updateValues() {
 // about required game restart if settings was changed.
 func (s *Settings) close() {
 	if s.Changed() {
-		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
+		msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 			lang.Text("gui", "settings_reset_msg"))
-		if err != nil {
-			log.Err.Printf("settings:fail_to_create_settings_change_message")
-			s.mainmenu.OpenMenu()
-			return
-		}
 		s.mainmenu.ShowMessage(msg)
 		s.Apply()
 	}
@@ -187,13 +182,8 @@ func (s *Settings) close() {
 // main menu messages list.
 func (s *Settings) closeWithDialog() {
 	if s.Changed() {
-		dlg, err := mtk.NewDialogWindow(mtk.SIZE_SMALL,
+		dlg := mtk.NewDialogWindow(mtk.SIZE_SMALL,
 			lang.Text("gui", "settings_save_msg"))
-		if err != nil {
-			log.Err.Printf("settings:fail_to_create_settings_confirm_dialog")
-			s.close() 
-			return
-		}
 		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
 		s.mainmenu.ShowMessage(dlg)

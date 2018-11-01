@@ -55,7 +55,7 @@ type MessageWindow struct {
 }
 
 // NewMessageWindow creates new message window instance.
-func NewMessageWindow(size Size, msg string) (*MessageWindow, error) {
+func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw := new(MessageWindow)
 	// Background.
 	mw.bg = imdraw.New(nil)
@@ -73,22 +73,19 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow, error) {
 	acceptB.SetOnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
 
-	return mw, nil
+	return mw
 }
 
 // NewDialogWindow creates new dialog window with message.
-func NewDialogWindow(size Size, msg string) (*MessageWindow, error) {
+func NewDialogWindow(size Size, msg string) (*MessageWindow) {
 	// Basic message window.
-	mw, err := NewMessageWindow(size, msg)
-	if err != nil {
-		return nil, err
-	}
+	mw := NewMessageWindow(size, msg)
 	// Buttons.
 	mw.cancelButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "cancel_b_label"), "")
 	mw.cancelButton.SetOnClickFunc(mw.onCancelButtonClicked)
 	
-	return mw, nil
+	return mw
 }
 
 // Draw draws window.

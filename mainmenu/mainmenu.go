@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/objects"
 )
 
 var (
@@ -46,12 +47,13 @@ var (
 // all menu screens(settings menu, new game menu, etc.).
 // Wraps all main menu screens.
 type MainMenu struct {
-	menu        *Menu
-	newcharmenu *NewCharacterMenu
-	settings    *Settings
-	console     *Console
-	userFocus   *mtk.Focus
-	msgs        *mtk.MessagesQueue
+	menu          *Menu
+	newcharmenu   *NewCharacterMenu
+	settings      *Settings
+	console       *Console
+	userFocus     *mtk.Focus
+	msgs          *mtk.MessagesQueue
+	playableChars []*objects.Avatar
 }
 
 // New returns new main menu
@@ -169,5 +171,11 @@ func (mm *MainMenu) HideMenus() {
 func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
 	m.Show(true)
 	mm.msgs.Append(m)
+}
+
+// AddPlaybaleChar adds new playable character to playable
+// characters list.
+func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
+	mm.playableChars = append(mm.playableChars, c)
 }
 

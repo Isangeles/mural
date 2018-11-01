@@ -60,6 +60,12 @@ func Picture(filePath string) (pixel.Picture, error) {
 	return loadPictureFromArch(g_arch_path, filePath)
 }
 
+// Portrait returns portrait with specified name.
+func Portrait(fileName string) (pixel.Picture, error) {
+        path :=	flame.Mod().FullPath() + "/gui/portraits/" + fileName
+        return loadPictureFromDir(path)
+}
+
 // PlayablePortraits returns map with names of portraits as keys
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {

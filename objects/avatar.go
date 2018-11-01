@@ -1,5 +1,5 @@
 /*
- * interpreter.go
+ * avatar.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,30 +21,35 @@
  *
  */
 
-// ci package provides GUI specific command line tools and
-// connection to flame engine commands interpreter.
-package ci
+package objects
 
 import (
-	flameci "github.com/isangeles/flame/cmd/ci"
+	"fmt"
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame/core/game/object/character"
+
+	"github.com/isangeles/mural/core/data"
 )
 
-const (
-	GUI_MAN = "guiman"
-)
-
-// Handles specified command,
-// returns response code and message.
-func HandleCommand(cmd flameci.Command) (int, string) {
-	switch cmd.Tool() {
-	case GUI_MAN:
-		return handleGUICommand(cmd)
-	case flameci.ENGINE_MAN:
-		//return 2, "tool_unavalible:" + cmd.Tool()
-		return flameci.HandleCommand(cmd)
-	default:
-		return flameci.HandleCommand(cmd)
-	}
+// Avatar struct for graphical representation of
+// game character.
+type Avatar struct {
+	*character.Character
+	
+	portrait    *pixel.Sprite
+	portraitName string
 }
 
+// NewAvatar creates new avatar for specified game character.
+func NewAvatar(char *character.Character, portraitName string) (*Avatar, error) {
+	av := new(Avatar)
+	av.portraitName = portraitName
+	portraitPic, err := data.Portrait(av.portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_portrait")
+	}
+	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
+	return av, nil
+}
 

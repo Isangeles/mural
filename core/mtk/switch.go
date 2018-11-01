@@ -59,6 +59,26 @@ func (s SwitchValue) Sprite() (*pixel.Sprite, error) {
 	return spr, nil
 }
 
+// IntValue returns value as integer, or error if not
+// possible.
+func (s SwitchValue) IntValue() (int, error) {
+	num, ok := s.Value.(int)
+	if !ok {
+		return 0, fmt.Errorf("fail_to_retrieve_switch_integer_value")		
+	}
+	return num, nil
+}
+
+// TextValue returns value as text, or error if not
+// possible.
+func (s SwitchValue) TextValue() (string, error) {
+	txt, ok := s.Value.(string)
+	if !ok {
+		return "", fmt.Errorf("failt_to_retrieve_switch_text_value")
+	}
+	return txt, nil
+}
+
 // Switch struct represents graphical switch for values.
 type Switch struct {
 	bgDraw                 *imdraw.IMDraw
@@ -208,9 +228,9 @@ func (s *Switch) SetTextValues(values []string) {
 // SetIntValue sets all integer values from specified range as
 // switch values.
 func (s *Switch) SetIntValues(min, max int) {
-	intValues := make([]SwitchValue, max)
-	for i := min; i < max; i++ {
-		value := i + 1
+	intValues := make([]SwitchValue, max+1)
+	for i := min; i < max+1; i++ {
+		value := i
 		intVal := SwitchValue{fmt.Sprint(value), value}
 		intValues[i] = intVal
 	}

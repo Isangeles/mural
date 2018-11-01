@@ -26,4 +26,5 @@ newchar_roll_b_label:Roll;
 newchar_roll_b_info:Roll attributes points;
 newchar_sex_switch_label:Gender;
 newchar_race_switch_label:Race;
+newchar_alignment_switch_label:Alignment;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

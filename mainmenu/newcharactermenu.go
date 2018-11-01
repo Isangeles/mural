@@ -56,6 +56,7 @@ type NewCharacterMenu struct {
 	wisSwitch  *mtk.Switch
 	sexSwitch  *mtk.Switch
 	raceSwitch *mtk.Switch
+	aliSwitch  *mtk.Switch
 	doneButton *mtk.Button
 	backButton *mtk.Button
 	rollButton *mtk.Button
@@ -84,27 +85,27 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
 	}
 	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color,
-		lang.Text("gui", "newchar_face_switch_label"), nil)
+		lang.Text("gui", "newchar_face_switch_label"), "", nil)
 	ncm.faceSwitch.SetPictureValues(faces)
 	// Attributes switches.
 	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_str_switch_label"), nil)
+		lang.Text("gui", "newchar_str_switch_label"), "", nil)
 	ncm.strSwitch.SetIntValues(0, 90)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.conSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_con_switch_label"), nil)
+		lang.Text("gui", "newchar_con_switch_label"), "", nil)
 	ncm.conSwitch.SetIntValues(0, 90)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.dexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_dex_switch_label"), nil)
+		lang.Text("gui", "newchar_dex_switch_label"), "", nil)
 	ncm.dexSwitch.SetIntValues(0, 90)
 	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.intSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_int_switch_label"), nil)
+		lang.Text("gui", "newchar_int_switch_label"), "", nil)
 	ncm.intSwitch.SetIntValues(0, 90)
 	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.wisSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_wis_switch_label"), nil)
+		lang.Text("gui", "newchar_wis_switch_label"), "", nil)
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
@@ -114,17 +115,33 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		character.FEMALE}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_sex_switch_label"), gens)
+		lang.Text("gui", "newchar_sex_switch_label"), "", gens)
 	// Race switch.
-	rNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
+	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
 		"race_gnome")
-	races := []mtk.SwitchValue{mtk.SwitchValue{rNames[0], character.HUMAN},
-		mtk.SwitchValue{rNames[1], character.ELF,}, mtk.SwitchValue{
-			rNames[2], character.DWARF}, mtk.SwitchValue{rNames[3],
+	races := []mtk.SwitchValue{mtk.SwitchValue{raceNames[0], character.HUMAN},
+		mtk.SwitchValue{raceNames[1], character.ELF,}, mtk.SwitchValue{
+			raceNames[2], character.DWARF}, mtk.SwitchValue{raceNames[3],
 				character.GNOME}}
 	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_race_switch_label"), races)
-	// TODO: alligement switch.
+		lang.Text("gui", "newchar_race_switch_label"), "", races)
+	// Alignment switch.
+	aliNames := lang.Texts("ui", "ali_law_good", "ali_neu_good", "ali_cha_good",
+		"ali_law_neutral", "ali_tru_neutral", "ali_cha_neutral",
+		"ali_law_evli", "ali_neu_evil", "ali_cha_evil")
+	alis := []mtk.SwitchValue{
+		mtk.SwitchValue{aliNames[0], character.Lawful_good},
+		mtk.SwitchValue{aliNames[1], character.Neutral_good},
+		mtk.SwitchValue{aliNames[2], character.Chaotic_good},
+		mtk.SwitchValue{aliNames[3], character.Lawful_neutral},
+		mtk.SwitchValue{aliNames[4], character.True_neutral},
+		mtk.SwitchValue{aliNames[5], character.Chaotic_neutral},
+		mtk.SwitchValue{aliNames[6], character.Lawful_evil},
+		mtk.SwitchValue{aliNames[7], character.Neutral_evil},
+		mtk.SwitchValue{aliNames[8], character.Chaotic_evil},
+	}
+	ncm.aliSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
+		lang.Text("gui", "newchar_ali_switch_label"), "", alis)
 	// Buttons.
 	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "done_b_label"), "")
@@ -173,6 +190,8 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Frame(), 30)))
 	ncm.raceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
 		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Frame(), 10)))
+	ncm.aliSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		ncm.raceSwitch.DrawArea(), ncm.aliSwitch.Frame(), 10)))
 	// Buttons.
 	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
 		ncm.doneButton.Frame(), pixel.V(win.Bounds().Max.X,
@@ -199,6 +218,7 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 		ncm.wisSwitch.Update(win)
 		ncm.sexSwitch.Update(win)
 		ncm.raceSwitch.Update(win)
+		ncm.aliSwitch.Update(win)
 		ncm.updatePoints()
 		if ncm.nameEdit.Text() == "" || ncm.attrPoints > 0 {
 			ncm.doneButton.Active(false)

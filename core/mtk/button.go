@@ -76,15 +76,15 @@ func NewButton(size Size, shape Shape, color color.Color,
 
 // NewButtonSprite creates new instance of button with specified
 // background image and label text.
-func NewButtonSprite(bgPic pixel.Picture, labelText, infoText string) *Button {
+func NewButtonSprite(bgPic pixel.Picture, fontSize Size, labelText,
+	infoText string) *Button {
 	button := new(Button)
 	// Backround.
-	bg := pixel.NewSprite(bgPic, bgPic.Bounds())
-	button.bgSpr = bg
+	button.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
 	button.colorPush = colornames.Grey
 	button.colorHover = colornames.Crimson
 	// Label.
-	button.label = NewText(labelText, SIZE_SMALL, button.Frame().W()) 
+	button.label = NewText(labelText, fontSize, button.Frame().W()) 
 	// Info window.
 	if len(infoText) > 0 {	
 		button.info = NewInfoWindow(infoText)
@@ -145,7 +145,7 @@ func (b *Button) Update(win *Window) {
 	if b.ContainsPosition(win.MousePosition()) {
 		b.hovered = true
 		if b.info != nil {	
-			b.info.Update(win.Window)
+			b.info.Update(win)
 		}
 	} else {
 		b.hovered = false

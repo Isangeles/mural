@@ -27,7 +27,6 @@ import (
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 )
 
 // InfoWindow struct for small text boxes with information about UI
@@ -51,7 +50,7 @@ func (iw *InfoWindow) Draw(t pixel.Target) {
 }
 
 // Update updates info window.
-func (iw *InfoWindow) Update(win *pixelgl.Window) {
+func (iw *InfoWindow) Update(win *Window) {
 	iw.drawArea = pixel.R(win.MousePosition().X, win.MousePosition().Y,
 		win.MousePosition().X + iw.text.Bounds().Size().X,
 		win.MousePosition().Y + iw.text.Bounds().Size().Y * 1.5)

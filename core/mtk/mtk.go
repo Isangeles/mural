@@ -28,6 +28,7 @@ import (
 	//"fmt"
 
 	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
 
 	"github.com/golang/freetype/truetype"
 
@@ -47,6 +48,7 @@ const (
 )
 
 var (
+	fallback_font  font.Face = basicfont.Face7x13
 	main_font_base *truetype.Font
 )
 
@@ -165,8 +167,10 @@ func Matrix() pixel.Matrix {
 
 // createMainFont creates new main font face with
 // specified size.
-// TODO: fallback font for  UI(if main font base was not set).
 func createMainFont(size float64) font.Face {
+	if main_font_base == nil {
+		return fallback_font
+	}
 	return truetype.NewFace(main_font_base, &truetype.Options{
 		Size:              size,
 		GlyphCacheEntries: 1,

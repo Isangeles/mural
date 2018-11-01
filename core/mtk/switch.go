@@ -67,19 +67,21 @@ type Switch struct {
 	valueText              *Text
 	valueSprite            *pixel.Sprite
 	label                  *Text
+	info                   *InfoWindow
 	drawArea               pixel.Rect // updated on each draw
 	size                   Size
 	color                  color.Color
 	index                  int
 	focused                bool
 	disabled               bool
+	hovered                bool
 	values                 []SwitchValue
 	onChange               func(s *Switch, old, new *SwitchValue)
 }
 
 // NewSwitch creates new instance of switch with IMDraw
 // background with specified values to switch.
-func NewSwitch(size Size, color color.Color, label string,
+func NewSwitch(size Size, color color.Color, label, info string,
 	values []SwitchValue) *Switch {
 	s := new(Switch)
 	// Background.
@@ -87,17 +89,44 @@ func NewSwitch(size Size, color color.Color, label string,
 	s.size = size
 	s.color = color
 	// Buttons.
-	s.prevButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "-", "")
-	s.nextButton = NewButton(size-2, SHAPE_SQUARE, colornames.Red, "+", "")
+	s.prevButton = NewButton(s.size-2, SHAPE_SQUARE, colornames.Red, "-", "")
 	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
+	s.nextButton = NewButton(s.size-2, SHAPE_SQUARE, colornames.Red, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
-	// Label.
-	s.label = NewText(label, size-1, s.Frame().W())
+	// Label & info window.
+	s.label = NewText(label, s.size-1, s.Frame().W())
+	s.info = NewInfoWindow(info)
 	// Values.
 	s.values = values
 	s.index = 0
-	s.valueText = NewText("", size, 100)
+	s.valueText = NewText("", s.size, 100)
 	s.updateValueView()
+
+	return s
+}
+
+// NewSwitchSprite creates new instance of switch with specified picture
+// as background.
+func NewSwitchSprite(bgPic, nextButtonPic, prevButtonPic pixel.Picture,
+	fontSize Size, label, info string,
+	values []SwitchValue) *Switch {
+	s := new(Switch)
+	// Background.
+	s.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
+	s.size = fontSize
+	// Buttons.
+	s.prevButton = NewButtonSprite(prevButtonPic, s.size-2, "-", "")
+	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
+	s.nextButton = NewButtonSprite(nextButtonPic, s.size-2, "+", "")
+	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
+	// Label & info window.
+	s.label = NewText(label, s.size-1, s.Frame().W())
+	s.info = NewInfoWindow(info)
+	// Values.
+	s.values = values
+	s.index = 0
+	s.valueText = NewText("", s.size, 100)
+	
 	return s
 }
 
@@ -116,11 +145,14 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if s.valueSprite == nil {
 		s.valueText.Draw(t, matrix)
 	} else {
-		s.valueSprite.Draw(t, matrix.Scaled(s.DrawArea().Center(), Scale()))
-		valueDA = MatrixToDrawArea(matrix.Scaled(s.DrawArea().Center(),
-			Scale()), s.valueSprite.Frame())
+		s.valueSprite.Draw(t, matrix)
+		valueDA = MatrixToDrawArea(matrix, s.valueSprite.Frame())
 	}
+	// Label & info window.
 	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
+	if s.info != nil && s.hovered {
+		s.info.Draw(t)
+	}
 	// Buttons.
 	s.prevButton.Draw(t, pixel.IM.Moved(LeftOf(valueDA, s.prevButton.Frame(),
 		10)))
@@ -135,6 +167,14 @@ func (s *Switch) Update(win *Window) {
 	}
 	s.prevButton.Update(win)
 	s.nextButton.Update(win)
+	if s.ContainsPosition(win.MousePosition()) {
+		s.hovered = true
+		if s.info != nil {	
+			s.info.Update(win)
+		}
+	} else {
+		s.hovered = false
+	}
 }
 
 // drawIMBackground Draws IMDraw background.
@@ -150,6 +190,7 @@ func (s *Switch) drawIMBackground(t pixel.Target) {
 // SetValues sets specified list with values as switch values.
 func (s *Switch) SetValues(values []SwitchValue) {
 	s.values = values
+	s.updateValueView()
 }
 
 // SetTextValues sets specified textual values as switch
@@ -185,7 +226,6 @@ func (s *Switch) SetPictureValues(pics map[string]pixel.Picture) {
 		picValues = append(picValues, val)
 	}
 	s.SetValues(picValues)
-	s.updateValueView()
 }
 
 // Focus toggles focus on element.
@@ -273,6 +313,12 @@ func (s *Switch) SetIndex(index int) {
 // Sets specified function as function triggered on on switch value change.
 func (s *Switch) SetOnChangeFunc(f func(s *Switch, old, new *SwitchValue)) {
 	s.onChange = f
+}
+
+// ContainsPosition checks if specified position is wthin current
+// draw area.
+func (s *Switch) ContainsPosition(pos pixel.Vec) bool {
+	return s.DrawArea().Contains(pos)
 }
 
 // updateValueView updates value view with current switch value.

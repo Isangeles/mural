@@ -62,6 +62,7 @@ func Picture(filePath string) (pixel.Picture, error) {
 
 // Portrait returns portrait with specified name.
 func Portrait(fileName string) (pixel.Picture, error) {
+	// TODO: search graphic archive also.
         path :=	flame.Mod().FullPath() + "/gui/portraits/" + fileName
         return loadPictureFromDir(path)
 }

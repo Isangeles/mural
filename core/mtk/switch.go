@@ -74,7 +74,7 @@ func (s SwitchValue) IntValue() (int, error) {
 func (s SwitchValue) TextValue() (string, error) {
 	txt, ok := s.Value.(string)
 	if !ok {
-		return "", fmt.Errorf("failt_to_retrieve_switch_text_value")
+		return "", fmt.Errorf("fail_to_retrieve_switch_text_value")
 	}
 	return txt, nil
 }
@@ -287,6 +287,9 @@ func (s *Switch) DrawArea() pixel.Rect {
 
 // Value returns current switch value.
 func (s *Switch) Value() *SwitchValue {
+	if s.index >= len(s.values) || s.index < 0 {
+		return nil
+	}
 	return &s.values[s.index]
 }
 
@@ -312,6 +315,9 @@ func (s *Switch) Find(value interface{}) int {
 // and returns this value or nil if switch does not contains
 // value with such index.
 func (s *Switch) FindValue(index int) *SwitchValue {
+	if index >= len(s.values) || index < 0 {
+		return nil
+	}
 	return &s.values[index]
 }
 
@@ -343,7 +349,7 @@ func (s *Switch) ContainsPosition(pos pixel.Vec) bool {
 
 // updateValueView updates value view with current switch value.
 func (s *Switch) updateValueView() {
-	if s.values == nil {
+	if s.values == nil || len(s.values) < 1 {
 		return
 	}
 	if spr, err := s.Value().Sprite(); err != nil {

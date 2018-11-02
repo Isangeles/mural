@@ -48,12 +48,13 @@ var (
 // Wraps all main menu screens.
 type MainMenu struct {
 	menu          *Menu
+	newgamemenu   *NewGameMenu
 	newcharmenu   *NewCharacterMenu
 	settings      *Settings
 	console       *Console
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
-	playableChars []*objects.Avatar
+	PlayableChars []*objects.Avatar
 }
 
 // New returns new main menu
@@ -66,6 +67,13 @@ func New() (*MainMenu, error) {
 			err)
 	}
 	mm.menu = m
+	// New game menu.
+	ngm, err := newNewGameMenu(mm)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_new_game_menu:%v",
+			err)
+	}
+	mm.newgamemenu = ngm
 	// New character menu.
 	ncm, err := newNewCharacterMenu(mm)
 	if err != nil {
@@ -113,6 +121,10 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 	if mm.menu.Opened() {
 		mm.menu.Draw(win)
 	}
+	// New game menu.
+	if mm.newgamemenu.Opened() {
+		mm.newgamemenu.Draw(win)
+	}
 	// New character menu.
 	if mm.newcharmenu.Opened() {
 		mm.newcharmenu.Draw(win)
@@ -135,6 +147,7 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.menu.Update(win)
+	mm.newgamemenu.Update(win)
 	mm.newcharmenu.Update(win)
 	mm.settings.Update(win)
 	mm.console.Update(win)
@@ -145,6 +158,12 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 func (mm *MainMenu) OpenMenu() {
 	mm.HideMenus()
 	mm.menu.Show(true)
+}
+
+// OpenNewGameMenu opens new game creation menu.
+func (mm *MainMenu) OpenNewGameMenu() {
+	mm.HideMenus()
+	mm.newgamemenu.Show(true)
 }
 
 // OpenNewCharMenu opens new character creation menu.
@@ -162,6 +181,7 @@ func (mm *MainMenu) OpenSettings() {
 // HideMenus hides all menus.
 func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
+	mm.newgamemenu.Show(false)
 	mm.newcharmenu.Show(false)
 	mm.settings.Show(false)
 }
@@ -176,6 +196,6 @@ func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
-	mm.playableChars = append(mm.playableChars, c)
+	mm.PlayableChars = append(mm.PlayableChars, c)
 }
 

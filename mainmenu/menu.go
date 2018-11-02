@@ -40,6 +40,7 @@ import (
 type Menu struct {
 	mainmenu  *MainMenu
 	title     *mtk.Text
+	newgameB  *mtk.Button
 	newcharB  *mtk.Button
 	settingsB *mtk.Button
 	exitB     *mtk.Button
@@ -54,6 +55,10 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	// Title.
 	m.title = mtk.NewText(flame.Mod().Name(), mtk.SIZE_BIG, mtk.ConvSize(900)) 
 	// Buttons.
+	m.newgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "newgame_b_label"),
+		lang.Text("gui", "newgame_b_info"))
+	m.newgameB.SetOnClickFunc(m.onNewGameButtonClicked)
 	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newchar_b_label"),
 		lang.Text("gui", "newchar_b_info"))
@@ -84,8 +89,10 @@ func (m *Menu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
+	m.newgameB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		m.title.DrawArea(), m.newgameB.Frame(), 10)))
 	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.title.DrawArea(), m.newcharB.Frame(), 10)))
+		m.newgameB.DrawArea(), m.newcharB.Frame(), 5)))
 	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
 		m.newcharB.DrawArea(), m.settingsB.Frame(), 5)))
 	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
@@ -95,6 +102,7 @@ func (m *Menu) Draw(win *mtk.Window) {
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
 	if m.Opened() {
+		m.newgameB.Update(win)
 		m.newcharB.Update(win)
 		m.settingsB.Update(win)
 		m.exitB.Update(win)
@@ -112,6 +120,11 @@ func (m *Menu) Opened() bool {
 // Show toggles menu visibility.
 func (m *Menu) Show(show bool) {
 	m.opened = show
+}
+
+// Triggered after new game button clicked.
+func (m *Menu) onNewGameButtonClicked(b *mtk.Button) {
+	m.mainmenu.OpenNewGameMenu()
 }
 
 // onNewCharButtonClicked closes all currently open

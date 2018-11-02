@@ -44,6 +44,7 @@ type Avatar struct {
 // NewAvatar creates new avatar for specified game character.
 func NewAvatar(char *character.Character, portraitName string) (*Avatar, error) {
 	av := new(Avatar)
+	av.Character = char
 	av.portraitName = portraitName
 	portraitPic, err := data.Portrait(av.portraitName)
 	if err != nil {
@@ -51,5 +52,10 @@ func NewAvatar(char *character.Character, portraitName string) (*Avatar, error) 
 	}
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil
+}
+
+// Portrait returns avatar portrait.
+func (av *Avatar) Portrait() *pixel.Sprite {
+	return av.portrait
 }
 

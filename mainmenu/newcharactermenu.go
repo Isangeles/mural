@@ -303,7 +303,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	}
 	char := character.NewCharacter("player_01", name, 1, gender, race, character.Friendly,
 		character.NewGuild("none"), attrs, alignment)
-	return &char, nil
+	return char, nil
 }
 
 // Triggered after back button clicked.

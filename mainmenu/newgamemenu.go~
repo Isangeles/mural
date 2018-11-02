@@ -1,0 +1,90 @@
+/*
+ * newgamemenu.go
+ *
+ * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ *
+ *
+ */
+
+package mainmenu
+
+import (
+	"golang.org/x/image/colornames"
+
+	"github.com/faiface/pixel"
+	
+	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/mural/core/mtk"
+)
+
+// NewGameMenu struct represents new game
+// creation screen.
+type NewGameMenu struct {
+	mainmenu   *MainMenu
+	title      *mtk.Text
+	backButton *mtk.Button
+	opened     bool
+}
+
+// newNewGameMenu creates new game creation menu.
+func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
+	ngm := new(NewGameMenu)
+	ngm.mainmenu = mainmenu
+	// Title.
+	ngm.title = mtk.NewText(lang.Text("gui", "newgame_menu_title"),
+		mtk.SIZE_BIG, 0)
+	// Buttons.
+	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "back_b_label"), "")
+	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
+	return ngm, nil
+}
+
+// Draw draws all menu elements in specified window.
+func (ngm *NewGameMenu) Draw(win *mtk.Window) {
+	// Title.
+	titlePos := pixel.V(win.Bounds().Center().X,
+		win.Bounds().Max.Y-ngm.title.Bounds().Size().Y)
+	ngm.title.Draw(win, mtk.Matrix().Moved(titlePos))
+	// Buttons.
+	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
+		ngm.backButton.Frame(), win.Bounds().Min)))
+}
+
+// Update updates all menu elements.
+func (ngm *NewGameMenu) Update(win *mtk.Window) {
+	if ngm.Opened() {
+		ngm.backButton.Update(win)
+	}
+}
+
+// Show toggles menu visibility.
+func (ngm *NewGameMenu) Show(show bool) {
+	ngm.opened = show
+}
+
+// Opened checks whether menu is open.
+func (ngm *NewGameMenu) Opened() bool {
+	return ngm.opened
+}
+
+// Triggered after back button clicked.
+func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
+	ngm.mainmenu.OpenMenu()
+}

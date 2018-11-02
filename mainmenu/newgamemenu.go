@@ -1,0 +1,135 @@
+/*
+ * newgamemenu.go
+ *
+ * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ *
+ *
+ */
+
+package mainmenu
+
+import (
+	"fmt"
+	
+	"golang.org/x/image/colornames"
+
+	"github.com/faiface/pixel"
+	
+	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/log"
+)
+
+// NewGameMenu struct represents new game
+// creation screen.
+type NewGameMenu struct {
+	mainmenu   *MainMenu
+	title      *mtk.Text
+	charSwitch *mtk.Switch
+	charInfo   *mtk.Textbox
+	backButton *mtk.Button
+	opened     bool
+}
+
+// newNewGameMenu creates new game creation menu.
+func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
+	ngm := new(NewGameMenu)
+	ngm.mainmenu = mainmenu
+	// Title.
+	ngm.title = mtk.NewText(lang.Text("gui", "newgame_menu_title"),
+		mtk.SIZE_BIG, 0)
+	// Swtches & text.
+	ngm.charSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color,
+		lang.Text("gui", "newgame_char_switch_label"), "", nil)
+	ngm.charSwitch.SetOnChangeFunc(ngm.onCharSwitchChanged)
+	ngm.charInfo = mtk.NewTextbox(mtk.SIZE_BIG, main_color)
+	// Buttons.
+	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red, lang.Text("gui", "back_b_label"), "")
+	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
+	ngm.updateCharSwitchValues()
+	return ngm, nil
+}
+
+// Draw draws all menu elements in specified window.
+func (ngm *NewGameMenu) Draw(win *mtk.Window) {
+	// Title.
+	titlePos := pixel.V(win.Bounds().Center().X,
+		win.Bounds().Max.Y-ngm.title.Bounds().Size().Y)
+	ngm.title.Draw(win, mtk.Matrix().Moved(titlePos))
+	// Buttons.
+	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
+		ngm.backButton.Frame(), win.Bounds().Min)))
+	// Switches & text.
+	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
+		ngm.title.DrawArea(), ngm.charSwitch.Frame(), 10)))
+	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X, ngm.backButton.DrawArea().Max.Y, 
+		win.Bounds().Max.X, ngm.charSwitch.DrawArea().Min.Y), win.Window)
+}
+
+// Update updates all menu elements.
+func (ngm *NewGameMenu) Update(win *mtk.Window) {
+	if ngm.Opened() {
+		ngm.charSwitch.Update(win)
+		ngm.charInfo.Update(win)
+		ngm.backButton.Update(win)
+	}
+}
+
+// Show toggles menu visibility.
+func (ngm *NewGameMenu) Show(show bool) {
+	ngm.opened = show
+	ngm.updateCharSwitchValues()
+}
+
+// Opened checks whether menu is open.
+func (ngm *NewGameMenu) Opened() bool {
+	return ngm.opened
+}
+
+// updateCharSwitchValues updates character switch values.
+func (ngm *NewGameMenu) updateCharSwitchValues() {
+	charSwitchValues := make([]mtk.SwitchValue, len(ngm.mainmenu.PlayableChars))
+	for i, c := range ngm.mainmenu.PlayableChars {
+		charSwitchValues[i] = mtk.SwitchValue{c.Portrait(), c}
+	}
+	ngm.charSwitch.SetValues(charSwitchValues)
+}
+
+// Triggered after back button clicked.
+func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
+	ngm.mainmenu.OpenMenu()
+}
+
+// Triggered after character switch change.
+func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchValue) {
+	//charInfoForm := `Name:    %s`
+	switchVal := s.Value()
+	if switchVal == nil {
+		return
+	}
+	c, ok := switchVal.Value.(*objects.Avatar)
+	if !ok {
+		log.Err.Print("fail_to_retrieve_avatar_from_switch")
+		return
+	}
+	ngm.charInfo.Clear()
+	ngm.charInfo.Add(fmt.Sprintf("%s", c.Id()))
+}

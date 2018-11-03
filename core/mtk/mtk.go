@@ -26,6 +26,7 @@ package mtk
 
 import (
 	//"fmt"
+	"time"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -50,6 +51,7 @@ const (
 var (
 	fallback_font  font.Face = basicfont.Face7x13
 	main_font_base *truetype.Font
+	sec_timer = time.Tick(time.Second)
 )
 
 // Type for shapes of UI elements.

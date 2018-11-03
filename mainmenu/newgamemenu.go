@@ -27,7 +27,9 @@ import (
 	"fmt"
 
 	"github.com/faiface/pixel"
-	
+
+	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core/game/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
 	"github.com/isangeles/mural/core/mtk"
@@ -85,8 +87,9 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 	// Switches & text.
 	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
 		ngm.title.DrawArea(), ngm.charSwitch.Frame(), 10)))
-	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X, ngm.backButton.DrawArea().Max.Y, 
-		win.Bounds().Max.X, ngm.charSwitch.DrawArea().Min.Y), win.Window)
+	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X,
+		ngm.backButton.DrawArea().Max.Y, win.Bounds().Max.X,
+		ngm.charSwitch.DrawArea().Min.Y), win.Window)
 }
 
 // Update updates all menu elements.
@@ -121,15 +124,14 @@ func (ngm *NewGameMenu) updateCharSwitchValues() {
 }
 
 // updateCharInfo updates textbox with character informations.
-func (ngm *NewGameMenu) updateCharInfo() {
+func (ngm *NewGameMenu) updateCharInfo() error {
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
-		return
+		return nil
 	}
 	c, ok := switchVal.Value.(*objects.Avatar)
 	if !ok {
-		log.Err.Print("fail_to_retrieve_avatar_from_switch")
-		return
+		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
 	charInfoForm := `
                          Name:       %s
@@ -142,16 +144,32 @@ func (ngm *NewGameMenu) updateCharInfo() {
 	ngm.charInfo.Add(fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
 		lang.Text("ui", c.Gender().Id()), lang.Text("ui", c.Race().Id()),
 	        lang.Text("ui", c.Alignment().Id()), c.Attributes().String()))
+	return nil
 }
 
 // startGame starts new game.
-func (ngm *NewGameMenu) startGame() {
-	// TODO: start new game.
+func (ngm *NewGameMenu) startGame() error {
+	switchVal := ngm.charSwitch.Value()
+	if switchVal == nil {
+		return nil
+	}
+	c, ok := switchVal.Value.(*objects.Avatar)
+	if !ok {
+		fmt.Errorf("fail_to_retrieve_avatar_from_switch")
+	}
+	err := flame.StartGame([]*character.Character{c.Character})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Triggered after start button clicked.
 func (ngm *NewGameMenu) onStartButtonClicked(b *mtk.Button) {
-	ngm.startGame()
+	err := ngm.startGame()
+	if err != nil {
+		log.Err.Printf("fail_to_start_new_game:%v\n", err)
+	}
 }
 
 // Triggered after back button clicked.
@@ -160,6 +178,10 @@ func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 }
 
 // Triggered after character switch change.
-func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchValue) {
-	ngm.updateCharInfo()
+func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
+		old, new *mtk.SwitchValue) {
+	err := ngm.updateCharInfo()
+	if err != nil {
+		log.Err.Printf("fail_to_update_char_info:%v\n", err)
+	}
 }

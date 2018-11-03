@@ -79,7 +79,14 @@ func DisTL(rect pixel.Rect, scale float64) pixel.Vec {
 	        rect.Max.Y - (rect.Max.Y * scale))
 }
 
-// PosBL return bottom left point for specified position
+
+// PosTR returns top right point for specified position
+// of specified rectangle.
+func PosTR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
+	return pixel.V(pos.X - (size.Size().X / 2), pos.Y - (size.Size().Y))
+}
+
+// PosBL returns bottom left point for specified position
 // of specified rectangle.
 func PosBL(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X + (size.Size().X / 2), pos.Y + (size.Size().Y / 2))

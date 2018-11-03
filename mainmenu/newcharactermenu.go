@@ -301,8 +301,8 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
-	char := character.NewCharacter("player_01", name, 1, gender, race, character.Friendly,
-		character.NewGuild("none"), attrs, alignment)
+	char := character.NewCharacter("player_01", name, 1, gender, race,
+		character.Friendly, character.NewGuild("none"), attrs, alignment)
 	return char, nil
 }
 
@@ -325,7 +325,8 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	av, err := objects.NewAvatar(char, faceName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_create_character_avatar:%v\n", err)
+		log.Err.Printf("newchar_menu:fail_to_create_character_avatar:%v\n",
+			err)
 		return
 	}
 	ncm.mainmenu.AddPlayableChar(av)

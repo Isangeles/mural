@@ -37,6 +37,7 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text"
+	"github.com/isangeles/flame/core/enginelog"
 )
 
 const (
@@ -105,6 +106,11 @@ func Resolution() pixel.Vec {
 // Lang returns current language ID.
 func Lang() string {
 	return lang
+}
+
+// Debug checks whether debug mode is enabled.
+func Debug() bool {
+	return enginelog.IsDebug()
 }
 
 // SetFullscreen toggles fullscreen mode.

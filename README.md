@@ -13,18 +13,20 @@
   Get sources from git:
 ```
 $ go get github.com/isangeles/mural
-
 ```
 
   Build GUI
 ```
 $ go build github.com/isangeles/mural
 ```
+
+Copy 'data' directory to directory with Mural executable.
+
 Now, specify the path to a valid Flame module in Flame configuration file,
-create file '.flame' in Mural executable directory(or run mural to create it
+create file '.flame' in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
-  module:[mod dir name];[mod path](optional);
+  module:[module name];[module path](optional);
 ```
 If no path provided, the engine will search default modules directory(data/modules).
 

@@ -111,6 +111,7 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
+	fpsInfo := mtk.NewText(fmt.Sprint(win.FPS()), mtk.SIZE_MEDIUM, 100)
 
 	// textbox test.
 	/*
@@ -125,9 +126,14 @@ func run() {
 		//last = time.Now()
 		// Update.
 		mainMenu.Update(win)
+		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
 		// Draw.
 		win.Clear(colornames.Black)
 		mainMenu.Draw(win)
+		if config.Debug() {
+			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
+				fpsInfo.Bounds(), win.Bounds().Max)))
+		}
 
 		win.Update()
 	}

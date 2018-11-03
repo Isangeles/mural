@@ -31,6 +31,9 @@ import (
 // Wrapper struct for pixel window, to provide scalability.
 type Window struct {
 	*pixelgl.Window
+
+	frameCount int
+	fps        int
 }
 
 // NewWindow creates new MTK window.
@@ -43,4 +46,21 @@ func NewWindow(conf pixelgl.WindowConfig) (*Window, error) {
 	}
 	w.Window = win
 	return w, nil
+}
+
+// Update updates window.
+func (w *Window) Update() {
+	w.Window.Update()
+	w.frameCount++
+	select {
+	case <-sec_timer:
+		w.fps = w.frameCount
+		w.frameCount = 0
+	default:
+	}
+}
+
+// FPS returns current frame per second value.
+func (w *Window) FPS() int {
+	return w.fps
 }

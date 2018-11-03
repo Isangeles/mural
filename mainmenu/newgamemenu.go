@@ -25,8 +25,6 @@ package mainmenu
 
 import (
 	"fmt"
-	
-	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 	
@@ -40,12 +38,13 @@ import (
 // NewGameMenu struct represents new game
 // creation screen.
 type NewGameMenu struct {
-	mainmenu   *MainMenu
-	title      *mtk.Text
-	charSwitch *mtk.Switch
-	charInfo   *mtk.Textbox
-	backButton *mtk.Button
-	opened     bool
+	mainmenu    *MainMenu
+	title       *mtk.Text
+	charSwitch  *mtk.Switch
+	charInfo    *mtk.Textbox
+	startButton *mtk.Button
+	backButton  *mtk.Button
+	opened      bool
 }
 
 // newNewGameMenu creates new game creation menu.
@@ -61,8 +60,11 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 	ngm.charSwitch.SetOnChangeFunc(ngm.onCharSwitchChanged)
 	ngm.charInfo = mtk.NewTextbox(mtk.SIZE_BIG, main_color)
 	// Buttons.
+	ngm.startButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		accent_color, lang.Text("gui", "newgame_start_button_label"), "")
+	ngm.startButton.SetOnClickFunc(ngm.onStartButtonClicked)
 	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "back_b_label"), "")
+		accent_color, lang.Text("gui", "back_b_label"), "")
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
 	ngm.updateCharSwitchValues()
 	return ngm, nil
@@ -75,6 +77,9 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y-ngm.title.Bounds().Size().Y)
 	ngm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons.
+	ngm.startButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
+		ngm.startButton.Frame(), pixel.V(win.Bounds().Max.X,
+			win.Bounds().Min.Y))))
 	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
 		ngm.backButton.Frame(), win.Bounds().Min)))
 	// Switches & text.
@@ -89,6 +94,7 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 	if ngm.Opened() {
 		ngm.charSwitch.Update(win)
 		ngm.charInfo.Update(win)
+		ngm.startButton.Update(win)
 		ngm.backButton.Update(win)
 	}
 }
@@ -97,6 +103,7 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 func (ngm *NewGameMenu) Show(show bool) {
 	ngm.opened = show
 	ngm.updateCharSwitchValues()
+	ngm.updateCharInfo()
 }
 
 // Opened checks whether menu is open.
@@ -113,15 +120,9 @@ func (ngm *NewGameMenu) updateCharSwitchValues() {
 	ngm.charSwitch.SetValues(charSwitchValues)
 }
 
-// Triggered after back button clicked.
-func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
-	ngm.mainmenu.OpenMenu()
-}
-
-// Triggered after character switch change.
-func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchValue) {
-	//charInfoForm := `Name:    %s`
-	switchVal := s.Value()
+// updateCharInfo updates textbox with character informations.
+func (ngm *NewGameMenu) updateCharInfo() {
+	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
 		return
 	}
@@ -130,6 +131,35 @@ func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchV
 		log.Err.Print("fail_to_retrieve_avatar_from_switch")
 		return
 	}
+	charInfoForm := `
+                         Name:       %s
+                         Level:      %d
+                         Gender:     %s
+                         Race:       %s
+                         Alignment   %s
+                         Attributes: %s`
 	ngm.charInfo.Clear()
-	ngm.charInfo.Add(fmt.Sprintf("%s", c.Id()))
+	ngm.charInfo.Add(fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
+		lang.Text("ui", c.Gender().Id()), lang.Text("ui", c.Race().Id()),
+	        lang.Text("ui", c.Alignment().Id()), c.Attributes().String()))
+}
+
+// startGame starts new game.
+func (ngm *NewGameMenu) startGame() {
+	// TODO: start new game.
+}
+
+// Triggered after start button clicked.
+func (ngm *NewGameMenu) onStartButtonClicked(b *mtk.Button) {
+	ngm.startGame()
+}
+
+// Triggered after back button clicked.
+func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
+	ngm.mainmenu.OpenMenu()
+}
+
+// Triggered after character switch change.
+func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchValue) {
+	ngm.updateCharInfo()
 }

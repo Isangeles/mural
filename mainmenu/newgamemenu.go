@@ -29,7 +29,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/core/game/object/character"
+	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
 	"github.com/isangeles/mural/core/mtk"

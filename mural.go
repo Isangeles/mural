@@ -111,7 +111,11 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
-	fpsInfo := mtk.NewText(fmt.Sprint(win.FPS()), mtk.SIZE_MEDIUM, 100)
+	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
+	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
+		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
+	versionInfo.JustLeft()
+	
 
 	// textbox test.
 	/*
@@ -133,6 +137,8 @@ func run() {
 		if config.Debug() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
 				fpsInfo.Bounds(), win.Bounds().Max)))
+			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
+				fpsInfo.Bounds(), win.Bounds().Min)))
 		}
 
 		win.Update()

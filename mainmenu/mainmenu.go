@@ -33,6 +33,8 @@ import (
 	
 	"github.com/faiface/pixel"
 
+	flamecore "github.com/isangeles/flame/core"
+	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
 )
@@ -41,6 +43,8 @@ var (
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red
+
+	game *flamecore.Game
 )
 
 // MainMenu struct reperesents container with
@@ -197,5 +201,11 @@ func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
 	mm.PlayableChars = append(mm.PlayableChars, c)
+}
+
+// Triggered after new game was created(by new game creation menu).
+func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game) {
+	game = g
+	// TODO: start game.
 }
 

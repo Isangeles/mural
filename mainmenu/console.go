@@ -73,6 +73,7 @@ func (c *Console) Update(win *mtk.Window) {
 		} else {
 			c.Show(false)
 		}
+		defer c.textedit.Clear()
 	}
 	if win.JustPressed(pixelgl.KeyDown) {
 		c.textedit.SetText(c.lastInput)

@@ -1,0 +1,13 @@
+MAJOR:
+* HUD & in-game menu.
+* Area map.
+* Graphical avatars.
+* Objects.
+* Animations.
+* Save & load GUI state.
+MINOR:
+* Fix for mainmenu console input line(remove '`'[grave] char after console open).
+* Fix for textbox visible content height[MTK].
+* Fix for text origi adjusting[MTK].
+* Titles for messages windows[MTK].
+

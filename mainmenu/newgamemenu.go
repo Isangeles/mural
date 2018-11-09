@@ -29,6 +29,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
@@ -148,28 +149,29 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 }
 
 // startGame starts new game.
-func (ngm *NewGameMenu) startGame() error {
+func (ngm *NewGameMenu) startGame() (*flamecore.Game, error) {
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
-		return nil
+		return nil, fmt.Errorf("no_char_switch_val")
 	}
 	c, ok := switchVal.Value.(*objects.Avatar)
 	if !ok {
 		fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
-	err := flame.StartGame([]*character.Character{c.Character})
+	g, err := flame.StartGame([]*character.Character{c.Character})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return g, nil
 }
 
 // Triggered after start button clicked.
 func (ngm *NewGameMenu) onStartButtonClicked(b *mtk.Button) {
-	err := ngm.startGame()
+	g, err := ngm.startGame()
 	if err != nil {
 		log.Err.Printf("fail_to_start_new_game:%v\n", err)
 	}
+	ngm.mainmenu.OnNewGameCreated(g)
 }
 
 // Triggered after back button clicked.

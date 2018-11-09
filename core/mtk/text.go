@@ -88,6 +88,13 @@ func (tx *Text) JustCenter() {
 	tx.text.WriteString(tx.content)
 }
 
+// JustRights adjusts text origin to left.
+func (tx *Text) JustLeft() {
+	tx.text.Orig = pixel.V(0, 0)
+	tx.text.Clear()
+	tx.text.WriteString(tx.content)
+}
+
 // Draw draws text.
 func (tx *Text) Draw(t pixel.Target, matrix pixel.Matrix) {
 	tx.drawArea = MatrixToDrawArea(matrix, tx.Bounds())

@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	flamecore "github.com/isangeles/flame/core"
+	"github.com/isangeles/flame/core/module/object/character"
 	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
@@ -43,8 +44,6 @@ var (
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red
-
-	game *flamecore.Game
 )
 
 // MainMenu struct reperesents container with
@@ -59,6 +58,7 @@ type MainMenu struct {
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	PlayableChars []*objects.Avatar
+	onGameCreated func(g *flamecore.Game, player *character.Character)
 }
 
 // New returns new main menu
@@ -158,6 +158,13 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.msgs.Update(win)
 }
 
+// SetOnGameCreatedFunc sets specified function as function
+// triggered after new game created.
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
+	player *character.Character)) {
+	mm.onGameCreated = f
+}
+
 // OpenMenu opens menu.
 func (mm *MainMenu) OpenMenu() {
 	mm.HideMenus()
@@ -175,6 +182,7 @@ func (mm *MainMenu) OpenNewCharMenu() {
 	mm.HideMenus()
 	mm.newcharmenu.Show(true)
 }
+
 
 // OpenSettings opens settings menu.
 func (mm *MainMenu) OpenSettings() {
@@ -204,8 +212,8 @@ func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
 }
 
 // Triggered after new game was created(by new game creation menu).
-func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game) {
-	game = g
-	// TODO: start game.
+func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
+	player *objects.Avatar) {
+	mm.onGameCreated(g, player.Character)
 }
 

@@ -1,5 +1,5 @@
 /*
- * window.go
+ * camera.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,47 +21,34 @@
  *
  */
 
-package mtk
+package hud
 
 import (
-	//"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/mural/core/areamap"
+	"github.com/isangeles/mural/core/mtk"
 )
 
-// Wrapper struct for pixel window, to provide scalability.
-type Window struct {
-	*pixelgl.Window
-
-	frameCount int
-	fps        int
+// Struct for HUD camera.
+type Camera struct {
+	size pixel.Vec
+	areaMap *areamap.Map
 }
 
-// NewWindow creates new MTK window.
-func NewWindow(conf pixelgl.WindowConfig) (*Window, error) {
-	initScale(conf.Bounds.Max)
-	w := new(Window)
-	win, err := pixelgl.NewWindow(conf)
-	if err != nil {
-		return nil, err
-	}
-	win.SetSmooth(true)
-	w.Window = win
-	return w, nil
+// newCamera creates new instance of camera.
+func newCamera(size pixel.Vec) (*Camera) {
+	c := new(Camera)
+	c.size = size
+	return c
 }
 
-// Update updates window.
-func (w *Window) Update() {
-	w.Window.Update()
-	w.frameCount++
-	select {
-	case <-sec_timer:
-		w.fps = w.frameCount
-		w.frameCount = 0
-	default:
-	}
+// Draw draws camera on specified map.
+func (c *Camera) Draw(win *mtk.Window) {
+	// TODO: draw visible map part.
 }
 
-// FPS returns current frame per second value.
-func (w *Window) FPS() int {
-	return w.fps
+// SetMap sets maps for camera.
+func (c *Camera) SetMap(m *areamap.Map) {
+	c.areaMap = m
 }

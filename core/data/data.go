@@ -29,9 +29,12 @@ import (
 	"fmt"
 	"path/filepath"
 	"io/ioutil"
+	"os"
 
 	"github.com/golang/freetype/truetype"
 
+	"github.com/salviati/go-tmx/tmx"
+	
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
@@ -94,4 +97,19 @@ func PlayablePortraits() (map[string]pixel.Picture, error) {
 func Font(fileName string) (*truetype.Font, error) {
 	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
+}
+
+// Map returns TMX map with specified ID from chapter
+// area directory.
+func Map(mapId, areasPath string) (*tmx.Map, error) {
+	mapPath := filepath.FromSlash(areasPath + "/maps/" + mapId + ".tmx")
+	tmxFile, err := os.Open(mapPath)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_open_tmx_file:%v", err)
+	}
+	tmxMap, err := tmx.Read(tmxFile)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_read_tmx_file:%v", err)
+	}
+	return tmxMap, nil
 }

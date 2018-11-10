@@ -1,5 +1,5 @@
 /*
- * window.go
+ * map.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,47 +21,25 @@
  *
  */
 
-package mtk
+// Package for area map.
+package areamap
 
 import (
-	//"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/salviati/go-tmx/tmx"
+	
+	"github.com/isangeles/flame/core/module/scenario"
 )
 
-// Wrapper struct for pixel window, to provide scalability.
-type Window struct {
-	*pixelgl.Window
-
-	frameCount int
-	fps        int
+// Struct for graphical representation of area map.
+type Map struct {
+	area   *scenario.Area
+	tmxMap *tmx.Map
 }
 
-// NewWindow creates new MTK window.
-func NewWindow(conf pixelgl.WindowConfig) (*Window, error) {
-	initScale(conf.Bounds.Max)
-	w := new(Window)
-	win, err := pixelgl.NewWindow(conf)
-	if err != nil {
-		return nil, err
-	}
-	win.SetSmooth(true)
-	w.Window = win
-	return w, nil
-}
-
-// Update updates window.
-func (w *Window) Update() {
-	w.Window.Update()
-	w.frameCount++
-	select {
-	case <-sec_timer:
-		w.fps = w.frameCount
-		w.frameCount = 0
-	default:
-	}
-}
-
-// FPS returns current frame per second value.
-func (w *Window) FPS() int {
-	return w.fps
+// NewMap creates new map for specified scenario area.
+func NewMap(area *scenario.Area, tmxMap *tmx.Map) (*Map) {
+	m := new(Map)
+	m.area = area
+	m.tmxMap = tmxMap
+	return m
 }

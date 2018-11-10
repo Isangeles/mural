@@ -34,13 +34,16 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
+	flamecore "github.com/isangeles/flame/core"
+	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 
-	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/config" 
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/mainmenu"
+	"github.com/isangeles/mural/hud"
 )
 
 const (
@@ -48,7 +51,13 @@ const (
 )
 
 var (
-	focus = new(mtk.Focus)
+	mainMenu *mainmenu.MainMenu
+	pcHUD    *hud.HUD
+	game     *flamecore.Game
+
+	focus= new(mtk.Focus)
+
+	inGame bool
 )
 
 // On init.
@@ -95,8 +104,6 @@ func run() {
 		panic(err)
 	}
 
-	win.SetSmooth(true)
-
 	err = data.Load()
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
@@ -111,12 +118,12 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
+	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
 	versionInfo.JustLeft()
 	
-
 	// textbox test.
 	/*
 	for i := 0; i < 40; i ++ {
@@ -126,14 +133,24 @@ func run() {
 
 	//last := time.Now()
 	for !win.Closed() {
+		// Delta.
 		//dt := time.Since(last).Seconds()
 		//last = time.Now()
 		// Update.
-		mainMenu.Update(win)
+		if inGame {
+			// TODO: update HUD.
+		} else {
+			mainMenu.Update(win)
+		}
 		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
+		
 		// Draw.
 		win.Clear(colornames.Black)
-		mainMenu.Draw(win)
+		if inGame {
+			pcHUD.Draw(win) // is HUD nil check?
+		} else {
+			mainMenu.Draw(win)
+		}
 		if config.Debug() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
 				fpsInfo.Bounds(), win.Bounds().Max)))
@@ -149,4 +166,17 @@ func run() {
 		config.SaveConfig()
 		flame.SaveConfig()
 	}
+}
+
+// EnterGame opens HUD and area map for
+// specified game.
+func EnterGame(g *flamecore.Game, pc *character.Character) {
+	game = g
+	HUD, err := hud.NewHUD(g, pc)
+	if err != nil {
+		log.Err.Printf("fail_to_create_player_HUD:%v", err)
+		return
+	}
+	pcHUD = HUD
+	inGame = true
 }

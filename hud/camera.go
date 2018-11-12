@@ -25,6 +25,7 @@ package hud
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
@@ -32,23 +33,50 @@ import (
 
 // Struct for HUD camera.
 type Camera struct {
-	size pixel.Vec
-	areaMap *areamap.Map
+	position pixel.Vec
+	size     pixel.Vec
+	areaMap  *areamap.Map
 }
 
 // newCamera creates new instance of camera.
 func newCamera(size pixel.Vec) (*Camera) {
 	c := new(Camera)
 	c.size = size
+	c.position = pixel.V(0, 0)
 	return c
 }
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	// TODO: draw visible map part.
+	c.areaMap.Draw(win, c.position, c.size)
+}
+
+// Update updates camera.
+func (c *Camera) Update(win *mtk.Window) {
+	if win.JustPressed(pixelgl.KeyW) ||
+		win.JustPressed(pixelgl.KeyUp) {
+		c.position.Y -= c.areaMap.TileSize().Y
+	}
+	if win.JustPressed(pixelgl.KeyD) ||
+		win.JustPressed(pixelgl.KeyRight) {
+		c.position.X += c.areaMap.TileSize().X
+	}
+	if win.JustPressed(pixelgl.KeyS) ||
+		win.JustPressed(pixelgl.KeyDown) {
+		c.position.Y += c.areaMap.TileSize().Y
+	}
+	if win.JustPressed(pixelgl.KeyA) ||
+		win.JustPressed(pixelgl.KeyLeft) {
+		c.position.X -= c.areaMap.TileSize().X
+	}
 }
 
 // SetMap sets maps for camera.
 func (c *Camera) SetMap(m *areamap.Map) {
 	c.areaMap = m
+}
+
+// Position return camera position.
+func (c *Camera) Position() pixel.Vec {
+	return c.position
 }

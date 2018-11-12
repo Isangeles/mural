@@ -123,6 +123,7 @@ func run() {
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
 	versionInfo.JustLeft()
+	cameraInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	
 	// textbox test.
 	/*
@@ -138,7 +139,9 @@ func run() {
 		//last = time.Now()
 		// Update.
 		if inGame {
-			// TODO: update HUD.
+			pcHUD.Update(win)
+			cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
+				pcHUD.CameraPosition()))
 		} else {
 			mainMenu.Update(win)
 		}
@@ -155,7 +158,9 @@ func run() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
 				fpsInfo.Bounds(), win.Bounds().Max)))
 			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
-				fpsInfo.Bounds(), win.Bounds().Min)))
+				versionInfo.Bounds(), win.Bounds().Min)))
+			cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
+				cameraInfo.Bounds(), win.Bounds().Center())))
 		}
 
 		win.Update()

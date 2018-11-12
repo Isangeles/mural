@@ -26,6 +26,8 @@ package hud
 
 import (
 	"fmt"
+
+	"github.com/faiface/pixel"
 	
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/module/object/character"
@@ -33,7 +35,6 @@ import (
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/data"
 )
 
 // Struct for 'head-up display'.
@@ -50,13 +51,12 @@ func NewHUD(g *flamecore.Game, pc *character.Character) (*HUD, error) {
 	hud.camera = newCamera(config.Resolution())
 	pcArea, err := g.PlayerArea(pc.Id())
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_player_area:%v", err)
+		return nil, fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 	}
-	m, err := data.Map(pcArea.Id(), g.Module().Chapter().AreasPath())
+	areaMap, err := areamap.NewMap(pcArea, g.Module().Chapter().AreasPath())
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_load_pc_area_map:%v", err)
+		return nil, fmt.Errorf("fail_to_create_pc_area_map:%v", err)
 	}
-	areaMap := areamap.NewMap(pcArea, m)
 	hud.camera.SetMap(areaMap)
 	hud.game = g
 	hud.pc = pc
@@ -66,4 +66,15 @@ func NewHUD(g *flamecore.Game, pc *character.Character) (*HUD, error) {
 // Draw draws HUD elements.
 func (hud *HUD) Draw(win *mtk.Window) {
 	hud.camera.Draw(win)
+}
+
+// Update updated HUD elements.
+func (hud *HUD) Update(win *mtk.Window) {
+	hud.camera.Update(win)
+}
+
+// Camera position returns current position of
+// HUD camera.
+func (hud *HUD) CameraPosition() pixel.Vec {
+	return hud.camera.Position()
 }

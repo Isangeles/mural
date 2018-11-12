@@ -57,10 +57,15 @@ func Load() error {
 	return nil
 }
 
-// Sprite loads image with specified name from gdata
+// Picture loads image from specified path in gdata
 // archive.
 func Picture(filePath string) (pixel.Picture, error) {
 	return loadPictureFromArch(g_arch_path, filePath)
+}
+
+// PictureFromDir loads image from specified system path.
+func PictureFromDir(path string) (pixel.Picture, error) {
+	return loadPictureFromDir(path)
 }
 
 // Portrait returns portrait with specified name.

@@ -54,10 +54,9 @@ var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
 	game     *flamecore.Game
+	inGame   bool
 
 	focus= new(mtk.Focus)
-
-	inGame bool
 )
 
 // On init.
@@ -146,7 +145,6 @@ func run() {
 			mainMenu.Update(win)
 		}
 		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
-		
 		// Draw.
 		win.Clear(colornames.Black)
 		if inGame {
@@ -162,10 +160,8 @@ func run() {
 			cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
 				cameraInfo.Bounds(), win.Bounds().Center())))
 		}
-
 		win.Update()
 	}
-
 	// On exit.
 	if win.Closed() {
 		config.SaveConfig()

@@ -60,13 +60,15 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 		return nil, fmt.Errorf("fail_to_load_TMX_file:%v", err)
 	}
 	m.tmxMap = tm
-	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth), float64(m.tmxMap.TileHeight))
+	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
+		float64(m.tmxMap.TileHeight))
 	m.tilesets = make(map[string]pixel.Picture)
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapsPath + "/" + ts.Image.Source)
 		tsPic, err := data.PictureFromDir(tsPath)
 		if err != nil {
-			return nil, fmt.Errorf("fail_to_retrieve_tilset_source:%v", ts.Name)
+			return nil, fmt.Errorf("fail_to_retrieve_tilset_source:%v",
+				ts.Name)
 		}
 		m.tilesets[ts.Name] = tsPic
 	}
@@ -76,8 +78,8 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 			l, err := m.mapLayer(l, mapsPath, m.tmxMap.TileWidth,
 				m.tmxMap.TileHeight, m.tmxMap.Width, m.tmxMap.Height)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_create_ground_layer:%v",
-					err)
+				return nil,
+				fmt.Errorf("fail_to_create_ground_layer:%v", err)
 			}
 			m.ground = l
 		default:
@@ -89,6 +91,7 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 
 // Draw draws specified part of map(specific amount of tile starting
 // from specific point on map)
+// TODO: slow as f**k.
 func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
 	for _, t := range m.ground {
@@ -142,7 +145,8 @@ func (m *Map) TileSize() pixel.Vec {
 
 // tileBounds returns bounds for tile with specified size and ID
 // from specified tileset picture.
-func tileBounds(tileset pixel.Picture, tileSize pixel.Vec, tileId tmx.ID) pixel.Rect {
+func tileBounds(tileset pixel.Picture, tileSize pixel.Vec,
+	tileId tmx.ID) pixel.Rect {
 	tileCount := 0
 	for h := 0.0; h <= tileset.Bounds().H(); h += tileSize.Y {
 		for w := 0.0; w <= tileset.Bounds().W(); w += tileSize.X {

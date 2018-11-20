@@ -33,4 +33,5 @@ newchar_sex_switch_label:Gender;
 newchar_race_switch_label:Race;
 newchar_ali_switch_label:Alignment;
 newchar_create_msg:New character created.;
+load_area_info:Loading area...;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

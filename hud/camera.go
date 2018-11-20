@@ -33,14 +33,16 @@ import (
 
 // Struct for HUD camera.
 type Camera struct {
+	hud      *HUD
 	position pixel.Vec
 	size     pixel.Vec
 	areaMap  *areamap.Map
 }
 
 // newCamera creates new instance of camera.
-func newCamera(size pixel.Vec) (*Camera) {
+func newCamera(hud *HUD, size pixel.Vec) (*Camera) {
 	c := new(Camera)
+	c.hud = hud
 	c.size = size
 	c.position = pixel.V(0, 0)
 	return c
@@ -48,7 +50,7 @@ func newCamera(size pixel.Vec) (*Camera) {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	c.areaMap.Draw(win, c.position, c.size)
+	//c.areaMap.Draw(win, c.position, c.size)
 }
 
 // Update updates camera.

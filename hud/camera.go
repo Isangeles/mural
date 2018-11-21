@@ -50,24 +50,37 @@ func newCamera(hud *HUD, size pixel.Vec) (*Camera) {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	//c.areaMap.Draw(win, c.position, c.size)
+	if c.areaMap != nil {
+		//c.areaMap.Draw(win, c.position, c.size)
+		// Drawing map in circular form is faster and simulates FOW.
+		// TODO: use player position and sight range.
+		c.areaMap.DrawCircle(win, c.position, mtk.ConvSize(300)) 
+	}
 }
 
 // Update updates camera.
 func (c *Camera) Update(win *mtk.Window) {
-	if win.JustPressed(pixelgl.KeyW) ||
-		win.JustPressed(pixelgl.KeyUp) {
-		c.position.Y -= c.areaMap.TileSize().Y
+	if c.areaMap == nil {
+		return
 	}
-	if win.JustPressed(pixelgl.KeyD) ||
-		win.JustPressed(pixelgl.KeyRight) {
-		c.position.X += c.areaMap.TileSize().X
-	}
-	if win.JustPressed(pixelgl.KeyS) ||
-		win.JustPressed(pixelgl.KeyDown) {
+	// Key events.
+	if c.position.Y < c.areaMap.Size().Y &&
+		(win.JustPressed(pixelgl.KeyW) ||
+		win.JustPressed(pixelgl.KeyUp)) {
 		c.position.Y += c.areaMap.TileSize().Y
 	}
-	if win.JustPressed(pixelgl.KeyA) ||
+	if c.position.X < c.areaMap.Size().X &&
+		(win.JustPressed(pixelgl.KeyD) ||
+		win.JustPressed(pixelgl.KeyRight)) {
+		c.position.X += c.areaMap.TileSize().X
+	}
+	if c.position.Y > 0 &&
+		(win.JustPressed(pixelgl.KeyS) ||
+		win.JustPressed(pixelgl.KeyDown)) {
+		c.position.Y -= c.areaMap.TileSize().Y
+	}
+	if c.position.X > 0 &&
+		win.JustPressed(pixelgl.KeyA) ||
 		win.JustPressed(pixelgl.KeyLeft) {
 		c.position.X -= c.areaMap.TileSize().X
 	}

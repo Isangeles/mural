@@ -7,6 +7,8 @@
 ## Install & Run
 
   Get [Pixel](https://github.com/faiface/pixel)
+
+  Get [go-tmx](https://github.com/salviati/go-tmx/tree/master/tmx)
   
   Get [Flame](https://github.com/Isangeles/flame)
 

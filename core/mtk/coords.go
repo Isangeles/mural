@@ -126,6 +126,11 @@ func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 		drawArea.Min.Y + (rect.H() / 2))
 }
 
+// Range returns range from specified position to other specified position.
+func Range(from, to pixel.Vec) float64 {
+	return math.Hypot(to.X - from.X, to.Y - from.Y)
+}
+
 // Size converts specified default size value(for 1080p)
 // to value for current resolution.
 func ConvSize(size1080p float64) float64 {

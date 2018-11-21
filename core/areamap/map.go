@@ -21,7 +21,7 @@
  *
  */
 
-// Package for area map.
+// Package for tiled area map.
 package areamap
 
 import (
@@ -46,6 +46,7 @@ type Map struct {
 	tmxMap   *tmx.Map
 	tilesets map[string]pixel.Picture
 	tilesize pixel.Vec
+	mapsize  pixel.Vec
 	// Layers.
 	ground []*tile 
 }
@@ -62,6 +63,8 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	m.tmxMap = tm
 	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
 		float64(m.tmxMap.TileHeight))
+	m.mapsize = pixel.V(float64(int(m.tilesize.X) * m.tmxMap.Width),
+		float64(int(m.tilesize.Y) * m.tmxMap.Height))
 	m.tilesets = make(map[string]pixel.Picture)
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapsPath + "/" + ts.Image.Source)
@@ -76,7 +79,8 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 		switch l.Name {
 		case "ground":
 			l, err := m.mapLayer(l, mapsPath, m.tmxMap.TileWidth,
-				m.tmxMap.TileHeight, m.tmxMap.Width, m.tmxMap.Height)
+				m.tmxMap.TileHeight, m.tmxMap.Width,
+				m.tmxMap.Height)
 			if err != nil {
 				return nil,
 				fmt.Errorf("fail_to_create_ground_layer:%v", err)
@@ -96,6 +100,16 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
 	for _, t := range m.ground {
 		if drawArea.Contains(t.Position()) {
+			t.Draw(win.Window, mtk.Matrix())
+		}
+	}
+}
+
+// DrawCircle draws map tiles in circular form(all tiles in specified
+// radius from specified position).
+func (m *Map) DrawCircle(win *mtk.Window, startPoint pixel.Vec, radius float64) {
+	for _, t := range m.ground {
+		if mtk.Range(startPoint, t.Position()) <= radius {
 			t.Draw(win.Window, mtk.Matrix())
 		}
 	}
@@ -138,9 +152,14 @@ func (m *Map) mapLayer(layer tmx.Layer, mapsPath string,
 	return tiles, nil
 }
 
-// TileSize return size of map tile.
+// TileSize returns size of map tile.
 func (m *Map) TileSize() pixel.Vec {
 	return m.tilesize
+}
+
+// Size returns size of the map.
+func (m *Map) Size() pixel.Vec {
+	return m.mapsize
 }
 
 // tileBounds returns bounds for tile with specified size and ID

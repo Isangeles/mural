@@ -78,8 +78,9 @@ func NewHUD(g *flamecore.Game, pc *character.Character) (*HUD, error) {
 func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
+	} else {
+		hud.camera.Draw(win)
 	}
-	hud.camera.Draw(win)
 }
 
 // Update updated HUD elements.

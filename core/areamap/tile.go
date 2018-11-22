@@ -26,8 +26,6 @@ package areamap
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-
-	"github.com/isangeles/mural/core/mtk"
 )
 
 // Struct for map tile.
@@ -47,8 +45,7 @@ func newTile(spr *pixel.Sprite, pos pixel.Vec) *tile {
 
 // Draw draws tile.
 func (t *tile) Draw(win *pixelgl.Window, matrix pixel.Matrix) {
-	t.Sprite.Draw(win, matrix.Moved(pixel.V(mtk.ConvSize(t.Position().X),
-		mtk.ConvSize(t.Position().Y))))
+	t.Sprite.Draw(win, matrix)
 }
 
 // Position returns tile position.

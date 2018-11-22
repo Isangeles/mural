@@ -54,7 +54,9 @@ func (c *Camera) Draw(win *mtk.Window) {
 		//c.areaMap.Draw(win, c.position, c.size)
 		// Drawing map in circular form is faster and simulates FOW.
 		// TODO: use player position and sight range.
-		c.areaMap.DrawCircle(win, c.position, mtk.ConvSize(300)) 
+		//playerPos := c.translatePos(c.hud.Player().Position())
+		//c.areaMap.DrawCircle(win, playerPos, c.hud.Player().SightRange())
+		c.areaMap.DrawForChar(win, c.position, c.size, c.hud.Player())
 	}
 }
 
@@ -94,4 +96,10 @@ func (c *Camera) SetMap(m *areamap.Map) {
 // Position return camera position.
 func (c *Camera) Position() pixel.Vec {
 	return c.position
+}
+
+// TranslatePos translates specified position to
+// position on camera.
+func (c *Camera) translatePos(pos pixel.Vec) pixel.Vec {
+	return pixel.V(pos.X - c.Position().X, pos.Y + c.Position().Y)
 }

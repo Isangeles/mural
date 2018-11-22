@@ -34,7 +34,6 @@ import (
 	"github.com/faiface/pixel"
 
 	flamecore "github.com/isangeles/flame/core"
-	"github.com/isangeles/flame/core/module/object/character"
 	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
@@ -58,7 +57,7 @@ type MainMenu struct {
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	PlayableChars []*objects.Avatar
-	onGameCreated func(g *flamecore.Game, player *character.Character)
+	onGameCreated func(g *flamecore.Game, player *objects.Avatar)
 }
 
 // New returns new main menu
@@ -161,7 +160,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
 func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
-	player *character.Character)) {
+	player *objects.Avatar)) {
 	mm.onGameCreated = f
 }
 
@@ -214,6 +213,6 @@ func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
 // Triggered after new game was created(by new game creation menu).
 func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
 	player *objects.Avatar) {
-	mm.onGameCreated(g, player.Character)
+	mm.onGameCreated(g, player)
 }
 

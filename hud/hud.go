@@ -35,12 +35,12 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/scenario"
-	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/objects"
 )
 
 var (
@@ -55,12 +55,12 @@ type HUD struct {
 	camera     *Camera
 
 	game    *flamecore.Game
-	pc      *character.Character
+	pc      *objects.Avatar
 	loading bool
 }
 
 // NewHUD creates new HUD instance.
-func NewHUD(g *flamecore.Game, pc *character.Character) (*HUD, error) {
+func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
 	hud.pc = pc
@@ -93,6 +93,12 @@ func (hud *HUD) Update(win *mtk.Window) {
 // HUD camera.
 func (hud *HUD) CameraPosition() pixel.Vec {
 	return hud.camera.Position()
+}
+
+// Player returns player character
+// (game character of HUD user).
+func (hud *HUD) Player() *objects.Avatar {
+	return hud.pc
 }
 
 // ChangeArea changes current HUD area.

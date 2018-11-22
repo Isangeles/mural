@@ -35,7 +35,6 @@ import (
 
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
-	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/config" 
@@ -44,6 +43,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/hud"
+	"github.com/isangeles/mural/objects"
 )
 
 const (
@@ -171,7 +171,7 @@ func run() {
 
 // EnterGame opens HUD and area map for
 // specified game.
-func EnterGame(g *flamecore.Game, pc *character.Character) {
+func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 	game = g
 	HUD, err := hud.NewHUD(g, pc)
 	if err != nil {

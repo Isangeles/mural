@@ -37,6 +37,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/objects"
 )
 
 // Struct for graphical representation of area map.
@@ -78,9 +79,7 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	for _, l := range m.tmxMap.Layers {
 		switch l.Name {
 		case "ground":
-			l, err := m.mapLayer(l, mapsPath, m.tmxMap.TileWidth,
-				m.tmxMap.TileHeight, m.tmxMap.Width,
-				m.tmxMap.Height)
+			l, err := m.mapLayer(l, mapsPath)
 			if err != nil {
 				return nil,
 				fmt.Errorf("fail_to_create_ground_layer:%v", err)
@@ -100,7 +99,9 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
 	for _, t := range m.ground {
 		if drawArea.Contains(t.Position()) {
-			t.Draw(win.Window, mtk.Matrix())
+			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
+				mtk.ConvSize(t.Position().X),
+				mtk.ConvSize(t.Position().Y))))
 		}
 	}
 }
@@ -110,15 +111,31 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 func (m *Map) DrawCircle(win *mtk.Window, startPoint pixel.Vec, radius float64) {
 	for _, t := range m.ground {
 		if mtk.Range(startPoint, t.Position()) <= radius {
-			t.Draw(win.Window, mtk.Matrix())
+			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
+				mtk.ConvSize(t.Position().X),
+				mtk.ConvSize(t.Position().Y))))
+		}
+	}
+}
+
+// DrawForChar draws only part of map visible for specified game character.
+func (m *Map) DrawForChar(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
+	av *objects.Avatar) {
+	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
+	for _, t := range m.ground {
+		if drawArea.Contains(t.Position()) &&
+			mtk.Range(av.Position(), t.Position()) <= av.SightRange() {
+			tilePos := mapDrawPos(t.Position(), startPoint)
+			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
+				mtk.ConvSize(tilePos.X),
+				mtk.ConvSize(tilePos.Y))))
 		}
 	}
 }
 
 // mapLayer parses specified TMX layer data to slice
 // with tile sprites.
-func (m *Map) mapLayer(layer tmx.Layer, mapsPath string,
-	tileWidth, tileHeight, mapWidth, mapHeight int) ([]*tile, error) {
+func (m *Map) mapLayer(layer tmx.Layer, mapsPath string) ([]*tile, error) {
 	tiles := make([]*tile, 0)
 	tileIdX := 1
 	tileIdY := 1
@@ -131,17 +148,15 @@ func (m *Map) mapLayer(layer tmx.Layer, mapsPath string,
 					"fail_to_found_tileset_source:%s",
 					tileset.Name)
 			}
-			tileWidth := float64(tileWidth)
-			tileHeight := float64(tileHeight)
 			tileBounds := tileBounds(tilesetPic, pixel.V(
-				tileWidth, tileHeight), dt.ID)
+				m.tilesize.X, m.tilesize.Y), dt.ID)
 			pic := pixel.NewSprite(tilesetPic, tileBounds)
-			tilePos := pixel.V(float64(int(tileWidth)*tileIdX),
-				float64(int(tileHeight)*tileIdY))
+			tilePos := pixel.V(float64(int(m.tilesize.X)*tileIdX),
+				float64(int(m.tilesize.Y)*tileIdY))
 			tile := newTile(pic, tilePos)
 			tiles = append(tiles, tile)	
 			tileIdX++
-			if tileIdX > mapWidth {
+			if tileIdX > int(m.mapsize.X) {
 				tileIdX = 0
 				tileIdY++
 			}		
@@ -176,4 +191,9 @@ func tileBounds(tileset pixel.Picture, tileSize pixel.Vec,
 		}
 	}
 	return pixel.R(0, 0, 0, 0)
+}
+
+// mapDrawPos translates real position to map draw position.
+func mapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
+	return pixel.V(pos.X - drawPos.X, pos.Y - drawPos.Y)
 }

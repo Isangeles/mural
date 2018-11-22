@@ -59,3 +59,9 @@ func (av *Avatar) Portrait() *pixel.Sprite {
 	return av.portrait
 }
 
+// Position return current position of avatar.
+func (av *Avatar) Position() pixel.Vec {
+	x, y := av.Character.Position()
+	return pixel.V(x, y)
+}
+

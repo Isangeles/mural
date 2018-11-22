@@ -37,6 +37,7 @@ type Camera struct {
 	position pixel.Vec
 	size     pixel.Vec
 	areaMap  *areamap.Map
+	locked   bool
 }
 
 // newCamera creates new instance of camera.
@@ -65,26 +66,28 @@ func (c *Camera) Update(win *mtk.Window) {
 	if c.areaMap == nil {
 		return
 	}
-	// Key events.
-	if c.position.Y < c.areaMap.Size().Y &&
-		(win.JustPressed(pixelgl.KeyW) ||
-		win.JustPressed(pixelgl.KeyUp)) {
-		c.position.Y += c.areaMap.TileSize().Y
-	}
-	if c.position.X < c.areaMap.Size().X &&
-		(win.JustPressed(pixelgl.KeyD) ||
-		win.JustPressed(pixelgl.KeyRight)) {
-		c.position.X += c.areaMap.TileSize().X
-	}
-	if c.position.Y > 0 &&
-		(win.JustPressed(pixelgl.KeyS) ||
-		win.JustPressed(pixelgl.KeyDown)) {
-		c.position.Y -= c.areaMap.TileSize().Y
-	}
-	if c.position.X > 0 &&
-		win.JustPressed(pixelgl.KeyA) ||
-		win.JustPressed(pixelgl.KeyLeft) {
-		c.position.X -= c.areaMap.TileSize().X
+	if !c.locked {
+		// Key events.
+		if c.position.Y < c.areaMap.Size().Y &&
+			(win.JustPressed(pixelgl.KeyW) ||
+			win.JustPressed(pixelgl.KeyUp)) {
+			c.position.Y += c.areaMap.TileSize().Y
+		}
+		if c.position.X < c.areaMap.Size().X &&
+			(win.JustPressed(pixelgl.KeyD) ||
+			win.JustPressed(pixelgl.KeyRight)) {
+			c.position.X += c.areaMap.TileSize().X
+		}
+		if c.position.Y > 0 &&
+			(win.JustPressed(pixelgl.KeyS) ||
+			win.JustPressed(pixelgl.KeyDown)) {
+			c.position.Y -= c.areaMap.TileSize().Y
+		}
+		if c.position.X > 0 &&
+			win.JustPressed(pixelgl.KeyA) ||
+			win.JustPressed(pixelgl.KeyLeft) {
+			c.position.X -= c.areaMap.TileSize().X
+		}
 	}
 }
 
@@ -96,6 +99,16 @@ func (c *Camera) SetMap(m *areamap.Map) {
 // Position return camera position.
 func (c *Camera) Position() pixel.Vec {
 	return c.position
+}
+
+// Lock toggles camera lock.
+func (c *Camera) Lock(lock bool) {
+	c.locked = lock
+}
+
+// Locked checks whether camera is locked.
+func (c *Camera) Locked() bool {
+	return c.locked
 }
 
 // TranslatePos translates specified position to

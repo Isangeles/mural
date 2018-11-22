@@ -119,7 +119,7 @@ func (c *Console) Execute(line string) {
 	log.Cli.Printf("[%d]:%s", res, out)
 }
 
-// Triggered after accept input in text edit.
+// Triggered after accepting input in text edit.
 func (c *Console) onTexteditInput(t *mtk.Textedit) {
 	c.Execute(t.Text())
 	t.Clear()

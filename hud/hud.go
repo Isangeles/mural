@@ -31,6 +31,7 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -53,6 +54,7 @@ var (
 type HUD struct {
 	loadScreen *LoadingScreen
 	camera     *Camera
+	chat       *Chat
 
 	game    *flamecore.Game
 	pc      *objects.Avatar
@@ -66,6 +68,7 @@ func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
 	hud.pc = pc
 	hud.loadScreen = newLoadingScreen(hud)
 	hud.camera = newCamera(hud, config.Resolution())
+	hud.chat = newChat(hud)
 	pcArea, err := hud.game.PlayerArea(pc.Id())
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
@@ -80,13 +83,26 @@ func (hud *HUD) Draw(win *mtk.Window) {
 		hud.loadScreen.Draw(win)
 	} else {
 		hud.camera.Draw(win)
+		hud.chat.Draw(win)
 	}
 }
 
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(pixelgl.KeyGraveAccent) {
+		if !hud.chat.Active() {
+			hud.chat.SetActive(true)
+			hud.camera.Lock(true)
+			
+		} else {
+			hud.chat.SetActive(false)
+			hud.camera.Lock(false)
+		}
+	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
+	hud.chat.Update(win)
 }
 
 // Camera position returns current position of

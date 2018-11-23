@@ -322,12 +322,13 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		log.Err.Printf("newchar_menu:fail_to_create_character:%v\n", err)
 		return
 	}
+	spriteName := "test.png" // TODO: real sprite
 	faceName, err := ncm.faceSwitch.Value().TextValue()
 	if err != nil {
 		log.Err.Printf("newchar_menu:fail_to_retrieve_avatar_portrait_name:%v\n", err)
 		return 
 	}
-	av, err := objects.NewAvatar(char, faceName)
+	av, err := objects.NewAvatar(char, spriteName, faceName)
 	if err != nil {
 		log.Err.Printf("newchar_menu:fail_to_create_character_avatar:%v\n",
 			err)

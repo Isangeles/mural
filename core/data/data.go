@@ -71,8 +71,15 @@ func PictureFromDir(path string) (pixel.Picture, error) {
 // Portrait returns portrait with specified name.
 func Portrait(fileName string) (pixel.Picture, error) {
 	// TODO: search graphic archive also.
-        path :=	flame.Mod().FullPath() + "/gui/portraits/" + fileName
+        path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" + fileName)
         return loadPictureFromDir(path)
+}
+
+// AvatarSprite returns picture with specified name
+// for avatar sprite.
+func AvatarSprite(fileName string) (pixel.Picture, error) {
+	path := filepath.FromSlash("avatar/sprite/" + fileName)
+	return loadPictureFromArch(g_arch_path, path)
 }
 
 // PlayablePortraits returns map with names of portraits as keys

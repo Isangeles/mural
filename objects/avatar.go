@@ -30,28 +30,43 @@ import (
 	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/mtk"
 )
 
 // Avatar struct for graphical representation of
 // game character.
 type Avatar struct {
 	*character.Character
-	
+
+	sprite      *pixel.Sprite
 	portrait    *pixel.Sprite
 	portraitName string
 }
 
 // NewAvatar creates new avatar for specified game character.
-func NewAvatar(char *character.Character, portraitName string) (*Avatar, error) {
+func NewAvatar(char *character.Character, spriteName, portraitName string) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
+	// Sprite.
+	// TODO: handling spritesheets(frames, animations, etc.).
+	spritePic, err := data.AvatarSprite(spriteName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_sprite:%v", err)
+	}
+	av.sprite = pixel.NewSprite(spritePic, spritePic.Bounds())
+	// Portrait.
 	av.portraitName = portraitName
 	portraitPic, err := data.Portrait(av.portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_portrait")
+		return nil, fmt.Errorf("fail_to_create_portrait:%v", err)
 	}
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil
+}
+
+// Draw draws avatar.
+func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
+	av.sprite.Draw(win, matrix)
 }
 
 // Portrait returns avatar portrait.

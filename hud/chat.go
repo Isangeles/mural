@@ -24,12 +24,23 @@
 package hud
 
 import (
+	"fmt"
+	"strings"
+	
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
-	
+
+	"github.com/isangeles/flame/core/enginelog"
+	"github.com/isangeles/flame/cmd/command"
+
+	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/mtk"
-	//"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/log"
+)
+
+var (
+	chat_command_prefix = "$"
 )
 
 // Chat represents HUD chat window.
@@ -51,17 +62,19 @@ func newChat(hud *HUD) *Chat {
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	c.textboxSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(300))
-	c.texteditSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(20))
+	c.texteditSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(40))
 	return c
 }
 
 // Draw draws chat window.
 func (c *Chat) Draw(win *mtk.Window) {
 	textboxDA := pixel.R(win.Bounds().Max.X - c.textboxSize.X,
-		win.Bounds().Min.Y + c.texteditSize.Y, win.Bounds().Max.X - mtk.ConvSize(10),
+		win.Bounds().Min.Y + c.texteditSize.Y + mtk.ConvSize(10),
+		win.Bounds().Max.X - mtk.ConvSize(10),
 		win.Bounds().Min.Y + c.texteditSize.Y + c.textboxSize.Y)
 	texteditDA := pixel.R(win.Bounds().Max.X - c.texteditSize.X,
-		win.Bounds().Min.Y, win.Bounds().Max.X - mtk.ConvSize(10),
+		win.Bounds().Min.Y + mtk.ConvSize(10),
+		win.Bounds().Max.X - mtk.ConvSize(10),
 		win.Bounds().Min.Y + c.texteditSize.Y)
 	c.textbox.Draw(textboxDA, win)
 	c.textedit.Draw(texteditDA, win)
@@ -69,11 +82,22 @@ func (c *Chat) Draw(win *mtk.Window) {
 
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
+	var msgs []fmt.Stringer
+	engineMsgs := enginelog.Messages()
+	/* 
+		for i := len(engineMsgs)-1; i >= 0; i-- {
+			msgs = append(msgs, engineMsgs[i])
+		}
+	*/
+	for _, msg := range engineMsgs {
+		msgs = append(msgs, msg)
+	}
+	c.textbox.Insert(msgs)
+	
 	c.textbox.Update(win)
 	if c.Active() {
 		c.textedit.Update(win)
 	}
-	// TODO: fill textbox with engine messages.
 }
 
 // Active checks whether chat input is
@@ -88,7 +112,29 @@ func (c *Chat) SetActive(active bool) {
 	c.textedit.Focus(active)
 }
 
+// Execute executes specified text command.
+func (c *Chat) ExecuteCommand(line string) {
+	log.Cli.Printf(">%s", line)
+	cmd, err := command.NewStdCommand(line)
+	if err != nil {
+		log.Err.Printf("invalid_input:%s", line)
+		return
+	}
+	res, out := ci.HandleCommand(cmd)
+	log.Cli.Printf("[%d]:%s", res, out)
+}
+
+// Echo displays specified text in chat log.
+func (c *Chat) Echo(text string) {
+	log.Inf.Printf("%s", text)
+}
+
 // Triggered after accepting input in text edit.
 func (c *Chat) onTexteditInput(t *mtk.Textedit) {
-	// TODO: send chat input to CI.
+	if strings.HasPrefix(t.Text(), chat_command_prefix) {
+		c.ExecuteCommand(strings.TrimPrefix(t.Text(), chat_command_prefix))
+	} else {
+		c.Echo(t.Text())
+	}
+	t.Clear()
 }

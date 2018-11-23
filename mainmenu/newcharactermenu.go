@@ -42,6 +42,10 @@ import (
 	"github.com/isangeles/mural/objects"
 )
 
+var (
+	new_char_id = "player_01"
+)
+
 // NewCharacterMenu struct represents new game character
 // creation screen.
 type NewCharacterMenu struct {
@@ -301,7 +305,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
-	char := character.NewCharacter("player_01", name, 1, gender, race,
+	char := character.NewCharacter(new_char_id, name, 1, gender, race,
 		character.Friendly, character.NewGuild("none"), attrs, alignment)
 	return char, nil
 }

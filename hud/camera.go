@@ -59,7 +59,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 		//c.areaMap.DrawCircle(win, playerPos, c.hud.Player().SightRange())
 		c.areaMap.DrawForChar(win, c.position, c.size, c.hud.Player())
 	}
-	playerPos := c.translatePos(c.hud.Player().Position())
+	playerPos := c.ConvAreaPos(c.hud.Player().Position())
 	c.hud.Player().Draw(win, mtk.Matrix().Moved(playerPos))
 }
 
@@ -113,8 +113,14 @@ func (c *Camera) Locked() bool {
 	return c.locked
 }
 
-// TranslatePos translates specified position to
-// position on camera.
-func (c *Camera) translatePos(pos pixel.Vec) pixel.Vec {
+// ConvAreaPos translates specified area
+// position to camera position.
+func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X - c.Position().X, pos.Y - c.Position().Y)
+}
+
+// ConvCameraPos translates specified camera
+// position to area position.
+func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
+	return pixel.V(pos.X + c.Position().X, pos.Y + c.Position().Y)
 }

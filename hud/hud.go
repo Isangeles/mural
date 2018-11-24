@@ -58,6 +58,7 @@ type HUD struct {
 
 	game    *flamecore.Game
 	pc      *objects.Avatar
+	destPos pixel.Vec
 	loading bool
 }
 
@@ -99,6 +100,10 @@ func (hud *HUD) Update(win *mtk.Window) {
 			hud.chat.SetActive(false)
 			hud.camera.Lock(false)
 		}
+	}
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
+		hud.Player().SetPosition(hud.destPos.X, hud.destPos.Y)
 	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)

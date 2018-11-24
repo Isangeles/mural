@@ -43,11 +43,12 @@ import (
 // Struct for graphical representation of area map.
 // TODO: implementation is bulky as f**k, slow and don't work well.
 type Map struct {
-	area     *scenario.Area
-	tmxMap   *tmx.Map
-	tilesets map[string]pixel.Picture
-	tilesize pixel.Vec
-	mapsize  pixel.Vec
+	area       *scenario.Area
+	tmxMap     *tmx.Map
+	tilesets   map[string]pixel.Picture
+	tilesize   pixel.Vec
+	mapsize    pixel.Vec
+	tilescount pixel.Vec
 	// Layers.
 	ground []*tile 
 }
@@ -64,6 +65,8 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	m.tmxMap = tm
 	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
 		float64(m.tmxMap.TileHeight))
+	m.tilescount = pixel.V(float64(m.tmxMap.Width),
+		float64(m.tmxMap.Height))
 	m.mapsize = pixel.V(float64(int(m.tilesize.X) * m.tmxMap.Width),
 		float64(int(m.tilesize.Y) * m.tmxMap.Height))
 	m.tilesets = make(map[string]pixel.Picture)
@@ -156,7 +159,7 @@ func (m *Map) mapLayer(layer tmx.Layer, mapsPath string) ([]*tile, error) {
 			tile := newTile(pic, tilePos)
 			tiles = append(tiles, tile)	
 			tileIdX++
-			if tileIdX > int(m.mapsize.X) {
+			if tileIdX > int(m.tilescount.X) {
 				tileIdX = 0
 				tileIdY++
 			}		

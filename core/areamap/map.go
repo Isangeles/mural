@@ -27,6 +27,7 @@ package areamap
 import (
 	"fmt"
 	"path/filepath"
+	"math"
 	
 	"github.com/salviati/go-tmx/tmx"
 
@@ -114,7 +115,7 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 func (m *Map) DrawCircle(win *mtk.Window, startPoint pixel.Vec, radius float64) {
 	for _, t := range m.ground {
 		if mtk.Range(startPoint, t.Position()) <= radius {
-			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
+			t.Draw(win.Window, pixel.IM.Moved(pixel.V(
 				mtk.ConvSize(t.Position().X),
 				mtk.ConvSize(t.Position().Y))))
 		}
@@ -132,6 +133,7 @@ func (m *Map) DrawForChar(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
 			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
 				mtk.ConvSize(tilePos.X),
 				mtk.ConvSize(tilePos.Y))))
+			//return
 		}
 	}
 }
@@ -151,8 +153,7 @@ func (m *Map) mapLayer(layer tmx.Layer, mapsPath string) ([]*tile, error) {
 					"fail_to_found_tileset_source:%s",
 					tileset.Name)
 			}
-			tileBounds := tileBounds(tilesetPic, pixel.V(
-				m.tilesize.X, m.tilesize.Y), dt.ID)
+			tileBounds := m.tileBounds(tilesetPic, dt.ID)
 			pic := pixel.NewSprite(tilesetPic, tileBounds)
 			tilePos := pixel.V(float64(int(m.tilesize.X)*tileIdX),
 				float64(int(m.tilesize.Y)*tileIdY))
@@ -182,13 +183,17 @@ func (m *Map) Size() pixel.Vec {
 
 // tileBounds returns bounds for tile with specified size and ID
 // from specified tileset picture.
-func tileBounds(tileset pixel.Picture, tileSize pixel.Vec,
-	tileId tmx.ID) pixel.Rect {
+func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
 	tileCount := 0
-	for h := 0.0; h <= tileset.Bounds().H(); h += tileSize.Y {
-		for w := 0.0; w <= tileset.Bounds().W(); w += tileSize.X {
+	tilesetSize := roundTilesetSize(tileset.Bounds().Max, m.tilesize)
+	//fmt.Printf("tileset_size:%v\n", tilesetSize)
+	for h := tilesetSize.Y - m.tilesize.Y; h - m.tilesize.Y >= 0; h -= m.tilesize.Y {
+		for w := 0.0; w + m.tilesize.X <= tilesetSize.X; w += m.tilesize.X {
+			//fmt.Printf("tile_id:%d\n", tileCount)
 			if tileCount == int(tileId) {
-				return pixel.R(w, h, tileSize.X, tileSize.Y)
+				tileBounds := pixel.R(w, h, w + m.tilesize.X, h + m.tilesize.Y)
+				//fmt.Printf("tile_id:%d, tile_bounds:%v\n", tileCount, tileBounds)
+				return tileBounds
 			}
 			tileCount++
 		}
@@ -199,4 +204,14 @@ func tileBounds(tileset pixel.Picture, tileSize pixel.Vec,
 // mapDrawPos translates real position to map draw position.
 func mapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X - drawPos.X, pos.Y - drawPos.Y)
+}
+
+// roundMapSize rounds map size 
+func roundTilesetSize(tilesetSize pixel.Vec, tileSize pixel.Vec) pixel.Vec {
+	size := pixel.V(0, 0)
+	xCount := math.Floor(tilesetSize.X / 32)
+	yCount := math.Floor(tilesetSize.Y / 32)
+	size.X = tileSize.X * xCount
+	size.Y = tileSize.Y * yCount
+	return size
 }

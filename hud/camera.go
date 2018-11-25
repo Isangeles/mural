@@ -24,9 +24,12 @@
 package hud
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
 )
@@ -38,14 +41,18 @@ type Camera struct {
 	size     pixel.Vec
 	areaMap  *areamap.Map
 	locked   bool
+
+	// Debug mode.
+	cameraInfo *mtk.Text
 }
 
 // newCamera creates new instance of camera.
-func newCamera(hud *HUD, size pixel.Vec) (*Camera) {
+func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c := new(Camera)
 	c.hud = hud
 	c.size = size
 	c.position = pixel.V(0, 0)
+	c.cameraInfo = mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	return c
 }
 
@@ -61,6 +68,11 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	playerPos := c.ConvAreaPos(c.hud.Player().Position())
 	c.hud.Player().Draw(win, mtk.Matrix().Moved(playerPos))
+
+	if config.Debug() {
+		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
+			c.cameraInfo.Bounds(), win.Bounds().Center())))
+	}
 }
 
 // Update updates camera.
@@ -72,17 +84,17 @@ func (c *Camera) Update(win *mtk.Window) {
 		// Key events.
 		if c.position.Y < c.areaMap.Size().Y &&
 			(win.JustPressed(pixelgl.KeyW) ||
-			win.JustPressed(pixelgl.KeyUp)) {
+				win.JustPressed(pixelgl.KeyUp)) {
 			c.position.Y += c.areaMap.TileSize().Y
 		}
 		if c.position.X < c.areaMap.Size().X &&
 			(win.JustPressed(pixelgl.KeyD) ||
-			win.JustPressed(pixelgl.KeyRight)) {
+				win.JustPressed(pixelgl.KeyRight)) {
 			c.position.X += c.areaMap.TileSize().X
 		}
 		if c.position.Y > 0 &&
 			(win.JustPressed(pixelgl.KeyS) ||
-			win.JustPressed(pixelgl.KeyDown)) {
+				win.JustPressed(pixelgl.KeyDown)) {
 			c.position.Y -= c.areaMap.TileSize().Y
 		}
 		if c.position.X > 0 &&
@@ -91,6 +103,8 @@ func (c *Camera) Update(win *mtk.Window) {
 			c.position.X -= c.areaMap.TileSize().X
 		}
 	}
+	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
+		c.Position()))
 }
 
 // SetMap sets maps for camera.
@@ -116,11 +130,11 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X - c.Position().X, pos.Y - c.Position().Y)
+	return pixel.V(mtk.ConvSize(pos.X)-c.Position().X, mtk.ConvSize(pos.Y)-c.Position().Y)
 }
 
 // ConvCameraPos translates specified camera
 // position to area position.
 func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X + c.Position().X, pos.Y + c.Position().Y)
+	return pixel.V(pos.X+c.Position().X, pos.Y+c.Position().Y)
 }

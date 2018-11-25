@@ -37,12 +37,12 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/text/lang"
 
-	"github.com/isangeles/mural/config" 
-	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/mainmenu"
+	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/hud"
+	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/objects"
 )
 
@@ -56,7 +56,7 @@ var (
 	game     *flamecore.Game
 	inGame   bool
 
-	focus= new(mtk.Focus)
+	focus = new(mtk.Focus)
 )
 
 // On init.
@@ -112,24 +112,24 @@ func run() {
 		panic(fmt.Errorf("fail_to_load_ui_font:%v", err))
 	}
 	mtk.SetMainFont(uiFont)
-	
+
 	mainMenu, err := mainmenu.New()
 	if err != nil {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
+	// Debug mode.
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
 	versionInfo.JustLeft()
-	cameraInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
-	
+
 	// textbox test.
 	/*
-	for i := 0; i < 40; i ++ {
-		log.Dbg.Printf("msg_%d", i)
-	}
-        */
+		for i := 0; i < 40; i ++ {
+			log.Dbg.Printf("msg_%d", i)
+		}
+	*/
 
 	//last := time.Now()
 	for !win.Closed() {
@@ -139,8 +139,6 @@ func run() {
 		// Update.
 		if inGame {
 			pcHUD.Update(win)
-			cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
-				pcHUD.CameraPosition()))
 		} else {
 			mainMenu.Update(win)
 		}
@@ -157,8 +155,6 @@ func run() {
 				fpsInfo.Bounds(), win.Bounds().Max)))
 			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
 				versionInfo.Bounds(), win.Bounds().Min)))
-			cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
-				cameraInfo.Bounds(), win.Bounds().Center())))
 		}
 		win.Update()
 	}

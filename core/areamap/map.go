@@ -133,7 +133,6 @@ func (m *Map) DrawForChar(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
 			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
 				mtk.ConvSize(tilePos.X),
 				mtk.ConvSize(tilePos.Y))))
-			//return
 		}
 	}
 }

@@ -38,7 +38,6 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/objects"
 )
 
 // Struct for graphical representation of area map.
@@ -83,14 +82,14 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	for _, l := range m.tmxMap.Layers {
 		switch l.Name {
 		case "ground":
-			l, err := m.mapLayer(l, mapsPath)
+			l, err := mapLayer(m, l)
 			if err != nil {
 				return nil,
 				fmt.Errorf("fail_to_create_ground_layer:%v", err)
 			}
 			m.ground = l
 		default:
-			log.Err.Printf("map_builder:unknown_layer:%s", l.Name) 
+			log.Err.Printf("map_builder:unknown_layer:%s", l.Name)
 		}
 	}
 	return m, nil
@@ -123,23 +122,53 @@ func (m *Map) DrawCircle(win *mtk.Window, startPoint pixel.Vec, radius float64) 
 }
 
 // DrawForChar draws only part of map visible for specified game character.
-func (m *Map) DrawForChar(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
-	av *objects.Avatar) {
+func (m *Map) DrawWithFOW(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
+	sightStart pixel.Vec, sightRange float64) {
 	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
 	for _, t := range m.ground {
 		if drawArea.Contains(t.Position()) &&
-			mtk.Range(av.Position(), t.Position()) <= av.SightRange() {
-			tilePos := mapDrawPos(t.Position(), startPoint)
-			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
-				mtk.ConvSize(tilePos.X),
-				mtk.ConvSize(tilePos.Y))))
+			mtk.Range(sightStart, t.Position()) <= sightRange {
+			tileDrawPos := mapDrawPos(t.Position(), startPoint)
+			t.Draw(win.Window, mtk.Matrix().Moved(tileDrawPos))
 		}
 	}
 }
 
+// TileSize returns size of map tile.
+func (m *Map) TileSize() pixel.Vec {
+	return m.tilesize
+}
+
+// Size returns size of the map.
+func (m *Map) Size() pixel.Vec {
+	return m.mapsize
+}
+
+// tileBounds returns bounds for tile with specified size and ID
+// from specified tileset picture.
+func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
+	tileCount := 0
+	tilesetSize := roundTilesetSize(tileset.Bounds().Max, m.tilesize)
+	//fmt.Printf("tileset_size:%v\n", tilesetSize)
+	for h := tilesetSize.Y - m.tilesize.Y; h - m.tilesize.Y >= 0;
+	h -= m.tilesize.Y {
+		for w := 0.0; w + m.tilesize.X <= tilesetSize.X; w += m.tilesize.X {
+			//fmt.Printf("tile_id:%d\n", tileCount)
+			if tileCount == int(tileId) {
+				tileBounds := pixel.R(w, h, w + m.tilesize.X,
+					h + m.tilesize.Y)
+				//fmt.Printf("tile_id:%d, tile_bounds:%v\n", tileCount, tileBounds)
+				return tileBounds
+			}
+			tileCount++
+		}
+	}
+	return pixel.R(0, 0, 0, 0)
+}
+
 // mapLayer parses specified TMX layer data to slice
 // with tile sprites.
-func (m *Map) mapLayer(layer tmx.Layer, mapsPath string) ([]*tile, error) {
+func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 	tiles := make([]*tile, 0)
 	tileIdX := 1
 	tileIdY := 1
@@ -164,52 +193,22 @@ func (m *Map) mapLayer(layer tmx.Layer, mapsPath string) ([]*tile, error) {
 				tileIdY++
 			}		
 		}
-		//log.Dbg.Printf("tile[%d]:%v, tileset:%s", i, dt.ID,
-		//	dt.Tileset.Name)
 	}
 	return tiles, nil
 }
 
-// TileSize returns size of map tile.
-func (m *Map) TileSize() pixel.Vec {
-	return m.tilesize
-}
-
-// Size returns size of the map.
-func (m *Map) Size() pixel.Vec {
-	return m.mapsize
-}
-
-// tileBounds returns bounds for tile with specified size and ID
-// from specified tileset picture.
-func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
-	tileCount := 0
-	tilesetSize := roundTilesetSize(tileset.Bounds().Max, m.tilesize)
-	//fmt.Printf("tileset_size:%v\n", tilesetSize)
-	for h := tilesetSize.Y - m.tilesize.Y; h - m.tilesize.Y >= 0; h -= m.tilesize.Y {
-		for w := 0.0; w + m.tilesize.X <= tilesetSize.X; w += m.tilesize.X {
-			//fmt.Printf("tile_id:%d\n", tileCount)
-			if tileCount == int(tileId) {
-				tileBounds := pixel.R(w, h, w + m.tilesize.X, h + m.tilesize.Y)
-				//fmt.Printf("tile_id:%d, tile_bounds:%v\n", tileCount, tileBounds)
-				return tileBounds
-			}
-			tileCount++
-		}
-	}
-	return pixel.R(0, 0, 0, 0)
-}
-
 // mapDrawPos translates real position to map draw position.
 func mapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X - drawPos.X, pos.Y - drawPos.Y)
+	return pixel.V(mtk.ConvSize(pos.X - drawPos.X),
+		mtk.ConvSize(pos.Y - drawPos.Y))
 }
 
-// roundMapSize rounds map size 
+// roundTilesetSize rounds tileset size to to value that can be divided
+// by tile size without rest.
 func roundTilesetSize(tilesetSize pixel.Vec, tileSize pixel.Vec) pixel.Vec {
 	size := pixel.V(0, 0)
-	xCount := math.Floor(tilesetSize.X / 32)
-	yCount := math.Floor(tilesetSize.Y / 32)
+	xCount := math.Floor(tilesetSize.X / tileSize.X)
+	yCount := math.Floor(tilesetSize.Y / tileSize.Y)
 	size.X = tileSize.X * xCount
 	size.Y = tileSize.Y * yCount
 	return size

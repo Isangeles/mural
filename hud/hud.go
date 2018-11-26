@@ -74,7 +74,7 @@ func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 	}
-	go hud.ChangeArea(pcArea, hud.game)
+	go hud.ChangeArea(pcArea)
 	return hud, nil
 }
 
@@ -123,10 +123,10 @@ func (hud *HUD) Player() *objects.Avatar {
 }
 
 // ChangeArea changes current HUD area.
-func (hud *HUD) ChangeArea(area *scenario.Area, game *flamecore.Game) {
+func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_area_info"))
-	areaMap, err := areamap.NewMap(area, game.Module().Chapter().AreasPath())
+	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
 		log.Err.Printf("fail_to_create_pc_area_map:%v", err)
 		hud.loading = false

@@ -79,8 +79,18 @@ func (tx *Text) SetText(text string) {
 	tx.text.WriteString(tx.content)
 }
 
+// AddText adds specified text to current text
+// content.
+func (tx *Text) AddText(text string) {
+	tx.content += "\n" + text
+	tx.SetText(tx.content)
+}
+
+func (tx *Text) Write(p []byte) (n int, err error) {
+	return tx.text.Write(p)
+}
+
 // Adjust text origin position to center.
-// TODO: don't work well.
 func (tx *Text) JustCenter() {
 	mariginX := (-tx.text.BoundsOf(tx.content).Max.X) / 2
 	tx.text.Orig = pixel.V(mariginX, 0)
@@ -104,6 +114,17 @@ func (tx *Text) Draw(t pixel.Target, matrix pixel.Matrix) {
 // Bounds return size of text.
 func (tx *Text) Bounds() pixel.Rect {
 	return tx.text.Bounds()
+}
+
+// Clear clears texts,
+func (tx *Text) Clear() {
+	tx.text.Clear()
+}
+
+// BoundsOf returns bounds of specified text
+// while displayed.
+func (tx *Text) BoundsOf(text string) pixel.Rect {
+	return tx.text.BoundsOf(text)
 }
 
 // DrawArea returns current draw area of text.

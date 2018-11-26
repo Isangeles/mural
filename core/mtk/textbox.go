@@ -24,13 +24,13 @@
 package mtk
 
 import (
+	"bytes"
 	"fmt"
 	"image/color"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/text"
 	//"golang.org/x/image/colornames"
 )
 
@@ -38,7 +38,7 @@ import (
 type Textbox struct {
 	bg          *imdraw.IMDraw
 	color       color.Color
-	textarea    *text.Text
+	textarea    *Text
 	drawArea    pixel.Rect // updated at every draw
 	textContent []string
 	visibleText []string
@@ -52,9 +52,8 @@ func NewTextbox(fontSize Size, color color.Color) (*Textbox) {
 	t.bg = imdraw.New(nil)
 	t.color = color
 	// Text.
-	font := MainFont(fontSize)
-	atlas := Atlas(&font)
-	t.textarea = text.New(pixel.V(0, 0), atlas)
+	t.textarea = NewText("", fontSize, 999)
+	t.textarea.JustLeft()
 	
 	return t
 }
@@ -141,7 +140,6 @@ func (t *Textbox) Clear() {
 // TODO: height of visible text is calculated wrong,
 // value is too big.
 func (t *Textbox) updateTextVisibility() {
-	t.textarea.Clear()
 	var (
 		visibleText       []string
 		visibleTextHeight float64 
@@ -153,13 +151,37 @@ func (t *Textbox) updateTextVisibility() {
 			continue
 		}
 		if visibleTextHeight > t.drawArea.H() {
-			break;
+			break
 		}
 		
 		visibleText = append(visibleText, line)
 		visibleTextHeight += t.textarea.BoundsOf(line).H()
 	}
+	t.textarea.Clear()
 	for _, txt := range visibleText {
-		fmt.Fprintln(t.textarea, txt)
+		//t.textarea.AddText(txt)
+		fmt.Fprintf(t.textarea, txt)
 	}
+	//t.textarea.JustLeft()
+}
+
+// Splits string at specified index.
+// Author: mozey(@stackoverflow).
+func SplitSubN(s string, n int) []string {
+    sub := ""
+    subs := []string{}
+
+    runes := bytes.Runes([]byte(s))
+    l := len(runes)
+    for i, r := range runes {
+        sub = sub + string(r)
+        if (i + 1) % n == 0 {
+            subs = append(subs, sub)
+            sub = ""
+        } else if (i + 1) == l {
+            subs = append(subs, sub)
+        }
+    }
+
+    return subs
 }

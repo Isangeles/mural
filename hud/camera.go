@@ -59,12 +59,8 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
 	if c.areaMap != nil {
-		//c.areaMap.Draw(win, c.position, c.size)
-		// Drawing map in circular form is faster and simulates FOW.
-		// TODO: use player position and sight range.
-		//playerPos := c.translatePos(c.hud.Player().Position())
-		//c.areaMap.DrawCircle(win, playerPos, c.hud.Player().SightRange())
-		c.areaMap.DrawForChar(win, c.position, c.size, c.hud.Player())
+		c.areaMap.DrawWithFOW(win, c.position, c.size,
+			c.hud.Player().Position(), c.hud.Player().SightRange())
 	}
 	playerPos := c.ConvAreaPos(c.hud.Player().Position())
 	c.hud.Player().Draw(win, mtk.Matrix().Moved(playerPos))

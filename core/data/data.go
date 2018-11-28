@@ -43,24 +43,59 @@ import (
 var (
 	g_dir_path  string
 	g_arch_path string
+	
+	uiData   map[string]pixel.Picture
+	avatars  map[string]pixel.Picture
+	fonts    map[string]*truetype.Font
 )
 
-// Called by GUI before creating any GUI elements.
-func Load() error {
-	if flame.Mod() == nil {
-		return fmt.Errorf("no module loaded")
+
+// LoadGameData loads game graphic data.
+// Should be called by GUI before creating any
+// in-game elements.
+func LoadGameData() error {
+	err := loadPaths()
+	if err != nil {
+		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
-	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		flame.Mod().Name()))
-	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
-		flame.Mod().Name()))
+	avTexs, err := loadPicturesFromArch(g_arch_path, "avatars")
+	if err != nil {
+		return fmt.Errorf("fail to load avatars textures")
+	}
+	avatars = *avTexs
 	return nil
 }
 
-// Picture loads image from specified path in gdata
-// archive.
-func Picture(filePath string) (pixel.Picture, error) {
-	return loadPictureFromArch(g_arch_path, filePath)
+// LoadUIData loads UI graphic data.
+// Should be called by GUI before creating any
+// GUI elements.
+func LoadUIData() error {
+	err := loadPaths()
+	if err != nil {
+		return fmt.Errorf("fail_to_load_paths:%v", err)
+	}
+	texs, err := loadPicturesFromArch(g_arch_path, "ui")
+	if err != nil {
+		return fmt.Errorf("fail to load UI textures")
+	}
+	uiData = *texs
+	ttfs, err := loadFontsFromArch(g_arch_path, "fonts")
+	if err != nil {
+		return fmt.Errorf("fail to load fonts")
+	}
+	fonts = *ttfs
+	return nil
+}
+
+// PictureUI loads image with specified name from UI data
+// in gdata archive.
+func PictureUI(fileName string) (pixel.Picture, error) {
+	pic := uiData[fileName]
+	if pic != nil {
+		return pic, nil
+	}
+	// Fallback, load picture 'by hand'.
+	return loadPictureFromArch(g_arch_path, "ui/" + fileName)
 }
 
 // PictureFromDir loads image from specified system path.
@@ -68,16 +103,21 @@ func PictureFromDir(path string) (pixel.Picture, error) {
 	return loadPictureFromDir(path)
 }
 
-// Portrait returns portrait with specified name.
-func Portrait(fileName string) (pixel.Picture, error) {
-	// TODO: search graphic archive also.
-        path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" + fileName)
+// PlayablePortrait returns portrait with specified name.
+func PlayablePortrait(fileName string) (pixel.Picture, error) {
+        path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
+		fileName)
         return loadPictureFromDir(path)
 }
 
-// AvatarSprite returns picture with specified name
+// AvatarSpritesheet returns picture with specified name
 // for avatar sprite.
-func AvatarSprite(fileName string) (pixel.Picture, error) {
+func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
+	spritesheet := avatars[fileName]
+	if spritesheet != nil {
+		return spritesheet, nil
+	}
+	// Fallback.
 	path := filepath.FromSlash("avatar/sprite/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
 }
@@ -107,6 +147,11 @@ func PlayablePortraits() (map[string]pixel.Picture, error) {
 // Font loads font with specified name from gdata
 // directory.
 func Font(fileName string) (*truetype.Font, error) {
+	font := fonts[fileName]
+	if font != nil {
+		return font, nil
+	}
+	// Fallback.
 	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
 }
@@ -124,4 +169,16 @@ func Map(mapId, areasPath string) (*tmx.Map, error) {
 		return nil, fmt.Errorf("fail_to_read_tmx_file:%v", err)
 	}
 	return tmxMap, nil
+}
+
+// Load loads grpahic directories.
+func loadPaths() error {
+	if flame.Mod() == nil {
+		return fmt.Errorf("no module loaded")
+	}
+	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
+		flame.Mod().Name()))
+	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
+		flame.Mod().Name()))
+	return nil
 }

@@ -67,12 +67,12 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 		colornames.Red, lang.Text("gui", "settings_b_label"),
 		lang.Text("gui", "settings_b_info"))
 	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
-	//buttonExitBG, err := data.Picture("buttonS.png")
+	//exitButtonBG, err := data.PictureUI("buttonS.png")
 	//if err != nil {
 	//	return nil, err
 	//}
-	//m.exitB = mtk.NewButtonSprite(buttonExitBG, lang.Text("gui", "exit_b_label"),
-	//	lang.Text("gui", "exit_b_info"))
+	//m.exitB = mtk.NewButtonSprite(exitButtonBG, mtk.SIZE_MEDIUM,
+	//	lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_b_info"))
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "exit_b_label"),
 		lang.Text("gui", "exit_b_info"))

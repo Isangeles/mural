@@ -25,6 +25,7 @@ package data
 
 import (
 	_ "image/png"
+	"strings"
 
 	"archive/zip"
 	"fmt"
@@ -37,6 +38,76 @@ import (
 
 	"github.com/faiface/pixel"
 )
+
+var (
+	pic_png_prefix  = ".png"
+	pic_jpg_prefix  = ".jpg"
+	font_ttf_prefix = ".ttf"
+)
+
+// loadPicturesFromArch loads all pictures from specified
+// directory in ZIP archive with specified path.
+func loadPicturesFromArch(archPath, dir string) (*map[string]pixel.Picture, error) {
+	r, err := zip.OpenReader(archPath)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+
+	pics := make(map[string]pixel.Picture, 0)
+	for _, f := range r.File {
+		if isImage(f) && strings.HasPrefix(f.Name, dir) {
+			fPath := strings.Split(f.Name, "/")
+			fName := fPath[len(fPath)-1]
+			rc, err := f.Open()
+			if err != nil {
+				return nil, err
+			}
+			defer rc.Close()
+			img, _, err := image.Decode(rc)
+			if err != nil {
+				return nil, err
+			}
+			pics[fName] = pixel.PictureDataFromImage(img)
+		}
+	}
+	return &pics, nil
+}
+
+// loadFontsFromArch loads all fonts from specified
+// directory in ZIP archive with specified path.
+func loadFontsFromArch(archPath, dir string) (*map[string]*truetype.Font, error) {
+	r, err := zip.OpenReader(archPath)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+
+	fonts := make(map[string]*truetype.Font, 0)
+	for _, f := range r.File {
+		if isFont(f) && strings.HasPrefix(f.Name, dir) {
+			fPath := strings.Split(f.Name, "/")
+			fName := fPath[len(fPath)-1]
+			rc, err := f.Open()
+			if err != nil {
+				return nil, err
+			}
+			defer rc.Close()
+			
+			bytes, err := ioutil.ReadAll(rc)
+			if err != nil {
+				return nil, err
+			}
+
+			font, err := truetype.Parse(bytes)
+			if err != nil {
+				return nil, err
+			}
+			fonts[fName] = font
+		}
+	}
+	return &fonts, nil
+}
 
 // loadPictureFromArch loads picture from ZIP archive from specified
 // system path.
@@ -63,6 +134,38 @@ func loadPictureFromArch(archPath, filePath string) (pixel.Picture, error) {
 		}
 	}
 	return nil, fmt.Errorf("arch:%s:file_not_found:%s\n", archPath, filePath)
+}
+
+// loadFontFromArch Returns font with specified path in archive in
+// specified system path or nil if arch/font was not found.
+func loadFontFromArch(archPath, filePath string) (*truetype.Font, error) {
+	r, err := zip.OpenReader(archPath)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+
+	for _, f := range r.File {
+		if f.Name == filePath {
+			rc, err := f.Open()
+			if err != nil {
+				return nil, err
+			}
+			defer rc.Close()
+
+			bytes, err := ioutil.ReadAll(rc)
+			if err != nil {
+				return nil, err
+			}
+
+			font, err := truetype.Parse(bytes)
+			if err != nil {
+				return nil, err
+			}
+			return font, nil
+		}
+	}
+	return nil, fmt.Errorf("arch%s:file_not_found:%s\n", archPath, filePath)
 }
 
 // loadPictureFromDir loads picture from specified system path and
@@ -120,4 +223,16 @@ func loadFontFromDir(path string) (*truetype.Font, error) {
 	}
 
 	return font, nil
+}
+
+// isImage checks whether specified ZIP file is a image.
+func isImage(f *zip.File) bool {
+	return strings.HasSuffix(f.Name, pic_png_prefix) ||
+		strings.HasSuffix(f.Name, pic_jpg_prefix)
+}
+
+// isFont checks whether specified ZIP file is a
+// font file.
+func isFont(f *zip.File) bool {
+	return strings.HasSuffix(f.Name, font_ttf_prefix)
 }

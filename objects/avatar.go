@@ -44,19 +44,20 @@ type Avatar struct {
 }
 
 // NewAvatar creates new avatar for specified game character.
-func NewAvatar(char *character.Character, spriteName, portraitName string) (*Avatar, error) {
+func NewAvatar(char *character.Character, spriteName,
+	portraitName string) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
 	// Sprite.
 	// TODO: handling spritesheets(frames, animations, etc.).
-	spritePic, err := data.AvatarSprite(spriteName)
+	spritePic, err := data.AvatarSpritesheet(spriteName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_sprite:%v", err)
 	}
 	av.sprite = pixel.NewSprite(spritePic, spritePic.Bounds())
 	// Portrait.
 	av.portraitName = portraitName
-	portraitPic, err := data.Portrait(av.portraitName)
+	portraitPic, err := data.PlayablePortrait(av.portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_portrait:%v", err)
 	}

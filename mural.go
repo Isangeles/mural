@@ -103,7 +103,7 @@ func run() {
 		panic(err)
 	}
 
-	err = data.Load()
+	err = data.LoadUIData()
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
 	}

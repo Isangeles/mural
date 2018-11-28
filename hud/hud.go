@@ -40,6 +40,7 @@ import (
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/objects"
 )
@@ -60,6 +61,8 @@ type HUD struct {
 	pc      *objects.Avatar
 	destPos pixel.Vec
 	loading bool
+	exitReq bool
+	loaderr error
 }
 
 // NewHUD creates new HUD instance.
@@ -70,11 +73,7 @@ func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
 	hud.loadScreen = newLoadingScreen(hud)
 	hud.camera = newCamera(hud, config.Resolution())
 	hud.chat = newChat(hud)
-	pcArea, err := hud.game.PlayerArea(pc.Id())
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
-	}
-	go hud.ChangeArea(pcArea)
+	go hud.LoadGame(g)
 	return hud, nil
 }
 
@@ -90,6 +89,16 @@ func (hud *HUD) Draw(win *mtk.Window) {
 
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
+	if hud.exitReq {
+		// TODO: exit back to menu.
+		win.SetClosed(true)
+	}
+	if hud.loading {
+		if hud.loaderr != nil {
+			log.Err.Printf("loading_fail:%v", hud.loaderr)
+			hud.Exit()
+		}
+	}
 	// Key events.
 	if win.JustPressed(pixelgl.KeyGraveAccent) {
 		if !hud.chat.Active() {
@@ -122,14 +131,31 @@ func (hud *HUD) Player() *objects.Avatar {
 	return hud.pc
 }
 
+// Exit sends GUI exit request to HUD.
+func (hud *HUD) Exit() {
+	hud.exitReq = true
+}
+
+// LoadNewGame load all game data.
+func (hud *HUD) LoadGame(game *flamecore.Game) {
+	hud.loading = true
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
+	data.LoadGameData()
+	pcArea, err := hud.game.PlayerArea(hud.Player().Id())
+	if err != nil {
+		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
+		return
+	}
+	hud.ChangeArea(pcArea)
+}
+
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_area_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
-		log.Err.Printf("fail_to_create_pc_area_map:%v", err)
-		hud.loading = false
+		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
 		return
 	}
 	hud.camera.SetMap(areaMap)

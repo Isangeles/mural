@@ -101,18 +101,6 @@ func New() (*MainMenu, error) {
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
-	// Messages test.
-	/*
-	for i := 0; i < 2; i++ {
-		msg, err := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-			fmt.Sprintf("This is test UI message.\n%d", i))
-		if err != nil {
-			return nil, err
-		}
-		msg.Show(true)
-		mm.msgs.Append(msg)
-	}
-        */
 
 	mm.menu.Show(true)
 	return mm, nil

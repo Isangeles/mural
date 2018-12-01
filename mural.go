@@ -118,6 +118,7 @@ func run() {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
+	mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
 	// Debug mode.
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,

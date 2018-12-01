@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	flamecore "github.com/isangeles/flame/core"
+	flamedata "github.com/isangeles/flame/core/data"
 	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
@@ -202,5 +203,16 @@ func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
 func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
 	player *objects.Avatar) {
 	mm.onGameCreated(g, player)
+}
+
+// ImportPlayableChars import all characters from specified
+// path.
+func (mm *MainMenu) ImportPlayableChars(path string) error {
+	_, err := flamedata.ImportCharacters(path)
+	if err != nil {
+		return err
+	}
+	// TODO: create avatar for each imported character.
+	return nil
 }
 

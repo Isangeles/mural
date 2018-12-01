@@ -115,9 +115,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
 	maleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_male"),
-		character.MALE}
+		character.Male}
 	femaleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_female"),
-		character.FEMALE}
+		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_sex_switch_label"), "", gens)
@@ -125,10 +125,10 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
 		"race_gnome")
 	races := []mtk.SwitchValue{
-		mtk.SwitchValue{raceNames[0], character.HUMAN},
-		mtk.SwitchValue{raceNames[1], character.ELF},
-		mtk.SwitchValue{raceNames[2], character.DWARF},
-		mtk.SwitchValue{raceNames[3], character.GNOME},
+		mtk.SwitchValue{raceNames[0], character.Human},
+		mtk.SwitchValue{raceNames[1], character.Elf},
+		mtk.SwitchValue{raceNames[2], character.Dwarf},
+		mtk.SwitchValue{raceNames[3], character.Gnome},
 	}
 	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_race_switch_label"), "", races)
@@ -322,18 +322,17 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		log.Err.Printf("newchar_menu:fail_to_create_character:%v\n", err)
 		return
 	}
-	spriteName := "test.png" // TODO: real sprite
-	faceName, err := ncm.faceSwitch.Value().TextValue()
+	spritePic, err := data.AvatarSpritesheet("test.png") // TODO: real sprite
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_avatar_portrait_name:%v\n", err)
-		return 
-	}
-	av, err := objects.NewAvatar(char, spriteName, faceName)
-	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_create_character_avatar:%v\n",
-			err)
+		log.Err.Printf("fail_to_create_sprite:%v", err)
 		return
 	}
+	face, err := ncm.faceSwitch.Value().Sprite()
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_retrieve_avatar_portrait:%v\n", err)
+		return 
+	}
+	av := objects.NewAvatar(char, spritePic, face.Picture())
 	ncm.mainmenu.AddPlayableChar(av)
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 		lang.Text("gui", "newchar_create_msg"))

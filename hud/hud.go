@@ -141,7 +141,7 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
 	data.LoadGameData()
-	pcArea, err := hud.game.PlayerArea(hud.Player().Id())
+	pcArea, err := hud.game.PlayerArea(hud.Player().SerialID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 		return

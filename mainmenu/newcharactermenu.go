@@ -43,7 +43,7 @@ import (
 )
 
 var (
-	new_char_id = "player_01"
+	new_char_id = "player"
 )
 
 // NewCharacterMenu struct represents new game character

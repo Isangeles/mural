@@ -103,8 +103,9 @@ func PictureFromDir(path string) (pixel.Picture, error) {
 	return loadPictureFromDir(path)
 }
 
-// PlayablePortrait returns portrait with specified name.
-func PlayablePortrait(fileName string) (pixel.Picture, error) {
+// AvatarPortrait returns portrait with specified name.
+func AvatarPortrait(fileName string) (pixel.Picture, error) {
+	// TODO: search graphic archive also.
         path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
 		fileName)
         return loadPictureFromDir(path)

@@ -29,10 +29,12 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/objects"
 	"github.com/isangeles/mural/log"
 )
@@ -40,13 +42,14 @@ import (
 // NewGameMenu struct represents new game
 // creation screen.
 type NewGameMenu struct {
-	mainmenu    *MainMenu
-	title       *mtk.Text
-	charSwitch  *mtk.Switch
-	charInfo    *mtk.Textbox
-	startButton *mtk.Button
-	backButton  *mtk.Button
-	opened      bool
+	mainmenu     *MainMenu
+	title        *mtk.Text
+	charSwitch   *mtk.Switch
+	charInfo     *mtk.Textbox
+	startButton  *mtk.Button
+	exportButton *mtk.Button
+	backButton   *mtk.Button
+	opened       bool
 }
 
 // newNewGameMenu creates new game creation menu.
@@ -65,6 +68,9 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 	ngm.startButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "newgame_start_button_label"), "")
 	ngm.startButton.SetOnClickFunc(ngm.onStartButtonClicked)
+	ngm.exportButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		accent_color, lang.Text("gui", "newgame_export_button_label"), "")
+	ngm.exportButton.SetOnClickFunc(ngm.onExportButtonClicked)
 	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "back_b_label"), "")
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
@@ -82,6 +88,8 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 	ngm.startButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
 		ngm.startButton.Frame(), pixel.V(win.Bounds().Max.X,
 			win.Bounds().Min.Y))))
+	ngm.exportButton.Draw(win, mtk.Matrix().Moved(mtk.LeftOf(
+		ngm.startButton.DrawArea(), ngm.exportButton.Frame(), 10)))
 	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
 		ngm.backButton.Frame(), win.Bounds().Min)))
 	// Switches & text.
@@ -98,6 +106,7 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 		ngm.charSwitch.Update(win)
 		ngm.charInfo.Update(win)
 		ngm.startButton.Update(win)
+		ngm.exportButton.Update(win)
 		ngm.backButton.Update(win)
 	}
 }
@@ -147,6 +156,27 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 	return nil
 }
 
+// exportChar exports currently selected character.
+func (ngm *NewGameMenu) exportChar() error {
+	switchVal := ngm.charSwitch.Value()
+	if switchVal == nil {
+		return nil
+	}
+	c, ok := switchVal.Value.(*objects.Avatar)
+	if !ok {
+		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
+	}
+	err := flamedata.ExportCharacter(c.Character, flame.Mod().CharactersPath())
+	if err != nil {
+		return err
+	}
+	err = data.ExportAvatar(c, flame.Mod().CharactersPath())
+	if err != nil {
+		return fmt.Errorf("fail_to_export_avatar:%v", err)
+	}
+	return nil
+}
+
 // startGame starts new game.
 func (ngm *NewGameMenu) startGame() error {
 	switchVal := ngm.charSwitch.Value()
@@ -176,6 +206,18 @@ func (ngm *NewGameMenu) onStartButtonClicked(b *mtk.Button) {
 // Triggered after back button clicked.
 func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 	ngm.mainmenu.OpenMenu()
+}
+
+// Triggered after export button clicked.
+func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
+	err := ngm.exportChar()
+	if err != nil {
+		log.Err.Printf("fail_to_export_character:%v", err)
+		return
+	}
+	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL, lang.Text("gui",
+		"newgame_export_msg"))
+	ngm.mainmenu.ShowMessage(msg)
 }
 
 // Triggered after character switch change.

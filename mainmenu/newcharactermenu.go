@@ -322,17 +322,22 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		log.Err.Printf("newchar_menu:fail_to_create_character:%v\n", err)
 		return
 	}
-	spritePic, err := data.AvatarSpritesheet("test.png") // TODO: real sprite
+	spritesheetName := "test.png" // TODO: real sprite
+	spritesheetPic, err := data.AvatarSpritesheet(spritesheetName)
 	if err != nil {
-		log.Err.Printf("fail_to_create_sprite:%v", err)
+		log.Err.Printf("newchar_menu:fail_to_retrieve_spritesheet_picture:%v",
+			err)
 		return
 	}
-	face, err := ncm.faceSwitch.Value().Sprite()
+	portraitName, err := ncm.faceSwitch.Value().TextValue()
+	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_avatar_portrait:%v\n", err)
-		return 
+		log.Err.Printf("newchar_menu:fail_to_retrieve_portrait_picture:%v\n",
+			err)
+		return
 	}
-	av := objects.NewAvatar(char, spritePic, face.Picture())
+	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
+		spritesheetName)
 	ncm.mainmenu.AddPlayableChar(av)
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 		lang.Text("gui", "newchar_create_msg"))

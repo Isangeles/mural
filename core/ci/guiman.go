@@ -30,8 +30,9 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame"
 	flameci "github.com/isangeles/flame/cmd/ci"
-
+	
 	"github.com/isangeles/mural/config"
 )
 
@@ -47,6 +48,8 @@ func handleGUICommand(cmd flameci.Command) (int, string) {
 		return 0, config.VERSION
 	case "set":
 		return setGUIOption(cmd)
+	case "export":
+		return exportGUIOption(cmd)
 	default:
 		return 4, fmt.Sprintf("%s:no_such_option:%s", GUI_MAN,
 			cmd.OptionArgs()[0])
@@ -64,7 +67,7 @@ func setGUIOption(cmd flameci.Command) (int, string) {
 	case "resolution":
 		if len(cmd.Args()) < 1 {
                         return 7, fmt.Sprintf("%s:no_enought_args_for:%s", GUI_MAN,
-				cmd.OptionArgs()[1])
+				cmd.TargetArgs()[0])
                 }
 		
 		resInput := cmd.Args()[0]
@@ -78,6 +81,31 @@ func setGUIOption(cmd flameci.Command) (int, string) {
 		}
 		config.SetResolution(pixel.V(resX, resY))
 		return 0, ""
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
+	}
+}
+
+// exportGUIOption handles 'export' option for guiman tool.
+func exportGUIOption(cmd flameci.Command) (int, string) {
+	if len(cmd.TargetArgs()) < 1 {
+		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+
+	switch cmd.TargetArgs()[0] {
+	case "character":
+		if len(cmd.TargetArgs()) < 2 {
+			return 7, fmt.Sprintf("%s:no_enought_target_args_for:%s",
+				GUI_MAN, cmd.TargetArgs()[0])
+		}
+		if flame.Game() == nil {
+			return 7, fmt.Sprintf("%s:no_game_loaded", GUI_MAN)
+		}
+		//charID := cmd.TargetArgs()[1]
+		// TODO: retrieve avatar for character with specified ID.
+		return 10, "unsupported_yet"
 	default:
 		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
 			cmd.OptionArgs()[0], cmd.TargetArgs()[0])

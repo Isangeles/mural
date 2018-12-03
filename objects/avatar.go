@@ -36,19 +36,25 @@ import (
 type Avatar struct {
 	*character.Character
 
-	sprite      *pixel.Sprite
-	portrait    *pixel.Sprite
-	portraitName string
+	sprite          *pixel.Sprite
+	portrait        *pixel.Sprite
+	portraitName    string
+	spritesheetName string
 }
 
 // NewAvatar creates new avatar for specified game character.
-func NewAvatar(char *character.Character, spritePic,
-	portraitPic pixel.Picture) (*Avatar) {
+// Portrait and spritesheet names are required for saving and
+// loading avatar file.
+func NewAvatar(char *character.Character, portraitPic,
+	spritesheetPic pixel.Picture, portraitName,
+	spritesheetName string) *Avatar {
 	av := new(Avatar)
 	av.Character = char
+	av.portraitName = portraitName
+	av.spritesheetName = spritesheetName
 	// Sprite.
 	// TODO: handling spritesheets(frames, animations, etc.).
-	av.sprite = pixel.NewSprite(spritePic, spritePic.Bounds())
+	av.sprite = pixel.NewSprite(spritesheetPic, spritesheetPic.Bounds())
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av
@@ -62,6 +68,18 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Portrait returns avatar portrait.
 func (av *Avatar) Portrait() *pixel.Sprite {
 	return av.portrait
+}
+
+// PortraitName returns name of portrait picture
+// file.
+func (av *Avatar) PortraitName() string {
+	return av.portraitName
+}
+
+// SpritesheetName returns name of spritesheet picture
+// file.
+func (av *Avatar) SpritesheetName() string {
+	return av.spritesheetName
 }
 
 // Position return current position of avatar.

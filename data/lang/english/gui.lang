@@ -19,6 +19,8 @@ newgame_b_info:Start new game;
 newgame_menu_title:Start new game;
 newgame_char_switch_label:Character;
 newgame_start_button_label:Start game;
+newgame_export_button_label:Export character;
+newgame_export_msg:Character exported;
 newchar_menu_title:Create new character;
 newchar_name_edit_label:Name:;
 newchar_face_switch_label:Portrait;

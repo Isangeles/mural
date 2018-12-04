@@ -32,6 +32,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/objects"
 )
 
 // Struct for HUD camera.
@@ -39,9 +40,10 @@ type Camera struct {
 	hud      *HUD
 	position pixel.Vec
 	size     pixel.Vec
-	areaMap  *areamap.Map
 	locked   bool
-
+	// Map.
+	areaMap  *areamap.Map
+	avatars  []*objects.Avatar
 	// Debug mode.
 	cameraInfo *mtk.Text
 }
@@ -58,13 +60,17 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
+	// Map.
 	if c.areaMap != nil {
 		c.areaMap.DrawWithFOW(win, c.position, c.size,
 			c.hud.Player().Position(), c.hud.Player().SightRange())
 	}
-	playerPos := c.ConvAreaPos(c.hud.Player().Position())
-	c.hud.Player().Draw(win, mtk.Matrix().Moved(playerPos))
-
+	// Objects.
+	for _, a := range c.avatars {
+		avPos := c.ConvAreaPos(a.Position())
+		a.Draw(win, mtk.Matrix().Moved(avPos))
+	}
+	// Debug mode.
 	if config.Debug() {
 		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
 			c.cameraInfo.Bounds(), win.Bounds().Center())))
@@ -108,6 +114,11 @@ func (c *Camera) SetMap(m *areamap.Map) {
 	c.areaMap = m
 }
 
+// SetAvatars sets avatars to draw.
+func (c *Camera) SetAvatars(avs []*objects.Avatar) {
+	c.avatars = avs
+}
+
 // Position return camera position.
 func (c *Camera) Position() pixel.Vec {
 	return c.position
@@ -126,7 +137,8 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	return pixel.V(mtk.ConvSize(pos.X)-c.Position().X, mtk.ConvSize(pos.Y)-c.Position().Y)
+	return pixel.V(mtk.ConvSize(pos.X)-c.Position().X,
+		mtk.ConvSize(pos.Y)-c.Position().Y)
 }
 
 // ConvCameraPos translates specified camera

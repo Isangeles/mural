@@ -38,6 +38,9 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core/module/object/character"
+	
+	"github.com/isangeles/mural/objects"
 )
 
 var (
@@ -60,7 +63,7 @@ func LoadGameData() error {
 	}
 	avTexs, err := loadPicturesFromArch(g_arch_path, "avatars")
 	if err != nil {
-		return fmt.Errorf("fail to load avatars textures")
+		return fmt.Errorf("fail to load avatars spritesheets")
 	}
 	avatars = *avTexs
 	return nil
@@ -123,6 +126,14 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 	return loadPictureFromArch(g_arch_path, path)
 }
 
+// CharacterAvatar returns imports and returns avatars for specified
+// character.
+func CharacterAvatar(importDir string, char *character.Character) (*objects.Avatar,
+	error) {
+	// TODO: avatar import.
+	return DefaultAvatar(char)
+}
+
 // PlayablePortraits returns map with names of portraits as keys
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {
@@ -182,4 +193,24 @@ func loadPaths() error {
 	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
 		flame.Mod().Name()))
 	return nil
+}
+
+// DefaultAvatar creates default avatar for specified
+// character.
+func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
+	spritesheetName := "test.png"
+	spritesheetPic, err := AvatarSpritesheet(spritesheetName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_spritesheet_picture:%v",
+			err)
+	}
+	portraitName := "male01.png"
+	portraitPic, err := AvatarPortrait(portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
+			err)
+	}
+	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
+		spritesheetName)
+	return av, nil	
 }

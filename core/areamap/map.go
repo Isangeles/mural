@@ -50,7 +50,7 @@ type Map struct {
 	mapsize    pixel.Vec
 	tilescount pixel.Vec
 	// Layers.
-	ground []*tile 
+	ground []*tile
 }
 
 // NewMap creates new map for specified scenario area.
@@ -70,6 +70,7 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	m.mapsize = pixel.V(float64(int(m.tilesize.X) * m.tmxMap.Width),
 		float64(int(m.tilesize.Y) * m.tmxMap.Height))
 	m.tilesets = make(map[string]pixel.Picture)
+	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapsPath + "/" + ts.Image.Source)
 		tsPic, err := data.PictureFromDir(tsPath)
@@ -79,6 +80,7 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 		}
 		m.tilesets[ts.Name] = tsPic
 	}
+	// Map layers.
 	for _, l := range m.tmxMap.Layers {
 		switch l.Name {
 		case "ground":
@@ -107,6 +109,7 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 				mtk.ConvSize(t.Position().Y))))
 		}
 	}
+	
 }
 
 // DrawCircle draws map tiles in circular form(all tiles in specified

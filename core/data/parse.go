@@ -57,3 +57,11 @@ func ExportAvatar(av *objects.Avatar, dirPath string) error {
 	w.Flush()
 	return nil
 }
+
+// ImportAvatars imports all avatars from avatars files in
+// directory with specified path.
+func ImportAvatars(dirPath string) ([]*objects.Avatar, error) {
+	avs := make([]*objects.Avatar, 0)
+	// TODO: unmarshal XML avatars base.
+	return avs, fmt.Errorf("unsupported_yet")
+}

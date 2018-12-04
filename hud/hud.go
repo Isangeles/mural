@@ -152,12 +152,31 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loading = true
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_area_info"))
+	// Map.
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
 		return
 	}
 	hud.camera.SetMap(areaMap)
+	// Objects.
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
+	avatars := make([]*objects.Avatar, 0)
+	for _, c := range area.Characters() {
+		if c == hud.pc.Character { // player already has avatar.
+			avatars = append(avatars, hud.pc)
+			continue
+		}
+		av, err := data.CharacterAvatar(
+			hud.game.Module().Chapter().NPCPath(), c)
+		if err != nil {
+			log.Err.Printf("hud_area_change:char:%s:fail_to_retrieve_avatar:%v",
+				c.ID(), err)
+			continue
+		}
+		avatars = append(avatars, av)
+	}
+	hud.camera.SetAvatars(avatars)
 	hud.loading = false
 }

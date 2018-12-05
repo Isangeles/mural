@@ -35,7 +35,8 @@ import (
 
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	
+
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
 )
@@ -208,11 +209,17 @@ func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
-	_, err := flamedata.ImportCharacters(path)
+	chars, err := flamedata.ImportCharactersDir(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("fail_to_import_characters:%v", err)
 	}
-	// TODO: create avatar for each imported character.
+	avs, err := data.ImportAvatarsDir(chars, path)
+	if err != nil {
+		return fmt.Errorf("fail_to_import_avatars:%v", err)
+	}
+	for _, av := range avs {
+		mm.PlayableChars = append(mm.PlayableChars, av)
+	}
 	return nil
 }
 

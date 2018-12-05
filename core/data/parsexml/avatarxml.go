@@ -27,6 +27,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/ioutil"
 
 	"github.com/isangeles/mural/objects"
 )
@@ -65,8 +66,13 @@ func MarshalAvatar(av *objects.Avatar) (string, error) {
 
 // unmarshalAvatarsBaseXML parses specified XML data to game
 // characters avatars.
-func UnmarshalAvatarsBase(data io.Reader) ([]*objects.Avatar, error) {
-	// TODO: unmarshal XML avatars base.
-	return nil, fmt.Errorf("unsuported_yet")
+func UnmarshalAvatarsBase(data io.Reader) ([]AvatarXML, error) {
+	doc, _ := ioutil.ReadAll(data)
+	avatarsXML := new(AvatarsBaseXML)
+	err := xml.Unmarshal(doc, avatarsXML)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+	}
+	return avatarsXML.Avatars, nil
 }
 

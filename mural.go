@@ -118,7 +118,11 @@ func run() {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
-	mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
+ 	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
+	if err != nil {
+		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
+			err)
+	}
 	// Debug mode.
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,

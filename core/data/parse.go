@@ -28,13 +28,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+	"io/ioutil"
+
+	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/log"
 )
 
 var (
-	AVATAR_FILE_PREFIX = ".avatar"
+	AVATAR_FILE_PREFIX = ".avatars"
 )
 
 // ExportAvatars exports specified avatar to '/characters'
@@ -58,10 +63,70 @@ func ExportAvatar(av *objects.Avatar, dirPath string) error {
 	return nil
 }
 
-// ImportAvatars imports all avatars from avatars files in
-// directory with specified path.
-func ImportAvatars(dirPath string) ([]*objects.Avatar, error) {
+// ImportAvatars imports all avatars for specified characters
+// from avatar file with specified path.
+func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar,
+	error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("xml:%s:fail_to_open_avatars_file:%v",
+			path, err)
+	}
+	avsXML, err := parsexml.UnmarshalAvatarsBase(f)
+	if err != nil {
+		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
+			path, err)
+	}
 	avs := make([]*objects.Avatar, 0)
-	// TODO: unmarshal XML avatars base.
-	return avs, fmt.Errorf("unsupported_yet")
+	for _, avXML := range avsXML {
+		for _, c := range chars {
+			if avXML.ID != c.ID() {
+				continue
+			}
+			portraitPic, err := AvatarPortrait(avXML.Portrait)
+			if err != nil {
+				log.Err.Printf("data:parse_fail:%s:fail_to_retrieve_portrait_picture:%v",
+					avXML.ID, err)
+				continue
+			}
+			spritesheetPic, err := AvatarSpritesheet(avXML.Spritesheet)
+			if err != nil {
+				log.Err.Printf("data:parse_fail:%s:fail_to_retrieve_spritesheet_picture:%v",
+					avXML.ID, err)
+				continue
+			}
+			av := objects.NewAvatar(c, portraitPic, spritesheetPic,
+				avXML.Portrait, avXML.Spritesheet)
+			avs = append(avs, av)
+		}
+	}
+	return avs, nil
+}
+
+// ImportAvatarsDir imports all avatars from avatars files
+// in directory with specified path.
+func ImportAvatarsDir(chars []*character.Character,
+	dirPath string) ([]*objects.Avatar, error) {
+	files, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("xml_dir:%s:fail_to_read_dir:%v",
+			dirPath, err)
+	}
+	avs := make([]*objects.Avatar, 0)
+	for _, fInfo := range files {
+		if !strings.HasSuffix(fInfo.Name(), AVATAR_FILE_PREFIX) {
+			continue
+		}
+		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
+		impAvs, err := ImportAvatars(chars, avFilePath)
+		if err != nil {
+			log.Err.Printf("data_avatar_import:%s:fail_to_parse_char_file:%v",
+				dirPath, err)
+			continue
+		}
+		for _, av := range impAvs {
+			avs = append(avs, av)
+		}
+	}
+	return avs, nil
 }

@@ -47,9 +47,10 @@ var (
 	g_dir_path  string
 	g_arch_path string
 	
-	uiData   map[string]pixel.Picture
-	avatars  map[string]pixel.Picture
-	fonts    map[string]*truetype.Font
+	uiData    map[string]pixel.Picture
+	avatars   map[string]pixel.Picture
+	portraits map[string]pixel.Picture
+	fonts     map[string]*truetype.Font
 )
 
 
@@ -61,9 +62,14 @@ func LoadGameData() error {
 	if err != nil {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
+	portraitsTexs, err := loadPicturesFromArch(g_arch_path, "portraits")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_portraits:%v", err)
+	}
+	portraits = *portraitsTexs
 	avTexs, err := loadPicturesFromArch(g_arch_path, "avatars")
 	if err != nil {
-		return fmt.Errorf("fail to load avatars spritesheets")
+		return fmt.Errorf("fail_to_load_avatars_spritesheets:%v", err)
 	}
 	avatars = *avTexs
 	return nil
@@ -108,7 +114,10 @@ func PictureFromDir(path string) (pixel.Picture, error) {
 
 // AvatarPortrait returns portrait with specified name.
 func AvatarPortrait(fileName string) (pixel.Picture, error) {
-	// TODO: search graphic archive also.
+	portrait := portraits[fileName]
+	if portrait != nil {
+		return portrait, nil
+	}
         path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
 		fileName)
         return loadPictureFromDir(path)

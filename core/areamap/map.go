@@ -58,7 +58,7 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	m := new(Map)
 	m.area = area
 	mapsPath := filepath.FromSlash(areasPath + "/maps")
-	tm, err := data.Map(area.Id(), areasPath)
+	tm, err := data.Map(area.ID(), areasPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_load_TMX_file:%v", err)
 	}

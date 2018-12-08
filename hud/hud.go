@@ -164,7 +164,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*objects.Avatar, 0)
 	for _, c := range area.Characters() {
-		if c == hud.pc.Character { // player already has avatar.
+		if c == hud.pc.Character { // skip player, PC already has avatar
 			avatars = append(avatars, hud.pc)
 			continue
 		}

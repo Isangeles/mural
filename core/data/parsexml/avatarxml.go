@@ -48,15 +48,17 @@ type AvatarXML struct {
 	Spritesheet string `xml:"spritesheet, value"`
 }
 
-// marshalAvatarXML parses specified character avatar to
-// XML in form of bytes.
-func MarshalAvatar(av *objects.Avatar) (string, error) {
+// MarshalAvatarsBase parses specified avatars to avatars
+// base XML data.
+func MarshalAvatarsBase(avs []*objects.Avatar) (string, error) {
 	xmlAvatarsBase := new(AvatarsBaseXML)
-	xmlAvatar := AvatarXML{}
-	xmlAvatar.ID = av.ID()
-	xmlAvatar.Portrait = av.PortraitName()
-	xmlAvatar.Spritesheet = av.SpritesheetName()
-	xmlAvatarsBase.Avatars = append(xmlAvatarsBase.Avatars, xmlAvatar)
+	for _, av := range avs {
+		xmlAvatar := AvatarXML{}
+		xmlAvatar.ID = av.ID()
+		xmlAvatar.Portrait = av.PortraitName()
+		xmlAvatar.Spritesheet = av.SpritesheetName()
+		xmlAvatarsBase.Avatars = append(xmlAvatarsBase.Avatars, xmlAvatar)
+	}
 	out, err := xml.Marshal(xmlAvatarsBase)
 	if err != nil {
 		return "", fmt.Errorf("fail_to_marshal_avatars_base:%v", err)
@@ -64,7 +66,13 @@ func MarshalAvatar(av *objects.Avatar) (string, error) {
 	return string(out[:]), nil
 }
 
-// unmarshalAvatarsBaseXML parses specified XML data to game
+// MarshalAvatar parses specified character avatar to
+// XML data.
+func MarshalAvatar(av *objects.Avatar) (string, error) {
+	return MarshalAvatarsBase([]*objects.Avatar{av})
+}
+
+// UnmarshalAvatarsBase parses specified XML data to game
 // characters avatars.
 func UnmarshalAvatarsBase(data io.Reader) ([]AvatarXML, error) {
 	doc, _ := ioutil.ReadAll(data)

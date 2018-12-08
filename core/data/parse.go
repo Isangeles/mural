@@ -39,21 +39,23 @@ import (
 )
 
 var (
-	AVATAR_FILE_PREFIX = ".avatars"
+	AVATAR_FILE_EXT = ".avatars"
 )
 
-// ExportAvatars exports specified avatar to '/characters'
-// module directory.
-func ExportAvatar(av *objects.Avatar, dirPath string) error {
-	xml, err := parsexml.MarshalAvatar(av)
+// ExportAvatars exports specified avatars to file
+// with specified path.
+func ExportAvatars(avs []*objects.Avatar, basePath string) error {
+	xml, err := parsexml.MarshalAvatarsBase(avs)
 	if err != nil {
-		return fmt.Errorf("fail_to_marshal_avatar:%v", err)
+		return fmt.Errorf("fail_to_marshal_avatars:%v", err)
 	}
 
-	f, err := os.Create(filepath.FromSlash(dirPath + "/" + av.Name() +
-		AVATAR_FILE_PREFIX))
+	if !strings.HasSuffix(basePath, AVATAR_FILE_EXT) {
+		basePath = basePath + AVATAR_FILE_EXT
+	}
+	f, err := os.Create(filepath.FromSlash(basePath))
 	if err != nil {
-		return fmt.Errorf("fail_to_create_avatar_file:%v", err)
+		return fmt.Errorf("fail_to_create_avatars_file:%v", err)
 	}
 	defer f.Close()
 
@@ -61,6 +63,14 @@ func ExportAvatar(av *objects.Avatar, dirPath string) error {
 	w.WriteString(xml)
 	w.Flush()
 	return nil
+}
+
+// ExportAvatars exports specified avatar to '/characters'
+// module directory.
+func ExportAvatar(av *objects.Avatar, dirPath string) error {
+	filePath := filepath.FromSlash(dirPath + "/" + av.Name() +
+		AVATAR_FILE_EXT)
+	return ExportAvatars([]*objects.Avatar{av}, filePath)
 }
 
 // ImportAvatars imports all avatars for specified characters
@@ -114,7 +124,7 @@ func ImportAvatarsDir(chars []*character.Character,
 	}
 	avs := make([]*objects.Avatar, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), AVATAR_FILE_PREFIX) {
+		if !strings.HasSuffix(fInfo.Name(), AVATAR_FILE_EXT) {
 			continue
 		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())

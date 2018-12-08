@@ -13,7 +13,7 @@
 $ go get github.com/isangeles/mural
 ```
 
-  Build GUI
+  Build GUI:
 ```
 $ go build github.com/isangeles/mural
 ```
@@ -29,7 +29,7 @@ automatically) and add the following line:
 If no path provided, the engine will search default modules directory(data/modules).
 
 
-  Run Mural
+  Run Mural:
 ```
 $ ./mural
 ```

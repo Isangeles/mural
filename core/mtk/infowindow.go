@@ -39,7 +39,7 @@ type InfoWindow struct {
 // NewInfoWindow creates new information window.
 func NewInfoWindow(infoText string) *InfoWindow {
 	iw := new(InfoWindow)
-	iw.text = NewTextbox(SIZE_SMALL, colornames.Grey)
+	iw.text = NewTextbox(pixel.V(0, 0), SIZE_SMALL, colornames.Grey)
 	iw.text.Add(infoText)
 	return iw
 }

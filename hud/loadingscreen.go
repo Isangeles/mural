@@ -24,6 +24,8 @@
 package hud
 
 import (
+	"github.com/faiface/pixel"
+	
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -35,8 +37,8 @@ type LoadingScreen struct {
 // newLoadingScreen returns new HUD loadin screen.
 func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls := new(LoadingScreen)
-	ls.info = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
-	
+	ls.info = mtk.NewTextbox(pixel.V(0, 0),
+		mtk.SIZE_MEDIUM, main_color)
 	return ls
 }
 

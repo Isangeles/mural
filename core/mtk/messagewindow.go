@@ -63,7 +63,7 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.color = colornames.Grey
 	mw.colorDisable = colornames.Darkgrey
 	// Textbox.
-	textbox := NewTextbox(SIZE_MEDIUM, colornames.Grey)
+	textbox := NewTextbox(mw.Frame().Max, SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
 	tex := []string{msg}
 	mw.textbox.InsertText(tex)

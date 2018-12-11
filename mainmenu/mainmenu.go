@@ -30,8 +30,6 @@ import (
 	"image/color"
 
 	"golang.org/x/image/colornames"
-	
-	"github.com/faiface/pixel"
 
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
@@ -130,10 +128,7 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 	mm.msgs.Draw(win.Window, mtk.Matrix().Moved(win.Bounds().Center()))
 	// Console.
 	if mm.console.Opened() {
-		conBottomLeft := pixel.V(win.Bounds().Min.X,
-			win.Bounds().Center().Y)
-		mm.console.Draw(conBottomLeft, mtk.DisTR(win.Bounds(), 0),
-			win.Window)
+		mm.console.Draw(win)
 	}
 }
 

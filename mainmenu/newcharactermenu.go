@@ -81,9 +81,10 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
 		mtk.SIZE_BIG, 0)
 	// Text fields.
-	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
+	ncm.nameEdit = mtk.NewTextedit( mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
-	ncm.pointsBox = mtk.NewTextbox(mtk.SIZE_MEDIUM, main_color)
+	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
+		main_color)
 	// Portrait switch.
 	faces, err := data.PlayablePortraits()
 	if err != nil {

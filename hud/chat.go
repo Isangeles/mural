@@ -58,7 +58,8 @@ type Chat struct {
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
-	c.textbox = mtk.NewTextbox(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
+		colornames.Grey)
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	c.textboxSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(300))

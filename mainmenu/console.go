@@ -42,6 +42,7 @@ import (
 type Console struct {
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
+	drawArea  pixel.Rect
 	opened    bool
 	lastInput string
 }
@@ -50,7 +51,7 @@ type Console struct {
 func newConsole() (*Console, error) {
 	c := new(Console)
 	// Text box.
-	c.textbox = mtk.NewTextbox(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
 	// Text input.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
@@ -59,7 +60,9 @@ func newConsole() (*Console, error) {
 }
 
 // Draw draws console.
-func (c *Console) Draw(drawMin, drawMax pixel.Vec, win *pixelgl.Window) {
+func (c *Console) Draw(win *mtk.Window) {
+	drawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
+	drawMax := mtk.DisTR(win.Bounds(), 0)
 	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
 	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X,
 		drawMin.Y), win)
@@ -88,6 +91,7 @@ func (c *Console) Update(win *mtk.Window) {
 	for _, msg := range engineMsgs {
 		msgs = append(msgs, msg)
 	}
+	c.textbox.SetMaxTextWidth(win.Bounds().Max.X)
 	c.textbox.Insert(msgs)
 	
 	c.textbox.Update(win)

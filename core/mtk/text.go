@@ -42,8 +42,6 @@ type Text struct {
 // NewText creates new text with specified text content,
 // font size and with max width of text line(0 for no max width).
 // Note that text is adjusted to center by default.
-// Adjsust to center must be done here, beacuse doing this
-// by function don't work.
 func NewText(content string, fontSize Size, width float64) *Text {
 	t := new(Text)
 	// Parameters.
@@ -54,14 +52,7 @@ func NewText(content string, fontSize Size, width float64) *Text {
 	font := MainFont(t.fontSize)
 	atlas := Atlas(&font)
 	t.text = text.New(pixel.V(0, 0), atlas)
-	// If text too wide, then split to more lines.
-	if t.width != 0 && t.text.BoundsOf(t.content).W() > t.width {
-		t.content = strings.Replace(t.content, " ", "\n", 1)
-	}
-	mariginX := (-t.text.BoundsOf(t.content).Max.X) / 2
-	t.text.Orig = pixel.V(mariginX, 0)
-	t.text.Clear()
-	t.text.WriteString(t.content)
+	t.SetText(t.content)
 	
 	return t
 }
@@ -71,12 +62,19 @@ func (tx *Text) SetText(text string) {
 	tx.content = text
 	// If text too wide, then split to more lines.
 	if tx.width != 0 && tx.text.BoundsOf(tx.content).W() > tx.width {
+		// TODO: figure out something better. Now its only
+		// replaces first blank line with '\n'.
 		tx.content = strings.Replace(tx.content, " ", "\n", 1)
 	}
 	mariginX := (-tx.text.BoundsOf(tx.content).Max.X) / 2
 	tx.text.Orig = pixel.V(mariginX, 0)
 	tx.text.Clear()
 	tx.text.WriteString(tx.content)
+}
+
+// SetMaxWidth sets maximal width of single text line.
+func (tx *Text) SetMaxWidth(width float64) {
+	tx.width = width
 }
 
 // AddText adds specified text to current text
@@ -86,11 +84,21 @@ func (tx *Text) AddText(text string) {
 	tx.SetText(tx.content)
 }
 
+// Write writes specified data as text to text
+// area.
 func (tx *Text) Write(p []byte) (n int, err error) {
 	return tx.text.Write(p)
 }
 
-// Adjust text origin position to center.
+// JustRight adjusts text origin position to right.
+func (tx *Text) JustRight() {
+	mariginX := (-tx.text.BoundsOf(tx.content).Max.X)
+	tx.text.Orig = pixel.V(mariginX, 0)
+	tx.text.Clear()
+	tx.text.WriteString(tx.content)
+}
+
+// JustCenter adjusts text origin position to center.
 func (tx *Text) JustCenter() {
 	mariginX := (-tx.text.BoundsOf(tx.content).Max.X) / 2
 	tx.text.Orig = pixel.V(mariginX, 0)
@@ -98,7 +106,7 @@ func (tx *Text) JustCenter() {
 	tx.text.WriteString(tx.content)
 }
 
-// JustRights adjusts text origin to left.
+// JustLeft adjusts text origin to left.
 func (tx *Text) JustLeft() {
 	tx.text.Orig = pixel.V(0, 0)
 	tx.text.Clear()

@@ -39,22 +39,26 @@ type Textbox struct {
 	bg          *imdraw.IMDraw
 	color       color.Color
 	textarea    *Text
+	textSize    pixel.Vec
 	drawArea    pixel.Rect // updated at every draw
 	textContent []string
 	visibleText []string
 	startID     int
 }
 
-// NewTextbox creates new textbox.
-func NewTextbox(fontSize Size, color color.Color) (*Textbox) {
+// NewTextbox creates new textbox with specified font size,
+// background color and maximal size of text content (0 for
+// no maximal values).
+func NewTextbox(textSize pixel.Vec, fontSize Size,
+	color color.Color) (*Textbox) {
 	t := new(Textbox)
+	t.textSize = textSize
 	// Background.
 	t.bg = imdraw.New(nil)
 	t.color = color
 	// Text.
-	t.textarea = NewText("", fontSize, 999)
+	t.textarea = NewText("", fontSize, t.textSize.X)
 	t.textarea.JustLeft()
-	
 	return t
 }
 
@@ -64,8 +68,8 @@ func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	tb.drawArea = drawArea
 	tb.drawIMBackground(t)
 	// Text content.
-	tb.textarea.Draw(t, Matrix().Moved(pixel.V(drawArea.Min.X,
-		drawArea.Max.Y - tb.textarea.BoundsOf("AA").H()))) 
+	tb.textarea.Draw(t, Matrix().Moved(pixel.V(tb.DrawArea().Min.X,
+		tb.DrawArea().Max.Y - tb.textarea.BoundsOf("AA").H()))) 
 }
 
 // Update handles key events.
@@ -107,6 +111,12 @@ func (t *Textbox) DrawArea() pixel.Rect {
 	return t.drawArea
 }
 
+// SetMaxTextWidth sets maximal width of single
+// line in text area.
+func (tb *Textbox) SetMaxTextWidth(width float64) {
+	tb.textarea.SetMaxWidth(width)
+}
+
 // Insert clears textbox and inserts specified text.
 func (t *Textbox) Insert(text []fmt.Stringer) {
 	t.Clear()
@@ -139,6 +149,7 @@ func (t *Textbox) Clear() {
 // text area.
 // TODO: height of visible text is calculated wrong,
 // value is too big.
+// TODO: break to wide text into more lines.
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string
@@ -146,7 +157,6 @@ func (t *Textbox) updateTextVisibility() {
 	)
 	
 	for i := 0; i < len(t.textContent); i++ {
-		line := t.textContent[i]
 		if i < t.startID {
 			continue
 		}
@@ -154,12 +164,12 @@ func (t *Textbox) updateTextVisibility() {
 			break
 		}
 		
+		line := t.textContent[i]
 		visibleText = append(visibleText, line)
 		visibleTextHeight += t.textarea.BoundsOf(line).H()
 	}
 	t.textarea.Clear()
 	for _, txt := range visibleText {
-		//t.textarea.AddText(txt)
 		fmt.Fprintf(t.textarea, txt)
 	}
 	//t.textarea.JustLeft()

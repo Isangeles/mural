@@ -67,8 +67,11 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Objects.
 	for _, a := range c.avatars {
-		avPos := c.ConvAreaPos(a.Position())
-		a.Draw(win, mtk.Matrix().Moved(avPos))
+		if mtk.Range(c.hud.Player().Position(),
+			a.Position()) <= c.hud.Player().SightRange() {
+				avPos := c.ConvAreaPos(a.Position())
+				a.Draw(win, mtk.Matrix().Moved(avPos))
+		}
 	}
 	// Debug mode.
 	if config.Debug() {

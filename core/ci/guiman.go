@@ -34,7 +34,26 @@ import (
 	flameci "github.com/isangeles/flame/cmd/ci"
 	
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/mainmenu"
+	"github.com/isangeles/mural/hud"
 )
+
+var (
+	gui_mmenu *mainmenu.MainMenu
+	gui_hud   *hud.HUD
+)
+
+// SetMainMenu sets specified main menu as main
+// menu for GUIman to manage.
+func SetMainMenu(menu *mainmenu.MainMenu) {
+	gui_mmenu = menu
+}
+
+// SetHUD sets specified HUD as HUD for
+// GUIman to manage.
+func SetHUD(h *hud.HUD) {
+	gui_hud = h
+}
 
 // handleGUICommand handles guiman tool commands.
 // Returns response code and message.

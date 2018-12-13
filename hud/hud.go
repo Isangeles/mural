@@ -136,6 +136,11 @@ func (hud *HUD) Exit() {
 	hud.exitReq = true
 }
 
+// Chat returns HUD chat.
+func (hud *HUD) Chat() *Chat {
+	return hud.chat
+}
+
 // LoadNewGame load all game data.
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true

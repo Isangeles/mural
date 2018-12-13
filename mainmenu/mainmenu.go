@@ -189,6 +189,11 @@ func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
 	mm.msgs.Append(m)
 }
 
+// Console returns main menu console.
+func (mm *MainMenu) Console() *Console {
+	return mm.console
+}
+
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {

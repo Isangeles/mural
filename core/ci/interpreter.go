@@ -46,5 +46,3 @@ func HandleCommand(cmd flameci.Command) (int, string) {
 		return flameci.HandleCommand(cmd)
 	}
 }
-
-

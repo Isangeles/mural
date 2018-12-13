@@ -32,9 +32,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/enginelog"
-	"github.com/isangeles/flame/cmd/command"
-
-	"github.com/isangeles/mural/core/ci"
+	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -45,10 +43,11 @@ var (
 
 // Chat represents HUD chat window.
 type Chat struct {
-	hud      *HUD
-	textbox  *mtk.Textbox
-	textedit *mtk.Textedit
-	active   bool
+	hud       *HUD
+	textbox   *mtk.Textbox
+	textedit  *mtk.Textedit
+	active    bool
+	onCommand func(line string) (int, string, error)
 
 	textboxSize  pixel.Vec
 	texteditSize pixel.Vec
@@ -113,16 +112,10 @@ func (c *Chat) SetActive(active bool) {
 	c.textedit.Focus(active)
 }
 
-// Execute executes specified text command.
-func (c *Chat) ExecuteCommand(line string) {
-	log.Cli.Printf(">%s", line)
-	cmd, err := command.NewStdCommand(line)
-	if err != nil {
-		log.Err.Printf("invalid_input:%s", line)
-		return
-	}
-	res, out := ci.HandleCommand(cmd)
-	log.Cli.Printf("[%d]:%s", res, out)
+// SetOnCommandFunc sets specified function as
+// function triggered on command input.
+func (c *Chat) SetOnCommandFunc(f func(line string) (int, string, error)) {
+	c.onCommand = f
 }
 
 // Echo displays specified text in chat log.
@@ -132,10 +125,20 @@ func (c *Chat) Echo(text string) {
 
 // Triggered after accepting input in text edit.
 func (c *Chat) onTexteditInput(t *mtk.Textedit) {
-	if strings.HasPrefix(t.Text(), chat_command_prefix) {
-		c.ExecuteCommand(strings.TrimPrefix(t.Text(), chat_command_prefix))
-	} else {
-		c.Echo(t.Text())
+	// Echo input to log.
+	input := t.Text()
+	c.Echo(input)
+	defer t.Clear()
+	// Execute command.
+	if !strings.HasPrefix(input, chat_command_prefix) ||
+		c.onCommand == nil {
+		return
 	}
-	t.Clear()
+	cmdInput := strings.TrimPrefix(input, chat_command_prefix)
+	res, out, err := c.onCommand(cmdInput)
+	if err != nil {
+		log.Err.Printf("fail_to_execute_command:%v", err)
+	}
+	// Echo command result to log.
+	log.Cli.Printf("[%d]:%s", res, out)
 }

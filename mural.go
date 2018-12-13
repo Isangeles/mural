@@ -35,9 +35,11 @@ import (
 
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
+	"github.com/isangeles/flame/cmd/command"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/hud"
@@ -78,10 +80,12 @@ func main() {
 
 // All window code fired from there.
 func run() {
+	// Check whether Flame module is loaded.
 	if flame.Mod() == nil {
 		log.Err.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
 		return
 	}
+	// Configure window.
 	resolution := config.Resolution()
 	if resolution.X == 0 || resolution.Y == 0 {
 		monitor := pixelgl.PrimaryMonitor()
@@ -97,12 +101,11 @@ func run() {
 		monitor := pixelgl.PrimaryMonitor()
 		cfg.Monitor = monitor
 	}
-
 	win, err := mtk.NewWindow(cfg)
 	if err != nil {
 		panic(err)
 	}
-
+	// Load UI data.
 	err = data.LoadUIData()
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
@@ -112,7 +115,7 @@ func run() {
 		panic(fmt.Errorf("fail_to_load_ui_font:%v", err))
 	}
 	mtk.SetMainFont(uiFont)
-
+	// Create main menu.
 	mainMenu, err := mainmenu.New()
 	if err != nil {
 		panic(err)
@@ -123,19 +126,14 @@ func run() {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
 			err)
 	}
+	ci.SetMainMenu(mainMenu)
+	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
 	versionInfo.JustLeft()
-
-	// textbox test.
-	/*
-		for i := 0; i < 40; i ++ {
-			log.Dbg.Printf("msg_%d", i)
-		}
-	*/
-
+	// Main loop.
 	//last := time.Now()
 	for !win.Closed() {
 		// Delta.
@@ -180,5 +178,20 @@ func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 		return
 	}
 	pcHUD = HUD
+	ci.SetHUD(pcHUD)
+	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
 	inGame = true
+}
+
+// ExecuteCommand handles specified text line
+// as CI command.
+// Returns result code and output text, or error if
+// specified line is not valid command.
+func ExecuteCommand(line string) (int, string, error) {
+	cmd, err := command.NewStdCommand(line)
+	if err != nil {
+		return 1, "", fmt.Errorf("invalid_input:%s", line)
+	}
+	res, out := ci.HandleCommand(cmd)
+	return res, out, nil
 }

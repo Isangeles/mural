@@ -30,10 +30,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
-	"github.com/isangeles/flame/cmd/command"
 	"github.com/isangeles/flame/core/enginelog"
-
-	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -45,6 +42,7 @@ type Console struct {
 	drawArea  pixel.Rect
 	opened    bool
 	lastInput string
+	onCommand func(cmd string) (int, string, error)
 }
 
 // newConsole creates game console.
@@ -110,21 +108,32 @@ func (c *Console) Opened() bool {
 	return c.opened
 }
 
-// Execute executes specified text command.
-func (c *Console) Execute(line string) {
-	log.Cli.Printf(">%s", line)
-	c.lastInput = line
-	cmd, err := command.NewStdCommand(line)
-	if err != nil {
-		log.Err.Printf("invalid_input:%s", line)
-		return
-	}
-	res, out := ci.HandleCommand(cmd)
-	log.Cli.Printf("[%d]:%s", res, out)
+// SetOnCommandFunc sets specified function as
+// function triggered on command input.
+func (c *Console) SetOnCommandFunc(f func(cmd string) (int, string, error)) {
+	c.onCommand = f
+}
+
+// Echo prints specified text to console.
+func (c *Console) Echo(text string) {
+	log.Cli.Printf(">%s", text)
 }
 
 // Triggered after accepting input in text edit.
 func (c *Console) onTexteditInput(t *mtk.Textedit) {
-	c.Execute(t.Text())
-	t.Clear()
+	// Echo input to log.
+	input := t.Text()
+	c.Echo(input)
+	c.lastInput = input
+	defer t.Clear()
+	// Execute command.
+	if c.onCommand == nil {
+		return
+	}
+	res, out, err := c.onCommand(input)
+	if err != nil {
+		log.Err.Printf("fail_to_execute_command:%s", input)
+	}
+	// Echo command result to log.
+	log.Cli.Printf("[%d]:%s", res, out)
 }

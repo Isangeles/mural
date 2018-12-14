@@ -168,8 +168,7 @@ func run() {
 	}
 }
 
-// EnterGame opens HUD and area map for
-// specified game.
+// EnterGame creates HUD for specified game.
 func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 	game = g
 	HUD, err := hud.NewHUD(g, pc)
@@ -190,7 +189,7 @@ func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 func ExecuteCommand(line string) (int, string, error) {
 	cmd, err := command.NewStdCommand(line)
 	if err != nil {
-		return 1, "", fmt.Errorf("invalid_input:%s", line)
+		return -1, "", fmt.Errorf("invalid_input:%s", line)
 	}
 	res, out := ci.HandleCommand(cmd)
 	return res, out, nil

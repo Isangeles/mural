@@ -30,10 +30,10 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	flameci "github.com/isangeles/flame/cmd/ci"
 	
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/hud"
 )
@@ -44,13 +44,13 @@ var (
 )
 
 // SetMainMenu sets specified main menu as main
-// menu for GUIman to manage.
+// menu for guiman to manage.
 func SetMainMenu(menu *mainmenu.MainMenu) {
 	gui_mmenu = menu
 }
 
 // SetHUD sets specified HUD as HUD for
-// GUIman to manage.
+// guiman to manage.
 func SetHUD(h *hud.HUD) {
 	gui_hud = h
 }
@@ -67,8 +67,20 @@ func handleGUICommand(cmd flameci.Command) (int, string) {
 		return 0, config.VERSION
 	case "set":
 		return setGUIOption(cmd)
+	case "show":
+		return showGUIOption(cmd)
 	case "export":
 		return exportGUIOption(cmd)
+	case "exit":
+		if gui_hud != nil {
+			gui_hud.Exit()
+			return 0, ""
+		}
+		if gui_mmenu != nil {
+			gui_mmenu.Exit()
+			return 0, ""
+		}
+		return 5, fmt.Sprintf("no main menu or HUD set")
 	default:
 		return 4, fmt.Sprintf("%s:no_such_option:%s", GUI_MAN,
 			cmd.OptionArgs()[0])
@@ -106,6 +118,30 @@ func setGUIOption(cmd flameci.Command) (int, string) {
 	}
 }
 
+// showGUIOption handles 'show' option for guiman tool.
+func showGUIOption(cmd flameci.Command) (int, string) {
+	if len(cmd.TargetArgs()) < 1 {
+		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+
+	switch cmd.TargetArgs()[0] {
+	case "playable-chars":
+		if gui_mmenu == nil {
+			return 7, fmt.Sprintf("%s:no gui main menu set", GUI_MAN)
+		}
+		out := ""
+		for _, c := range gui_mmenu.PlayableChars {
+			out = out + fmt.Sprintf("%s[%s]", c.Name(), c.SerialID()) +
+				","
+		}
+		return 0, out
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
+	}
+}
+
 // exportGUIOption handles 'export' option for guiman tool.
 func exportGUIOption(cmd flameci.Command) (int, string) {
 	if len(cmd.TargetArgs()) < 1 {
@@ -114,17 +150,27 @@ func exportGUIOption(cmd flameci.Command) (int, string) {
 	}
 
 	switch cmd.TargetArgs()[0] {
-	case "character":
+	case "avatar":
 		if len(cmd.TargetArgs()) < 2 {
 			return 7, fmt.Sprintf("%s:no_enought_target_args_for:%s",
 				GUI_MAN, cmd.TargetArgs()[0])
 		}
-		if flame.Game() == nil {
-			return 7, fmt.Sprintf("%s:no_game_loaded", GUI_MAN)
+		if gui_hud == nil {
+			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
-		//charID := cmd.TargetArgs()[1]
-		// TODO: retrieve avatar for character with specified ID.
-		return 10, "unsupported_yet"
+		for _, av := range gui_hud.AreaAvatars() {
+			if av.SerialID() == cmd.TargetArgs()[1] {
+				err := data.ExportAvatar(av,
+					gui_hud.Game().Module().CharactersPath())
+				if err != nil {
+					return 8, fmt.Sprintf("%s:fail_to_export_avatar:%v",
+						GUI_MAN, err)
+				}
+				return 0, ""
+			}
+		}
+		return 7, fmt.Sprintf("%s:avatar_not_found:%s", GUI_MAN,
+			cmd.TargetArgs()[1])
 	default:
 		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
 			cmd.OptionArgs()[0], cmd.TargetArgs()[0])

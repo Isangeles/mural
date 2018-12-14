@@ -58,6 +58,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	PlayableChars []*objects.Avatar
 	onGameCreated func(g *flamecore.Game, player *objects.Avatar)
+	exitReq       bool
 }
 
 // New returns new main menu
@@ -134,12 +135,21 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *mtk.Window) {
+	if mm.exitReq {
+		win.SetClosed(true)
+		return
+	}
 	mm.menu.Update(win)
 	mm.newgamemenu.Update(win)
 	mm.newcharmenu.Update(win)
 	mm.settings.Update(win)
 	mm.console.Update(win)
 	mm.msgs.Update(win)
+}
+
+// Exit sends exit request to main menu.
+func (mm *MainMenu) Exit() {
+	mm.exitReq = true
 }
 
 // SetOnGameCreatedFunc sets specified function as function

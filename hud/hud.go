@@ -66,6 +66,8 @@ type HUD struct {
 }
 
 // NewHUD creates new HUD instance.
+// HUD loads all game data and setup specified
+// PC area as current HUD area.
 func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
@@ -131,7 +133,13 @@ func (hud *HUD) Player() *objects.Avatar {
 	return hud.pc
 }
 
-// Exit sends GUI exit request to HUD.
+// AreaAvatars returns all avatars from current
+// HUD area.
+func (hud *HUD) AreaAvatars() []*objects.Avatar {
+	return hud.camera.Avatars()
+}
+
+// Exit sends exit request to HUD.
 func (hud *HUD) Exit() {
 	hud.exitReq = true
 }
@@ -139,6 +147,11 @@ func (hud *HUD) Exit() {
 // Chat returns HUD chat.
 func (hud *HUD) Chat() *Chat {
 	return hud.chat
+}
+
+// Game returns HUD current game.
+func (hud *HUD) Game() *flamecore.Game {
+	return hud.game
 }
 
 // LoadNewGame load all game data.

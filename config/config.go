@@ -70,7 +70,7 @@ func LoadConfig() error {
 		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
 	}
 	
-	log.Dbg.Print("config_file_loaded")
+	log.Dbg.Print("config file loaded")
 	return nil
 }
 
@@ -89,7 +89,7 @@ func SaveConfig() error {
 		resolution.Y))
 	w.Flush()
 
-	log.Dbg.Print("config_file_saved")
+	log.Dbg.Print("config file saved")
 	return nil
 }
 

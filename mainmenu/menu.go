@@ -45,7 +45,6 @@ type Menu struct {
 	settingsB *mtk.Button
 	exitB     *mtk.Button
 	opened    bool
-	exitReq   bool
 }
 
 // newMenu creates new menu.
@@ -112,9 +111,6 @@ func (m *Menu) Update(win *mtk.Window) {
 		m.settingsB.Update(win)
 		m.exitB.Update(win)
 	}
-	if m.exitReq {
-		win.SetClosed(true)
-	}
 }
 
 // Opened checks whether menu is open.
@@ -146,5 +142,5 @@ func (m *Menu) onSettingsButtonClicked(b *mtk.Button) {
 
 // Triggered on exit button clicked.
 func (m *Menu) onExitButtonClicked(b *mtk.Button) {
-	m.exitReq = true
+	m.mainmenu.Exit()
 }

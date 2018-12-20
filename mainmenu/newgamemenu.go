@@ -151,8 +151,8 @@ func (ngm *NewGameMenu) updateCharInfo() error {
                          Attributes: %s`
 	ngm.charInfo.Clear()
 	ngm.charInfo.Add(fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
-		lang.Text("ui", c.Gender().Id()), lang.Text("ui", c.Race().Id()),
-	        lang.Text("ui", c.Alignment().Id()), c.Attributes().String()))
+		lang.Text("ui", c.Gender().ID()), lang.Text("ui", c.Race().ID()),
+	        lang.Text("ui", c.Alignment().ID()), c.Attributes().String()))
 	return nil
 }
 

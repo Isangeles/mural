@@ -1,5 +1,5 @@
 /*
- * parse.go
+ * avatar.go
  *
  * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -39,8 +39,27 @@ import (
 )
 
 var (
-	AVATAR_FILE_EXT = ".avatars"
+	AVATARS_FILE_EXT = ".avatars"
 )
+
+// CharacterAvatar imports and returns avatars for specified
+// character from avatars file in directory with specified path.
+func CharacterAvatar(importDir string, char *character.Character) (*objects.Avatar,
+	error) {
+	avs, err := ImportAvatarsDir([]*character.Character{char}, importDir)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_import_avatar:%v",
+			err)
+	}
+	if len(avs) < 1 {
+		// If avatar for character was not found,
+		// then build and return default avatar.
+		log.Dbg.Printf("avatar_not_found_for:%s",
+			char.ID())
+		return DefaultAvatar(char)
+	}
+	return avs[0], nil
+}
 
 // ExportAvatars exports specified avatars to file
 // with specified path.
@@ -50,8 +69,8 @@ func ExportAvatars(avs []*objects.Avatar, basePath string) error {
 		return fmt.Errorf("fail_to_marshal_avatars:%v", err)
 	}
 
-	if !strings.HasSuffix(basePath, AVATAR_FILE_EXT) {
-		basePath = basePath + AVATAR_FILE_EXT
+	if !strings.HasSuffix(basePath, AVATARS_FILE_EXT) {
+		basePath = basePath + AVATARS_FILE_EXT
 	}
 	f, err := os.Create(filepath.FromSlash(basePath))
 	if err != nil {
@@ -65,11 +84,11 @@ func ExportAvatars(avs []*objects.Avatar, basePath string) error {
 	return nil
 }
 
-// ExportAvatars exports specified avatar to '/characters'
-// module directory.
+// ExportAvatars exports specified avatar to directory
+// with specified path.
 func ExportAvatar(av *objects.Avatar, dirPath string) error {
 	filePath := filepath.FromSlash(dirPath + "/" + av.Name() +
-		AVATAR_FILE_EXT)
+		AVATARS_FILE_EXT)
 	return ExportAvatars([]*objects.Avatar{av}, filePath)
 }
 
@@ -124,7 +143,7 @@ func ImportAvatarsDir(chars []*character.Character,
 	}
 	avs := make([]*objects.Avatar, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), AVATAR_FILE_EXT) {
+		if !strings.HasSuffix(fInfo.Name(), AVATARS_FILE_EXT) {
 			continue
 		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
@@ -139,4 +158,24 @@ func ImportAvatarsDir(chars []*character.Character,
 		}
 	}
 	return avs, nil
+}
+
+// DefaultAvatar creates default avatar for specified
+// character.
+func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
+	spritesheetName := "test.png"
+	spritesheetPic, err := AvatarSpritesheet(spritesheetName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_spritesheet_picture:%v",
+			err)
+	}
+	portraitName := "male01.png"
+	portraitPic, err := AvatarPortrait(portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
+			err)
+	}
+	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
+		spritesheetName)
+	return av, nil	
 }

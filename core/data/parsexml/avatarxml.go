@@ -35,17 +35,17 @@ import (
 // Struct for representation of avatars
 // XML base.
 type AvatarsBaseXML struct {
-	XMLName string      `xml:"base"`
+	XMLName xml.Name    `xml:"base"`
 	Avatars []AvatarXML `xml:"avatar"`
 }
 
 // Struct for representation of XML avatar
 // node.
 type AvatarXML struct {
-	XMLName     string `xml:"avatar"`
-	ID          string `xml:"id,attr"`
-	Portrait    string `xml:"portrait, value"`
-	Spritesheet string `xml:"spritesheet, value"`
+	XMLName     xml.Name `xml:"avatar"`
+	ID          string   `xml:"id,attr"`
+	Portrait    string   `xml:"portrait,value"`
+	Spritesheet string   `xml:"spritesheet,value"`
 }
 
 // MarshalAvatarsBase parses specified avatars to avatars

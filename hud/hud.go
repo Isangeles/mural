@@ -32,8 +32,10 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	
+
+	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
+	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/scenario"
 
@@ -41,6 +43,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/objects"
 )
@@ -171,7 +174,7 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loading = true
 	// Map.
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
+	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
@@ -179,7 +182,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	}
 	hud.camera.SetMap(areaMap)
 	// Objects.
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
+	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*objects.Avatar, 0)
 	for _, c := range area.Characters() {
 		if c == hud.pc.Character { // skip player, PC already has avatar
@@ -197,4 +200,38 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	}
 	hud.camera.SetAvatars(avatars)
 	hud.loading = false
+}
+
+// Save saves GUI and game state to
+// savegames directory.
+func (hud *HUD) Save(saveName string) error {
+	// Retrieve saves path.
+	savesPath, err := flame.SavegamesPath()
+	if err != nil {
+		return fmt.Errorf("fail_to_retrieve_save_dir_path:%v",
+			err)
+	}
+	// Save current game.
+	err = flamedata.SaveGame(hud.Game(), savesPath, saveName)
+	if err != nil {
+		return fmt.Errorf("fail_to_save_game:%v",
+			err)
+	}
+	// Save GUI state.
+	guisav := hud.NewGUISave()
+	err = data.SaveGUI(guisav, savesPath, saveName)
+	if err != nil {
+		return fmt.Errorf("fail_to_save_gui:%v",
+			err)
+	}
+	return nil
+}
+
+// Saves GUI to save struct.
+func (hud *HUD) NewGUISave() *save.GUISave {
+	sav := new(save.GUISave)
+	// Save camera XY position.
+	sav.CameraPosX = hud.CameraPosition().X
+	sav.CameraPosY = hud.CameraPosition().Y
+	return sav
 }

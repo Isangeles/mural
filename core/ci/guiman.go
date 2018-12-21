@@ -30,6 +30,7 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame"
 	flameci "github.com/isangeles/flame/cmd/ci"
 	
 	"github.com/isangeles/mural/config"
@@ -71,6 +72,8 @@ func handleGUICommand(cmd flameci.Command) (int, string) {
 		return showGUIOption(cmd)
 	case "export":
 		return exportGUIOption(cmd)
+	case "save":
+		return saveGUIOption(cmd)
 	case "exit":
 		if gui_hud != nil {
 			gui_hud.Exit()
@@ -171,6 +174,41 @@ func exportGUIOption(cmd flameci.Command) (int, string) {
 		}
 		return 7, fmt.Sprintf("%s:avatar_not_found:%s", GUI_MAN,
 			cmd.TargetArgs()[1])
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
+	}
+}
+
+// saveGUIOptions handles 'save' option for guiman tool.
+func saveGUIOption(cmd flameci.Command) (int, string) {
+	if len(cmd.TargetArgs()) < 1 {
+		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+
+	switch cmd.TargetArgs()[0] {
+	case "gui":
+		if len(cmd.Args()) < 1 {
+			return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
+				GUI_MAN, cmd.TargetArgs()[0])
+		}
+		if gui_hud == nil {
+			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
+		}
+		savName := cmd.Args()[0]
+		savDir, err := flame.SavegamesPath()
+		if err != nil {
+			return 8, fmt.Sprintf("%s:fail_to_retrieve_save_dir_path:%v",
+				GUI_MAN, err)
+		}
+		sav := gui_hud.NewGUISave()
+		err = data.SaveGUI(sav, savDir, savName)
+		if err != nil {
+			return 8, fmt.Sprintf("%s:fail_to_save_gui_state:%v",
+				GUI_MAN, err)
+		}
+		return 0, ""
 	default:
 		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
 			cmd.OptionArgs()[0], cmd.TargetArgs()[0])

@@ -1,0 +1,6 @@
+<base>
+	<avatar id="testchar">
+		<portrait>male01.png</portrait>
+		<spritesheet>test.png</spritesheet>
+	</avatar>
+</base>

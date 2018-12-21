@@ -38,9 +38,6 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/core/module/object/character"
-	
-	"github.com/isangeles/mural/objects"
 )
 
 var (
@@ -58,15 +55,18 @@ var (
 // Should be called by GUI before creating any
 // in-game elements.
 func LoadGameData() error {
+	// Load data sources paths.
 	err := loadPaths()
 	if err != nil {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
+	// Portrait textures.
 	portraitsTexs, err := loadPicturesFromArch(g_arch_path, "portraits")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_portraits:%v", err)
 	}
 	portraits = *portraitsTexs
+	// Avatars spritesheets.
 	avTexs, err := loadPicturesFromArch(g_arch_path, "avatars")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_avatars_spritesheets:%v", err)
@@ -79,15 +79,18 @@ func LoadGameData() error {
 // Should be called by GUI before creating any
 // GUI elements.
 func LoadUIData() error {
+	// Load data sources paths.
 	err := loadPaths()
 	if err != nil {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
+	// GUI elements textures.
 	texs, err := loadPicturesFromArch(g_arch_path, "ui")
 	if err != nil {
 		return fmt.Errorf("fail to load UI textures")
 	}
 	uiData = *texs
+	// Fonts.
 	ttfs, err := loadFontsFromArch(g_arch_path, "fonts")
 	if err != nil {
 		return fmt.Errorf("fail to load fonts")
@@ -133,14 +136,6 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 	// Fallback.
 	path := filepath.FromSlash("avatar/sprite/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
-}
-
-// CharacterAvatar returns imports and returns avatars for specified
-// character.
-func CharacterAvatar(importDir string, char *character.Character) (*objects.Avatar,
-	error) {
-	// TODO: avatar import.
-	return DefaultAvatar(char)
 }
 
 // PlayablePortraits returns map with names of portraits as keys
@@ -202,24 +197,4 @@ func loadPaths() error {
 	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
 		flame.Mod().Name()))
 	return nil
-}
-
-// DefaultAvatar creates default avatar for specified
-// character.
-func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
-	spritesheetName := "test.png"
-	spritesheetPic, err := AvatarSpritesheet(spritesheetName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_spritesheet_picture:%v",
-			err)
-	}
-	portraitName := "male01.png"
-	portraitPic, err := AvatarPortrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
-			err)
-	}
-	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
-		spritesheetName)
-	return av, nil	
 }

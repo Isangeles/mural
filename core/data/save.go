@@ -26,11 +26,14 @@ package data
 import (
 	"bufio"
 	"fmt"
-	"path/filepath"
 	"os"
+	"path/filepath"
+	"strings"
 
-	"github.com/isangeles/mural/core/data/save"
+	flameparsexml "github.com/isangeles/flame/core/data/parsexml"
+	
 	"github.com/isangeles/mural/core/data/parsexml"
+	"github.com/isangeles/mural/core/data/save"
 )
 
 var (
@@ -53,9 +56,46 @@ func SaveGUI(gui *save.GUISave, dirPath, saveName string) error {
 			err)
 	}
 	defer f.Close()
-
 	w := bufio.NewWriter(f)
 	w.WriteString(xml)
 	w.Flush()
 	return nil
+}
+
+// LoadGUISave loads GUI state from file with specified name
+// in directory with specified path.
+func LoadGUISave(dirPath, saveName string) (*save.GUISave, error) {
+	if !strings.HasSuffix(saveName, GUISAVE_FILE_EXT) {
+		saveName = saveName + GUISAVE_FILE_EXT
+	}
+	filePath := filepath.FromSlash(dirPath + "/" + saveName)
+	f, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_open_save_file:%v",
+			err)
+	}
+	xmlSave, err := parsexml.UnmarshalGUISave(f)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_save_data:%v",
+			err)
+	}
+	save, err := buildXMLGUISave(xmlSave)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_build_save:%v",
+			err)
+	}
+	return save, nil
+}
+
+// buildGUISave builds GUI save from specified XML data.
+func buildXMLGUISave(xmlSave *parsexml.GUISaveXML) (*save.GUISave, error) {
+	save := new(save.GUISave)
+	// Camera position.
+	camX, camY, err := flameparsexml.UnmarshalPosition(xmlSave.Camera.Position)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
+			err)
+	}
+	save.CameraPosX, save.CameraPosY = camX, camY
+	return save, nil
 }

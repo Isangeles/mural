@@ -90,7 +90,7 @@ func ExportAvatars(avs []*objects.Avatar, basePath string) error {
 // ExportAvatars exports specified avatar to directory
 // with specified path.
 func ExportAvatar(av *objects.Avatar, dirPath string) error {
-	filePath := filepath.FromSlash(dirPath + "/" + av.Name() +
+	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
 		AVATARS_FILE_EXT)
 	return ExportAvatars([]*objects.Avatar{av}, filePath)
 }

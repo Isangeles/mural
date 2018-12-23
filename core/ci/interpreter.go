@@ -33,15 +33,15 @@ const (
 	GUI_MAN = "guiman"
 )
 
+// On init.
+func init() {
+	flameci.AddToolHandler(GUI_MAN, handleGUICommand)
+}
+
 // Handles specified command,
 // returns response code and message.
 func HandleCommand(cmd flameci.Command) (int, string) {
 	switch cmd.Tool() {
-	case GUI_MAN:
-		return handleGUICommand(cmd)
-	case flameci.ENGINE_MAN:
-		//return 2, "tool_unavalible:" + cmd.Tool()
-		return flameci.HandleCommand(cmd)
 	default:
 		return flameci.HandleCommand(cmd)
 	}

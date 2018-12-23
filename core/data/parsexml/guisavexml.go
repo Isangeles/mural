@@ -26,21 +26,29 @@ package parsexml
 import (
 	"encoding/xml"
 	"fmt"
+	"io"
+	"io/ioutil"
 	
 	"github.com/isangeles/mural/core/data/save"
 )
 
 // Struct for XML GUI save.
 type GUISaveXML struct {
-	XMLName        xml.Name `xml:"save"`
-	CameraPosition string   `xml:"camera-position,value"`
+	XMLName xml.Name      `xml:"save"`
+	Camera  CameraSaveXML `xml:"camera"`
+}
+
+// Struct for GUI camera XML save.
+type CameraSaveXML struct {
+	XMLName  xml.Name `xml:"camera"`
+	Position string   `xml:"position,attr"`
 }
 
 // MarshalGUISave parses specified game save to XML
 // data.
 func MarshalGUISave(save *save.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
-	xmlGUI.CameraPosition = fmt.Sprintf("%fx%f", save.CameraPosX,
+	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX,
 		save.CameraPosY)
 	out, err := xml.Marshal(xmlGUI)
 	if err != nil {
@@ -51,6 +59,13 @@ func MarshalGUISave(save *save.GUISave) (string, error) {
 }
 
 // Unmarshal parses XML data to GUI save struct.
-func UnmarshalGUISave(data io.Reader) (*save.GUISave, error) {
-	return nil, fmt.Errorf("unsupported yet")
+func UnmarshalGUISave(data io.Reader) (*GUISaveXML, error) {
+	doc, _ := ioutil.ReadAll(data)
+	xmlGUISave := new(GUISaveXML)
+	err := xml.Unmarshal(doc, xmlGUISave)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v",
+			err)
+	}
+	return xmlGUISave, nil
 }

@@ -122,6 +122,11 @@ func (c *Camera) SetAvatars(avs []*objects.Avatar) {
 	c.avatars = avs
 }
 
+// SetPosition sets camera position.
+func (c *Camera) SetPosition(pos pixel.Vec) {
+	c.position = pos
+}
+
 // Avatars returns all avatars from current
 // area.
 func (c *Camera) Avatars() []*objects.Avatar {

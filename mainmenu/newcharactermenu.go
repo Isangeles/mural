@@ -26,6 +26,7 @@ package mainmenu
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"golang.org/x/image/colornames"
@@ -43,7 +44,7 @@ import (
 )
 
 var (
-	new_char_id = "player"
+	new_char_base_id = "player_"
 )
 
 // NewCharacterMenu struct represents new game character
@@ -81,7 +82,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
 		mtk.SIZE_BIG, 0)
 	// Text fields.
-	ncm.nameEdit = mtk.NewTextedit( mtk.SIZE_MEDIUM, main_color,
+	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
 		main_color)
@@ -306,7 +307,8 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
-	char := character.NewCharacter(new_char_id, name, 1, gender, race,
+	id := new_char_base_id + strings.ToLower(name)
+	char := character.NewCharacter(id, name, 1, gender, race,
 		character.Friendly, character.NewGuild("none"), attrs, alignment)
 	return char, nil
 }

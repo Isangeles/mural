@@ -34,6 +34,32 @@ If no path provided, the engine will search default modules directory(data/modul
 $ ./mural
 ```
 
+## Commands
+[Flame](https://github.com/Isangeles/flame) CI handles commands execution.
+Additionally to Flame CI tools, Mural implements guiman tool to manage game GUI.
+You can access CI by dropdown console in main menu or chat window in HUD,
+both accessible by pressing [`](grave).
+Note: all commands entered in HUD chat window must be prefixed by '$' character.
+
+  Exit mural:
+```
+guiman -o exit
+```
+Description: exits program.
+
+  Save HUD state:
+```
+guiman -o save -t gui-state -a [save name]
+```
+Description: saves current HUD state to file in current /savegames directory(/savegames/[module]).
+
+  Load HUD state:
+```
+guiman -o load -t gui-state -a [save name]
+```
+Description: load HUD state from file in current /savegames directory(/savegames/[module]).
+
+
 ## Contact
 * Isangeles <<dev@isangeles.pl>>
 

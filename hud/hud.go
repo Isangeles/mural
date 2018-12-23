@@ -235,3 +235,10 @@ func (hud *HUD) NewGUISave() *save.GUISave {
 	sav.CameraPosY = hud.CameraPosition().Y
 	return sav
 }
+
+// LoadGUISave load specified saved GUI state.
+func (hud *HUD) LoadGUISave(save *save.GUISave) error {
+	// Camera position.
+	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
+	return nil
+}

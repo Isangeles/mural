@@ -35,13 +35,14 @@ import (
 
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
+	flameci "github.com/isangeles/flame/cmd/ci"
 	"github.com/isangeles/flame/cmd/command"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
@@ -187,10 +188,10 @@ func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 // Returns result code and output text, or error if
 // specified line is not valid command.
 func ExecuteCommand(line string) (int, string, error) {
-	cmd, err := command.NewStdCommand(line)
+	cmd, err := command.NewSTDExpression(line)
 	if err != nil {
 		return -1, "", fmt.Errorf("invalid_input:%s", line)
 	}
-	res, out := ci.HandleCommand(cmd)
+	res, out := flameci.HandleExpression(cmd)
 	return res, out, nil
 }

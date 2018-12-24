@@ -21,8 +21,8 @@
  *
  */
 
-// ci package provides GUI specific command line tools and
-// connection to flame engine commands interpreter.
+// ci package provides GUI specific command line tools
+// for Flame CI.
 package ci
 
 import (
@@ -36,13 +36,4 @@ const (
 // On init.
 func init() {
 	flameci.AddToolHandler(GUI_MAN, handleGUICommand)
-}
-
-// Handles specified command,
-// returns response code and message.
-func HandleCommand(cmd flameci.Command) (int, string) {
-	switch cmd.Tool() {
-	default:
-		return flameci.HandleCommand(cmd)
-	}
 }

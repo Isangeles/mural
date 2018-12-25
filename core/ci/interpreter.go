@@ -22,11 +22,11 @@
  */
 
 // ci package provides GUI specific command line tools
-// for Flame CI.
+// for Burn CI.
 package ci
 
 import (
-	flameci "github.com/isangeles/flame/cmd/ci"
+	"github.com/isangeles/flame/cmd/burn"
 )
 
 const (
@@ -35,5 +35,5 @@ const (
 
 // On init.
 func init() {
-	flameci.AddToolHandler(GUI_MAN, handleGUICommand)
+	burn.AddToolHandler(GUI_MAN, handleGUICommand)
 }

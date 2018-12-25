@@ -31,7 +31,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	flameci "github.com/isangeles/flame/cmd/ci"
+	"github.com/isangeles/flame/cmd/burn"
 	
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
@@ -58,7 +58,7 @@ func SetHUD(h *hud.HUD) {
 
 // handleGUICommand handles guiman tool commands.
 // Returns response code and message.
-func handleGUICommand(cmd flameci.Command) (int, string) {
+func handleGUICommand(cmd burn.Command) (int, string) {
 	if len(cmd.OptionArgs()) < 1 {
 		return 3, fmt.Sprintf("%s:no_option_args", GUI_MAN)
 	}
@@ -91,7 +91,7 @@ func handleGUICommand(cmd flameci.Command) (int, string) {
 }
 
 // setGUIOption Handles set coptions for guiman commands.
-func setGUIOption(cmd flameci.Command) (int, string) {
+func setGUIOption(cmd burn.Command) (int, string) {
 	if len(cmd.TargetArgs()) < 1 {
 		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
 			cmd.OptionArgs()[0])
@@ -122,7 +122,7 @@ func setGUIOption(cmd flameci.Command) (int, string) {
 }
 
 // showGUIOption handles 'show' option for guiman tool.
-func showGUIOption(cmd flameci.Command) (int, string) {
+func showGUIOption(cmd burn.Command) (int, string) {
 	if len(cmd.TargetArgs()) < 1 {
 		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
 			cmd.OptionArgs()[0])
@@ -146,7 +146,7 @@ func showGUIOption(cmd flameci.Command) (int, string) {
 }
 
 // exportGUIOption handles 'export' option for guiman tool.
-func exportGUIOption(cmd flameci.Command) (int, string) {
+func exportGUIOption(cmd burn.Command) (int, string) {
 	if len(cmd.TargetArgs()) < 1 {
 		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
 			cmd.OptionArgs()[0])
@@ -202,7 +202,7 @@ func exportGUIOption(cmd flameci.Command) (int, string) {
 }
 
 // importGUIOption handles import option for guiman.
-func importGUIOption(cmd flameci.Command) (int, string) {
+func importGUIOption(cmd burn.Command) (int, string) {
 	if len(cmd.TargetArgs()) < 1 {
 		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
 			cmd.OptionArgs()[0])

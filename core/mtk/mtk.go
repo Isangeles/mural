@@ -135,6 +135,14 @@ func (s Size) MessageWindowSize() pixel.Rect {
 	}
 }
 
+// ListSize returns size parameters for list.
+func (s Size) ListSize() pixel.Rect {
+	switch {
+	default:
+		return pixel.R(0, 0, ConvSize(600), ConvSize(500))
+	}
+}
+
 // Sets specified truetype font as current main font of
 // the interface.
 func SetMainFont(font *truetype.Font) {

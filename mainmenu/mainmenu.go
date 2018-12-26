@@ -52,6 +52,7 @@ type MainMenu struct {
 	menu          *Menu
 	newgamemenu   *NewGameMenu
 	newcharmenu   *NewCharacterMenu
+	loadgamemenu  *LoadGameMenu
 	settings      *Settings
 	console       *Console
 	userFocus     *mtk.Focus
@@ -85,6 +86,13 @@ func New() (*MainMenu, error) {
 			err)
 	}
 	mm.newcharmenu = ncm
+	// Load game menu.
+	lgm, err := newLoadGameMenu(mm)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_load_game_menu:%v",
+			err)
+	}
+	mm.loadgamemenu = lgm
 	// Settings.
 	s, err := newSettings(mm)
 	if err != nil {
@@ -121,6 +129,10 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 	if mm.newcharmenu.Opened() {
 		mm.newcharmenu.Draw(win)
 	}
+	// Load game menu.
+	if mm.loadgamemenu.Opened() {
+		mm.loadgamemenu.Draw(win)
+	}
 	// Settings.
 	if mm.settings.Opened() {
 		mm.settings.Draw(win.Window)
@@ -139,10 +151,21 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 		win.SetClosed(true)
 		return
 	}
-	mm.menu.Update(win)
-	mm.newgamemenu.Update(win)
-	mm.newcharmenu.Update(win)
-	mm.settings.Update(win)
+	if mm.menu.Opened() {
+		mm.menu.Update(win)
+	}
+	if mm.newgamemenu.Opened() {
+		mm.newgamemenu.Update(win)
+	}
+	if mm.newcharmenu.Opened() {
+		mm.newcharmenu.Update(win)
+	}
+	if mm.loadgamemenu.Opened() {
+		mm.loadgamemenu.Update(win)
+	}
+	if mm.settings.Opened() {
+		mm.settings.Update(win)
+	}
 	mm.console.Update(win)
 	mm.msgs.Update(win)
 }
@@ -177,6 +200,11 @@ func (mm *MainMenu) OpenNewCharMenu() {
 	mm.newcharmenu.Show(true)
 }
 
+// OpenLoadGameMenu opens load game menu.
+func (mm *MainMenu) OpenLoadGameMenu() {
+	mm.HideMenus()
+	mm.loadgamemenu.Show(true)
+}
 
 // OpenSettings opens settings menu.
 func (mm *MainMenu) OpenSettings() {
@@ -189,6 +217,7 @@ func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
 	mm.newgamemenu.Show(false)
 	mm.newcharmenu.Show(false)
+	mm.loadgamemenu.Show(false)
 	mm.settings.Show(false)
 }
 

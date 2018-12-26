@@ -33,8 +33,8 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
-// Tuple for switch values, contains value to display and
-// real value.
+// Tuple for switch values, contains value to
+// display(view) and real value.
 type SwitchValue struct {
 	View  interface{}
 	Value interface{}
@@ -197,7 +197,7 @@ func (s *Switch) Update(win *Window) {
 	}
 }
 
-// drawIMBackground Draws IMDraw background.
+// drawIMBackground draws IMDraw background.
 func (s *Switch) drawIMBackground(t pixel.Target) {
 	s.bgDraw.Color = pixel.ToRGBA(s.color)
 	s.bgDraw.Push(s.drawArea.Min)

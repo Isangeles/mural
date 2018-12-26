@@ -213,27 +213,25 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 
 // Update updates all menu elements.
 func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
-	if ncm.Opened() {
-		ncm.nameEdit.Update(win)
-		ncm.doneButton.Update(win)
-		ncm.backButton.Update(win)
-		ncm.rollButton.Update(win)
-		ncm.pointsBox.Update(win)
-		ncm.faceSwitch.Update(win)
-		ncm.strSwitch.Update(win)
-		ncm.conSwitch.Update(win)
-		ncm.dexSwitch.Update(win)
-		ncm.intSwitch.Update(win)
-		ncm.wisSwitch.Update(win)
-		ncm.sexSwitch.Update(win)
-		ncm.raceSwitch.Update(win)
-		ncm.aliSwitch.Update(win)
-		ncm.updatePoints()
-		if ncm.canCreate() {
-			ncm.doneButton.Active(false)
-		} else {
-			ncm.doneButton.Active(true)
-		}
+	ncm.nameEdit.Update(win)
+	ncm.doneButton.Update(win)
+	ncm.backButton.Update(win)
+	ncm.rollButton.Update(win)
+	ncm.pointsBox.Update(win)
+	ncm.faceSwitch.Update(win)
+	ncm.strSwitch.Update(win)
+	ncm.conSwitch.Update(win)
+	ncm.dexSwitch.Update(win)
+	ncm.intSwitch.Update(win)
+	ncm.wisSwitch.Update(win)
+	ncm.sexSwitch.Update(win)
+	ncm.raceSwitch.Update(win)
+	ncm.aliSwitch.Update(win)
+	ncm.updatePoints()
+	if ncm.canCreate() {
+		ncm.doneButton.Active(false)
+	} else {
+		ncm.doneButton.Active(true)
 	}
 }
 

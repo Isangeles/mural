@@ -105,12 +105,10 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 
 // Update updates all menu elements.
 func (s *Settings) Update(win *mtk.Window) {
-	if s.Opened() {
-		s.fullscrSwitch.Update(win)
-		s.resSwitch.Update(win)
-		s.langSwitch.Update(win)
-		s.backButton.Update(win)
-	}
+	s.fullscrSwitch.Update(win)
+	s.resSwitch.Update(win)
+	s.langSwitch.Update(win)
+	s.backButton.Update(win)
 }
 
 // Opened checks whether menu should be drawn or not.

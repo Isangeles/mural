@@ -38,13 +38,14 @@ import (
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
-	mainmenu  *MainMenu
-	title     *mtk.Text
-	newgameB  *mtk.Button
-	newcharB  *mtk.Button
-	settingsB *mtk.Button
-	exitB     *mtk.Button
-	opened    bool
+	mainmenu   *MainMenu
+	title      *mtk.Text
+	newgameB   *mtk.Button
+	newcharB   *mtk.Button
+	loadgameB  *mtk.Button
+	settingsB  *mtk.Button
+	exitB      *mtk.Button
+	opened     bool
 }
 
 // newMenu creates new menu.
@@ -62,6 +63,10 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 		colornames.Red, lang.Text("gui", "newchar_b_label"),
 		lang.Text("gui", "newchar_b_info"))
 	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
+	m.loadgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		accent_color, lang.Text("gui", "loadgame_b_label"),
+		lang.Text("gui", "loadgame_b_info"))
+	m.loadgameB.SetOnClickFunc(m.onLoadGameButtonClicked)
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "settings_b_label"),
 		lang.Text("gui", "settings_b_info"))
@@ -92,25 +97,26 @@ func (m *Menu) Draw(win *mtk.Window) {
 		m.title.DrawArea(), m.newgameB.Frame(), 10)))
 	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
 		m.newgameB.DrawArea(), m.newcharB.Frame(), 5)))
+	m.loadgameB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
+		m.newcharB.DrawArea(), m.loadgameB.Frame(), 5)))
 	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.newcharB.DrawArea(), m.settingsB.Frame(), 5)))
+		m.loadgameB.DrawArea(), m.settingsB.Frame(), 5)))
 	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
 		m.settingsB.DrawArea(), m.exitB.Frame(), 5)))
 }
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
-	if m.Opened() {
-		if len(m.mainmenu.PlayableChars) < 1 {
-			m.newgameB.Active(false)
-		} else {
-			m.newgameB.Active(true)
-		}
-		m.newgameB.Update(win)
-		m.newcharB.Update(win)
-		m.settingsB.Update(win)
-		m.exitB.Update(win)
+	if len(m.mainmenu.PlayableChars) < 1 {
+		m.newgameB.Active(false)
+	} else {
+		m.newgameB.Active(true)
 	}
+	m.newgameB.Update(win)
+	m.newcharB.Update(win)
+	m.loadgameB.Update(win)
+	m.settingsB.Update(win)
+	m.exitB.Update(win)
 }
 
 // Opened checks whether menu is open.
@@ -132,6 +138,11 @@ func (m *Menu) onNewGameButtonClicked(b *mtk.Button) {
 // menus and opens new character creation  menu.
 func (m *Menu) onNewCharButtonClicked(b *mtk.Button) {
 	m.mainmenu.OpenNewCharMenu()
+}
+
+// Triggered after load game button clicked.
+func (m *Menu) onLoadGameButtonClicked(b *mtk.Button) {
+	m.mainmenu.OpenLoadGameMenu()
 }
 
 // onSettingsButtonClicked closes all currently open

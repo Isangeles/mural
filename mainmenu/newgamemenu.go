@@ -102,13 +102,11 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 
 // Update updates all menu elements.
 func (ngm *NewGameMenu) Update(win *mtk.Window) {
-	if ngm.Opened() {
-		ngm.charSwitch.Update(win)
-		ngm.charInfo.Update(win)
-		ngm.startButton.Update(win)
-		ngm.exportButton.Update(win)
-		ngm.backButton.Update(win)
-	}
+	ngm.charSwitch.Update(win)
+	ngm.charInfo.Update(win)
+	ngm.startButton.Update(win)
+	ngm.exportButton.Update(win)
+	ngm.backButton.Update(win)
 }
 
 // Show toggles menu visibility.

@@ -30,32 +30,6 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
-// Tuple for list items, containts value to
-// display(view) and real value.
-type ListItem struct {
-	selected bool
-	label    *Text
-	value    interface{}
-}
-
-// NewListItem creates new item for list.
-func NewListItem(label string, value interface{}) *ListItem {
-	li := new(ListItem)
-	li.label = NewText(label, SIZE_MEDIUM, 0);
-	li.value = value
-	return li
-}
-
-// Label returns list item label.
-func (li *ListItem) Label() *Text {
-	return li.label
-}
-
-// Value return list item value.
-func (li *ListItem) Value() interface{} {
-	return li.value
-}
-
 // Struct for list with 'selectable'
 // items.
 type List struct {
@@ -68,7 +42,7 @@ type List struct {
 	drawArea    pixel.Rect
 	upButton    *Button
 	downButton  *Button
-	items       []*ListItem
+	items       []*CheckSlot
 	startIndex  int
 	focused     bool
 	disabled    bool
@@ -86,10 +60,12 @@ func NewList(size Size, bgColor, secColor,
 	l.secColor = secColor
 	l.accentColor = accentColor
 	// Buttons.
-	l.upButton = NewButton(l.size-2, SHAPE_SQUARE, accentColor,
+	l.upButton = NewButton(l.size  , SHAPE_SQUARE, accentColor,
 		"^", "")
-	l.downButton = NewButton(l.size-2, SHAPE_SQUARE, accentColor,
+	l.upButton.SetOnClickFunc(l.onButtonUpClicked)
+	l.downButton = NewButton(l.size  , SHAPE_SQUARE, accentColor,
 		".", "")
+	l.downButton.SetOnClickFunc(l.onButtonDownClicked)
 	return l
 }
 
@@ -153,9 +129,14 @@ func (l *List) Frame() pixel.Rect {
 	}
 }
 
+// SetStartIndex sets specified integer as index
+// of first item to display. If specified value is
+// bigger than last item index then first index(0)
+// is set, if is smaller than 0 then last index is
+// set.
 func (l *List) SetStartIndex(index int) {
 	if index > len(l.items)-1 {
-		l.startIndex = index
+		l.startIndex = 0
 	} else if index < 0 {
 		l.startIndex = len(l.items)-1
 	} else {
@@ -163,10 +144,19 @@ func (l *List) SetStartIndex(index int) {
 	}
 }
 
-// SetContent sets specified list of list items as
+// InsertItems sets specified values with labels as
 // current list content.
-func (l *List) SetContent(items []*ListItem) {
-	l.items = items
+func (l *List) InsertItems(content map[string]interface{}) {
+	for label, val := range content {
+		l.AddItem(label, val)
+	}
+}
+
+// AddItem adds specified value with label to current
+// list content.
+func (l *List) AddItem(label string, value interface{}) {
+	itemSlot := NewCheckSlot(label, value, l.secColor)
+	l.items = append(l.items, itemSlot)
 }
 
 // DrawArea returns current list background position
@@ -191,44 +181,37 @@ func (l *List) drawListItems(t pixel.Target) {
 	listH := l.DrawArea().H()
 	var contentH float64
 	var lastItemDA pixel.Rect
-	for i := l.startIndex; i < len(l.items) || contentH + lastItemDA.H() < listH; i ++ {
+	for i := l.startIndex; i < len(l.items) && contentH + lastItemDA.H() < listH; i ++ {
 		item := l.items[i]
 		if i == l.startIndex {
-			itemPos := PosTL(item.Label().Bounds(), bgTLPos)
+			drawMin := PosTL(item.Bounds(), bgTLPos)
 			//itemPos.Y -= item.Label().Bounds().H()
-			l.drawItemBackground(t, item, itemPos)
-			item.Label().Draw(t, Matrix().Moved(itemPos))
-			contentH += item.Label().DrawArea().H()
+			l.drawItem(t, item, drawMin)
+			contentH += item.DrawArea().H() + ConvSize(15)
 			lastItemDA = item.Label().DrawArea()
 			continue
 		}
-		itemPos := BottomOf(lastItemDA, item.Label().Bounds(), 5)
+		drawMin := BottomOf(lastItemDA, item.Bounds(), 15)
 		//itemPos.Y -= item.Label().Bounds().H()
-		l.drawItemBackground(t, item, itemPos)
-		item.Label().Draw(t, Matrix().Moved(itemPos))
-		contentH += item.Label().DrawArea().H()
+		l.drawItem(t, item, drawMin)
+		contentH += item.DrawArea().H() + ConvSize(15)
 		lastItemDA = item.Label().DrawArea()
 	}
 }
 
 // drawItemBackground draws list item background.
-func (l *List) drawItemBackground(t pixel.Target, item *ListItem,
-	itemPos pixel.Vec) {
-	draw := imdraw.New(nil) // separate draw for each slot
-	drawAreaMin := itemPos
-	drawAreaMax := pixel.V(l.DrawArea().Max.X, itemPos.Y +
-		item.Label().Bounds().H())
-	draw.Color = pixel.ToRGBA(l.secColor)
-	draw.Push(drawAreaMin)
-	draw.Color = pixel.ToRGBA(l.secColor)
-	draw.Push(drawAreaMax)
-	draw.Rectangle(0)
-	draw.Draw(t)
+func (l *List) drawItem(t pixel.Target, item *CheckSlot,
+	drawAreaMin pixel.Vec) {
+	drawAreaMax := pixel.V(l.DrawArea().Max.X, drawAreaMin.Y +
+		item.Bounds().H())
+	drawArea := pixel.R(drawAreaMin.X, drawAreaMin.Y,
+		drawAreaMax.X, drawAreaMax.Y)
+	item.Draw(t, drawArea)
 }
 
 // Triggered after button up clicked.
 func (l *List) onButtonUpClicked(b *Button) {
-	l.SetStartIndex(l.startIndex + 1)
+	l.SetStartIndex(l.startIndex - 1)
 }
 
 // Triggered after button down clicked.

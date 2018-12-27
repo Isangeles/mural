@@ -128,7 +128,7 @@ func (b *Button) Update(win *Window) {
 	if b.Disabled() {
 		return
 	}
-	
+	// Mouse events.
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		if b.ContainsPosition(win.MousePosition()) {
 			b.pressed = true
@@ -146,7 +146,7 @@ func (b *Button) Update(win *Window) {
 		b.hovered = true
 		if b.info != nil {	
 			b.info.Update(win)
-		}
+	}
 	} else {
 		b.hovered = false
 	}

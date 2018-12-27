@@ -88,7 +88,8 @@ func (t *Textbox) Update(win *Window) {
 	}
 }
 
-// drawIMBackground draws IMDraw background in size of draw area.
+// drawIMBackground draws IMDraw background in size of
+// current draw area.
 func (tb *Textbox) drawIMBackground(t pixel.Target) {
 	// TODO: use color from constructor.
 	tb.bg.Clear()

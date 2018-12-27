@@ -94,7 +94,9 @@ func (s Size) ButtonSize(sh Shape) pixel.Rect {
 	case s == SIZE_SMALL && sh == SHAPE_SQUARE:
 		return pixel.R(0, 0, ConvSize(45), ConvSize(45))
 	case s == SIZE_MEDIUM && sh == SHAPE_SQUARE:
-		return pixel.R(0, 0, ConvSize(100), ConvSize(100))
+		return pixel.R(0, 0, ConvSize(60), ConvSize(60))
+	case s >= SIZE_BIG && sh == SHAPE_SQUARE:
+		return pixel.R(0, 0, ConvSize(70), ConvSize(70))
 	case s <= SIZE_MINI && sh == SHAPE_RECTANGLE:
 		return pixel.R(0, 0, ConvSize(30), ConvSize(15))
 	case s == SIZE_SMALL && sh == SHAPE_RECTANGLE:
@@ -138,6 +140,8 @@ func (s Size) MessageWindowSize() pixel.Rect {
 // ListSize returns size parameters for list.
 func (s Size) ListSize() pixel.Rect {
 	switch {
+	case s <= SIZE_MEDIUM:
+		return pixel.R(0, 0, ConvSize(600), ConvSize(500))
 	default:
 		return pixel.R(0, 0, ConvSize(600), ConvSize(500))
 	}

@@ -53,13 +53,11 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)
-	saves := make([]*mtk.ListItem, 0)
 	// TEST.
-	for i := 0; i < 25; i ++ {
-		li := mtk.NewListItem(fmt.Sprintf("TEST_%d", i), nil)
-		saves = append(saves, li)
+	for i := 0; i < 30; i ++ {
+		label, value := fmt.Sprintf("TEST_%d", i), "test"
+		lgm.savesList.AddItem(label, value)
 	}
-	lgm.savesList.SetContent(saves)
 	// Buttons.
 	lgm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "back_b_label"), "")

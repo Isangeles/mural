@@ -38,6 +38,7 @@ newchar_create_msg:New character created.;
 loadgame_b_label:Load game;
 loadgame_b_info:Load saved game;
 loadgame_menu_title:Load game;
+load_b_label:Load;
 load_map_info:Loading map...;
 load_avatars_info:Loading characters avatars...;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

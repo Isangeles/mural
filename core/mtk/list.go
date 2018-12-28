@@ -243,5 +243,5 @@ func (l *List) onButtonDownClicked(b *Button) {
 func (l *List) onItemSelected(s *CheckSlot) {
 	l.unselectAll()
 	s.Check(true)
-	l.selectedVal = s.Value
+	l.selectedVal = s.Value()
 }

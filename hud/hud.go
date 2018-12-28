@@ -184,7 +184,7 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.loading = true
 	// Map.
-	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
@@ -192,17 +192,22 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	}
 	hud.camera.SetMap(areaMap)
 	// Objects.
-	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*objects.Avatar, 0)
+	npcPath := hud.Game().Module().Chapter().NPCPath()
 	for _, c := range area.Characters() {
+		var pcAvatar *objects.Avatar
 		for _, pc := range hud.Players() {
-			if c == pc.Character { // skip players, PCs already has avatar
-				avatars = append(avatars, pc)
-				continue
+			if c == pc.Character {
+				pcAvatar = pc
+				break
 			}
 		}
-		av, err := data.CharacterAvatar(
-			hud.game.Module().Chapter().NPCPath(), c)
+		if pcAvatar != nil { // skip players, PCs already has avatar
+			avatars = append(avatars, pcAvatar)
+			continue
+		}
+		av, err := data.CharacterAvatar(npcPath, c)
 		if err != nil {
 			log.Err.Printf("hud_area_change:char:%s:fail_to_retrieve_avatar:%v",
 				c.ID(), err)

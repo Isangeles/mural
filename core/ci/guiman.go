@@ -214,7 +214,7 @@ func importGUIOption(cmd burn.Command) (int, string) {
 		}
 		savName := cmd.Args()[0]
 		savDir := flame.SavegamesPath()
-		save, err := data.LoadGUISave(gui_hud.Game(), savDir, savName)
+		save, err := data.ImportGUISave(gui_hud.Game(), savDir, savName)
 		if err != nil {
 			return 9, fmt.Sprintf("%s:fail_to_load_save_file:%v",
 				GUI_MAN, err)

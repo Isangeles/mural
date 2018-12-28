@@ -36,7 +36,6 @@ import (
 	flamesave "github.com/isangeles/flame/core/data/save" 
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/objects"
 )
@@ -61,7 +60,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	PlayableChars []*objects.Avatar
 	onGameCreated func(g *flamecore.Game, player *objects.Avatar)
-	onGameLoaded  func(gameSav *flamesave.SaveGame, guiSav *save.GUISave)
+	onGameLoaded  func(gameSav *flamesave.SaveGame)
 	exitReq       bool
 }
 
@@ -187,8 +186,7 @@ func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
 
 // SetOnGameLoadedFunc sets specified function as function
 // triggered after game loaded.
-func (mm *MainMenu) SetOnGameLoadedFunc(f func(gameSav *flamesave.SaveGame,
-	guiSav *save.GUISave)) {
+func (mm *MainMenu) SetOnGameLoadedFunc(f func(gameSav *flamesave.SaveGame)) {
 	mm.onGameLoaded = f
 }
 
@@ -252,12 +250,18 @@ func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
 // Triggered after new game was created(by new game creation menu).
 func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
 	player *objects.Avatar) {
+	if mm.onGameCreated == nil {
+		return
+	}
 	mm.onGameCreated(g, player)
 }
 
 // Triggered after saved game was loaded.
-func (mm *MainMenu) OnGameLoaded(gameSav *flamesave.SaveGame, guiSav *save.GUISave) {
-
+func (mm *MainMenu) OnGameLoaded(gameSav *flamesave.SaveGame) {
+	if mm.onGameLoaded == nil {
+		return
+	}
+	mm.onGameLoaded(gameSav)
 }
 
 // ImportPlayableChars import all characters from specified

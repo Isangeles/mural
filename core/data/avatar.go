@@ -53,11 +53,8 @@ func CharacterAvatar(importDir string, char *character.Character) (*objects.Avat
 			err)
 	}
 	if len(avs) < 1 {
-		// If avatar for character was not found,
-		// then build and return default avatar.
-		log.Dbg.Printf("avatar_not_found_for:%s",
+		return nil, fmt.Errorf("avatar_not_found_for:%s",
 			char.ID())
-		return DefaultAvatar(char)
 	}
 	return avs[0], nil
 }

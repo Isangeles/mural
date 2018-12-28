@@ -63,12 +63,13 @@ func SaveGUI(gui *save.GUISave, dirPath, saveName string) error {
 	w := bufio.NewWriter(f)
 	w.WriteString(xml)
 	w.Flush()
+	log.Dbg.Printf("gui_state_saved_in:%s", filePath)
 	return nil
 }
 
-// LoadGUISave loads GUI state from file with specified name
+// ImportGUISave imports GUI state from file with specified name
 // in directory with specified path.
-func LoadGUISave(game *flamecore.Game, dirPath,
+func ImportGUISave(game *flamecore.Game, dirPath,
 	saveName string) (*save.GUISave, error) {
 	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
 		saveName = saveName + SAVEGUI_FILE_EXT
@@ -92,9 +93,9 @@ func LoadGUISave(game *flamecore.Game, dirPath,
 	return save, nil
 }
 
-// LoadGUISavesDir loads all saved GUIs from save files in
+// ImportsGUISavesDir imports all saved GUIs from save files in
 // directory with specified path.
-func LoadGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, error) {
+func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
@@ -104,7 +105,7 @@ func LoadGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, err
 		if !strings.HasSuffix(fInfo.Name(), SAVEGUI_FILE_EXT) {
 			continue
 		}
-		sav, err := LoadGUISave(game, dirPath, fInfo.Name())
+		sav, err := ImportGUISave(game, dirPath, fInfo.Name())
 		if err != nil {
 			log.Err.Printf("data_saves_import:fail_to_load_save_fail:%v",
 				err)

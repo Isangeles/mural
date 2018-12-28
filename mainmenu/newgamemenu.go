@@ -85,9 +85,9 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y-ngm.title.Bounds().Size().Y)
 	ngm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons.
+	winBRPos := pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y)
 	ngm.startButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
-		ngm.startButton.Frame(), pixel.V(win.Bounds().Max.X,
-			win.Bounds().Min.Y))))
+		ngm.startButton.Frame(), winBRPos)))
 	ngm.exportButton.Draw(win, mtk.Matrix().Moved(mtk.LeftOf(
 		ngm.startButton.DrawArea(), ngm.exportButton.Frame(), 10)))
 	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(

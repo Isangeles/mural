@@ -28,9 +28,13 @@ import (
 	
 	"github.com/faiface/pixel"
 	
+	"github.com/isangeles/flame"
+	flamedata "github.com/isangeles/flame/core/data"
+	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/log"
 )
 
 // LoadGameMenu struct represents load game
@@ -40,6 +44,7 @@ type LoadGameMenu struct {
 	title      *mtk.Text
 	savesList  *mtk.List
 	backButton *mtk.Button
+	loadButton *mtk.Button
 	opened     bool
 }
 
@@ -53,15 +58,21 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)
-	// TEST.
-	for i := 0; i < 30; i ++ {
-		label, value := fmt.Sprintf("TEST_%d", i), "test"
-		lgm.savesList.AddItem(label, value)
+	gameSaves, err := flamedata.ImportSavedGamesDir(flame.Mod(), flame.SavegamesPath())
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_import_saved_games:%v",
+			err)
+	}
+	for _, sav := range gameSaves {
+		lgm.savesList.AddItem(sav.Name, sav)
 	}
 	// Buttons.
 	lgm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "back_b_label"), "")
 	lgm.backButton.SetOnClickFunc(lgm.onBackButtonClicked)
+	lgm.loadButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		accent_color, lang.Text("gui", "load_b_label"), "")
+	lgm.loadButton.SetOnClickFunc(lgm.onLoadButtonClicked)
 	return lgm, nil
 }
 
@@ -75,13 +86,17 @@ func (lgm *LoadGameMenu) Draw(win *mtk.Window) {
 	lgm.savesList.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
 		lgm.title.DrawArea(), lgm.savesList.Frame(), 10)))
 	// Buttons.
+	winBRPos := pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y)
 	lgm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
 		lgm.backButton.Frame(), win.Bounds().Min)))
+	lgm.loadButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
+		lgm.loadButton.Frame(), winBRPos)))
 }
 
 // Update updates all menu elements.
 func (lgm *LoadGameMenu) Update(win *mtk.Window) {
 	lgm.backButton.Update(win)
+	lgm.loadButton.Update(win)
 	lgm.savesList.Update(win)
 }
 
@@ -98,4 +113,18 @@ func (lgm *LoadGameMenu) Opened() bool {
 // Triggered after back button clicked.
 func (lgm *LoadGameMenu) onBackButtonClicked(b *mtk.Button) {
 	lgm.mainmenu.OpenMenu()
+}
+
+// Triggered after load button clicked.
+func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
+	if lgm.savesList.SelectedValue() == nil {
+		return
+	}
+	selection := lgm.savesList.SelectedValue()
+	sav, ok := selection.(*flamesave.SaveGame)
+	if !ok {
+		log.Err.Printf("load_game_menu:fail to retrieve save from list value")
+		return
+	}
+	lgm.mainmenu.OnGameLoaded(sav)
 }

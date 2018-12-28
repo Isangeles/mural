@@ -43,7 +43,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -124,6 +123,7 @@ func run() {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
+	mainMenu.SetOnGameLoadedFunc(EnterSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
@@ -184,8 +184,16 @@ func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 }
 
 // EnterSavedGame creates game and HUD from saved data.
-func EnterSavedGame(gameSav *flamesave.SaveGame, guiSav *save.GUISave) {
+func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	game = flamecore.LoadGame(gameSav)
+	// Load saved GUI state.
+	guiSav, err := data.ImportGUISave(game, flame.SavegamesPath(),
+		gameSav.Name)
+	if err != nil {
+		log.Err.Printf("fail_to_load_gui_save:%v",
+			err)
+		return
+	}
 	HUD, err := hud.NewHUD(game, guiSav.Players)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)

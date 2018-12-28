@@ -27,29 +27,33 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"io/ioutil"
 	"path/filepath"
 	"strings"
 
+	flamecore "github.com/isangeles/flame/core"
 	flameparsexml "github.com/isangeles/flame/core/data/parsexml"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/log"
 )
 
 var (
-	GUISAVE_FILE_EXT = ".savegui"
+	SAVEGUI_FILE_EXT = ".savegui"
 )
 
 // SaveGUI saves GUI state to file with specified name
 // in directory with specified path.
 func SaveGUI(gui *save.GUISave, dirPath, saveName string) error {
+	gui.Name = saveName
 	xml, err := parsexml.MarshalGUISave(gui)
 	if err != nil {
 		return fmt.Errorf("fail_to_marshal_gui_save:%v",
 			err)
 	}
 	filePath := filepath.FromSlash(dirPath + "/" + saveName +
-		GUISAVE_FILE_EXT)
+		SAVEGUI_FILE_EXT)
 	f, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("fail_to_create_save_file:%v",
@@ -64,9 +68,10 @@ func SaveGUI(gui *save.GUISave, dirPath, saveName string) error {
 
 // LoadGUISave loads GUI state from file with specified name
 // in directory with specified path.
-func LoadGUISave(dirPath, saveName string) (*save.GUISave, error) {
-	if !strings.HasSuffix(saveName, GUISAVE_FILE_EXT) {
-		saveName = saveName + GUISAVE_FILE_EXT
+func LoadGUISave(game *flamecore.Game, dirPath,
+	saveName string) (*save.GUISave, error) {
+	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
+		saveName = saveName + SAVEGUI_FILE_EXT
 	}
 	filePath := filepath.FromSlash(dirPath + "/" + saveName)
 	f, err := os.Open(filePath)
@@ -79,7 +84,7 @@ func LoadGUISave(dirPath, saveName string) (*save.GUISave, error) {
 		return nil, fmt.Errorf("fail_to_unmarshal_save_data:%v",
 			err)
 	}
-	save, err := buildXMLGUISave(xmlSave)
+	save, err := buildXMLGUISave(game, xmlSave)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_build_save:%v",
 			err)
@@ -87,9 +92,47 @@ func LoadGUISave(dirPath, saveName string) (*save.GUISave, error) {
 	return save, nil
 }
 
+// LoadGUISavesDir loads all saved GUIs from save files in
+// directory with specified path.
+func LoadGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, error) {
+	files, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+	}
+	saves := make([]*save.GUISave, 0)
+	for _, fInfo := range files {
+		if !strings.HasSuffix(fInfo.Name(), SAVEGUI_FILE_EXT) {
+			continue
+		}
+		sav, err := LoadGUISave(game, dirPath, fInfo.Name())
+		if err != nil {
+			log.Err.Printf("data_saves_import:fail_to_load_save_fail:%v",
+				err)
+			continue
+		}
+		saves = append(saves, sav)
+	}
+	return saves, nil
+}
+
 // buildGUISave builds GUI save from specified XML data.
-func buildXMLGUISave(xmlSave *parsexml.GUISaveXML) (*save.GUISave, error) {
+func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*save.GUISave, error) {
 	save := new(save.GUISave)
+	// Save name.
+	save.Name = xmlSave.Name
+	// Players.
+	for _, xmlAvatar := range xmlSave.Players.Avatars {
+		for _, pc := range game.Players() {
+			if xmlAvatar.Serial == pc.Serial() {
+				av, err := buildXMLAvatar(pc, &xmlAvatar)
+				if err != nil {
+					return nil, fmt.Errorf("player:%s:fail_to_load_player_avatar:%v",
+						pc.SerialID, err)
+				}
+				save.Players = append(save.Players, av)
+			}
+		}
+	}
 	// Camera position.
 	camX, camY, err := flameparsexml.UnmarshalPosition(xmlSave.Camera.Position)
 	if err != nil {

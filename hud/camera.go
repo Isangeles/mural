@@ -62,15 +62,19 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		c.areaMap.DrawWithFOW(win, c.position, c.size,
-			c.hud.Player().Position(), c.hud.Player().SightRange())
+		for _, pc := range c.hud.Players() {
+			c.areaMap.DrawWithFOW(win, c.position, c.size,
+				pc.Position(), pc.SightRange())
+		}
 	}
 	// Objects.
 	for _, a := range c.avatars {
-		if mtk.Range(c.hud.Player().Position(),
-			a.Position()) <= c.hud.Player().SightRange() {
-				avPos := c.ConvAreaPos(a.Position())
-				a.Draw(win, mtk.Matrix().Moved(avPos))
+		for _, pc := range c.hud.Players() {
+			if mtk.Range(pc.Position(),
+				a.Position()) <= pc.SightRange() {
+					avPos := c.ConvAreaPos(a.Position())
+					a.Draw(win, mtk.Matrix().Moved(avPos))
+				}
 		}
 	}
 	// Debug mode.

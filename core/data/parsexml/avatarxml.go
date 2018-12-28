@@ -44,6 +44,7 @@ type AvatarsBaseXML struct {
 type AvatarXML struct {
 	XMLName     xml.Name `xml:"avatar"`
 	ID          string   `xml:"id,attr"`
+	Serial      string   `xml:"serial,attr"`
 	Portrait    string   `xml:"portrait,value"`
 	Spritesheet string   `xml:"spritesheet,value"`
 }
@@ -53,10 +54,7 @@ type AvatarXML struct {
 func MarshalAvatarsBase(avs []*objects.Avatar) (string, error) {
 	xmlAvatarsBase := new(AvatarsBaseXML)
 	for _, av := range avs {
-		xmlAvatar := AvatarXML{}
-		xmlAvatar.ID = av.ID()
-		xmlAvatar.Portrait = av.PortraitName()
-		xmlAvatar.Spritesheet = av.SpritesheetName()
+		xmlAvatar := buildAvatarXML(av)
 		xmlAvatarsBase.Avatars = append(xmlAvatarsBase.Avatars, xmlAvatar)
 	}
 	out, err := xml.Marshal(xmlAvatarsBase)
@@ -82,5 +80,16 @@ func UnmarshalAvatarsBase(data io.Reader) ([]AvatarXML, error) {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
 	}
 	return avatarsXML.Avatars, nil
+}
+
+// buildAvatarXML build XML node struct for specified
+// avatar.
+func buildAvatarXML(av *objects.Avatar) AvatarXML {
+	xmlAvatar := AvatarXML{}
+	xmlAvatar.ID = av.ID()
+	xmlAvatar.Serial = av.Serial()
+	xmlAvatar.Portrait = av.PortraitName()
+	xmlAvatar.Spritesheet = av.SpritesheetName()
+	return xmlAvatar
 }
 

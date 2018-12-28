@@ -34,15 +34,17 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
-	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/cmd/burn"
 	"github.com/isangeles/flame/cmd/burn/syntax"
+	flamecore "github.com/isangeles/flame/core"
+	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/ci"
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
@@ -122,7 +124,7 @@ func run() {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
- 	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
+	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
 			err)
@@ -172,14 +174,25 @@ func run() {
 // EnterGame creates HUD for specified game.
 func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
 	game = g
-	HUD, err := hud.NewHUD(g, pc)
+	HUD, err := hud.NewHUD(game, []*objects.Avatar{pc})
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return
 	}
-	pcHUD = HUD
-	ci.SetHUD(pcHUD)
-	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
+	setHUD(HUD)
+	inGame = true
+}
+
+// EnterSavedGame creates game and HUD from saved data.
+func EnterSavedGame(gameSav *flamesave.SaveGame, guiSav *save.GUISave) {
+	game = flamecore.LoadGame(gameSav)
+	HUD, err := hud.NewHUD(game, guiSav.Players)
+	if err != nil {
+		log.Err.Printf("fail_to_create_player_HUD:%v", err)
+		return
+	}
+	HUD.LoadGUISave(guiSav)
+	setHUD(HUD)
 	inGame = true
 }
 
@@ -194,4 +207,12 @@ func ExecuteCommand(line string) (int, string, error) {
 	}
 	res, out := burn.HandleExpression(cmd)
 	return res, out, nil
+}
+
+// setHUD sets specified HUD instance as current GUI player
+// HUD.
+func setHUD(h *hud.HUD) {
+	pcHUD = h
+	ci.SetHUD(pcHUD)
+	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
 }

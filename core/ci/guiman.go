@@ -183,13 +183,9 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
 		savName := cmd.Args()[0]
-		savDir, err := flame.SavegamesPath()
-		if err != nil {
-			return 8, fmt.Sprintf("%s:fail_to_retrieve_save_dir_path:%v",
-				GUI_MAN, err)
-		}
+		savDir := flame.SavegamesPath()
 		sav := gui_hud.NewGUISave()
-		err = data.SaveGUI(sav, savDir, savName)
+		err := data.SaveGUI(sav, savDir, savName)
 		if err != nil {
 			return 8, fmt.Sprintf("%s:fail_to_save_gui_state:%v",
 				GUI_MAN, err)
@@ -217,12 +213,8 @@ func importGUIOption(cmd burn.Command) (int, string) {
 			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
 		savName := cmd.Args()[0]
-		savDir, err := flame.SavegamesPath()
-		if err != nil {
-			return 8, fmt.Sprintf("%s:fail_to_retrieve_save_dir_path:%v",
-				GUI_MAN, err)
-		}
-		save, err := data.LoadGUISave(savDir, savName)
+		savDir := flame.SavegamesPath()
+		save, err := data.LoadGUISave(gui_hud.Game(), savDir, savName)
 		if err != nil {
 			return 9, fmt.Sprintf("%s:fail_to_load_save_file:%v",
 				GUI_MAN, err)

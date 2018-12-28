@@ -60,21 +60,26 @@ type HUD struct {
 	camera     *Camera
 	chat       *Chat
 
-	game    *flamecore.Game
-	pc      *objects.Avatar
-	destPos pixel.Vec
-	loading bool
-	exitReq bool
-	loaderr error
+	game     *flamecore.Game
+	pcs      []*objects.Avatar
+	activePC *objects.Avatar
+	destPos  pixel.Vec
+	loading  bool
+	exitReq  bool
+	loaderr  error
 }
 
 // NewHUD creates new HUD instance.
 // HUD loads all game data and setup specified
 // PC area as current HUD area.
-func NewHUD(g *flamecore.Game, pc *objects.Avatar) (*HUD, error) {
+func NewHUD(g *flamecore.Game, pcs []*objects.Avatar) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
-	hud.pc = pc
+	if len(pcs) < 1 {
+		return nil, fmt.Errorf("no player characters")
+	}
+	hud.pcs = pcs
+	hud.activePC = hud.pcs[0]
 	hud.loadScreen = newLoadingScreen(hud)
 	hud.camera = newCamera(hud, config.Resolution())
 	hud.chat = newChat(hud)
@@ -117,7 +122,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
-		hud.Player().SetPosition(hud.destPos.X, hud.destPos.Y)
+		hud.ActivePlayer().SetPosition(hud.destPos.X, hud.destPos.Y)
 	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
@@ -130,10 +135,15 @@ func (hud *HUD) CameraPosition() pixel.Vec {
 	return hud.camera.Position()
 }
 
-// Player returns player character
-// (game character of HUD user).
-func (hud *HUD) Player() *objects.Avatar {
-	return hud.pc
+// Players returns player characters
+// (game characters of HUD user).
+func (hud *HUD) Players() []*objects.Avatar {
+	return hud.pcs
+}
+
+// ActivePlayers retruns currently active PC.
+func (hud *HUD) ActivePlayer() *objects.Avatar {
+	return hud.activePC
 }
 
 // AreaAvatars returns all avatars from current
@@ -162,7 +172,7 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
 	data.LoadGameData()
-	pcArea, err := hud.game.PlayerArea(hud.Player().SerialID())
+	pcArea, err := hud.game.PlayerArea(hud.ActivePlayer().SerialID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 		return
@@ -185,9 +195,11 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*objects.Avatar, 0)
 	for _, c := range area.Characters() {
-		if c == hud.pc.Character { // skip player, PC already has avatar
-			avatars = append(avatars, hud.pc)
-			continue
+		for _, pc := range hud.Players() {
+			if c == pc.Character { // skip players, PCs already has avatar
+				avatars = append(avatars, pc)
+				continue
+			}
 		}
 		av, err := data.CharacterAvatar(
 			hud.game.Module().Chapter().NPCPath(), c)
@@ -206,13 +218,9 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 // savegames directory.
 func (hud *HUD) Save(saveName string) error {
 	// Retrieve saves path.
-	savesPath, err := flame.SavegamesPath()
-	if err != nil {
-		return fmt.Errorf("fail_to_retrieve_save_dir_path:%v",
-			err)
-	}
+	savesPath := flame.SavegamesPath()
 	// Save current game.
-	err = flamedata.SaveGame(hud.Game(), savesPath, saveName)
+	err := flamedata.SaveGame(hud.Game(), savesPath, saveName)
 	if err != nil {
 		return fmt.Errorf("fail_to_save_game:%v",
 			err)
@@ -230,6 +238,8 @@ func (hud *HUD) Save(saveName string) error {
 // Saves GUI to save struct.
 func (hud *HUD) NewGUISave() *save.GUISave {
 	sav := new(save.GUISave)
+	// Save players avatars.
+	sav.Players = hud.pcs
 	// Save camera XY position.
 	sav.CameraPosX = hud.CameraPosition().X
 	sav.CameraPosY = hud.CameraPosition().Y
@@ -238,6 +248,8 @@ func (hud *HUD) NewGUISave() *save.GUISave {
 
 // LoadGUISave load specified saved GUI state.
 func (hud *HUD) LoadGUISave(save *save.GUISave) error {
+	// Players.
+	hud.pcs = save.Players
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
 	return nil

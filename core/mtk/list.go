@@ -44,6 +44,7 @@ type List struct {
 	downButton  *Button
 	items       []*CheckSlot
 	startIndex  int
+	selectedVal interface{}
 	focused     bool
 	disabled    bool
 }
@@ -94,8 +95,13 @@ func (l *List) Update(win *Window) {
 	if l.Disabled() {
 		return
 	}
+	// Buttons.
 	l.upButton.Update(win)
 	l.downButton.Update(win)
+	// List items.
+	for _, i := range l.items {
+		i.Update(win)
+	}
 }
 
 // Focus toggles focus on element.
@@ -155,8 +161,15 @@ func (l *List) InsertItems(content map[string]interface{}) {
 // AddItem adds specified value with label to current
 // list content.
 func (l *List) AddItem(label string, value interface{}) {
-	itemSlot := NewCheckSlot(label, value, l.secColor)
+	itemSlot := NewCheckSlot(label, value, l.secColor, l.accentColor)
+	itemSlot.SetOnCheckFunc(l.onItemSelected)
 	l.items = append(l.items, itemSlot)
+}
+
+// SelectedValue returns value of currently selected
+// list item.
+func (l *List) SelectedValue() interface{} {
+	return l.selectedVal
 }
 
 // DrawArea returns current list background position
@@ -209,6 +222,13 @@ func (l *List) drawItem(t pixel.Target, item *CheckSlot,
 	item.Draw(t, drawArea)
 }
 
+// unselectAll unselects all list items.
+func (l *List) unselectAll() {
+	for _, i := range l.items {
+		i.Check(false)
+	}
+}
+
 // Triggered after button up clicked.
 func (l *List) onButtonUpClicked(b *Button) {
 	l.SetStartIndex(l.startIndex - 1)
@@ -217,4 +237,11 @@ func (l *List) onButtonUpClicked(b *Button) {
 // Triggered after button down clicked.
 func (l *List) onButtonDownClicked(b *Button) {
 	l.SetStartIndex(l.startIndex + 1)
+}
+
+// Triggered after list item selected.
+func (l *List) onItemSelected(s *CheckSlot) {
+	l.unselectAll()
+	s.Check(true)
+	l.selectedVal = s.Value
 }

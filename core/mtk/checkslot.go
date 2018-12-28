@@ -27,23 +27,27 @@ import (
 	"image/color"
 	
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
 )
 
 // Struct for 'chackable' slots.
 type CheckSlot struct {
-	selected bool
-	bgColor  color.Color
-	drawArea pixel.Rect
-	label    *Text
-	value    interface{}
+	checked    bool
+	bgColor    color.Color
+	checkColor color.Color
+	drawArea   pixel.Rect
+	label      *Text
+	value      interface{}
+	onCheck    func(s *CheckSlot)
 }
 
 // NewCheckSlot creates new item for list.
 func NewCheckSlot(label string, value interface{},
-	color color.Color) *CheckSlot {
+	color, checkColor color.Color) *CheckSlot {
 	cs := new(CheckSlot)
 	cs.bgColor = color
+	cs.checkColor = checkColor
 	cs.label = NewText(label, SIZE_MEDIUM, 0);
 	cs.label.JustLeft()
 	cs.value = value
@@ -59,7 +63,19 @@ func (cs *CheckSlot) Draw(t pixel.Target, drawArea pixel.Rect) {
 
 // Update updates slot.
 func (cs *CheckSlot) Update(win *Window) {
-
+	// Mouse events.
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		if cs.DrawArea().Contains(win.MousePosition()) {
+			if cs.Checked() {
+				cs.Check(false)
+			} else {
+				cs.Check(true)
+				if cs.onCheck != nil {
+					cs.onCheck(cs)
+				}
+			}
+		}
+	}
 }
 
 // Label returns slot label.
@@ -83,13 +99,33 @@ func (cs *CheckSlot) DrawArea() pixel.Rect {
 	return cs.drawArea
 }
 
+// Check toggles slot selection.
+func (cs *CheckSlot) Check(check bool) {
+	cs.checked = check
+}
+
+// Checked checks whether slot is checked.
+func (cs *CheckSlot) Checked() bool {
+	return cs.checked
+}
+
+// SetOnCheckFunc sets specified function as function triggered
+// after slot was selected.
+func (cs *CheckSlot) SetOnCheckFunc(f func(s *CheckSlot)) {
+	cs.onCheck = f
+}
+
 // drawIMBackground draws IMDraw background in siaze of
 // current draw area.
 func (cs *CheckSlot) drawIMBackground(t pixel.Target) {
+	color := cs.bgColor
+	if cs.Checked() {
+		color = cs.checkColor
+	}
 	draw := imdraw.New(nil)
-	draw.Color = pixel.ToRGBA(cs.bgColor)
+	draw.Color = pixel.ToRGBA(color)
 	draw.Push(cs.drawArea.Min)
-	draw.Color = pixel.ToRGBA(cs.bgColor)
+	draw.Color = pixel.ToRGBA(color)
 	draw.Push(cs.drawArea.Max)
 	draw.Rectangle(0)
 	draw.Draw(t)

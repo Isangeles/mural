@@ -115,20 +115,12 @@ func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar
 			if avXML.ID != c.ID() {
 				continue
 			}
-			portraitPic, err := AvatarPortrait(avXML.Portrait)
+			av, err := buildXMLAvatar(c, &avXML)
 			if err != nil {
-				log.Err.Printf("data:parse_fail:%s:fail_to_retrieve_portrait_picture:%v",
+				log.Err.Printf("data_avatars_import:parse_fail:%s:%v",
 					avXML.ID, err)
 				continue
 			}
-			spritesheetPic, err := AvatarSpritesheet(avXML.Spritesheet)
-			if err != nil {
-				log.Err.Printf("data:parse_fail:%s:fail_to_retrieve_spritesheet_picture:%v",
-					avXML.ID, err)
-				continue
-			}
-			av := objects.NewAvatar(c, portraitPic, spritesheetPic,
-				avXML.Portrait, avXML.Spritesheet)
 			avs = append(avs, av)
 		}
 	}
@@ -141,8 +133,7 @@ func ImportAvatarsDir(chars []*character.Character,
 	dirPath string) ([]*objects.Avatar, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("xml_dir:%s:fail_to_read_dir:%v",
-			dirPath, err)
+		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
 	}
 	avs := make([]*objects.Avatar, 0)
 	for _, fInfo := range files {
@@ -181,4 +172,21 @@ func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
 	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
 		spritesheetName)
 	return av, nil	
+}
+
+// buildXMLAvatar builds avatar from specified XML data.
+func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*objects.Avatar, error) {
+	portraitPic, err := AvatarPortrait(avXML.Portrait)
+	if err != nil {
+		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_portrait_picture:%v",
+			avXML.ID, err)
+	}
+	spritesheetPic, err := AvatarSpritesheet(avXML.Spritesheet)
+	if err != nil {
+		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_spritesheet_picture:%v", 
+			avXML.ID, err)
+	}
+	av := objects.NewAvatar(char, portraitPic, spritesheetPic,
+		avXML.Portrait, avXML.Spritesheet)
+	return av, nil
 }

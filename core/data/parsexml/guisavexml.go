@@ -34,12 +34,20 @@ import (
 
 // Struct for XML GUI save.
 type GUISaveXML struct {
-	XMLName xml.Name      `xml:"save"`
-	Camera  CameraSaveXML `xml:"camera"`
+	XMLName xml.Name   `xml:"save"`
+	Name    string     `xml:"name,attr"`
+	Players PlayersXML `xml:"players"`
+        Camera  CameraXML  `xml:"camera"`
 }
 
-// Struct for GUI camera XML save.
-type CameraSaveXML struct {
+// Struct for PCs avatars node.
+type PlayersXML struct {
+	XMLName xml.Name  `xml:"players"`
+	Avatars []AvatarXML `xml:"avatar"`
+}
+
+// Struct for GUI camera XML node.
+type CameraXML struct {
 	XMLName  xml.Name `xml:"camera"`
 	Position string   `xml:"position,attr"`
 }
@@ -48,6 +56,11 @@ type CameraSaveXML struct {
 // data.
 func MarshalGUISave(save *save.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
+	xmlGUI.Name = save.Name
+	for _, pc := range save.Players {
+		av := buildAvatarXML(pc)
+		xmlGUI.Players.Avatars = append(xmlGUI.Players.Avatars, av)
+	}
 	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX,
 		save.CameraPosY)
 	out, err := xml.Marshal(xmlGUI)

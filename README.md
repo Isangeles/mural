@@ -18,7 +18,7 @@ $ go get github.com/isangeles/mural
 $ go build github.com/isangeles/mural
 ```
 
-Copy 'data' directory to directory with Mural executable.
+Copy 'data' directory from /res to directory with Mural executable.
 
 Now, specify the path to a valid Flame module in Flame configuration file,
 create file '.flame' in Mural executable directory(or run Mural to create it

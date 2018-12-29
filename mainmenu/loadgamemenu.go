@@ -25,12 +25,14 @@ package mainmenu
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strings"
 	
 	"github.com/faiface/pixel"
 	
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
-	flamesave "github.com/isangeles/flame/core/data/save"
+	//flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/mtk"
@@ -58,13 +60,13 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)
-	gameSaves, err := flamedata.ImportSavedGamesDir(flame.Mod(), flame.SavegamesPath())
+	gameSaves, err := saveGamesFiles(flame.SavegamesPath())
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_import_saved_games:%v",
+		return nil, fmt.Errorf("fail_to_read_saved_games_dir:%v",
 			err)
 	}
 	for _, sav := range gameSaves {
-		lgm.savesList.AddItem(sav.Name, sav)
+		lgm.savesList.AddItem(sav, sav)
 	}
 	// Buttons.
 	lgm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
@@ -121,10 +123,33 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		return
 	}
 	selection := lgm.savesList.SelectedValue()
-	sav, ok := selection.(*flamesave.SaveGame)
+	savName, ok := selection.(string)
 	if !ok {
-		log.Err.Printf("load_game_menu:fail to retrieve save from list value")
+		log.Err.Printf("load_game_menu:fail to retrieve save name from list value")
+		return
+	}
+	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
+		savName)
+	if err != nil {
+		log.Err.Printf("load_game_menu:fail_to_load_saved_game:%v", err)
 		return
 	}
 	lgm.mainmenu.OnGameLoaded(sav)
+}
+
+// saveGamesFiles returns names of all save files
+// in directory with specified path.
+func saveGamesFiles(dirPath string) ([]string, error) {
+	files, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_read_dir:%v",
+			err)
+	}
+	filesNames := make([]string, 0)
+	for _, fInfo := range files {
+		if strings.HasSuffix(fInfo.Name(), flamedata.SAVEGAME_FILE_EXT) {
+			filesNames = append(filesNames, fInfo.Name())
+		}
+	}
+	return filesNames, nil
 }

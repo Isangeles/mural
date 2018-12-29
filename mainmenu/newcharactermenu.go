@@ -320,10 +320,10 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	char, err := ncm.createChar()
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_create_character:%v\n", err)
+		log.Err.Printf("newchar_menu:fail_to_create_character:%v", err)
 		return
 	}
-	spritesheetName := "test.png" // TODO: real sprite
+	spritesheetName := "test_1.png" // TODO: real sprite
 	spritesheetPic, err := data.AvatarSpritesheet(spritesheetName)
 	if err != nil {
 		log.Err.Printf("newchar_menu:fail_to_retrieve_spritesheet_picture:%v",
@@ -333,12 +333,17 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	portraitName, err := ncm.faceSwitch.Value().TextValue()
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_portrait_picture:%v\n",
+		log.Err.Printf("newchar_menu:fail_to_retrieve_portrait_picture:%v",
 			err)
 		return
 	}
-	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
+	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
 		spritesheetName)
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_create_avatar:%v",
+			err)
+		return
+	}
 	ncm.mainmenu.AddPlayableChar(av)
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 		lang.Text("gui", "newchar_create_msg"))

@@ -166,8 +166,11 @@ func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
 			err)
 	}
-	av := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
+	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
 		spritesheetName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
+	}
 	return av, nil	
 }
 
@@ -183,7 +186,10 @@ func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*obje
 		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_spritesheet_picture:%v", 
 			avXML.ID, err)
 	}
-	av := objects.NewAvatar(char, portraitPic, spritesheetPic,
+	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic,
 		avXML.Portrait, avXML.Spritesheet)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
+	}
 	return av, nil
 }

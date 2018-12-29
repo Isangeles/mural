@@ -68,12 +68,12 @@ func (c *Camera) Draw(win *mtk.Window) {
 		}
 	}
 	// Objects.
-	for _, a := range c.avatars {
+	for _, av := range c.avatars {
 		for _, pc := range c.hud.Players() {
 			if mtk.Range(pc.Position(),
-				a.Position()) <= pc.SightRange() {
-					avPos := c.ConvAreaPos(a.Position())
-					a.Draw(win, mtk.Matrix().Moved(avPos))
+				av.Position()) <= pc.SightRange() {
+					avPos := c.ConvAreaPos(av.Position())
+					av.Draw(win, mtk.Matrix().Moved(avPos))
 				}
 		}
 	}
@@ -110,6 +110,15 @@ func (c *Camera) Update(win *mtk.Window) {
 			win.JustPressed(pixelgl.KeyA) ||
 			win.JustPressed(pixelgl.KeyLeft) {
 			c.position.X -= c.areaMap.TileSize().X
+		}
+	}
+	// Objects.
+	for _, av := range c.avatars {
+		for _, pc := range c.hud.Players() {
+			if mtk.Range(pc.Position(),
+				av.Position()) <= pc.SightRange() {
+					av.Update(win)
+				}
 		}
 	}
 	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",

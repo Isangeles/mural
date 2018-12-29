@@ -140,7 +140,8 @@ func run() {
 	//last := time.Now()
 	for !win.Closed() {
 		// Delta.
-		//dt := time.Since(last).Seconds()
+		//dtNano := time.Since(last).Nanoseconds()
+		//dt := dtNano / int64(time.Millisecond) // delta in milliseconds
 		//last = time.Now()
 		// Update.
 		if inGame {
@@ -190,8 +191,7 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	guiSav, err := data.ImportGUISave(game, flame.SavegamesPath(),
 		gameSav.Name)
 	if err != nil {
-		log.Err.Printf("fail_to_load_gui_save:%v",
-			err)
+		log.Err.Printf("fail_to_load_gui_save:%v", err)
 		return
 	}
 	HUD, err := hud.NewHUD(game, guiSav.Players)

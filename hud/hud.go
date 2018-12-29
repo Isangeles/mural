@@ -182,9 +182,10 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *scenario.Area) {
+	// TODO: sometimes SetLoadInfo causes panic on load text draw.
 	hud.loading = true
 	// Map.
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
+	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)

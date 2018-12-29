@@ -24,6 +24,9 @@
 package mtk
 
 import (
+	"fmt"
+	"time"
+	
 	//"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
@@ -32,6 +35,8 @@ import (
 type Window struct {
 	*pixelgl.Window
 
+	lastUpdate time.Time
+	delta      int64 // time from last update in millis
 	frameCount int
 	fps        int
 }
@@ -59,9 +64,18 @@ func (w *Window) Update() {
 		w.frameCount = 0
 	default:
 	}
+	dtNano := time.Since(w.lastUpdate).Nanoseconds()
+	w.delta = dtNano / int64(time.Millisecond) // delta to milliseconds
+	w.lastUpdate = time.Now()
 }
 
 // FPS returns current frame per second value.
 func (w *Window) FPS() int {
 	return w.fps
+}
+
+// Delta returns time from last window update
+// in milliseconds.
+func (w *Window) Delta() int64 {
+	return w.delta
 }

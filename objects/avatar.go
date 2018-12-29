@@ -36,7 +36,7 @@ import (
 type Avatar struct {
 	*character.Character
 
-	sprite          *pixel.Sprite
+	sprite          *mtk.Animation
 	portrait        *pixel.Sprite
 	portraitName    string
 	spritesheetName string
@@ -47,22 +47,30 @@ type Avatar struct {
 // loading avatar file.
 func NewAvatar(char *character.Character, portraitPic,
 	spritesheetPic pixel.Picture, portraitName,
-	spritesheetName string) *Avatar {
+	spritesheetName string) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
 	av.portraitName = portraitName
 	av.spritesheetName = spritesheetName
-	// Sprite.
-	// TODO: handling spritesheets(frames, animations, etc.).
-	av.sprite = pixel.NewSprite(spritesheetPic, spritesheetPic.Bounds())
+	// Sprite animation.
+	spriteFrames := []*pixel.Sprite{
+		pixel.NewSprite(spritesheetPic, pixel.R(0, 0, 32, 32)),
+		pixel.NewSprite(spritesheetPic, pixel.R(32, 0, 64, 32)),
+	}
+	av.sprite = mtk.NewAnimation(spriteFrames, 1)
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
-	return av
+	return av, nil
 }
 
 // Draw draws avatar.
 func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	av.sprite.Draw(win, matrix)
+}
+
+// Update updates avatar.
+func (av *Avatar) Update(win *mtk.Window) {
+	av.sprite.Update(win)
 }
 
 // Portrait returns avatar portrait.

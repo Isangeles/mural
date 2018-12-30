@@ -32,6 +32,7 @@ type Animation struct {
 	drawFrameID int
 	frames      []*pixel.Sprite
 	fps         int
+	lastChange  int64
 }
 
 // NewAnimation creates new animation with specified
@@ -51,8 +52,10 @@ func (anim *Animation) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates animation.
 func (anim *Animation) Update(win *Window) {
-	if win.Delta() >= int64(anim.fps / 1000) {
+	anim.lastChange += win.Delta()
+	if anim.lastChange >= int64(1000 / anim.fps) {
 		anim.SetCurrentFrameID(anim.drawFrameID + 1)
+		anim.lastChange = 0
 	}
 }
 

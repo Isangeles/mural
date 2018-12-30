@@ -24,7 +24,6 @@
 package mtk
 
 import (
-	"fmt"
 	"time"
 	
 	//"github.com/faiface/pixel"

@@ -57,7 +57,7 @@ func NewAvatar(char *character.Character, portraitPic,
 		pixel.NewSprite(spritesheetPic, pixel.R(0, 0, 32, 32)),
 		pixel.NewSprite(spritesheetPic, pixel.R(32, 0, 64, 32)),
 	}
-	av.sprite = mtk.NewAnimation(spriteFrames, 1)
+	av.sprite = mtk.NewAnimation(spriteFrames, 2)
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil

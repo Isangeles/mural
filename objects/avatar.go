@@ -36,7 +36,8 @@ import (
 type Avatar struct {
 	*character.Character
 
-	sprite          *mtk.Animation
+	currentAnim     *mtk.MultiAnimation
+	idleAnim        *mtk.MultiAnimation
 	portrait        *pixel.Sprite
 	portraitName    string
 	spritesheetName string
@@ -52,12 +53,15 @@ func NewAvatar(char *character.Character, portraitPic,
 	av.Character = char
 	av.portraitName = portraitName
 	av.spritesheetName = spritesheetName
-	// Sprite animation.
-	spriteFrames := []*pixel.Sprite{
+	// Animations.
+	idleFrames := []*pixel.Sprite{
 		pixel.NewSprite(spritesheetPic, pixel.R(0, 0, 32, 32)),
 		pixel.NewSprite(spritesheetPic, pixel.R(32, 0, 64, 32)),
 	}
-	av.sprite = mtk.NewAnimation(spriteFrames, 2)
+	idleAnimUp := mtk.NewAnimation(idleFrames, 2)
+	av.idleAnim = mtk.NewMultiAnimation(idleAnimUp, idleAnimUp,
+		idleAnimUp, idleAnimUp)
+	av.currentAnim = av.idleAnim
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil
@@ -65,12 +69,12 @@ func NewAvatar(char *character.Character, portraitPic,
 
 // Draw draws avatar.
 func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
-	av.sprite.Draw(win, matrix)
+	av.currentAnim.Draw(win, matrix)
 }
 
 // Update updates avatar.
 func (av *Avatar) Update(win *mtk.Window) {
-	av.sprite.Update(win)
+	av.currentAnim.Update(win)
 }
 
 // Portrait returns avatar portrait.
@@ -94,5 +98,11 @@ func (av *Avatar) SpritesheetName() string {
 func (av *Avatar) Position() pixel.Vec {
 	x, y := av.Character.Position()
 	return pixel.V(x, y)
+}
+
+// idleFrames returns slice with idle frames from specified
+// spritesheet.
+func (av *Avatar) idleFrames(spritesheet pixel.Picture) []*pixel.Sprite {
+	return nil
 }
 

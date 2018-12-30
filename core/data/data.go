@@ -134,7 +134,7 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 		return spritesheet, nil
 	}
 	// Fallback.
-	path := filepath.FromSlash("avatar/sprite/" + fileName)
+	path := filepath.FromSlash("avatar/spritesheet/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
 }
 

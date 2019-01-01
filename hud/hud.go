@@ -39,13 +39,13 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/scenario"
 
-	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/objects"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/objects"
 )
 
 var (
@@ -114,7 +114,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		if !hud.chat.Active() {
 			hud.chat.SetActive(true)
 			hud.camera.Lock(true)
-			
+
 		} else {
 			hud.chat.SetActive(false)
 			hud.camera.Lock(false)
@@ -122,7 +122,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
-		hud.ActivePlayer().SetPosition(hud.destPos.X, hud.destPos.Y)
+		hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
 	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)

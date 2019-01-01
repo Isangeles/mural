@@ -47,7 +47,7 @@ import (
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 const (
@@ -137,23 +137,11 @@ func run() {
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
 	versionInfo.JustLeft()
 	// Main loop.
-	//last := time.Now()
 	for !win.Closed() {
-		// Delta.
-		//dtNano := time.Since(last).Nanoseconds()
-		//dt := dtNano / int64(time.Millisecond) // delta in milliseconds
-		//last = time.Now()
-		// Update.
-		if inGame {
-			pcHUD.Update(win)
-		} else {
-			mainMenu.Update(win)
-		}
-		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
 		// Draw.
 		win.Clear(colornames.Black)
 		if inGame {
-			pcHUD.Draw(win) // is HUD nil check?
+			pcHUD.Draw(win)
 		} else {
 			mainMenu.Draw(win)
 		}
@@ -163,7 +151,15 @@ func run() {
 			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
 				versionInfo.Bounds(), win.Bounds().Min)))
 		}
+		// Update.
 		win.Update()
+		if inGame {
+			pcHUD.Update(win)
+			game.Update(win.Delta()) // game update
+		} else {
+			mainMenu.Update(win)
+		}
+		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
 	}
 	// On exit.
 	if win.Closed() {

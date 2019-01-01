@@ -40,7 +40,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 var (
@@ -323,7 +323,10 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		log.Err.Printf("newchar_menu:fail_to_create_character:%v", err)
 		return
 	}
-	spritesheetName := "test_1.png" // TODO: real sprite
+	spritesheetName := "m-cloth-1222211-80x90.png"
+	if char.Gender() == character.Female {
+		spritesheetName = "f-cloth-1222211-80x90.png"
+	}
 	spritesheetPic, err := data.AvatarSpritesheet(spritesheetName)
 	if err != nil {
 		log.Err.Printf("newchar_menu:fail_to_retrieve_spritesheet_picture:%v",

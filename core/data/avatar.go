@@ -34,7 +34,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 	"github.com/isangeles/mural/log"
 )
 

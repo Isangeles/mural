@@ -32,7 +32,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 // Struct for HUD camera.

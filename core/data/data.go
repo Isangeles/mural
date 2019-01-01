@@ -38,6 +38,8 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+
+	"github.com/isangeles/mural/log"
 )
 
 var (
@@ -61,17 +63,17 @@ func LoadGameData() error {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
 	// Portrait textures.
-	portraitsTexs, err := loadPicturesFromArch(g_arch_path, "portraits")
+	portraitsTexs, err := loadPicturesFromArch(g_arch_path, "avatar/portrait")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_portraits:%v", err)
 	}
-	portraits = *portraitsTexs
+	portraits = portraitsTexs
 	// Avatars spritesheets.
-	avTexs, err := loadPicturesFromArch(g_arch_path, "avatars")
+	avTexs, err := loadPicturesFromArch(g_arch_path, "avatar/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_avatars_spritesheets:%v", err)
 	}
-	avatars = *avTexs
+	avatars = avTexs
 	return nil
 }
 
@@ -89,13 +91,13 @@ func LoadUIData() error {
 	if err != nil {
 		return fmt.Errorf("fail to load UI textures")
 	}
-	uiData = *texs
+	uiData = texs
 	// Fonts.
-	ttfs, err := loadFontsFromArch(g_arch_path, "fonts")
+	ttfs, err := loadFontsFromArch(g_arch_path, "font")
 	if err != nil {
 		return fmt.Errorf("fail to load fonts")
 	}
-	fonts = *ttfs
+	fonts = ttfs
 	return nil
 }
 
@@ -107,6 +109,7 @@ func PictureUI(fileName string) (pixel.Picture, error) {
 		return pic, nil
 	}
 	// Fallback, load picture 'by hand'.
+	log.Dbg.Printf("data_picture_ui_fallback_load:%s", fileName)
 	return loadPictureFromArch(g_arch_path, "ui/" + fileName)
 }
 
@@ -134,6 +137,8 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 		return spritesheet, nil
 	}
 	// Fallback.
+	log.Dbg.Printf("data_avatar_spritesheet_fallback_load:%s",
+		fileName)
 	path := filepath.FromSlash("avatar/spritesheet/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
 }
@@ -168,6 +173,7 @@ func Font(fileName string) (*truetype.Font, error) {
 		return font, nil
 	}
 	// Fallback.
+	log.Dbg.Printf("data_font_fallback_load:%s", fileName)
 	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
 }

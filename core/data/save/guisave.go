@@ -25,7 +25,7 @@
 package save
 
 import (
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 // Struct for GUI state save.

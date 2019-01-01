@@ -29,7 +29,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 // Struct for representation of avatars

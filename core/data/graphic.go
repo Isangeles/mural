@@ -47,7 +47,7 @@ var (
 
 // loadPicturesFromArch loads all pictures from specified
 // directory in ZIP archive with specified path.
-func loadPicturesFromArch(archPath, dir string) (*map[string]pixel.Picture, error) {
+func loadPicturesFromArch(archPath, dir string) (map[string]pixel.Picture, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
 		return nil, err
@@ -71,12 +71,12 @@ func loadPicturesFromArch(archPath, dir string) (*map[string]pixel.Picture, erro
 			pics[fName] = pixel.PictureDataFromImage(img)
 		}
 	}
-	return &pics, nil
+	return pics, nil
 }
 
 // loadFontsFromArch loads all fonts from specified
 // directory in ZIP archive with specified path.
-func loadFontsFromArch(archPath, dir string) (*map[string]*truetype.Font, error) {
+func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func loadFontsFromArch(archPath, dir string) (*map[string]*truetype.Font, error)
 			fonts[fName] = font
 		}
 	}
-	return &fonts, nil
+	return fonts, nil
 }
 
 // loadPictureFromArch loads picture from ZIP archive from specified

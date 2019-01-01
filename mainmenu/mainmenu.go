@@ -37,7 +37,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/objects"
+	"github.com/isangeles/mural/core/objects"
 )
 
 var (

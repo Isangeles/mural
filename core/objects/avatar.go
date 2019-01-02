@@ -37,23 +37,27 @@ import (
 type Avatar struct {
 	*character.Character
 
-	sprite          *internal.AvatarSprite
-	portrait        *pixel.Sprite
-	portraitName    string
-	spritesheetName string
+	sprite       *internal.AvatarSprite
+	portrait     *pixel.Sprite
+	portraitName string
+	ssHeadName   string
+	ssTorsoName  string
 }
 
 // NewAvatar creates new avatar for specified game character.
 // Portrait and spritesheet names are required for saving and
 // loading avatar file.
-func NewAvatar(char *character.Character, portraitPic, spritesheetPic pixel.Picture,
-	portraitName, spritesheetName string) (*Avatar, error) {
+func NewAvatar(char *character.Character, portraitPic,
+	ssHeadPic, ssTorsoPic pixel.Picture, portraitName,
+	ssHeadName, ssTorsoName string) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
+	// Portrait & spritesheets names.
 	av.portraitName = portraitName
-	av.spritesheetName = spritesheetName
+	av.ssHeadName = ssHeadName
+	av.ssTorsoName = ssTorsoName
 	// Sprite.
-	av.sprite = internal.NewAvatarSprite(spritesheetPic, spritesheetPic)
+	av.sprite = internal.NewAvatarSprite(ssTorsoPic, ssHeadPic)
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil
@@ -97,10 +101,16 @@ func (av *Avatar) PortraitName() string {
 	return av.portraitName
 }
 
-// SpritesheetName returns name of spritesheet picture
-// file.
-func (av *Avatar) SpritesheetName() string {
-	return av.spritesheetName
+// SpritesheetName returns name of base torso
+// spritesheet picture file.
+func (av *Avatar) SpritesheetTorsoName() string {
+	return av.ssTorsoName
+}
+
+// SpritesheeHeadtName returns name of base head
+// spritesheet picture file.
+func (av *Avatar) SpritesheetHeadName() string {
+	return av.ssHeadName
 }
 
 // Position return current position of avatar.

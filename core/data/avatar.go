@@ -154,20 +154,31 @@ func ImportAvatarsDir(chars []*character.Character,
 // DefaultAvatar creates default avatar for specified
 // character.
 func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
-	spritesheetName := "test.png"
-	spritesheetPic, err := AvatarSpritesheet(spritesheetName)
+	ssHeadName := "m-head-black-1222211-80x90.png"
+	ssTorsoName := "m-cloth-1222211-80x90.png"
+	portraitName := "male01.png"
+	if char.Gender() == character.Female {
+		ssHeadName = "f-head-black-1222211-80x90.png"
+		ssTorsoName = "f-cloth-1222211-80x90.png"
+		portraitName = "female01.png"
+	}
+	ssHeadPic, err := AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_spritesheet_picture:%v",
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
 			err)
 	}
-	portraitName := "male01.png"
+	ssTorsoPic, err := AvatarSpritesheet(ssTorsoName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v",
+			err)
+	}
 	portraitPic, err := AvatarPortrait(portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
 			err)
 	}
-	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
-		spritesheetName)
+	av, err := objects.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
+		portraitName, ssHeadName, ssTorsoName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
 	}
@@ -176,20 +187,58 @@ func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
 
 // buildXMLAvatar builds avatar from specified XML data.
 func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*objects.Avatar, error) {
-	portraitPic, err := AvatarPortrait(avXML.Portrait)
+	ssHeadName := avXML.Spritesheet.Head
+	ssTorsoName := avXML.Spritesheet.Torso
+	portraitName := avXML.Portrait
+	portraitPic, err := AvatarPortrait(portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_portrait_picture:%v",
 			avXML.ID, err)
 	}
-	spritesheetPic, err := AvatarSpritesheet(avXML.Spritesheet)
+	if ssHeadName == "" {
+		ssHeadName = defaultAvatarHeadSpritesheet(char)
+	}
+	if ssTorsoName == "" {
+		ssTorsoName = defaultAvatarTorsoSpritesheet(char)
+	}
+	ssHeadPic, err := AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_spritesheet_picture:%v", 
+		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_head_spritesheet_picture:%v", 
 			avXML.ID, err)
 	}
-	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic,
-		avXML.Portrait, avXML.Spritesheet)
+	ssTorsoPic, err := AvatarSpritesheet(ssTorsoName)
+	if err != nil {
+		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_torso_spritesheet_picture:%v", 
+			avXML.ID, err)
+	}
+	av, err := objects.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
+		portraitName, ssHeadName, ssTorsoName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
 	}
 	return av, nil
+}
+
+// defaultAvatarSpritesheet returns default spritesheet
+// for specified character.
+func defaultAvatarTorsoSpritesheet(char *character.Character) string {
+	switch char.Race() {
+	default:
+		if char.Gender() == character.Female {
+			return  "f-cloth-1222211-80x90.png"
+		}
+		return  "m-cloth-1222211-80x90.png"
+	}
+}
+
+// defaultAvatarHeadSpritesheet retruns default spritesheet
+// for specified character.
+func defaultAvatarHeadSpritesheet(char *character.Character) string {
+	switch char.Race() {
+	default:
+		if char.Gender() == character.Female {
+			return  "f-head-black-1222211-80x90.png"
+		}
+		return  "m-head-black-1222211-80x90.png"
+	}
 }

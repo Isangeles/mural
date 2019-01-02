@@ -43,9 +43,9 @@ var (
 	SAVEGUI_FILE_EXT = ".savegui"
 )
 
-// SaveGUI saves GUI state to file with specified name
+// ExportGUISave saves GUI state to file with specified name
 // in directory with specified path.
-func SaveGUI(gui *save.GUISave, dirPath, saveName string) error {
+func ExportGUISave(gui *save.GUISave, dirPath, saveName string) error {
 	gui.Name = saveName
 	xml, err := parsexml.MarshalGUISave(gui)
 	if err != nil {

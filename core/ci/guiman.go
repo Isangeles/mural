@@ -185,7 +185,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		savName := cmd.Args()[0]
 		savDir := flame.SavegamesPath()
 		sav := gui_hud.NewGUISave()
-		err := data.SaveGUI(sav, savDir, savName)
+		err := data.ExportGUISave(sav, savDir, savName)
 		if err != nil {
 			return 8, fmt.Sprintf("%s:fail_to_save_gui_state:%v",
 				GUI_MAN, err)

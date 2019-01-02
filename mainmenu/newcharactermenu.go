@@ -323,13 +323,21 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		log.Err.Printf("newchar_menu:fail_to_create_character:%v", err)
 		return
 	}
-	spritesheetName := "m-cloth-1222211-80x90.png"
+	ssHeadName := "m-head-black-1222211-80x90.png"
+	ssTorsoName := "m-cloth-1222211-80x90.png"
 	if char.Gender() == character.Female {
-		spritesheetName = "f-cloth-1222211-80x90.png"
+		ssTorsoName = "f-cloth-1222211-80x90.png"
+		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
-	spritesheetPic, err := data.AvatarSpritesheet(spritesheetName)
+	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_spritesheet_picture:%v",
+		log.Err.Printf("newchar_menu:fail_to_retrieve_head_spritesheet_picture:%v",
+			err)
+		return
+	}
+	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
+	if err != nil {
+		log.Err.Printf("newchar_menu:fail_to_retrieve_torso_spritesheet_picture:%v",
 			err)
 		return
 	}
@@ -340,8 +348,9 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 			err)
 		return
 	}
-	av, err := objects.NewAvatar(char, portraitPic, spritesheetPic, portraitName,
-		spritesheetName)
+	av, err := objects.NewAvatar(char, portraitPic,
+		ssHeadPic, ssTorsoPic, portraitName,
+		ssHeadName, ssTorsoName)
 	if err != nil {
 		log.Err.Printf("newchar_menu:fail_to_create_avatar:%v",
 			err)

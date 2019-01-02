@@ -42,11 +42,18 @@ type AvatarsBaseXML struct {
 // Struct for representation of XML avatar
 // node.
 type AvatarXML struct {
-	XMLName     xml.Name `xml:"avatar"`
-	ID          string   `xml:"id,attr"`
-	Serial      string   `xml:"serial,attr"`
-	Portrait    string   `xml:"portrait,value"`
-	Spritesheet string   `xml:"spritesheet,value"`
+	XMLName     xml.Name                 `xml:"avatar"`
+	ID          string                   `xml:"id,attr"`
+	Serial      string                   `xml:"serial,attr"`
+	Portrait    string                   `xml:"portrait,value"`
+	Spritesheet AvatarSpritesheetNodeXML `xml:"spritesheet"`
+}
+
+// Struct for spritesheet node of avatar node.
+type AvatarSpritesheetNodeXML struct {
+	XMLName xml.Name `xml:"spritesheet"`
+	Head    string   `xml:"head,value"`
+	Torso   string   `xml:"torso,value"`
 }
 
 // MarshalAvatarsBase parses specified avatars to avatars
@@ -89,7 +96,8 @@ func buildAvatarXML(av *objects.Avatar) AvatarXML {
 	xmlAvatar.ID = av.ID()
 	xmlAvatar.Serial = av.Serial()
 	xmlAvatar.Portrait = av.PortraitName()
-	xmlAvatar.Spritesheet = av.SpritesheetName()
+	xmlAvatar.Spritesheet.Head = av.SpritesheetHeadName()
+	xmlAvatar.Spritesheet.Torso = av.SpritesheetTorsoName()
 	return xmlAvatar
 }
 

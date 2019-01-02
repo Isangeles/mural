@@ -1,6 +1,9 @@
 <base>
 	<avatar id="testchar">
 		<portrait>male01.png</portrait>
-		<spritesheet>m-cloth-1222211-80x90.png</spritesheet>
+		<spritesheet>
+			<torso>m-cloth-1222211-80x90.png</torso>
+			<head></head>
+		</spritesheet>
 	</avatar>
 </base>

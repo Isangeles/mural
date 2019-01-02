@@ -233,7 +233,7 @@ func (hud *HUD) Save(saveName string) error {
 	}
 	// Save GUI state.
 	guisav := hud.NewGUISave()
-	err = data.SaveGUI(guisav, savesPath, saveName)
+	err = data.ExportGUISave(guisav, savesPath, saveName)
 	if err != nil {
 		return fmt.Errorf("fail_to_save_gui:%v",
 			err)

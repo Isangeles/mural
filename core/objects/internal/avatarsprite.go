@@ -31,10 +31,11 @@ import (
 
 // Struct for avatar sprite animations.
 type AvatarSprite struct {
-	head     *AvatarBodyPart
-	body     *AvatarBodyPart
-	baseHead *AvatarBodyPart
-	baseBody *AvatarBodyPart
+	head      *AvatarBodyPart
+	torso     *AvatarBodyPart
+	weapon    *AvatarBodyPart
+	baseHead  *AvatarBodyPart
+	baseTorso *AvatarBodyPart
 }
 
 // NewAvatarSprite creates new sprite for specified
@@ -43,52 +44,52 @@ func NewAvatarSprite(bodySpritesheet,
 	headSpritesheet pixel.Picture) *AvatarSprite {
 	spr := new(AvatarSprite)
 	spr.baseHead = newAvatarBodyPart(bodySpritesheet)
-	spr.baseBody = newAvatarBodyPart(bodySpritesheet)
+	spr.baseTorso = newAvatarBodyPart(bodySpritesheet)
 	spr.head = spr.baseHead
-	spr.body = spr.baseBody
+	spr.torso = spr.baseTorso
 	return spr
 }
 
 // Draw draws current sprite elements.
 func (spr *AvatarSprite) Draw(t pixel.Target, matrix pixel.Matrix) {
-	spr.body.Draw(t, matrix)
+	spr.torso.Draw(t, matrix)
 }
 
 // Update updates current sprite elements.
 func (spr *AvatarSprite) Update(win *mtk.Window) {
-	spr.body.Update(win)
+	spr.torso.Update(win)
 }
 
 // Up turns all current animataions up.
 func (spr *AvatarSprite) Up() {
-	spr.body.Up()
+	spr.torso.Up()
 }
 
 // Right turns all current animataions right.
 func (spr *AvatarSprite) Right() {
-	spr.body.Right()
+	spr.torso.Right()
 }
 
 // Down turns all current animataions down.
 func (spr *AvatarSprite) Down() {
-	spr.body.Down()
+	spr.torso.Down()
 }
 
 // Left turns all current animataions left.
 func (spr *AvatarSprite) Left() {
-	spr.body.Left()
+	spr.torso.Left()
 }
 
 // Idle sets idle animations as current
 // draw animations.
 func (spr *AvatarSprite) Idle() {
-	spr.body.Idle()
+	spr.torso.Idle()
 }
 
 // Move sets move animations as current
 // draw animations.
 func (spr *AvatarSprite) Move() {
-	spr.body.Move()
+	spr.torso.Move()
 }
 
 // SetHead creates head animations from specified
@@ -97,15 +98,15 @@ func (spr *AvatarSprite) SetHead(spritesheet pixel.Picture) {
 	spr.head = newAvatarBodyPart(spritesheet)
 }
 
-// SetBody creates body animations from specified
+// SetTorso creates body animations from specified
 // avatar spritesheet.
-func (spr *AvatarSprite) SetBody(spritesheet pixel.Picture) {
-	spr.body = newAvatarBodyPart(spritesheet)
+func (spr *AvatarSprite) SetTorso(spritesheet pixel.Picture) {
+	spr.torso = newAvatarBodyPart(spritesheet)
 }
 
 // Clear sets base body parts as current body parts.
 func (spr *AvatarSprite) Clear() {
 	spr.head = spr.baseHead
-	spr.body = spr.baseBody
+	spr.torso = spr.baseTorso
 }
 

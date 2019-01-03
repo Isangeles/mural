@@ -37,11 +37,12 @@ import (
 type Avatar struct {
 	*character.Character
 
-	sprite       *internal.AvatarSprite
-	portrait     *pixel.Sprite
-	portraitName string
-	ssHeadName   string
-	ssTorsoName  string
+	sprite         *internal.AvatarSprite
+	portrait       *pixel.Sprite
+	portraitName   string
+	ssHeadName     string
+	ssTorsoName    string
+	ssFullBodyName string
 }
 
 // NewAvatar creates new avatar for specified game character.
@@ -58,6 +59,24 @@ func NewAvatar(char *character.Character, portraitPic,
 	av.ssTorsoName = ssTorsoName
 	// Sprite.
 	av.sprite = internal.NewAvatarSprite(ssTorsoPic, ssHeadPic)
+	// Portrait.
+	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
+	return av, nil
+}
+
+// NewStaticAvatar creates new avatar with static(not affected by
+// equipped items) body sprite.
+// Portrait and spritesheet names are required for saving and
+// loading avatar file.
+func NewStaticAvatar(char *character.Character, portraitPic,
+	ssBodyPic pixel.Picture, portraitName,
+	ssBodyName string) (*Avatar, error) {
+	av := new(Avatar)
+	// Portrait & spritesheet names.
+	av.portraitName = portraitName
+	av.ssFullBodyName = ssBodyName
+	// Sprite.
+	av.sprite = internal.NewFullBodyAvatarSprite(ssBodyPic)
 	// Portrait.
 	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
 	return av, nil
@@ -101,16 +120,22 @@ func (av *Avatar) PortraitName() string {
 	return av.portraitName
 }
 
-// SpritesheetName returns name of base torso
+// TorsoSpritesheetName returns name of base torso
 // spritesheet picture file.
-func (av *Avatar) SpritesheetTorsoName() string {
+func (av *Avatar) TorsoSpritesheetName() string {
 	return av.ssTorsoName
 }
 
-// SpritesheeHeadtName returns name of base head
+// HeadSpritesheetName returns name of base head
 // spritesheet picture file.
-func (av *Avatar) SpritesheetHeadName() string {
+func (av *Avatar) HeadSpritesheetName() string {
 	return av.ssHeadName
+}
+
+// FullBodySpritesheetName returns name of base
+// full body spritesheet picture file.
+func (av *Avatar) FullBodySpritesheetName() string {
+	return av.ssFullBodyName
 }
 
 // Position return current position of avatar.

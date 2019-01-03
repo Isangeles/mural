@@ -112,9 +112,14 @@ func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar
 			if avXML.ID != c.ID() {
 				continue
 			}
-			av, err := buildXMLAvatar(c, &avXML)
+			var av *objects.Avatar
+			if avXML.Spritesheet.FullBody != "" {
+				av, err = buildXMLStaticAvatar(c, &avXML)
+			} else {
+				av, err = buildXMLAvatar(c, &avXML)
+			}
 			if err != nil {
-				log.Err.Printf("data_avatars_import:parse_fail:%s:%v",
+				log.Err.Printf("data_avatar_import:%s:parse_fail:%v",
 					avXML.ID, err)
 				continue
 			}
@@ -192,7 +197,7 @@ func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*obje
 	portraitName := avXML.Portrait
 	portraitPic, err := AvatarPortrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_portrait_picture:%v",
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
 			avXML.ID, err)
 	}
 	if ssHeadName == "" {
@@ -203,16 +208,40 @@ func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*obje
 	}
 	ssHeadPic, err := AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_head_spritesheet_picture:%v", 
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
 			avXML.ID, err)
 	}
 	ssTorsoPic, err := AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("data:parse_fail:%s:fail_to_retrieve_torso_spritesheet_picture:%v", 
+		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", 
 			avXML.ID, err)
 	}
 	av, err := objects.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
 		portraitName, ssHeadName, ssTorsoName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
+	}
+	return av, nil
+}
+
+// buildXMLStaticAvatar build new static avatar for specified
+// character from specified XML data.
+func buildXMLStaticAvatar(char *character.Character,
+	avXML *parsexml.AvatarXML) (*objects.Avatar, error) {
+	ssFullBodyName := avXML.Spritesheet.FullBody
+	portraitName := avXML.Portrait
+	portraitPic, err := AvatarPortrait(portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
+			avXML.ID, err)
+	}
+	ssFullBodyPic, err := AvatarSpritesheet(ssFullBodyName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
+			avXML.ID, err)
+	}
+	av, err := objects.NewStaticAvatar(char, portraitPic, ssFullBodyPic,
+		portraitName, ssFullBodyName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
 	}

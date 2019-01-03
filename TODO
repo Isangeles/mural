@@ -1,13 +1,10 @@
 MAJOR:
-* HUD & in-game menu.
-* Load game menu for mainmenu.
-* Improve tiled area map implementation(core/areamap).
-* Graphical avatars.
-* Objects.
-* Animations.
-* Save & load GUI state.
+* HUD windows & elements
+* Improve tiled area map implementation(core/areamap)
+* Effects
+* Objects
+* Avatar: handling character equipment
 MINOR:
-* Fix for initial mainmenu console input line(remove '`'[grave] char after console open).
-* Fix for textbox visible content height[MTK].
-* Titles for messages windows[MTK].
-* Handling pipe by CI[GUI CI].
+* Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
+* Fix for textbox visible content height[MTK]
+* Titles for messages windows[MTK]

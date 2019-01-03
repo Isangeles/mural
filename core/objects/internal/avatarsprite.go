@@ -36,6 +36,7 @@ type AvatarSprite struct {
 	weapon    *AvatarBodyPart
 	baseHead  *AvatarBodyPart
 	baseTorso *AvatarBodyPart
+	fullBody  *AvatarBodyPart
 }
 
 // NewAvatarSprite creates new sprite for specified
@@ -43,52 +44,100 @@ type AvatarSprite struct {
 func NewAvatarSprite(bodySpritesheet,
 	headSpritesheet pixel.Picture) *AvatarSprite {
 	spr := new(AvatarSprite)
-	spr.baseHead = newAvatarBodyPart(bodySpritesheet)
+	spr.baseHead = newAvatarBodyPart(headSpritesheet)
 	spr.baseTorso = newAvatarBodyPart(bodySpritesheet)
 	spr.head = spr.baseHead
 	spr.torso = spr.baseTorso
 	return spr
 }
 
+// NewFullBodyAvatarSprite creates new sprite with only one
+// full body animated part.
+func NewFullBodyAvatarSprite(spritesheet pixel.Picture) *AvatarSprite {
+	spr := new(AvatarSprite)
+	spr.fullBody = newAvatarBodyPart(spritesheet)
+	return spr
+}
+
 // Draw draws current sprite elements.
 func (spr *AvatarSprite) Draw(t pixel.Target, matrix pixel.Matrix) {
+	if spr.fullBody != nil {
+		spr.fullBody.Draw(t, matrix)
+		return
+	}
+	spr.head.Draw(t, matrix)
 	spr.torso.Draw(t, matrix)
 }
 
 // Update updates current sprite elements.
 func (spr *AvatarSprite) Update(win *mtk.Window) {
+	if spr.fullBody != nil {
+		spr.fullBody.Update(win)
+		return
+	}
+	spr.head.Update(win)
 	spr.torso.Update(win)
 }
 
 // Up turns all current animataions up.
 func (spr *AvatarSprite) Up() {
+	if spr.fullBody != nil {
+		spr.fullBody.Up()
+		return
+	}
+	spr.head.Up()
 	spr.torso.Up()
 }
 
 // Right turns all current animataions right.
 func (spr *AvatarSprite) Right() {
+	if spr.fullBody != nil {
+		spr.fullBody.Right()
+		return
+	}
+	spr.head.Right()
 	spr.torso.Right()
 }
 
 // Down turns all current animataions down.
 func (spr *AvatarSprite) Down() {
+	if spr.fullBody != nil {
+		spr.fullBody.Down()
+		return
+	}
+	spr.head.Down()
 	spr.torso.Down()
 }
 
 // Left turns all current animataions left.
 func (spr *AvatarSprite) Left() {
+	if spr.fullBody != nil {
+		spr.fullBody.Left()
+		return
+	}
+	spr.head.Left()
 	spr.torso.Left()
 }
 
 // Idle sets idle animations as current
 // draw animations.
 func (spr *AvatarSprite) Idle() {
+	if spr.fullBody != nil {
+		spr.fullBody.Idle()
+		return
+	}
+	spr.head.Idle()
 	spr.torso.Idle()
 }
 
 // Move sets move animations as current
 // draw animations.
 func (spr *AvatarSprite) Move() {
+	if spr.fullBody != nil {
+		spr.fullBody.Move()
+		return
+	}
+	spr.head.Move()
 	spr.torso.Move()
 }
 
@@ -102,6 +151,12 @@ func (spr *AvatarSprite) SetHead(spritesheet pixel.Picture) {
 // avatar spritesheet.
 func (spr *AvatarSprite) SetTorso(spritesheet pixel.Picture) {
 	spr.torso = newAvatarBodyPart(spritesheet)
+}
+
+// SetFullBody creates new full body animations from specified
+// avatar spritesheet.
+func (spr *AvatarSprite) SetFullBody(spritesheet pixel.Picture) {
+	spr.fullBody = newAvatarBodyPart(spritesheet)
 }
 
 // Clear sets base body parts as current body parts.

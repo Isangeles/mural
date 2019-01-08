@@ -31,6 +31,7 @@ import (
 
 	"golang.org/x/image/colornames"
 
+	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save" 
@@ -267,7 +268,7 @@ func (mm *MainMenu) OnGameLoaded(gameSav *flamesave.SaveGame) {
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
-	chars, err := flamedata.ImportCharactersDir(path)
+	chars, err := flamedata.ImportCharactersDir(flame.Mod(), path)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_characters:%v", err)
 	}

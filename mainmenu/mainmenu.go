@@ -57,12 +57,14 @@ type MainMenu struct {
 	loadgamemenu  *LoadGameMenu
 	settings      *Settings
 	console       *Console
+	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	PlayableChars []*objects.Avatar
 	onGameCreated func(g *flamecore.Game, player *objects.Avatar)
 	onGameLoaded  func(gameSav *flamesave.SaveGame)
-	exitReq       bool
+	loading       bool
+	exiting       bool
 }
 
 // New returns new main menu
@@ -110,6 +112,9 @@ func New() (*MainMenu, error) {
 			err)
 	}
 	mm.console = c
+	// Loading screen.
+	ls := newLoadingScreen(mm)
+	mm.loadscreen = ls
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
@@ -120,6 +125,10 @@ func New() (*MainMenu, error) {
 
 // Draw draws current menu screen.
 func (mm *MainMenu) Draw(win *mtk.Window) {
+	if mm.loading {
+		mm.loadscreen.Draw(win)
+		return
+	}
 	// Menu.
 	if mm.menu.Opened() {
 		mm.menu.Draw(win)
@@ -150,9 +159,12 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *mtk.Window) {
-	if mm.exitReq {
+	if mm.exiting {
 		win.SetClosed(true)
 		return
+	}
+	if mm.loading {
+		mm.loadscreen.Update(win)
 	}
 	if mm.menu.Opened() {
 		mm.menu.Update(win)
@@ -175,7 +187,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 
 // Exit sends exit request to main menu.
 func (mm *MainMenu) Exit() {
-	mm.exitReq = true
+	mm.exiting = true
 }
 
 // SetOnGameCreatedFunc sets specified function as function
@@ -219,6 +231,18 @@ func (mm *MainMenu) OpenLoadGameMenu() {
 func (mm *MainMenu) OpenSettings() {
 	mm.HideMenus()
 	mm.settings.Show(true) 
+}
+
+// OpenLoadingScreen opens loading screen
+// with specified loading information.
+func (mm *MainMenu) OpenLoadingScreen(loadInfo string) {
+	mm.loading = true
+	mm.loadscreen.SetLoadInfo(loadInfo)
+}
+
+// CloseLoadingScreen closes loading screen.
+func (mm *MainMenu) CloseLoadingScreen() {
+	mm.loading = false
 }
 
 // HideMenus hides all menus.

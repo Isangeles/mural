@@ -21,7 +21,7 @@
  *
  */
 
-package hud
+package mainmenu
 
 import (
 	"github.com/faiface/pixel"
@@ -29,17 +29,17 @@ import (
 	"github.com/isangeles/mural/core/mtk"
 )
 
-// Struct for HUD loading screen.
+// Struct for main menu loading screen.
 type LoadingScreen struct {
-	hud  *HUD
-	info *mtk.Textbox
+	mainmenu *MainMenu
+	info     *mtk.Textbox
 }
 
-// newLoadingScreen returns new HUD loading
-// screen.
-func newLoadingScreen(hud *HUD) *LoadingScreen {
+// newLoadingScreen creates new main menu
+// loading screen.
+func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls := new(LoadingScreen)
-	ls.hud = hud
+	ls.mainmenu = mainmenu
 	ls.info = mtk.NewTextbox(pixel.V(0, 0),
 		mtk.SIZE_MEDIUM, main_color)
 	return ls

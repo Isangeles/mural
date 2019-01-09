@@ -65,7 +65,7 @@ type HUD struct {
 	activePC *objects.Avatar
 	destPos  pixel.Vec
 	loading  bool
-	exitReq  bool
+	exiting  bool
 	loaderr  error
 }
 
@@ -99,7 +99,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
-	if hud.exitReq {
+	if hud.exiting {
 		// TODO: exit back to menu.
 		win.SetClosed(true)
 	}
@@ -154,7 +154,7 @@ func (hud *HUD) AreaAvatars() []*objects.Avatar {
 
 // Exit sends exit request to HUD.
 func (hud *HUD) Exit() {
-	hud.exitReq = true
+	hud.exiting = true
 }
 
 // Chat returns HUD chat.

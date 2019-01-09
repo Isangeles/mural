@@ -32,7 +32,6 @@ import (
 	
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
-	//flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/mtk"
@@ -128,13 +127,8 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		log.Err.Printf("load_game_menu:fail to retrieve save name from list value")
 		return
 	}
-	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
-		savName)
-	if err != nil {
-		log.Err.Printf("load_game_menu:fail_to_load_saved_game:%v", err)
-		return
-	}
-	lgm.mainmenu.OnGameLoaded(sav)
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_info"))
+	go lgm.loadGame(savName)
 }
 
 // saveGamesFiles returns names of all save files
@@ -152,4 +146,17 @@ func saveGamesFiles(dirPath string) ([]string, error) {
 		}
 	}
 	return filesNames, nil
+}
+
+// loadGame loads saved game file with
+// specified name.
+func (lgm *LoadGameMenu) loadGame(savName string) {
+	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
+		savName)
+	if err != nil {
+		log.Err.Printf("load_game_menu:fail_to_load_saved_game:%v", err)
+		return
+	}
+	lgm.mainmenu.CloseLoadingScreen()
+	lgm.mainmenu.OnGameLoaded(sav)
 }

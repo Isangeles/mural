@@ -37,6 +37,7 @@ import (
 	"github.com/isangeles/flame/cmd/burn"
 	"github.com/isangeles/flame/cmd/burn/syntax"
 	flamecore "github.com/isangeles/flame/core"
+	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
@@ -117,6 +118,11 @@ func run() {
 		panic(fmt.Errorf("fail_to_load_ui_font:%v", err))
 	}
 	mtk.SetMainFont(uiFont)
+	// Load game data.
+	err = flamedata.LoadModuleData(flame.Mod())
+	if err != nil {
+		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
+	}
 	// Create main menu.
 	mainMenu, err := mainmenu.New()
 	if err != nil {

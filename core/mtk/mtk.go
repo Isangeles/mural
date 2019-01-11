@@ -157,8 +157,10 @@ func SetMainFont(font *truetype.Font) {
 // data package.
 func MainFont(s Size) font.Face {
 	switch {
-	case s <= SIZE_SMALL:
+	case s <= SIZE_MINI:
 		return createMainFont(10)
+	case s <= SIZE_SMALL:
+		return createMainFont(15)
 	case s == SIZE_MEDIUM:
 		return createMainFont(20)
 	case s >= SIZE_BIG:

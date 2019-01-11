@@ -57,7 +57,7 @@ type Chat struct {
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
-	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
+	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL,
 		colornames.Grey)
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
@@ -68,13 +68,15 @@ func newChat(hud *HUD) *Chat {
 
 // Draw draws chat window.
 func (c *Chat) Draw(win *mtk.Window) {
-	textboxDA := pixel.R(win.Bounds().Max.X - c.textboxSize.X,
+	textboxDA := pixel.R(
+		win.Bounds().Min.X + mtk.ConvSize(10),
 		win.Bounds().Min.Y + c.texteditSize.Y + mtk.ConvSize(10),
-		win.Bounds().Max.X - mtk.ConvSize(10),
+		win.Bounds().Min.X + c.textboxSize.X,
 		win.Bounds().Min.Y + c.texteditSize.Y + c.textboxSize.Y)
-	texteditDA := pixel.R(win.Bounds().Max.X - c.texteditSize.X,
+	texteditDA := pixel.R(
+		win.Bounds().Min.X + mtk.ConvSize(10),
 		win.Bounds().Min.Y + mtk.ConvSize(10),
-		win.Bounds().Max.X - mtk.ConvSize(10),
+		win.Bounds().Min.X + c.texteditSize.X,
 		win.Bounds().Min.Y + c.texteditSize.Y)
 	c.textbox.Draw(textboxDA, win)
 	c.textedit.Draw(texteditDA, win)

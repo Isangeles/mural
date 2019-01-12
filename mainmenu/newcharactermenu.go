@@ -40,7 +40,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 var (
@@ -348,7 +348,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 			err)
 		return
 	}
-	av, err := objects.NewAvatar(char, portraitPic,
+	av, err := object.NewAvatar(char, portraitPic,
 		ssHeadPic, ssTorsoPic, portraitName,
 		ssHeadName, ssTorsoName)
 	if err != nil {

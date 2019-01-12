@@ -26,7 +26,7 @@ package mtk
 import (
 	"time"
 	
-	//"github.com/faiface/pixel"
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
 
@@ -77,4 +77,11 @@ func (w *Window) FPS() int {
 // in milliseconds.
 func (w *Window) Delta() int64 {
 	return w.delta
+}
+
+// PointTL returns position of top left corner of
+// window.
+func (w *Window) PointTL() pixel.Vec {
+	return pixel.V(w.Bounds().Min.X,
+		w.Bounds().Max.Y)
 }

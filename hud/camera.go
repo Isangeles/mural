@@ -32,7 +32,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 // Struct for HUD camera.
@@ -43,7 +43,7 @@ type Camera struct {
 	locked   bool
 	// Map.
 	areaMap  *areamap.Map
-	avatars  []*objects.Avatar
+	avatars  []*object.Avatar
 	// Debug mode.
 	cameraInfo *mtk.Text
 }
@@ -90,23 +90,27 @@ func (c *Camera) Update(win *mtk.Window) {
 		return
 	}
 	if !c.locked {
+		offset := pixel.V(c.areaMap.TileSize().X*16,
+			c.areaMap.TileSize().Y*16)
+		mapSizePlus := pixel.V(c.areaMap.Size().X + offset.X,
+			c.areaMap.Size().Y + offset.Y)
 		// Key events.
-		if c.position.Y < c.areaMap.Size().Y &&
+		if c.position.Y < mapSizePlus.Y &&
 			(win.JustPressed(pixelgl.KeyW) ||
 				win.JustPressed(pixelgl.KeyUp)) {
 			c.position.Y += c.areaMap.TileSize().Y
 		}
-		if c.position.X < c.areaMap.Size().X &&
+		if c.position.X < mapSizePlus.X &&
 			(win.JustPressed(pixelgl.KeyD) ||
 				win.JustPressed(pixelgl.KeyRight)) {
 			c.position.X += c.areaMap.TileSize().X
 		}
-		if c.position.Y > 0 &&
+		if c.position.Y > 0 - offset.Y &&
 			(win.JustPressed(pixelgl.KeyS) ||
 				win.JustPressed(pixelgl.KeyDown)) {
 			c.position.Y -= c.areaMap.TileSize().Y
 		}
-		if c.position.X > 0 &&
+		if c.position.X > 0 - offset.X &&
 			win.JustPressed(pixelgl.KeyA) ||
 			win.JustPressed(pixelgl.KeyLeft) {
 			c.position.X -= c.areaMap.TileSize().X
@@ -131,7 +135,7 @@ func (c *Camera) SetMap(m *areamap.Map) {
 }
 
 // SetAvatars sets avatars to draw.
-func (c *Camera) SetAvatars(avs []*objects.Avatar) {
+func (c *Camera) SetAvatars(avs []*object.Avatar) {
 	c.avatars = avs
 }
 
@@ -140,15 +144,26 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 	c.position = pos
 }
 
+// CenterAt centers camera at specified position.
+func (c *Camera) CenterAt(pos pixel.Vec) {
+	c.SetPosition(pixel.V(pos.X - c.Size().X/2,
+		pos.Y - c.Size().Y/2))
+}
+
 // Avatars returns all avatars from current
 // area.
-func (c *Camera) Avatars() []*objects.Avatar {
+func (c *Camera) Avatars() []*object.Avatar {
 	return c.avatars
 }
 
 // Position return camera position.
 func (c *Camera) Position() pixel.Vec {
 	return c.position
+}
+
+// Size returns camera size.
+func (c *Camera) Size() pixel.Vec {
+	return c.size
 }
 
 // Lock toggles camera lock.

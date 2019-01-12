@@ -38,7 +38,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 var (
@@ -60,8 +60,8 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
-	PlayableChars []*objects.Avatar
-	onGameCreated func(g *flamecore.Game, player *objects.Avatar)
+	PlayableChars []*object.Avatar
+	onGameCreated func(g *flamecore.Game, player *object.Avatar)
 	onGameLoaded  func(gameSav *flamesave.SaveGame)
 	loading       bool
 	exiting       bool
@@ -193,7 +193,7 @@ func (mm *MainMenu) Exit() {
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
 func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
-	player *objects.Avatar)) {
+	player *object.Avatar)) {
 	mm.onGameCreated = f
 }
 
@@ -268,13 +268,13 @@ func (mm *MainMenu) Console() *Console {
 
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
-func (mm *MainMenu) AddPlayableChar(c *objects.Avatar) {
+func (mm *MainMenu) AddPlayableChar(c *object.Avatar) {
 	mm.PlayableChars = append(mm.PlayableChars, c)
 }
 
 // Triggered after new game was created(by new game creation menu).
 func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
-	player *objects.Avatar) {
+	player *object.Avatar) {
 	if mm.onGameCreated == nil {
 		return
 	}

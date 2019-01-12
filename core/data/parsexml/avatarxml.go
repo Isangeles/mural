@@ -29,7 +29,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 // Struct for representation of avatars
@@ -59,7 +59,7 @@ type AvatarSpritesheetNodeXML struct {
 
 // MarshalAvatarsBase parses specified avatars to avatars
 // base XML data.
-func MarshalAvatarsBase(avs []*objects.Avatar) (string, error) {
+func MarshalAvatarsBase(avs []*object.Avatar) (string, error) {
 	xmlAvatarsBase := new(AvatarsBaseXML)
 	for _, av := range avs {
 		xmlAvatar := buildAvatarXML(av)
@@ -74,8 +74,8 @@ func MarshalAvatarsBase(avs []*objects.Avatar) (string, error) {
 
 // MarshalAvatar parses specified character avatar to
 // XML data.
-func MarshalAvatar(av *objects.Avatar) (string, error) {
-	return MarshalAvatarsBase([]*objects.Avatar{av})
+func MarshalAvatar(av *object.Avatar) (string, error) {
+	return MarshalAvatarsBase([]*object.Avatar{av})
 }
 
 // UnmarshalAvatarsBase parses specified XML data to game
@@ -92,7 +92,7 @@ func UnmarshalAvatarsBase(data io.Reader) ([]AvatarXML, error) {
 
 // buildAvatarXML build XML node struct for specified
 // avatar.
-func buildAvatarXML(av *objects.Avatar) AvatarXML {
+func buildAvatarXML(av *object.Avatar) AvatarXML {
 	xmlAvatar := AvatarXML{}
 	xmlAvatar.ID = av.ID()
 	xmlAvatar.Serial = av.Serial()

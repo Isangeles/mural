@@ -66,10 +66,7 @@ func (tx *Text) SetText(text string) {
 		// replaces first blank line with '\n'.
 		tx.content = strings.Replace(tx.content, " ", "\n", 1)
 	}
-	mariginX := (-tx.text.BoundsOf(tx.content).Max.X) / 2
-	tx.text.Orig = pixel.V(mariginX, 0)
-	tx.text.Clear()
-	tx.text.WriteString(tx.content)
+	tx.JustCenter()
 }
 
 // SetMaxWidth sets maximal width of single text line.

@@ -32,13 +32,13 @@ import (
 	flameitem "github.com/isangeles/flame/core/module/object/item"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
 // ImportItemsGraphics import all items grpahics from
 // base file with specified path.
-func ImportItemsGraphics(mod *module.Module, path string) ([]*objects.Item, error) {
+func ImportItemsGraphics(mod *module.Module, path string) ([]*object.Item, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_base_file:%s",
@@ -48,7 +48,7 @@ func ImportItemsGraphics(mod *module.Module, path string) ([]*objects.Item, erro
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
 	}
-	items := make([]*objects.Item, 0)
+	items := make([]*object.Item, 0)
 	for _,  xmlItem := range xmlItems {
 		baseItem, err := flamedata.Item(mod, xmlItem.ID)
 		if err != nil {
@@ -69,7 +69,7 @@ func ImportItemsGraphics(mod *module.Module, path string) ([]*objects.Item, erro
 
 // buildXMLItemGraphic creates item graphic object for
 // specified item.
-func buildXMLItemGraphic(it flameitem.Item, xmlItem *parsexml.ItemGraphicNodeXML) (*objects.Item,
+func buildXMLItemGraphic(it flameitem.Item, xmlItem *parsexml.ItemGraphicNodeXML) (*object.Item,
 	error) {
 	itSprite, err := ItemSpritesheet(xmlItem.Spritesheet)
 	if err != nil {
@@ -77,6 +77,6 @@ func buildXMLItemGraphic(it flameitem.Item, xmlItem *parsexml.ItemGraphicNodeXML
 			err)
 	}
 	// TODO: retrieve item icon picture.
-	item := objects.NewItem(it, itSprite, nil)
+	item := object.NewItem(it, itSprite, nil)
 	return item, nil
 }

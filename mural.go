@@ -48,7 +48,7 @@ import (
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 const (
@@ -141,7 +141,6 @@ func run() {
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
-	versionInfo.JustLeft()
 	// Main loop.
 	for !win.Closed() {
 		// Draw.
@@ -154,8 +153,8 @@ func run() {
 		if config.Debug() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
 				fpsInfo.Bounds(), win.Bounds().Max)))
-			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
-				versionInfo.Bounds(), win.Bounds().Min)))
+			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTL(
+				versionInfo.Bounds(), win.PointTL())))
 		}
 		// Update.
 		win.Update()
@@ -175,9 +174,9 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *flamecore.Game, pc *objects.Avatar) {
+func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 	game = g
-	HUD, err := hud.NewHUD(game, []*objects.Avatar{pc})
+	HUD, err := hud.NewHUD(game, []*object.Avatar{pc})
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return

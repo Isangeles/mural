@@ -44,7 +44,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -61,8 +61,8 @@ type HUD struct {
 	chat       *Chat
 
 	game     *flamecore.Game
-	pcs      []*objects.Avatar
-	activePC *objects.Avatar
+	pcs      []*object.Avatar
+	activePC *object.Avatar
 	destPos  pixel.Vec
 	loading  bool
 	exiting  bool
@@ -72,17 +72,23 @@ type HUD struct {
 // NewHUD creates new HUD instance.
 // HUD loads all game data and setup specified
 // PC area as current HUD area.
-func NewHUD(g *flamecore.Game, pcs []*objects.Avatar) (*HUD, error) {
+func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
 	if len(pcs) < 1 {
 		return nil, fmt.Errorf("no player characters")
 	}
+	// Players.
 	hud.pcs = pcs
 	hud.activePC = hud.pcs[0]
+	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
+	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
+	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	// Chat window.
 	hud.chat = newChat(hud)
+	// Start game loading.
 	go hud.LoadGame(g)
 	return hud, nil
 }
@@ -137,18 +143,18 @@ func (hud *HUD) CameraPosition() pixel.Vec {
 
 // Players returns player characters
 // (game characters of HUD user).
-func (hud *HUD) Players() []*objects.Avatar {
+func (hud *HUD) Players() []*object.Avatar {
 	return hud.pcs
 }
 
 // ActivePlayers retruns currently active PC.
-func (hud *HUD) ActivePlayer() *objects.Avatar {
+func (hud *HUD) ActivePlayer() *object.Avatar {
 	return hud.activePC
 }
 
 // AreaAvatars returns all avatars from current
 // HUD area.
-func (hud *HUD) AreaAvatars() []*objects.Avatar {
+func (hud *HUD) AreaAvatars() []*object.Avatar {
 	return hud.camera.Avatars()
 }
 
@@ -182,9 +188,9 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *scenario.Area) {
-	// TODO: sometimes SetLoadInfo causes panic on load text draw.
 	hud.loading = true
 	// Map.
+	// TODO: sometimes SetLoadInfo causes panic on load text draw.
 	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
 	if err != nil {
@@ -194,10 +200,10 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.camera.SetMap(areaMap)
 	// Objects.
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
-	avatars := make([]*objects.Avatar, 0)
+	avatars := make([]*object.Avatar, 0)
 	npcPath := hud.Game().Module().Chapter().NPCPath()
 	for _, c := range area.Characters() {
-		var pcAvatar *objects.Avatar
+		var pcAvatar *object.Avatar
 		for _, pc := range hud.Players() {
 			if c == pc.Character {
 				pcAvatar = pc

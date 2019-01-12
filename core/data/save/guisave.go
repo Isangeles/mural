@@ -25,12 +25,12 @@
 package save
 
 import (
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 )
 
 // Struct for GUI state save.
 type GUISave struct {
 	Name                   string
-	Players                []*objects.Avatar
+	Players                []*object.Avatar
 	CameraPosX, CameraPosY float64
 }

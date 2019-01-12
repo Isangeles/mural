@@ -21,14 +21,14 @@
  *
  */
 
-package objects
+package object
 
 import (
 	"github.com/faiface/pixel"
 	
 	flameitem "github.com/isangeles/flame/core/module/object/item"
 	
-	"github.com/isangeles/mural/core/objects/internal"
+	"github.com/isangeles/mural/core/object/internal"
 )
 
 // Struct for items with graphical

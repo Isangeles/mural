@@ -34,7 +34,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -44,7 +44,7 @@ var (
 
 // CharacterAvatar imports and returns avatars for specified
 // character from avatars file in directory with specified path.
-func CharacterAvatar(importDir string, char *character.Character) (*objects.Avatar,
+func CharacterAvatar(importDir string, char *character.Character) (*object.Avatar,
 	error) {
 	// Search all avatars files in directory for character avatar.
 	avs, err := ImportAvatarsDir([]*character.Character{char}, importDir)
@@ -61,7 +61,7 @@ func CharacterAvatar(importDir string, char *character.Character) (*objects.Avat
 
 // ExportAvatars exports specified avatars to file
 // with specified path.
-func ExportAvatars(avs []*objects.Avatar, basePath string) error {
+func ExportAvatars(avs []*object.Avatar, basePath string) error {
 	// Marshal avatars to base data.
 	xml, err := parsexml.MarshalAvatarsBase(avs)
 	if err != nil {
@@ -86,15 +86,15 @@ func ExportAvatars(avs []*objects.Avatar, basePath string) error {
 
 // ExportAvatars exports specified avatar to directory
 // with specified path.
-func ExportAvatar(av *objects.Avatar, dirPath string) error {
+func ExportAvatar(av *object.Avatar, dirPath string) error {
 	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
 		AVATARS_FILE_EXT)
-	return ExportAvatars([]*objects.Avatar{av}, filePath)
+	return ExportAvatars([]*object.Avatar{av}, filePath)
 }
 
 // ImportAvatars imports all avatars for specified characters
 // from avatar file with specified path.
-func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar,
+func ImportAvatars(chars []*character.Character, path string) ([]*object.Avatar,
 	error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -106,13 +106,13 @@ func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar
 		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
 			path, err)
 	}
-	avs := make([]*objects.Avatar, 0)
+	avs := make([]*object.Avatar, 0)
 	for _, avXML := range avsXML {
 		for _, c := range chars {
 			if avXML.ID != c.ID() {
 				continue
 			}
-			var av *objects.Avatar
+			var av *object.Avatar
 			if avXML.Spritesheet.FullBody != "" {
 				av, err = buildXMLStaticAvatar(c, &avXML)
 			} else {
@@ -132,12 +132,12 @@ func ImportAvatars(chars []*character.Character, path string) ([]*objects.Avatar
 // ImportAvatarsDir imports all avatars from avatars files
 // in directory with specified path.
 func ImportAvatarsDir(chars []*character.Character,
-	dirPath string) ([]*objects.Avatar, error) {
+	dirPath string) ([]*object.Avatar, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
 	}
-	avs := make([]*objects.Avatar, 0)
+	avs := make([]*object.Avatar, 0)
 	for _, fInfo := range files {
 		if !strings.HasSuffix(fInfo.Name(), AVATARS_FILE_EXT) {
 			continue
@@ -158,7 +158,7 @@ func ImportAvatarsDir(chars []*character.Character,
 
 // DefaultAvatar creates default avatar for specified
 // character.
-func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
+func DefaultAvatar(char *character.Character) (*object.Avatar, error) {
 	ssHeadName := "m-head-black-1222211-80x90.png"
 	ssTorsoName := "m-cloth-1222211-80x90.png"
 	portraitName := "male01.png"
@@ -182,7 +182,7 @@ func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
 			err)
 	}
-	av, err := objects.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
+	av, err := object.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
 		portraitName, ssHeadName, ssTorsoName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
@@ -191,7 +191,7 @@ func DefaultAvatar(char *character.Character) (*objects.Avatar, error) {
 }
 
 // buildXMLAvatar builds avatar from specified XML data.
-func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*objects.Avatar, error) {
+func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*object.Avatar, error) {
 	ssHeadName := avXML.Spritesheet.Head
 	ssTorsoName := avXML.Spritesheet.Torso
 	portraitName := avXML.Portrait
@@ -216,7 +216,7 @@ func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*obje
 		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", 
 			avXML.ID, err)
 	}
-	av, err := objects.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
+	av, err := object.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
 		portraitName, ssHeadName, ssTorsoName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
@@ -227,20 +227,20 @@ func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*obje
 // buildXMLStaticAvatar build new static avatar for specified
 // character from specified XML data.
 func buildXMLStaticAvatar(char *character.Character,
-	avXML *parsexml.AvatarXML) (*objects.Avatar, error) {
+	avXML *parsexml.AvatarXML) (*object.Avatar, error) {
 	ssFullBodyName := avXML.Spritesheet.FullBody
 	portraitName := avXML.Portrait
 	portraitPic, err := AvatarPortrait(portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
-			avXML.ID, err)
+			err)
 	}
 	ssFullBodyPic, err := AvatarSpritesheet(ssFullBodyName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
-			avXML.ID, err)
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
+			err)
 	}
-	av, err := objects.NewStaticAvatar(char, portraitPic, ssFullBodyPic,
+	av, err := object.NewStaticAvatar(char, portraitPic, ssFullBodyPic,
 		portraitName, ssFullBodyName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)

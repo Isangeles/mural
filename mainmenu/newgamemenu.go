@@ -35,7 +35,7 @@ import (
 	
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/objects"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -136,7 +136,7 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 	if switchVal == nil {
 		return nil
 	}
-	c, ok := switchVal.Value.(*objects.Avatar)
+	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
 		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
@@ -160,7 +160,7 @@ func (ngm *NewGameMenu) exportChar() error {
 	if switchVal == nil {
 		return nil
 	}
-	c, ok := switchVal.Value.(*objects.Avatar)
+	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
 		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
@@ -181,7 +181,7 @@ func (ngm *NewGameMenu) startGame() error {
 	if switchVal == nil {
 		return fmt.Errorf("no_char_switch_val")
 	}
-	c, ok := switchVal.Value.(*objects.Avatar)
+	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
 		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}

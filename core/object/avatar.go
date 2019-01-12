@@ -21,7 +21,7 @@
  *
  */
 
-package objects
+package object
 
 import (
 	"github.com/faiface/pixel"
@@ -29,7 +29,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/objects/internal"
+	"github.com/isangeles/mural/core/object/internal"
 )
 
 // Avatar struct for graphical representation of

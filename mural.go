@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ package main
 
 import (
 	"fmt"
-	//"time"
 
 	"golang.org/x/image/colornames"
 
@@ -44,6 +43,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -120,6 +120,7 @@ func run() {
 	mtk.SetMainFont(uiFont)
 	// Load game data.
 	err = flamedata.LoadModuleData(flame.Mod())
+	data.LoadGameData()
 	if err != nil {
 		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
 	}
@@ -188,14 +189,20 @@ func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 // EnterSavedGame creates game and HUD from saved data.
 func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	game = flamecore.LoadGame(gameSav)
+	flame.SetGame(game)
 	// Load saved GUI state.
-	guiSav, err := data.ImportGUISave(game, flame.SavegamesPath(),
+	guiSav, err := imp.ImportGUISave(game, flame.SavegamesPath(),
 		gameSav.Name)
 	if err != nil {
 		log.Err.Printf("fail_to_load_gui_save:%v", err)
 		return
 	}
-	HUD, err := hud.NewHUD(game, guiSav.Players)
+	pcs := make([]*object.Avatar, 0)
+	for _, pcData := range guiSav.PlayersData {
+		pc := object.NewAvatar(pcData)
+		pcs = append(pcs, pc)
+	}
+	HUD, err := hud.NewHUD(game, pcs)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return

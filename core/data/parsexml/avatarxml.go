@@ -30,6 +30,7 @@ import (
 	"io/ioutil"
 
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/core/data/res"
 )
 
 // Struct for representation of avatars
@@ -100,6 +101,19 @@ func buildAvatarXML(av *object.Avatar) AvatarXML {
 	xmlAvatar.Spritesheet.Head = av.HeadSpritesheetName()
 	xmlAvatar.Spritesheet.Torso = av.TorsoSpritesheetName()
 	xmlAvatar.Spritesheet.FullBody = av.FullBodySpritesheetName()
+	return xmlAvatar
+}
+
+// buildAvatarXML build XML node struct for specified
+// avatar.
+func buildAvatarDataXML(avData *res.AvatarData) AvatarXML {
+	xmlAvatar := AvatarXML{}
+	xmlAvatar.ID = avData.Character.ID()
+	xmlAvatar.Serial = avData.Character.Serial()
+	xmlAvatar.Portrait = avData.PortraitName
+	xmlAvatar.Spritesheet.Head = avData.SSHeadName
+	xmlAvatar.Spritesheet.Torso = avData.SSTorsoName
+	xmlAvatar.Spritesheet.FullBody = avData.SSFullBodyName
 	return xmlAvatar
 }
 

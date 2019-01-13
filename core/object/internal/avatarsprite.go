@@ -67,6 +67,9 @@ func (spr *AvatarSprite) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 	spr.head.Draw(t, matrix)
 	spr.torso.Draw(t, matrix)
+	if spr.weapon != nil {
+		spr.weapon.Draw(t, matrix)
+	}
 }
 
 // Update updates current sprite elements.
@@ -77,6 +80,9 @@ func (spr *AvatarSprite) Update(win *mtk.Window) {
 	}
 	spr.head.Update(win)
 	spr.torso.Update(win)
+	if spr.weapon != nil {
+		spr.weapon.Update(win)
+	}
 }
 
 // Up turns all current animataions up.
@@ -87,6 +93,9 @@ func (spr *AvatarSprite) Up() {
 	}
 	spr.head.Up()
 	spr.torso.Up()
+	if spr.weapon != nil {
+		spr.weapon.Up()
+	}
 }
 
 // Right turns all current animataions right.
@@ -97,6 +106,9 @@ func (spr *AvatarSprite) Right() {
 	}
 	spr.head.Right()
 	spr.torso.Right()
+	if spr.weapon != nil {
+		spr.weapon.Right()
+	}
 }
 
 // Down turns all current animataions down.
@@ -107,6 +119,9 @@ func (spr *AvatarSprite) Down() {
 	}
 	spr.head.Down()
 	spr.torso.Down()
+	if spr.weapon != nil {
+		spr.weapon.Down()
+	}
 }
 
 // Left turns all current animataions left.
@@ -117,6 +132,9 @@ func (spr *AvatarSprite) Left() {
 	}
 	spr.head.Left()
 	spr.torso.Left()
+	if spr.weapon != nil {
+		spr.weapon.Left()
+	}
 }
 
 // Idle sets idle animations as current
@@ -128,6 +146,9 @@ func (spr *AvatarSprite) Idle() {
 	}
 	spr.head.Idle()
 	spr.torso.Idle()
+	if spr.weapon != nil {
+		spr.weapon.Idle()
+	}
 }
 
 // Move sets move animations as current
@@ -139,6 +160,9 @@ func (spr *AvatarSprite) Move() {
 	}
 	spr.head.Move()
 	spr.torso.Move()
+	if spr.weapon != nil {
+		spr.weapon.Move()
+	}
 }
 
 // SetHead creates head animations from specified
@@ -157,6 +181,12 @@ func (spr *AvatarSprite) SetTorso(spritesheet pixel.Picture) {
 // avatar spritesheet.
 func (spr *AvatarSprite) SetFullBody(spritesheet pixel.Picture) {
 	spr.fullBody = newAvatarBodyPart(spritesheet)
+}
+
+// SetWeapon creates new weapon animations from specified
+// avatar spritesheet.
+func (spr *AvatarSprite) SetWeapon(spritesheet pixel.Picture) {
+	spr.weapon = newAvatarBodyPart(spritesheet)
 }
 
 // Clear sets base body parts as current body parts.

@@ -27,14 +27,14 @@ package data
 
 import (
 	"fmt"
-	"path/filepath"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/golang/freetype/truetype"
 
 	"github.com/salviati/go-tmx/tmx"
-	
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
@@ -43,16 +43,16 @@ import (
 )
 
 var (
+	// Paths.
 	g_dir_path  string
 	g_arch_path string
-	
+	// Textures.
 	uiData      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
 	fonts       map[string]*truetype.Font
 )
-
 
 // LoadGameData loads game graphic data.
 // Should be called by GUI before creating any
@@ -117,7 +117,7 @@ func PictureUI(fileName string) (pixel.Picture, error) {
 	}
 	// Fallback, load picture 'by hand'.
 	log.Dbg.Printf("data_picture_ui_fallback_load:%s", fileName)
-	return loadPictureFromArch(g_arch_path, "ui/" + fileName)
+	return loadPictureFromArch(g_arch_path, "ui/"+fileName)
 }
 
 // PictureFromDir loads image from specified system path.
@@ -131,9 +131,9 @@ func AvatarPortrait(fileName string) (pixel.Picture, error) {
 	if portrait != nil {
 		return portrait, nil
 	}
-        path :=	filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
+	path := filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
 		fileName)
-        return loadPictureFromDir(path)
+	return loadPictureFromDir(path)
 }
 
 // AvatarSpritesheet returns picture with specified name
@@ -167,7 +167,7 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 // PlayablePortraits returns map with names of portraits as keys
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {
-	path :=	flame.Mod().FullPath() + "/gui/portraits"
+	path := flame.Mod().FullPath() + "/gui/portraits"
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, err

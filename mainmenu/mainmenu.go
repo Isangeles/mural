@@ -36,7 +36,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save" 
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 )
@@ -296,11 +296,12 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	if err != nil {
 		return fmt.Errorf("fail_to_import_characters:%v", err)
 	}
-	avs, err := data.ImportAvatarsDir(chars, path)
+	avsData, err := imp.ImportAvatarsDataDir(chars, path)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_avatars:%v", err)
 	}
-	for _, av := range avs {
+	for _, avData := range avsData {
+		av := object.NewAvatar(avData)
 		mm.PlayableChars = append(mm.PlayableChars, av)
 	}
 	return nil

@@ -34,7 +34,7 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 	
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -168,7 +168,7 @@ func (ngm *NewGameMenu) exportChar() error {
 	if err != nil {
 		return err
 	}
-	err = data.ExportAvatar(c, flame.Mod().CharactersPath())
+	err = exp.ExportAvatar(c, flame.Mod().CharactersPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_export_avatar:%v", err)
 	}

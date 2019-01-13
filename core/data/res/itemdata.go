@@ -1,7 +1,7 @@
 /*
- * guisave.go
+ * avatar.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,35 @@
  *
  */
 
-// Package for save structs.
-package save
+package res
 
 import (
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame/core/module/object/item"
 )
 
-// Struct for GUI state save.
-type GUISave struct {
-	Name                   string
-	PlayersData            []*res.AvatarData
-	CameraPosX, CameraPosY float64
+var (
+	itemsData map[string]*ItemGraphicData
+)
+
+// Struct for item graphic data.
+type ItemGraphicData struct {
+	Item            item.Item
+	IconPic         pixel.Picture
+	SpritesheetPic  pixel.Picture
 }
+
+// SetItemsData sets specified map with item
+// graphic data as loaded resources data.
+func SetItemsData(data map[string]*ItemGraphicData) {
+	itemsData = data
+}
+
+// ItemData returns graphic data for item
+// with specified ID.
+func ItemData(itemID string) *ItemGraphicData {
+	return itemsData[itemID]
+}
+
+

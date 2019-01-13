@@ -57,8 +57,8 @@ type CameraXML struct {
 func MarshalGUISave(save *save.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
 	xmlGUI.Name = save.Name
-	for _, pc := range save.Players {
-		av := buildAvatarXML(pc)
+	for _, pcData := range save.PlayersData {
+		av := buildAvatarDataXML(pcData)
 		xmlGUI.Players.Avatars = append(xmlGUI.Players.Avatars, av)
 	}
 	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX,

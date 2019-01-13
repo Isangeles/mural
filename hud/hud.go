@@ -41,7 +41,9 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/exp"
+	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
@@ -177,7 +179,11 @@ func (hud *HUD) Game() *flamecore.Game {
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
-	data.LoadGameData()
+	err := imp.LoadResources()
+	if err != nil {
+		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
+		return
+	}
 	pcArea, err := hud.game.PlayerArea(hud.ActivePlayer().SerialID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
@@ -214,12 +220,13 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 			avatars = append(avatars, pcAvatar)
 			continue
 		}
-		av, err := data.CharacterAvatar(npcPath, c)
+		avData, err := imp.CharacterAvatarData(c, npcPath)
 		if err != nil {
 			log.Err.Printf("hud_area_change:char:%s:fail_to_retrieve_avatar:%v",
 				c.ID(), err)
 			continue
 		}
+		av := object.NewAvatar(avData)
 		avatars = append(avatars, av)
 	}
 	hud.camera.SetAvatars(avatars)
@@ -239,7 +246,7 @@ func (hud *HUD) Save(saveName string) error {
 	}
 	// Save GUI state.
 	guisav := hud.NewGUISave()
-	err = data.ExportGUISave(guisav, savesPath, saveName)
+	err = exp.ExportGUISave(guisav, savesPath, saveName)
 	if err != nil {
 		return fmt.Errorf("fail_to_save_gui:%v",
 			err)
@@ -251,7 +258,16 @@ func (hud *HUD) Save(saveName string) error {
 func (hud *HUD) NewGUISave() *save.GUISave {
 	sav := new(save.GUISave)
 	// Save players avatars.
-	sav.Players = hud.pcs
+	for _, pc := range hud.Players() {
+		avData := res.AvatarData{
+			Character: pc.Character,
+			PortraitName: pc.PortraitName(),
+			SSHeadName: pc.HeadSpritesheetName(),
+			SSTorsoName: pc.TorsoSpritesheetName(),
+			SSFullBodyName: pc.FullBodySpritesheetName(),
+		}
+		sav.PlayersData = append(sav.PlayersData, &avData)
+	}
 	// Save camera XY position.
 	sav.CameraPosX = hud.CameraPosition().X
 	sav.CameraPosY = hud.CameraPosition().Y
@@ -261,7 +277,10 @@ func (hud *HUD) NewGUISave() *save.GUISave {
 // LoadGUISave load specified saved GUI state.
 func (hud *HUD) LoadGUISave(save *save.GUISave) error {
 	// Players.
-	hud.pcs = save.Players
+	for _, pcData := range save.PlayersData {
+		pc := object.NewAvatar(pcData)
+		hud.pcs = append(hud.pcs, pc)
+	}
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
 	return nil

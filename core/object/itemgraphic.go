@@ -1,7 +1,7 @@
 /*
- * guisave.go
+ * itemgraphic.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,35 @@
  *
  */
 
-// Package for save structs.
-package save
+package object
 
 import (
+	"github.com/faiface/pixel"
+	
+	flameitem "github.com/isangeles/flame/core/module/object/item"
+	
 	"github.com/isangeles/mural/core/data/res"
 )
 
-// Struct for GUI state save.
-type GUISave struct {
-	Name                   string
-	PlayersData            []*res.AvatarData
-	CameraPosX, CameraPosY float64
+// Struct for items with graphical
+// representation.
+type ItemGraphic struct {
+	flameitem.Item
+	spritesheet pixel.Picture
+	icon        *pixel.Sprite
+}
+
+// NewItemGraphic creates new graphical wrapper from
+// specified data.
+func NewItemGraphic(data *res.ItemGraphicData) *ItemGraphic {
+	item := new(ItemGraphic)
+	item.Item = data.Item
+	item.spritesheet = data.SpritesheetPic
+	// TODO: icon sprite.
+	return item
+}
+
+// Spritesheet returns item spritesheet.
+func (it *ItemGraphic) Spritesheet() pixel.Picture {
+	return it.spritesheet
 }

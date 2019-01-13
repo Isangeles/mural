@@ -38,6 +38,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/object"
@@ -348,14 +349,16 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 			err)
 		return
 	}
-	av, err := object.NewAvatar(char, portraitPic,
-		ssHeadPic, ssTorsoPic, portraitName,
-		ssHeadName, ssTorsoName)
-	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_create_avatar:%v",
-			err)
-		return
+	avData := res.AvatarData{
+		Character: char,
+		PortraitName: portraitName,
+		SSHeadName: ssHeadName,
+		SSTorsoName: ssTorsoName,
+		PortraitPic: portraitPic,
+		SSHeadPic: ssHeadPic,
+		SSTorsoPic: ssTorsoPic,
 	}
+	av := object.NewAvatar(&avData)
 	ncm.mainmenu.AddPlayableChar(av)
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 		lang.Text("gui", "newchar_create_msg"))

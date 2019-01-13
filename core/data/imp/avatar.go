@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,9 @@
  *
  */
 
-package data
+package imp
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -33,8 +32,9 @@ import (
 
 	"github.com/isangeles/flame/core/module/object/character"
 
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -44,57 +44,24 @@ var (
 
 // CharacterAvatar imports and returns avatars for specified
 // character from avatars file in directory with specified path.
-func CharacterAvatar(importDir string, char *character.Character) (*object.Avatar,
+func CharacterAvatarData(char *character.Character, importDir string) (*res.AvatarData,
 	error) {
 	// Search all avatars files in directory for character avatar.
-	avs, err := ImportAvatarsDir([]*character.Character{char}, importDir)
+	avsData, err := ImportAvatarsDataDir([]*character.Character{char}, importDir)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_import_avatar:%v",
 			err)
 	}
-	if len(avs) < 1 {
+	if len(avsData) < 1 {
 		return nil, fmt.Errorf("avatar_not_found_for:%s",
 			char.ID())
 	}
-	return avs[0], nil
+	return avsData[0], nil
 }
 
-// ExportAvatars exports specified avatars to file
-// with specified path.
-func ExportAvatars(avs []*object.Avatar, basePath string) error {
-	// Marshal avatars to base data.
-	xml, err := parsexml.MarshalAvatarsBase(avs)
-	if err != nil {
-		return fmt.Errorf("fail_to_marshal_avatars:%v", err)
-	}
-	// Check whether file path ends with proper extension.
-	if !strings.HasSuffix(basePath, AVATARS_FILE_EXT) {
-		basePath = basePath + AVATARS_FILE_EXT
-	}
-	// Create base file.
-	f, err := os.Create(filepath.FromSlash(basePath))
-	if err != nil {
-		return fmt.Errorf("fail_to_create_avatars_file:%v", err)
-	}
-	defer f.Close()
-	// Write data to base file.
-	w := bufio.NewWriter(f)
-	w.WriteString(xml)
-	w.Flush()
-	return nil
-}
-
-// ExportAvatars exports specified avatar to directory
-// with specified path.
-func ExportAvatar(av *object.Avatar, dirPath string) error {
-	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
-		AVATARS_FILE_EXT)
-	return ExportAvatars([]*object.Avatar{av}, filePath)
-}
-
-// ImportAvatars imports all avatars for specified characters
+// ImportAvatarsData imports all avatars data for specified characters
 // from avatar file with specified path.
-func ImportAvatars(chars []*character.Character, path string) ([]*object.Avatar,
+func ImportAvatarsData(chars []*character.Character, path string) ([]*res.AvatarData,
 	error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -106,59 +73,59 @@ func ImportAvatars(chars []*character.Character, path string) ([]*object.Avatar,
 		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
 			path, err)
 	}
-	avs := make([]*object.Avatar, 0)
+	avsData := make([]*res.AvatarData, 0)
 	for _, avXML := range avsXML {
 		for _, c := range chars {
 			if avXML.ID != c.ID() {
 				continue
 			}
-			var av *object.Avatar
+			var avData *res.AvatarData
 			if avXML.Spritesheet.FullBody != "" {
-				av, err = buildXMLStaticAvatar(c, &avXML)
+				avData, err = buildXMLStaticAvatarData(c, &avXML)
 			} else {
-				av, err = buildXMLAvatar(c, &avXML)
+				avData, err = buildXMLAvatarData(c, &avXML)
 			}
 			if err != nil {
 				log.Err.Printf("data_avatar_import:%s:parse_fail:%v",
 					avXML.ID, err)
 				continue
 			}
-			avs = append(avs, av)
+			avsData = append(avsData, avData)
 		}
 	}
-	return avs, nil
+	return avsData, nil
 }
 
-// ImportAvatarsDir imports all avatars from avatars files
+// ImportAvatarsDataDir imports all avatars data from avatars files
 // in directory with specified path.
-func ImportAvatarsDir(chars []*character.Character,
-	dirPath string) ([]*object.Avatar, error) {
+func ImportAvatarsDataDir(chars []*character.Character,
+	dirPath string) ([]*res.AvatarData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
 	}
-	avs := make([]*object.Avatar, 0)
+	avsData := make([]*res.AvatarData, 0)
 	for _, fInfo := range files {
 		if !strings.HasSuffix(fInfo.Name(), AVATARS_FILE_EXT) {
 			continue
 		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
-		impAvs, err := ImportAvatars(chars, avFilePath)
+		impAvs, err := ImportAvatarsData(chars, avFilePath)
 		if err != nil {
 			log.Err.Printf("data_avatar_import:%s:fail_to_parse_char_file:%v",
-				dirPath, err)
+				avFilePath, err)
 			continue
 		}
 		for _, av := range impAvs {
-			avs = append(avs, av)
+			avsData = append(avsData, av)
 		}
 	}
-	return avs, nil
+	return avsData, nil
 }
 
-// DefaultAvatar creates default avatar for specified
-// character.
-func DefaultAvatar(char *character.Character) (*object.Avatar, error) {
+// DefaultAvatarData creates default avatar data
+// for specified character.
+func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 	ssHeadName := "m-head-black-1222211-80x90.png"
 	ssTorsoName := "m-cloth-1222211-80x90.png"
 	portraitName := "male01.png"
@@ -167,85 +134,31 @@ func DefaultAvatar(char *character.Character) (*object.Avatar, error) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		portraitName = "female01.png"
 	}
-	ssHeadPic, err := AvatarSpritesheet(ssHeadName)
+	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
 			err)
 	}
-	ssTorsoPic, err := AvatarSpritesheet(ssTorsoName)
+	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v",
 			err)
 	}
-	portraitPic, err := AvatarPortrait(portraitName)
+	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
 			err)
 	}
-	av, err := object.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
-		portraitName, ssHeadName, ssTorsoName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
+	avData := res.AvatarData{
+		Character: char,
+		PortraitName: portraitName,
+		SSHeadName: ssHeadName,
+		SSTorsoName: ssTorsoName,
+		PortraitPic: portraitPic,
+		SSHeadPic: ssHeadPic,
+		SSTorsoPic: ssTorsoPic,
 	}
-	return av, nil	
-}
-
-// buildXMLAvatar builds avatar from specified XML data.
-func buildXMLAvatar(char *character.Character, avXML *parsexml.AvatarXML) (*object.Avatar, error) {
-	ssHeadName := avXML.Spritesheet.Head
-	ssTorsoName := avXML.Spritesheet.Torso
-	portraitName := avXML.Portrait
-	portraitPic, err := AvatarPortrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
-			avXML.ID, err)
-	}
-	if ssHeadName == "" {
-		ssHeadName = defaultAvatarHeadSpritesheet(char)
-	}
-	if ssTorsoName == "" {
-		ssTorsoName = defaultAvatarTorsoSpritesheet(char)
-	}
-	ssHeadPic, err := AvatarSpritesheet(ssHeadName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
-			avXML.ID, err)
-	}
-	ssTorsoPic, err := AvatarSpritesheet(ssTorsoName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", 
-			avXML.ID, err)
-	}
-	av, err := object.NewAvatar(char, portraitPic, ssHeadPic, ssTorsoPic,
-		portraitName, ssHeadName, ssTorsoName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
-	}
-	return av, nil
-}
-
-// buildXMLStaticAvatar build new static avatar for specified
-// character from specified XML data.
-func buildXMLStaticAvatar(char *character.Character,
-	avXML *parsexml.AvatarXML) (*object.Avatar, error) {
-	ssFullBodyName := avXML.Spritesheet.FullBody
-	portraitName := avXML.Portrait
-	portraitPic, err := AvatarPortrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
-			err)
-	}
-	ssFullBodyPic, err := AvatarSpritesheet(ssFullBodyName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
-			err)
-	}
-	av, err := object.NewStaticAvatar(char, portraitPic, ssFullBodyPic,
-		portraitName, ssFullBodyName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_avatar:%v", err)
-	}
-	return av, nil
+	return &avData, nil	
 }
 
 // defaultAvatarSpritesheet returns default spritesheet
@@ -270,4 +183,89 @@ func defaultAvatarHeadSpritesheet(char *character.Character) string {
 		}
 		return  "m-head-black-1222211-80x90.png"
 	}
+}
+
+// buildXMLAvatar builds avatar from specified XML data.
+func buildXMLAvatarData(char *character.Character, avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
+	ssHeadName := avXML.Spritesheet.Head
+	ssTorsoName := avXML.Spritesheet.Torso
+	portraitName := avXML.Portrait
+	portraitPic, err := data.AvatarPortrait(portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
+			avXML.ID, err)
+	}
+	if ssHeadName == "" {
+		ssHeadName = defaultAvatarHeadSpritesheet(char)
+	}
+	if ssTorsoName == "" {
+		ssTorsoName = defaultAvatarTorsoSpritesheet(char)
+	}
+	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
+			avXML.ID, err)
+	}
+	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", 
+			avXML.ID, err)
+	}
+	eqItemsGraphics := make([]*res.ItemGraphicData, 0)
+	for _, eqi := range char.Equipment().Items() {
+		itemGData := res.ItemData(eqi.ID())
+		if itemGData == nil {
+			log.Err.Printf("data_buil_avatar_data:%s:item_graphic_not_found:%s",
+				avXML.ID, eqi.ID())
+			continue
+		}
+		eqItemsGraphics = append(eqItemsGraphics, itemGData)
+	}
+	avData := res.AvatarData{
+		Character: char,
+		PortraitName: portraitName,
+		SSHeadName: ssHeadName,
+		SSTorsoName: ssTorsoName,
+		PortraitPic: portraitPic,
+		SSHeadPic: ssHeadPic,
+		SSTorsoPic: ssTorsoPic,
+		EqItemsGraphics: eqItemsGraphics,
+	}
+	return &avData, nil
+}
+
+// buildXMLStaticAvatar build new static avatar for specified
+// character from specified XML data.
+func buildXMLStaticAvatarData(char *character.Character, avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
+	ssFullBodyName := avXML.Spritesheet.FullBody
+	portraitName := avXML.Portrait
+	portraitPic, err := data.AvatarPortrait(portraitName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
+			err)
+	}
+	ssFullBodyPic, err := data.AvatarSpritesheet(ssFullBodyName)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
+			err)
+	}
+	eqItemsGraphics := make([]*res.ItemGraphicData, 0)
+	for _, eqi := range char.Equipment().Items() {
+		itemGData := res.ItemData(eqi.ID())
+		if itemGData == nil {
+			log.Err.Printf("data_buil_avatar_data:%s:item_graphic_not_found:%s",
+				avXML.ID, eqi.ID())
+			continue
+		}
+		eqItemsGraphics = append(eqItemsGraphics, itemGData)
+	}
+	avData := res.AvatarData{
+		Character: char,
+		PortraitName: portraitName,
+		SSFullBodyName: ssFullBodyName,
+		PortraitPic: portraitPic,
+		SSFullBodyPic: ssFullBodyPic,
+		EqItemsGraphics: eqItemsGraphics,
+	}
+	return &avData, nil
 }

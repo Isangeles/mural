@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,17 @@
 package object
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/character"
+	flameitem "github.com/isangeles/flame/core/module/object/item"
 
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object/internal"
+	"github.com/isangeles/mural/log"
 )
 
 // Avatar struct for graphical representation of
@@ -43,42 +48,52 @@ type Avatar struct {
 	ssHeadName     string
 	ssTorsoName    string
 	ssFullBodyName string
+	eqItems        map[string]*ItemGraphic
 }
 
 // NewAvatar creates new avatar for specified game character.
 // Portrait and spritesheet names are required for saving and
 // loading avatar file.
-func NewAvatar(char *character.Character, portraitPic,
-	ssHeadPic, ssTorsoPic pixel.Picture, portraitName,
-	ssHeadName, ssTorsoName string) (*Avatar, error) {
+func NewAvatar(data *res.AvatarData) *Avatar {
 	av := new(Avatar)
-	av.Character = char
+	av.Character = data.Character
 	// Portrait & spritesheets names.
-	av.portraitName = portraitName
-	av.ssHeadName = ssHeadName
-	av.ssTorsoName = ssTorsoName
+	av.portraitName = data.PortraitName
+	av.ssHeadName = data.SSHeadName
+	av.ssTorsoName = data.SSTorsoName
 	// Sprite.
-	av.sprite = internal.NewAvatarSprite(ssTorsoPic, ssHeadPic)
+	av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	// Portrait.
-	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
-	return av, nil
+	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
+	// Items.
+	av.eqItems = make(map[string]*ItemGraphic, 0)
+	for _, eqItemData := range data.EqItemsGraphics {
+		eqItem := NewItemGraphic(eqItemData)
+		av.eqItems[eqItem.SerialID()] = eqItem
+	}
+	return av
 }
 
 // NewStaticAvatar creates new avatar with static(not affected by
 // equipped items) body sprite.
 // Portrait and spritesheet names are required for saving and
 // loading avatar file.
-func NewStaticAvatar(char *character.Character, portraitPic,
-	ssBodyPic pixel.Picture, portraitName,
-	ssBodyName string) (*Avatar, error) {
+func NewStaticAvatar(data *res.AvatarData) (*Avatar, error) {
 	av := new(Avatar)
+	av.Character = data.Character
 	// Portrait & spritesheet names.
-	av.portraitName = portraitName
-	av.ssFullBodyName = ssBodyName
+	av.portraitName = data.PortraitName
+	av.ssFullBodyName = data.SSFullBodyName
 	// Sprite.
-	av.sprite = internal.NewFullBodyAvatarSprite(ssBodyPic)
+	av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
 	// Portrait.
-	av.portrait = pixel.NewSprite(portraitPic, portraitPic.Bounds())
+	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
+	// Items.
+	av.eqItems = make(map[string]*ItemGraphic, 0)
+	for _, eqItemData := range data.EqItemsGraphics {
+		eqItem := NewItemGraphic(eqItemData)
+		av.eqItems[eqItem.ID()] = eqItem
+	}
 	return av, nil
 }
 
@@ -106,6 +121,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 	} else {
 		av.sprite.Idle()
 	}
+	av.updateApperance()
 	av.sprite.Update(win)
 }
 
@@ -151,3 +167,41 @@ func (av *Avatar) DestPoint() pixel.Vec {
 	return pixel.V(x, y)
 }
 
+// Equip equips specified graphical item.
+func (av *Avatar) Equip(gItem *ItemGraphic) error {
+	switch it := gItem.Item.(type) {
+	case *flameitem.Weapon:
+		err := av.Equipment().EquipHandRight(it)
+		if err != nil {
+			return err
+		}
+		av.eqItems[it.SerialID()] = gItem
+		av.sprite.SetWeapon(gItem.Spritesheet())
+		return nil
+	default:
+		return fmt.Errorf("unequipable item type")
+	}
+}
+
+// updateApperance updates avatar sprite apperance.
+func (av *Avatar) updateApperance() {
+	for _, eqi := range av.Equipment().Items() {
+		if av.eqItems[eqi.SerialID()] != nil {
+			continue
+		}
+		itemGData := res.ItemData(eqi.ID())
+		if itemGData == nil {
+			continue
+		}
+		itemGraphic := NewItemGraphic(itemGData)
+		av.eqItems[eqi.SerialID()] = itemGraphic
+	}
+	// Equipped items.
+	for _, eqItemGraphic := range av.eqItems {
+		err := av.Equip(eqItemGraphic)
+		if err != nil {
+			log.Err.Printf("new_avatar:%s:fail_to_equip_graphical_item:%v",
+				av.SerialID(), err)
+		}
+	}
+}

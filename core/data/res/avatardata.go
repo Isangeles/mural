@@ -1,7 +1,7 @@
 /*
- * item.go
+ * avatar.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,30 +21,25 @@
  *
  */
 
-package object
+package res
 
 import (
 	"github.com/faiface/pixel"
-	
-	flameitem "github.com/isangeles/flame/core/module/object/item"
-	
-	"github.com/isangeles/mural/core/object/internal"
+
+	"github.com/isangeles/flame/core/module/object/character"
 )
 
-// Struct for items with graphical
-// representation.
-type Item struct {
-	flameitem.Item
-	sprite *internal.AvatarBodyPart
-	icon   *pixel.Sprite
+// Struct for all avatar data.
+type AvatarData struct {
+	Character       *character.Character
+	PortraitName    string
+	SSHeadName      string
+	SSTorsoName     string
+	SSFullBodyName  string
+	PortraitPic     pixel.Picture
+	SSHeadPic       pixel.Picture
+	SSTorsoPic      pixel.Picture
+	SSFullBodyPic   pixel.Picture
+	EqItemsGraphics []*ItemGraphicData
 }
 
-// NewItem creates new graphical wrapper for
-// specified item.
-func NewItem(it flameitem.Item, iconPic pixel.Picture,
-	ssItemPic pixel.Picture) *Item {
-	item := new(Item)
-	item.Item = it
-	// TODO: make sprite and portrait.
-	return item
-}

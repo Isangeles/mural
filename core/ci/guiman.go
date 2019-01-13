@@ -34,7 +34,8 @@ import (
 	"github.com/isangeles/flame/cmd/burn"
 	
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/exp"
+	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/hud"
 )
@@ -163,7 +164,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		}
 		for _, av := range gui_hud.AreaAvatars() {
 			if av.SerialID() == cmd.TargetArgs()[1] {
-				err := data.ExportAvatar(av,
+				err := exp.ExportAvatar(av,
 					gui_hud.Game().Module().CharactersPath())
 				if err != nil {
 					return 8, fmt.Sprintf("%s:fail_to_export_avatar:%v",
@@ -185,7 +186,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		savName := cmd.Args()[0]
 		savDir := flame.SavegamesPath()
 		sav := gui_hud.NewGUISave()
-		err := data.ExportGUISave(sav, savDir, savName)
+		err := exp.ExportGUISave(sav, savDir, savName)
 		if err != nil {
 			return 8, fmt.Sprintf("%s:fail_to_save_gui_state:%v",
 				GUI_MAN, err)
@@ -214,7 +215,7 @@ func importGUIOption(cmd burn.Command) (int, string) {
 		}
 		savName := cmd.Args()[0]
 		savDir := flame.SavegamesPath()
-		save, err := data.ImportGUISave(gui_hud.Game(), savDir, savName)
+		save, err := imp.ImportGUISave(gui_hud.Game(), savDir, savName)
 		if err != nil {
 			return 9, fmt.Sprintf("%s:fail_to_load_save_file:%v",
 				GUI_MAN, err)

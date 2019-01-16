@@ -34,7 +34,7 @@ import (
 	flameparsexml "github.com/isangeles/flame/core/data/parsexml"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -46,7 +46,7 @@ var (
 // ImportGUISave imports GUI state from file with specified name
 // in directory with specified path.
 func ImportGUISave(game *flamecore.Game, dirPath,
-	saveName string) (*save.GUISave, error) {
+	saveName string) (*res.GUISave, error) {
 	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
 		saveName = saveName + SAVEGUI_FILE_EXT
 	}
@@ -71,12 +71,12 @@ func ImportGUISave(game *flamecore.Game, dirPath,
 
 // ImportsGUISavesDir imports all saved GUIs from save files in
 // directory with specified path.
-func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, error) {
+func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*res.GUISave, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
 	}
-	saves := make([]*save.GUISave, 0)
+	saves := make([]*res.GUISave, 0)
 	for _, fInfo := range files {
 		if !strings.HasSuffix(fInfo.Name(), SAVEGUI_FILE_EXT) {
 			continue
@@ -93,8 +93,8 @@ func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*save.GUISave, e
 }
 
 // buildGUISave builds GUI save from specified XML data.
-func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*save.GUISave, error) {
-	save := new(save.GUISave)
+func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.GUISave, error) {
+	save := new(res.GUISave)
 	// Save name.
 	save.Name = xmlSave.Name
 	// Players.

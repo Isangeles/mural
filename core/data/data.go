@@ -1,7 +1,7 @@
 /*
  * data.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ var (
 	// Paths.
 	g_dir_path  string
 	g_arch_path string
-	// Textures.
+	// Textures & fonts.
 	uiData      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
@@ -76,7 +76,7 @@ func LoadGameData() error {
 	}
 	avatarsTexs = avTexs
 	// Items spritesheets.
-	itTexs, err := loadPicturesFromArch(g_arch_path, "item/spritesheets")
+	itTexs, err := loadPicturesFromArch(g_arch_path, "item/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_items_spritesheets:%V", err)
 	}

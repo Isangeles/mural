@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ import (
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/save"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
 var (
+	// HUD colors.
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red
@@ -112,23 +112,37 @@ func (hud *HUD) Update(win *mtk.Window) {
 		win.SetClosed(true)
 	}
 	if hud.loading {
-		if hud.loaderr != nil {
+		if hud.loaderr != nil { // on loading error
 			log.Err.Printf("loading_fail:%v", hud.loaderr)
 			hud.Exit()
 		}
 	}
 	// Key events.
 	if win.JustPressed(pixelgl.KeyGraveAccent) {
-		if !hud.chat.Active() {
-			hud.chat.SetActive(true)
+		// Toggle chat activity.
+		if !hud.chat.Activated() {
+			hud.chat.Active(true)
 			hud.camera.Lock(true)
 
 		} else {
-			hud.chat.SetActive(false)
+			hud.chat.Active(false)
 			hud.camera.Lock(false)
 		}
 	}
+	if !hud.chat.Activated() { // block rest of key events if chat is active
+		if win.JustPressed(pixelgl.KeySpace) {
+			// Pause game.
+			if !hud.game.Paused() {
+				hud.game.Pause(true)
+				hud.camera.Lock(true)
+			} else {
+				hud.game.Pause(false)
+				hud.camera.Lock(false)
+			}
+		}
+	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		// Move active PC.
 		hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
 		hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
 	}
@@ -255,8 +269,8 @@ func (hud *HUD) Save(saveName string) error {
 }
 
 // Saves GUI to save struct.
-func (hud *HUD) NewGUISave() *save.GUISave {
-	sav := new(save.GUISave)
+func (hud *HUD) NewGUISave() *res.GUISave {
+	sav := new(res.GUISave)
 	// Save players avatars.
 	for _, pc := range hud.Players() {
 		avData := res.AvatarData{
@@ -275,7 +289,7 @@ func (hud *HUD) NewGUISave() *save.GUISave {
 }
 
 // LoadGUISave load specified saved GUI state.
-func (hud *HUD) LoadGUISave(save *save.GUISave) error {
+func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Players.
 	for _, pcData := range save.PlayersData {
 		pc := object.NewAvatar(pcData)

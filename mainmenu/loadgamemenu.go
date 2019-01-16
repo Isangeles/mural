@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 
+	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -151,6 +152,7 @@ func saveGamesFiles(dirPath string) ([]string, error) {
 // loadGame loads saved game file with
 // specified name.
 func (lgm *LoadGameMenu) loadGame(savName string) {
+	imp.LoadResources()
 	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
 		savName)
 	if err != nil {

@@ -1,5 +1,5 @@
 /*
- * itemdata.go
+ * loadgamemenu.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,19 +21,22 @@
  *
  */
 
+// Package with pre-loaded game resources
+// like items data, saves, etc.
 package res
 
-import (
-	"github.com/faiface/pixel"
-
-	"github.com/isangeles/flame/core/module/object/item"
+var (
+	itemsData map[string]*ItemGraphicData
 )
 
-// Struct for item graphic data.
-type ItemGraphicData struct {
-	Item            item.Item
-	IconPic         pixel.Picture
-	SpritesheetPic  pixel.Picture
+// SetItemsData sets specified map with item
+// graphic data as loaded resources data.
+func SetItemsData(data map[string]*ItemGraphicData) {
+	itemsData = data
 }
 
-
+// ItemData returns graphic data for item
+// with specified ID.
+func ItemData(itemID string) *ItemGraphicData {
+	return itemsData[itemID]
+}

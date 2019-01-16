@@ -69,7 +69,7 @@ func NewAvatar(data *res.AvatarData) *Avatar {
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	for _, eqItemData := range data.EqItemsGraphics {
 		eqItem := NewItemGraphic(eqItemData)
-		av.eqItems[eqItem.SerialID()] = eqItem
+		av.Equip(eqItem)
 	}
 	return av
 }
@@ -92,7 +92,7 @@ func NewStaticAvatar(data *res.AvatarData) (*Avatar, error) {
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	for _, eqItemData := range data.EqItemsGraphics {
 		eqItem := NewItemGraphic(eqItemData)
-		av.eqItems[eqItem.ID()] = eqItem
+		av.Equip(eqItem)
 	}
 	return av, nil
 }
@@ -177,14 +177,16 @@ func (av *Avatar) Equip(gItem *ItemGraphic) error {
 		}
 		av.eqItems[it.SerialID()] = gItem
 		av.sprite.SetWeapon(gItem.Spritesheet())
+		av.eqItems[gItem.SerialID()] = gItem
 		return nil
 	default:
-		return fmt.Errorf("unequipable item type")
+		return fmt.Errorf("unequipable_item_type")
 	}
 }
 
 // updateApperance updates avatar sprite apperance.
 func (av *Avatar) updateApperance() {
+	// Update graphical items list.
 	for _, eqi := range av.Equipment().Items() {
 		if av.eqItems[eqi.SerialID()] != nil {
 			continue
@@ -198,6 +200,9 @@ func (av *Avatar) updateApperance() {
 	}
 	// Equipped items.
 	for _, eqItemGraphic := range av.eqItems {
+		if av.Equipment().Equiped(eqItemGraphic.Item) {
+			continue
+		}
 		err := av.Equip(eqItemGraphic)
 		if err != nil {
 			log.Err.Printf("new_avatar:%s:fail_to_equip_graphical_item:%v",

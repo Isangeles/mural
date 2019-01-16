@@ -30,7 +30,7 @@ import (
 	"path/filepath"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
-	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -40,7 +40,7 @@ var (
 
 // ExportGUISave saves GUI state to file with specified name
 // in directory with specified path.
-func ExportGUISave(gui *save.GUISave, dirPath, saveName string) error {
+func ExportGUISave(gui *res.GUISave, dirPath, saveName string) error {
 	gui.Name = saveName
 	xml, err := parsexml.MarshalGUISave(gui)
 	if err != nil {

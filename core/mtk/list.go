@@ -1,7 +1,7 @@
 /*
  * list.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,9 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
-// Struct for list with 'selectable'
-// items.
+// Struct for list with 'selectable' items.
+// TODO: constructror for list with sprite
+// background.
 type List struct {
 	bgDraw      *imdraw.IMDraw
 	bgSpr       *pixel.Sprite
@@ -190,35 +191,38 @@ func (l *List) drawIMBackground(t pixel.Target) {
 
 // drawListItems draws visible list content.
 func (l *List) drawListItems(t pixel.Target) {
+	if len(l.items) < 1 { // if list empty
+		return
+	}
 	bgTLPos := pixel.V(l.DrawArea().Min.X, l.DrawArea().Max.Y)
 	listH := l.DrawArea().H()
 	var contentH float64
-	var lastItemDA pixel.Rect
-	for i := l.startIndex; i < len(l.items) && contentH + lastItemDA.H() < listH; i ++ {
+	// Draw first visible item.
+	item := l.items[l.startIndex]
+	drawMin := PosTL(item.Bounds(), bgTLPos)
+	drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
+		item.Bounds().H())
+	drawArea := pixel.R(drawMin.X, drawMin.Y,
+		drawMax.X, drawMax.Y)
+	item.Draw(t, drawArea)
+	contentH += item.DrawArea().H() + ConvSize(15)
+	lastItemDA := item.Label().DrawArea()
+	// Draw rest of visible items.
+	for i := l.startIndex+1; i < len(l.items) && contentH + lastItemDA.H() < listH; i ++ {
 		item := l.items[i]
-		if i == l.startIndex {
-			drawMin := PosTL(item.Bounds(), bgTLPos)
-			//itemPos.Y -= item.Label().Bounds().H()
-			l.drawItem(t, item, drawMin)
-			contentH += item.DrawArea().H() + ConvSize(15)
-			lastItemDA = item.Label().DrawArea()
-			continue
-		}
 		drawMin := BottomOf(lastItemDA, item.Bounds(), 15)
-		//itemPos.Y -= item.Label().Bounds().H()
-		l.drawItem(t, item, drawMin)
+		drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
+			item.Bounds().H())
+		drawArea := pixel.R(drawMin.X, drawMin.Y,
+			drawMax.X, drawMax.Y)
+		item.Draw(t, drawArea)
 		contentH += item.DrawArea().H() + ConvSize(15)
 		lastItemDA = item.Label().DrawArea()
 	}
 }
 
 // drawItemBackground draws list item background.
-func (l *List) drawItem(t pixel.Target, item *CheckSlot,
-	drawAreaMin pixel.Vec) {
-	drawAreaMax := pixel.V(l.DrawArea().Max.X, drawAreaMin.Y +
-		item.Bounds().H())
-	drawArea := pixel.R(drawAreaMin.X, drawAreaMin.Y,
-		drawAreaMax.X, drawAreaMax.Y)
+func (l *List) drawItem(t pixel.Target, item *CheckSlot, drawArea pixel.Rect) {
 	item.Draw(t, drawArea)
 }
 

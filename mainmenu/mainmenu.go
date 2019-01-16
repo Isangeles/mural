@@ -42,6 +42,7 @@ import (
 )
 
 var (
+	// Main menu elements colors.
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red

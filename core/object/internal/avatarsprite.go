@@ -27,6 +27,7 @@ import (
 	"github.com/faiface/pixel"
 	
 	"github.com/isangeles/mural/core/mtk"
+	//"github.com/isangeles/mural/log"
 )
 
 // Struct for avatar sprite animations.
@@ -61,108 +62,108 @@ func NewFullBodyAvatarSprite(spritesheet pixel.Picture) *AvatarSprite {
 
 // Draw draws current sprite elements.
 func (spr *AvatarSprite) Draw(t pixel.Target, matrix pixel.Matrix) {
+	if spr.weapon != nil {
+		spr.weapon.Draw(t, matrix)
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Draw(t, matrix)
 		return
 	}
 	spr.head.Draw(t, matrix)
 	spr.torso.Draw(t, matrix)
-	if spr.weapon != nil {
-		spr.weapon.Draw(t, matrix)
-	}
 }
 
 // Update updates current sprite elements.
 func (spr *AvatarSprite) Update(win *mtk.Window) {
+	if spr.weapon != nil {
+		spr.weapon.Update(win)
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Update(win)
 		return
 	}
 	spr.head.Update(win)
 	spr.torso.Update(win)
-	if spr.weapon != nil {
-		spr.weapon.Update(win)
-	}
 }
 
 // Up turns all current animataions up.
 func (spr *AvatarSprite) Up() {
+	if spr.weapon != nil {
+		spr.weapon.Up()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Up()
 		return
 	}
 	spr.head.Up()
 	spr.torso.Up()
-	if spr.weapon != nil {
-		spr.weapon.Up()
-	}
 }
 
 // Right turns all current animataions right.
 func (spr *AvatarSprite) Right() {
+	if spr.weapon != nil {
+		spr.weapon.Right()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Right()
 		return
 	}
 	spr.head.Right()
 	spr.torso.Right()
-	if spr.weapon != nil {
-		spr.weapon.Right()
-	}
 }
 
 // Down turns all current animataions down.
 func (spr *AvatarSprite) Down() {
+	if spr.weapon != nil {
+		spr.weapon.Down()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Down()
 		return
 	}
 	spr.head.Down()
 	spr.torso.Down()
-	if spr.weapon != nil {
-		spr.weapon.Down()
-	}
 }
 
 // Left turns all current animataions left.
 func (spr *AvatarSprite) Left() {
+	if spr.weapon != nil {
+		spr.weapon.Left()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Left()
 		return
 	}
 	spr.head.Left()
 	spr.torso.Left()
-	if spr.weapon != nil {
-		spr.weapon.Left()
-	}
 }
 
 // Idle sets idle animations as current
 // draw animations.
 func (spr *AvatarSprite) Idle() {
+	if spr.weapon != nil {
+		spr.weapon.Idle()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Idle()
 		return
 	}
 	spr.head.Idle()
 	spr.torso.Idle()
-	if spr.weapon != nil {
-		spr.weapon.Idle()
-	}
 }
 
 // Move sets move animations as current
 // draw animations.
 func (spr *AvatarSprite) Move() {
+	if spr.weapon != nil {
+		spr.weapon.Move()
+	}
 	if spr.fullBody != nil {
 		spr.fullBody.Move()
 		return
 	}
 	spr.head.Move()
 	spr.torso.Move()
-	if spr.weapon != nil {
-		spr.weapon.Move()
-	}
 }
 
 // SetHead creates head animations from specified

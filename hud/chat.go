@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ type Chat struct {
 	hud       *HUD
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
-	active    bool
+	activated bool
 	onCommand func(line string) (int, string, error)
 
 	textboxSize  pixel.Vec
@@ -97,21 +97,21 @@ func (c *Chat) Update(win *mtk.Window) {
 	c.textbox.Insert(msgs)
 	
 	c.textbox.Update(win)
-	if c.Active() {
+	if c.Activated() {
 		c.textedit.Update(win)
 	}
 }
 
-// Active checks whether chat input is
+// Activated checks whether chat input is
 // active.
-func (c *Chat) Active() bool {
-	return c.active
+func (c *Chat) Activated() bool {
+	return c.activated
 }
 
-// SetActive toggles chat intput activity.
-func (c *Chat) SetActive(active bool) {
-	c.active = active
-	c.textedit.Focus(active)
+// Active toggles chat intput activity.
+func (c *Chat) Active(active bool) {
+	c.activated = active
+	c.textedit.Focus(c.Activated())
 }
 
 // SetOnCommandFunc sets specified function as

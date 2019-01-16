@@ -215,7 +215,7 @@ func buildXMLAvatarData(char *character.Character, avXML *parsexml.AvatarXML) (*
 	for _, eqi := range char.Equipment().Items() {
 		itemGData := res.ItemData(eqi.ID())
 		if itemGData == nil {
-			log.Err.Printf("data_buil_avatar_data:%s:item_graphic_not_found:%s",
+			log.Err.Printf("data_build_avatar_data:%s:item_graphic_not_found:%s",
 				avXML.ID, eqi.ID())
 			continue
 		}

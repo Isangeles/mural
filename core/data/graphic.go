@@ -1,7 +1,7 @@
 /*
  * graphic.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,6 @@ import (
 	"github.com/golang/freetype/truetype"
 
 	"github.com/faiface/pixel"
-)
-
-var (
-	pic_png_prefix  = ".png"
-	pic_jpg_prefix  = ".jpg"
-	font_ttf_prefix = ".ttf"
 )
 
 // loadPicturesFromArch loads all pictures from specified
@@ -227,12 +221,12 @@ func loadFontFromDir(path string) (*truetype.Font, error) {
 
 // isImage checks whether specified ZIP file is a image.
 func isImage(f *zip.File) bool {
-	return strings.HasSuffix(f.Name, pic_png_prefix) ||
-		strings.HasSuffix(f.Name, pic_jpg_prefix)
+	return strings.HasSuffix(f.Name, ".png") ||
+		strings.HasSuffix(f.Name, ".jpg")
 }
 
 // isFont checks whether specified ZIP file is a
 // font file.
 func isFont(f *zip.File) bool {
-	return strings.HasSuffix(f.Name, font_ttf_prefix)
+	return strings.HasSuffix(f.Name, ".ttf")
 }

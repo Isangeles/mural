@@ -1,7 +1,7 @@
 /*
  * guisavexml.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import (
 	"io"
 	"io/ioutil"
 	
-	"github.com/isangeles/mural/core/data/save"
+	"github.com/isangeles/mural/core/data/res"
 )
 
 // Struct for XML GUI save.
@@ -54,7 +54,7 @@ type CameraXML struct {
 
 // MarshalGUISave parses specified game save to XML
 // data.
-func MarshalGUISave(save *save.GUISave) (string, error) {
+func MarshalGUISave(save *res.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
 	xmlGUI.Name = save.Name
 	for _, pcData := range save.PlayersData {

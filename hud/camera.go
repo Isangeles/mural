@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,12 +179,19 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	return pixel.V(mtk.ConvSize(pos.X)-c.Position().X,
-		mtk.ConvSize(pos.Y)-c.Position().Y)
+	posX := mtk.ConvSize(pos.X)
+	posY := mtk.ConvSize(pos.Y)
+	camX := mtk.ConvSize(c.Position().X)
+	camY := mtk.ConvSize(c.Position().Y)
+	return pixel.V(posX - camX, posY - camY)
 }
 
 // ConvCameraPos translates specified camera
 // position to area position.
 func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X+c.Position().X, pos.Y+c.Position().Y)
+	posX := pos.X
+	posY := pos.Y
+	camX := c.Position().X
+	camY := c.Position().Y
+	return pixel.V(posX + camX, posY + camY)
 }

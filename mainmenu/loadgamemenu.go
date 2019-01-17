@@ -105,6 +105,11 @@ func (lgm *LoadGameMenu) Update(win *mtk.Window) {
 // Show toggles menu visibility.
 func (lgm *LoadGameMenu) Show(show bool) {
 	lgm.opened = show
+	if show {
+		lgm.mainmenu.userFocus.Focus(lgm.savesList)
+	} else {
+		lgm.mainmenu.userFocus.Focus(nil)
+	}
 }
 
 // Opened checks whether menu is open.

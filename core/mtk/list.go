@@ -27,6 +27,7 @@ import (
 	"image/color"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
 )
 
@@ -96,6 +97,14 @@ func (l *List) Update(win *Window) {
 	if l.Disabled() {
 		return
 	}
+	if l.Focused() {
+		if win.JustPressed(pixelgl.KeyUp) {
+			l.SetStartIndex(l.startIndex - 1)
+		}
+		if win.JustPressed(pixelgl.KeyDown) {
+			l.SetStartIndex(l.startIndex + 1)
+		}
+	}
 	// Buttons.
 	l.upButton.Update(win)
 	l.downButton.Update(win)
@@ -115,6 +124,7 @@ func (l *List) Focused() bool {
 	return l.focused
 }
 
+// Active toggles list activity.
 func (l *List) Active(active bool) {
 	l.upButton.Active(active)
 	l.downButton.Active(active)
@@ -199,7 +209,7 @@ func (l *List) drawListItems(t pixel.Target) {
 	var contentH float64
 	// Draw first visible item.
 	item := l.items[l.startIndex]
-	drawMin := PosTL(item.Bounds(), bgTLPos)
+	drawMin := bgTLPos//PosTL(item.Bounds(), bgTLPos)
 	drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
 		item.Bounds().H())
 	drawArea := pixel.R(drawMin.X, drawMin.Y,
@@ -210,7 +220,7 @@ func (l *List) drawListItems(t pixel.Target) {
 	// Draw rest of visible items.
 	for i := l.startIndex+1; i < len(l.items) && contentH + lastItemDA.H() < listH; i ++ {
 		item := l.items[i]
-		drawMin := BottomOf(lastItemDA, item.Bounds(), 15)
+		drawMin := BottomOf(lastItemDA, lastItemDA, 15)
 		drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
 			item.Bounds().H())
 		drawArea := pixel.R(drawMin.X, drawMin.Y,
@@ -219,11 +229,6 @@ func (l *List) drawListItems(t pixel.Target) {
 		contentH += item.DrawArea().H() + ConvSize(15)
 		lastItemDA = item.Label().DrawArea()
 	}
-}
-
-// drawItemBackground draws list item background.
-func (l *List) drawItem(t pixel.Target, item *CheckSlot, drawArea pixel.Rect) {
-	item.Draw(t, drawArea)
 }
 
 // unselectAll unselects all list items.

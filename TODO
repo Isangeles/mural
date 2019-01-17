@@ -4,6 +4,7 @@ MAJOR:
 * Effects
 * Objects
 * Avatar: handling character equipment
+* Focusing UI elements with tab key
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Fix for textbox visible content height[MTK]

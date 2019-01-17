@@ -82,6 +82,9 @@ func (f *Focus) Focus(e Focuser) {
 		f.element.Focus(false)
 	}
 	f.element = e
+	if e == nil {
+		return
+	}
 	f.element.Focus(true)
 }
 

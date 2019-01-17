@@ -142,13 +142,20 @@ func (b *Button) Update(win *Window) {
 		}
 		b.pressed = false
 	}
-	if b.ContainsPosition(win.MousePosition()) {
+	// On-hover.
+	if b.ContainsPosition(win.MousePosition()) || b.Focused() {
 		b.hovered = true
 		if b.info != nil {	
 			b.info.Update(win)
-	}
+		}
 	} else {
 		b.hovered = false
+	}
+	// On-focus events.
+	if b.Focused() {
+		if win.JustPressed(pixelgl.KeyEnter) {
+			b.onClick(b)
+		}
 	}
 }
 

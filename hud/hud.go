@@ -27,6 +27,7 @@ package hud
 import (
 	"fmt"
 	"image/color"
+	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -212,7 +213,9 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	// Map.
 	// TODO: sometimes SetLoadInfo causes panic on load text draw.
 	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
-	areaMap, err := areamap.NewMap(area, hud.game.Module().Chapter().AreasPath())
+	mapsPath := filepath.FromSlash(hud.game.Module().Chapter().AreasPath() +
+		"/maps")
+	areaMap, err := areamap.NewMap(mapsPath, area.ID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
 		return
@@ -230,7 +233,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 				break
 			}
 		}
-		if pcAvatar != nil { // skip players, PCs already has avatar
+		if pcAvatar != nil { // skip players, PCs already have avatars
 			avatars = append(avatars, pcAvatar)
 			continue
 		}
@@ -274,10 +277,10 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 	// Save players avatars.
 	for _, pc := range hud.Players() {
 		avData := res.AvatarData{
-			Character: pc.Character,
-			PortraitName: pc.PortraitName(),
-			SSHeadName: pc.HeadSpritesheetName(),
-			SSTorsoName: pc.TorsoSpritesheetName(),
+			Character:      pc.Character,
+			PortraitName:   pc.PortraitName(),
+			SSHeadName:     pc.HeadSpritesheetName(),
+			SSTorsoName:    pc.TorsoSpritesheetName(),
 			SSFullBodyName: pc.FullBodySpritesheetName(),
 		}
 		sav.PlayersData = append(sav.PlayersData, &avData)

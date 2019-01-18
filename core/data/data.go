@@ -199,10 +199,10 @@ func Font(fileName string) (*truetype.Font, error) {
 	return loadFontFromDir(filepath.FromSlash(fullpath))
 }
 
-// Map returns TMX map with specified ID from chapter
-// area directory.
-func Map(mapId, areasPath string) (*tmx.Map, error) {
-	mapPath := filepath.FromSlash(areasPath + "/maps/" + mapId + ".tmx")
+// Map loads TMX map from file with specified
+// directory and name.
+func Map(mapDir, mapName string) (*tmx.Map, error) {
+	mapPath := filepath.FromSlash(mapDir + "/" + mapName + ".tmx")
 	tmxFile, err := os.Open(mapPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_tmx_file:%v", err)

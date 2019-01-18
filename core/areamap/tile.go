@@ -1,7 +1,7 @@
 /*
  * tile.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ package areamap
 
 import (
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 )
 
 // Struct for map tile.
@@ -34,18 +33,14 @@ type tile struct {
 	bounds pixel.Rect
 }
 
-// newTile creates new map tile.
+// newTile creates new map tile with specified sprite
+// and position.
 func newTile(spr *pixel.Sprite, pos pixel.Vec) *tile {
 	t := new(tile)
 	t.Sprite = spr
 	t.bounds = pixel.R(pos.X, pos.Y, t.Sprite.Frame().W(),
 		t.Sprite.Frame().H())
 	return t
-}
-
-// Draw draws tile.
-func (t *tile) Draw(win *pixelgl.Window, matrix pixel.Matrix) {
-	t.Sprite.Draw(win, matrix)
 }
 
 // Position returns tile position.

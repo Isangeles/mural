@@ -1,7 +1,7 @@
 /*
  * map.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,6 @@ import (
 	"github.com/salviati/go-tmx/tmx"
 
 	"github.com/faiface/pixel"
-	
-	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
@@ -41,28 +39,25 @@ import (
 )
 
 // Struct for graphical representation of area map.
-// TODO: implementation is bulky as f**k, slow and don't work well.
 type Map struct {
-	area       *scenario.Area
-	tmxMap     *tmx.Map
-	tilesets   map[string]pixel.Picture
-	tilesize   pixel.Vec
-	mapsize    pixel.Vec
-	tilescount pixel.Vec
+	tmxMap       *tmx.Map
+	tilesets     map[string]pixel.Picture
+	tilesBatches map[pixel.Picture]*pixel.Batch
+	tilesize     pixel.Vec
+	mapsize      pixel.Vec
+	tilescount   pixel.Vec
 	// Layers.
-	ground []*tile
+	ground      []*tile
 }
 
 // NewMap creates new map for specified scenario area.
-func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
+func NewMap(tmxDir, tmxName string) (*Map, error) {
 	m := new(Map)
-	m.area = area
-	mapsPath := filepath.FromSlash(areasPath + "/maps")
-	tm, err := data.Map(area.ID(), areasPath)
+	tmxMap, err := data.Map(tmxDir, tmxName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_load_TMX_file:%v", err)
+		return nil, fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)
 	}
-	m.tmxMap = tm
+	m.tmxMap = tmxMap
 	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
 		float64(m.tmxMap.TileHeight))
 	m.tilescount = pixel.V(float64(m.tmxMap.Width),
@@ -70,15 +65,17 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 	m.mapsize = pixel.V(float64(int(m.tilesize.X) * m.tmxMap.Width),
 		float64(int(m.tilesize.Y) * m.tmxMap.Height))
 	m.tilesets = make(map[string]pixel.Picture)
+	m.tilesBatches = make(map[pixel.Picture]*pixel.Batch)
 	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
-		tsPath := filepath.FromSlash(mapsPath + "/" + ts.Image.Source)
+		tsPath := filepath.FromSlash(tmxDir + "/" + ts.Image.Source)
 		tsPic, err := data.PictureFromDir(tsPath)
 		if err != nil {
 			return nil, fmt.Errorf("fail_to_retrieve_tilset_source:%v",
 				ts.Name)
 		}
 		m.tilesets[ts.Name] = tsPic
+		m.tilesBatches[tsPic] = pixel.NewBatch(&pixel.TrianglesData{}, tsPic)
 	}
 	// Map layers.
 	for _, l := range m.tmxMap.Layers {
@@ -99,28 +96,27 @@ func NewMap(area *scenario.Area, areasPath string) (*Map, error) {
 
 // Draw draws specified part of map(specific amount of tile starting
 // from specific point on map)
-// TODO: slow as f**k.
 func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
+	// Map draw area.
 	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
+	// Clear all tilesets draw batches.
+	for _, batch := range m.tilesBatches {
+		batch.Clear()
+	}
+	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
 		if drawArea.Contains(t.Position()) {
-			t.Draw(win.Window, mtk.Matrix().Moved(pixel.V(
-				mtk.ConvSize(t.Position().X),
-				mtk.ConvSize(t.Position().Y))))
+			batch := m.tilesBatches[t.Picture()]
+			if batch == nil {
+				continue
+			}
+			tileDrawPos := mapDrawPos(t.Position(), startPoint)
+			t.Draw(batch, mtk.Matrix().Moved(tileDrawPos))
 		}
 	}
-	
-}
-
-// DrawCircle draws map tiles in circular form(all tiles in specified
-// radius from specified position).
-func (m *Map) DrawCircle(win *mtk.Window, startPoint pixel.Vec, radius float64) {
-	for _, t := range m.ground {
-		if mtk.Range(startPoint, t.Position()) <= radius {
-			t.Draw(win.Window, pixel.IM.Moved(pixel.V(
-				mtk.ConvSize(t.Position().X),
-				mtk.ConvSize(t.Position().Y))))
-		}
+	// Draw bateches with layers tiles.
+	for _, batch := range m.tilesBatches {
+		batch.Draw(win)
 	}
 }
 

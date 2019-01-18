@@ -28,11 +28,16 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
+)
+
+var (
+	FOW_color pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
 )
 
 // Struct for HUD camera.
@@ -43,6 +48,7 @@ type Camera struct {
 	locked   bool
 	// Map.
 	areaMap  *areamap.Map
+	fow      *imdraw.IMDraw
 	avatars  []*object.Avatar
 	// Debug mode.
 	cameraInfo *mtk.Text
@@ -55,6 +61,7 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.size = size
 	c.position = pixel.V(0, 0)
 	c.cameraInfo = mtk.NewText("", mtk.SIZE_MEDIUM, 0)
+	c.fow = imdraw.New(nil)
 	return c
 }
 
@@ -62,10 +69,11 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		for _, pc := range c.hud.Players() {
-			c.areaMap.DrawWithFOW(win, c.position, c.size,
-				pc.Position(), pc.SightRange())
-		}
+		//for _, pc := range c.hud.Players() {
+		//	c.areaMap.DrawWithFOW(win, c.position, c.size,
+		//		pc.Position(), pc.SightRange())
+		//}
+		c.areaMap.Draw(win, c.Position(), c.Size())
 	}
 	// Objects.
 	for _, av := range c.avatars {
@@ -77,6 +85,8 @@ func (c *Camera) Draw(win *mtk.Window) {
 				}
 		}
 	}
+	// FOW effect.
+	c.drawFOW(win.Window)
 	// Debug mode.
 	if config.Debug() {
 		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
@@ -194,4 +204,36 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	camX := c.Position().X
 	camY := c.Position().Y
 	return pixel.V(posX + camX, posY + camY)
+}
+
+// drawFOW draws 'Fog Of War' effect.
+// TODO: for now only draws ring around active player
+// sight area.
+func (c *Camera) drawFOW(t pixel.Target) {
+	c.fow.Clear()
+	/*
+	w, h := 0.0, 0.0
+	for h <= c.areaMap.Size().Y {
+		tileDrawMin := c.ConvAreaPos(pixel.V(w, h))
+		tileDrawMax := pixel.V(w + c.areaMap.TileSize().X,
+			h + c.areaMap.TileSize().Y)
+		c.fow.Color = FOW_color
+		c.fow.Push(tileDrawMin)
+		c.fow.Color = FOW_color
+		c.fow.Push(tileDrawMax)
+		c.fow.Rectangle(0)
+		w += c.areaMap.TileSize().X
+		if w > c.areaMap.Size().X {
+			w = 0
+			h += c.areaMap.TileSize().Y
+		}
+	}
+        */
+	c.fow.Color = FOW_color
+	//c.fow.Push(pixel.V(0, 0))
+	//c.fow.Push(c.Size())
+	//c.fow.Rectangle(0)
+	c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
+	c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
+	c.fow.Draw(t)
 }

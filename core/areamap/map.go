@@ -62,8 +62,8 @@ func NewMap(tmxDir, tmxName string) (*Map, error) {
 		float64(m.tmxMap.TileHeight))
 	m.tilescount = pixel.V(float64(m.tmxMap.Width),
 		float64(m.tmxMap.Height))
-	m.mapsize = pixel.V(float64(int(m.tilesize.X) * m.tmxMap.Width),
-		float64(int(m.tilesize.Y) * m.tmxMap.Height))
+	m.mapsize = pixel.V(float64(int(m.tilesize.X * m.tilescount.X)),
+		float64(int(m.tilesize.Y * m.tilescount.Y)))
 	m.tilesets = make(map[string]pixel.Picture)
 	m.tilesBatches = make(map[pixel.Picture]*pixel.Batch)
 	// Tilesets.
@@ -94,23 +94,21 @@ func NewMap(tmxDir, tmxName string) (*Map, error) {
 	return m, nil
 }
 
-// Draw draws specified part of map(specific amount of tile starting
-// from specific point on map)
-func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
-	// Map draw area.
-	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
+// Draw draws map tiles with positions within specified
+// draw area.
+func (m *Map) Draw(win *mtk.Window, drawArea pixel.Rect) {
 	// Clear all tilesets draw batches.
 	for _, batch := range m.tilesBatches {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
-		if drawArea.Contains(t.Position()) {
+		tileDrawPos := MapDrawPos(t.Position(), drawArea.Min)
+		if drawArea.Contains(tileDrawPos) {
 			batch := m.tilesBatches[t.Picture()]
 			if batch == nil {
 				continue
 			}
-			tileDrawPos := mapDrawPos(t.Position(), startPoint)
 			t.Draw(batch, mtk.Matrix().Moved(tileDrawPos))
 		}
 	}
@@ -120,16 +118,24 @@ func (m *Map) Draw(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec) {
 	}
 }
 
-// DrawForChar draws only part of map visible for specified game character.
-func (m *Map) DrawWithFOW(win *mtk.Window, startPoint pixel.Vec, size pixel.Vec,
-	sightStart pixel.Vec, sightRange float64) {
-	drawArea := pixel.R(startPoint.X, startPoint.Y, size.X, size.Y)
+// DrawFull draws whole map starting from specified position.
+func (m *Map) DrawFull(win *mtk.Window, drawStart pixel.Vec) {
+	// Clear all tilesets draw batches.
+	for _, batch := range m.tilesBatches {
+		batch.Clear()
+	}
+	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
-		if drawArea.Contains(t.Position()) &&
-			mtk.Range(sightStart, t.Position()) <= sightRange {
-			tileDrawPos := mapDrawPos(t.Position(), startPoint)
-			t.Draw(win.Window, mtk.Matrix().Moved(tileDrawPos))
+		tileDrawPos := MapDrawPos(t.Position(), drawStart)
+		batch := m.tilesBatches[t.Picture()]
+		if batch == nil {
+			continue
 		}
+		t.Draw(batch, mtk.Matrix().Moved(tileDrawPos))
+	}
+	// Draw bateches with layers tiles.
+	for _, batch := range m.tilesBatches {
+		batch.Draw(win)
 	}
 }
 
@@ -148,15 +154,12 @@ func (m *Map) Size() pixel.Vec {
 func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
 	tileCount := 0
 	tilesetSize := roundTilesetSize(tileset.Bounds().Max, m.tilesize)
-	//fmt.Printf("tileset_size:%v\n", tilesetSize)
 	for h := tilesetSize.Y - m.tilesize.Y; h - m.tilesize.Y >= 0;
 	h -= m.tilesize.Y {
 		for w := 0.0; w + m.tilesize.X <= tilesetSize.X; w += m.tilesize.X {
-			//fmt.Printf("tile_id:%d\n", tileCount)
 			if tileCount == int(tileId) {
 				tileBounds := pixel.R(w, h, w + m.tilesize.X,
 					h + m.tilesize.Y)
-				//fmt.Printf("tile_id:%d, tile_bounds:%v\n", tileCount, tileBounds)
 				return tileBounds
 			}
 			tileCount++
@@ -169,8 +172,8 @@ func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
 // with tile sprites.
 func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 	tiles := make([]*tile, 0)
-	tileIdX := 1
-	tileIdY := 1
+	tileIdX := 0
+	tileIdY := 0
 	for _, dt := range layer.DecodedTiles {
 		tileset := dt.Tileset
 		if tileset != nil {
@@ -185,9 +188,9 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 			tilePos := pixel.V(float64(int(m.tilesize.X)*tileIdX),
 				float64(int(m.tilesize.Y)*tileIdY))
 			tile := newTile(pic, tilePos)
-			tiles = append(tiles, tile)	
+			tiles = append(tiles, tile)
 			tileIdX++
-			if tileIdX > int(m.tilescount.X) {
+			if tileIdX > int(m.tilescount.X)-1 {
 				tileIdX = 0
 				tileIdY++
 			}		
@@ -196,10 +199,13 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 	return tiles, nil
 }
 
-// mapDrawPos translates real position to map draw position.
-func mapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
-	return pixel.V(mtk.ConvSize(pos.X - drawPos.X),
-		mtk.ConvSize(pos.Y - drawPos.Y))
+// MapDrawPos translates real position to map draw position.
+func MapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
+	posX := mtk.ConvSize(pos.X)
+	posY := mtk.ConvSize(pos.Y)
+	drawX := mtk.ConvSize(drawPos.X)
+	drawY := mtk.ConvSize(drawPos.Y)
+	return pixel.V(posX - drawX, posY - drawY)
 }
 
 // roundTilesetSize rounds tileset size to to value that can be divided

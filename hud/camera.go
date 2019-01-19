@@ -46,7 +46,7 @@ type Camera struct {
 	position pixel.Vec
 	size     pixel.Vec
 	locked   bool
-	// Map.
+	// Map & objects.
 	areaMap  *areamap.Map
 	fow      *imdraw.IMDraw
 	avatars  []*object.Avatar
@@ -69,11 +69,10 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		//for _, pc := range c.hud.Players() {
-		//	c.areaMap.DrawWithFOW(win, c.position, c.size,
-		//		pc.Position(), pc.SightRange())
-		//}
-		c.areaMap.Draw(win, c.Position(), c.Size())
+		//mapDA := pixel.R(c.Position().X, c.Position().Y,
+		//	c.Size().X, c.Size().Y)
+		//c.areaMap.Draw(win, mapDA)
+		c.areaMap.DrawFull(win, c.Position())
 	}
 	// Objects.
 	for _, av := range c.avatars {
@@ -86,11 +85,13 @@ func (c *Camera) Draw(win *mtk.Window) {
 		}
 	}
 	// FOW effect.
-	c.drawFOW(win.Window)
+	if config.MapFOW() {
+		c.drawMapFOW(win.Window)
+	}
 	// Debug mode.
 	if config.Debug() {
-		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBL(
-			c.cameraInfo.Bounds(), win.Bounds().Center())))
+		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBR(
+			c.cameraInfo.Bounds(), win.PointBR())))
 	}
 }
 
@@ -189,11 +190,7 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	posX := mtk.ConvSize(pos.X)
-	posY := mtk.ConvSize(pos.Y)
-	camX := mtk.ConvSize(c.Position().X)
-	camY := mtk.ConvSize(c.Position().Y)
-	return pixel.V(posX - camX, posY - camY)
+	return areamap.MapDrawPos(pos, c.Position())
 }
 
 // ConvCameraPos translates specified camera
@@ -206,34 +203,43 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	return pixel.V(posX + camX, posY + camY)
 }
 
-// drawFOW draws 'Fog Of War' effect.
-// TODO: for now only draws ring around active player
-// sight area.
-func (c *Camera) drawFOW(t pixel.Target) {
+// VisibleForPlayers checks whether specified position is
+// in visibility range of any HUD PCs.
+func (c *Camera) VisibleForPlayers(pos pixel.Vec) bool {
+	for _, pc := range c.hud.Players() {
+		if mtk.Range(pc.Position(), pos) <= pc.SightRange() {
+			return true
+		}
+	}
+	return false
+}
+
+// drawMapFOW draws 'Fog Of War' effect on current area map.
+func (c *Camera) drawMapFOW(t pixel.Target) {
 	c.fow.Clear()
-	/*
 	w, h := 0.0, 0.0
-	for h <= c.areaMap.Size().Y {
-		tileDrawMin := c.ConvAreaPos(pixel.V(w, h))
-		tileDrawMax := pixel.V(w + c.areaMap.TileSize().X,
-			h + c.areaMap.TileSize().Y)
-		c.fow.Color = FOW_color
-		c.fow.Push(tileDrawMin)
-		c.fow.Color = FOW_color
-		c.fow.Push(tileDrawMax)
-		c.fow.Rectangle(0)
+	for h < c.areaMap.Size().Y {
+		pos := pixel.V(w, h)
+		if !c.VisibleForPlayers(pos) {
+			// Draw FOW tile.
+			tileDrawMin := c.ConvAreaPos(pos)
+			tileDrawMax := pixel.V(tileDrawMin.X + c.areaMap.TileSize().X,
+				tileDrawMin.Y + c.areaMap.TileSize().Y)
+			c.fow.Color = FOW_color
+			c.fow.Push(tileDrawMin)
+			c.fow.Push(tileDrawMax)
+			c.fow.Rectangle(0)
+		}
+		// Next tile.
 		w += c.areaMap.TileSize().X
 		if w > c.areaMap.Size().X {
-			w = 0
+			w = 0.0
 			h += c.areaMap.TileSize().Y
 		}
 	}
-        */
-	c.fow.Color = FOW_color
-	//c.fow.Push(pixel.V(0, 0))
-	//c.fow.Push(c.Size())
-	//c.fow.Rectangle(0)
-	c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
-	c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
+	// 'FOW ring' effect.
+	//c.fow.Color = FOW_color
+	//c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
+	//c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
 	c.fow.Draw(t)
 }

@@ -1,7 +1,7 @@
 /*
  * avatarbodypart.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ import (
 
 // Struct for avatar sprite body part
 // (e.g. body, head, weapon).
+// TODO: animations for kneel, melee,
+// range shoot and spell cast.
 type AvatarBodyPart struct {
 	drawAnim *mtk.MultiAnimation
 	idleAnim *mtk.MultiAnimation

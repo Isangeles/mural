@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ const (
 
 var (
 	fullscreen bool
+	mapfow     bool = true
 	resolution pixel.Vec
 	lang = flame.LangID()
 )
@@ -54,13 +55,13 @@ var (
 // LoadConfig loads configuration file.
 func LoadConfig() error {
 	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
-		"resolution")
+		"resolution", "map_fow")
 	if err != nil {
 		return err
 	}
-
+	// Fullscreen.
 	fullscreen = confValues[0] == "true"
-	
+	// Resolution.
 	resValue := confValues[1]
 	resolution.X, err = strconv.ParseFloat(strings.Split(resValue,
 		"x")[0], 64)
@@ -69,6 +70,8 @@ func LoadConfig() error {
 	if err != nil {
 		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
 	}
+	// Map FOW effect.
+	mapfow = confValues[2] == "true"
 	
 	log.Dbg.Print("config file loaded")
 	return nil
@@ -83,10 +86,11 @@ func SaveConfig() error {
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
-	w.WriteString(fmt.Sprintf("%s\n", "#Mural GUI configuration file.")) // default header
+	w.WriteString(fmt.Sprintf("%s\n", "# Mural GUI configuration file.")) // default header
 	w.WriteString(fmt.Sprintf("fullscreen:%v;\n", fullscreen))
 	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X,
 		resolution.Y))
+	w.WriteString(fmt.Sprintf("map_fow:%v;\n", mapfow))
 	w.Flush()
 
 	log.Dbg.Print("config file saved")
@@ -111,6 +115,12 @@ func Lang() string {
 // Debug checks whether debug mode is enabled.
 func Debug() bool {
 	return enginelog.IsDebug()
+}
+
+// MapFOW checks whether map 'Fog Of War' effect
+// in enabled.
+func MapFOW() bool {
+	return mapfow
 }
 
 // SetFullscreen toggles fullscreen mode.

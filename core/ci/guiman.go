@@ -1,7 +1,7 @@
 /*
  * guiman.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,15 +106,21 @@ func setGUIOption(cmd burn.Command) (int, string) {
                 }
 		
 		resInput := cmd.Args()[0]
-		resX, err := strconv.ParseFloat(strings.Split(resInput,
-			"x")[0], 64)
-		resY, err := strconv.ParseFloat(strings.Split(resInput,
-			"x")[1], 64)
+		resX, err := strconv.ParseFloat(strings.Split(resInput, "x")[0], 64)
+		resY, err := strconv.ParseFloat(strings.Split(resInput, "x")[1], 64)
 		if err != nil {
 			return 8, fmt.Sprintf("%s:invalid_input:%s", GUI_MAN,
 				cmd.OptionArgs()[0])
 		}
 		config.SetResolution(pixel.V(resX, resY))
+		return 0, ""
+	case "fow":
+		if len(cmd.Args()) < 1 {
+                        return 7, fmt.Sprintf("%s:no_enought_args_for:%s", GUI_MAN,
+				cmd.TargetArgs()[0])
+                }
+		fow := cmd.Args()[0] == "on"
+		config.SetMapFOW(fow)
 		return 0, ""
 	default:
 		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,

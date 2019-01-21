@@ -42,14 +42,14 @@ var (
 
 // Struct for HUD camera.
 type Camera struct {
-	hud      *HUD
-	position pixel.Vec
-	size     pixel.Vec
-	locked   bool
+	hud        *HUD
+	position   pixel.Vec
+	size       pixel.Vec
+	locked     bool
 	// Map & objects.
-	areaMap  *areamap.Map
-	fow      *imdraw.IMDraw
-	avatars  []*object.Avatar
+	areaMap    *areamap.Map
+	fow        *imdraw.IMDraw
+	avatars    []*object.Avatar
 	// Debug mode.
 	cameraInfo *mtk.Text
 }
@@ -69,10 +69,8 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		//mapDA := pixel.R(c.Position().X, c.Position().Y,
-		//	c.Size().X, c.Size().Y)
-		//c.areaMap.Draw(win, mapDA)
-		c.areaMap.DrawFull(win, c.Position())
+		//c.areaMap.Draw(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
+		c.areaMap.DrawFull(win.Window, mtk.Matrix().Moved(c.Position()))
 	}
 	// Objects.
 	for _, av := range c.avatars {
@@ -190,7 +188,7 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	return areamap.MapDrawPos(pos, c.Position())
+	return areamap.MapDrawPos(pos, mtk.Matrix().Moved(c.Position()))
 }
 
 // ConvCameraPos translates specified camera
@@ -222,9 +220,11 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 		pos := pixel.V(w, h)
 		if !c.VisibleForPlayers(pos) {
 			// Draw FOW tile.
+			tileSizeX := mtk.ConvSize(c.areaMap.TileSize().X)
+			tileSizeY := mtk.ConvSize(c.areaMap.TileSize().Y)
 			tileDrawMin := c.ConvAreaPos(pos)
-			tileDrawMax := pixel.V(tileDrawMin.X + c.areaMap.TileSize().X,
-				tileDrawMin.Y + c.areaMap.TileSize().Y)
+			tileDrawMax := pixel.V(tileDrawMin.X + tileSizeX,
+				tileDrawMin.Y + tileSizeY)
 			c.fow.Color = FOW_color
 			c.fow.Push(tileDrawMin)
 			c.fow.Push(tileDrawMax)

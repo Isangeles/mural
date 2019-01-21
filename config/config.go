@@ -42,7 +42,7 @@ import (
 
 const (
 	NAME, VERSION = "Mural", "0.0.0"
-	CONF_FILE_NAME string = ".mural"
+	CONF_FILE_NAME = ".mural"
 )
 
 var (
@@ -50,12 +50,13 @@ var (
 	mapfow     bool = true
 	resolution pixel.Vec
 	lang = flame.LangID()
+	mainFontName = ""
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
 	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
-		"resolution", "map_fow")
+		"resolution", "map_fow", "main_font")
 	if err != nil {
 		return err
 	}
@@ -72,6 +73,7 @@ func LoadConfig() error {
 	}
 	// Map FOW effect.
 	mapfow = confValues[2] == "true"
+	mainFontName = confValues[3]
 	
 	log.Dbg.Print("config file loaded")
 	return nil
@@ -91,6 +93,7 @@ func SaveConfig() error {
 	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X,
 		resolution.Y))
 	w.WriteString(fmt.Sprintf("map_fow:%v;\n", mapfow))
+	w.WriteString(fmt.Sprintf("main_font:%s;\n", mainFontName))
 	w.Flush()
 
 	log.Dbg.Print("config file saved")
@@ -123,6 +126,12 @@ func MapFOW() bool {
 	return mapfow
 }
 
+// MainFontName returns name of main font
+// for UI.
+func MainFontName() string  {
+	return mainFontName
+}
+
 // SetFullscreen toggles fullscreen mode.
 func SetFullscreen(fs bool) {
 	fullscreen = fs
@@ -134,12 +143,26 @@ func SetResolution(res pixel.Vec) {
 	resolution = res
 }
 
-// SetLang sets language with specified ID as current language.
+// SetLang sets language with specified ID as current
+// language.
 func SetLang(langID string) {
-	// TODO: set flame lang ID.
+	_ = flame.SetLang(langID)
 }
 
-// SupportedResolutions returns all resolutions supported by UI.
+// SetMapFOW toggles map 'Fog Of War' graphical
+// effect.
+func SetMapFOW(fow bool) {
+	mapfow = fow
+}
+
+// SetMainFotName set specified font file name
+// as name for main UI font.
+func SetMainFontName(font string) {
+	mainFontName = font
+}
+
+// SupportedResolutions returns all resolutions
+// supported by UI.
 func SupportedResolutions() []pixel.Vec {
 	return []pixel.Vec{pixel.V(1920, 1080), pixel.V(1300, 720)}
 }

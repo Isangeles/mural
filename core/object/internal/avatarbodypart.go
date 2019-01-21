@@ -31,8 +31,8 @@ import (
 
 // Struct for avatar sprite body part
 // (e.g. body, head, weapon).
-// TODO: animations for kneel, melee,
-// range shoot and spell cast.
+// TODO: animations for kneel, melee, range shoot
+// and spell cast.
 type AvatarBodyPart struct {
 	drawAnim *mtk.MultiAnimation
 	idleAnim *mtk.MultiAnimation

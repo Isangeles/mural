@@ -42,6 +42,7 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
@@ -215,7 +216,12 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
 	mapsPath := filepath.FromSlash(hud.game.Module().Chapter().AreasPath() +
 		"/maps")
-	areaMap, err := areamap.NewMap(mapsPath, area.ID())
+	tmxMap, err := data.Map(mapsPath, area.ID())
+	if err != nil {
+		hud.loaderr = fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)
+		return
+	}
+	areaMap, err := areamap.NewMap(tmxMap, mapsPath)
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
 		return

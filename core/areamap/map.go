@@ -34,8 +34,6 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/log"
 )
 
 // Struct for graphical representation of area map.
@@ -51,13 +49,9 @@ type Map struct {
 }
 
 // NewMap creates new map for specified scenario area.
-func NewMap(tmxDir, tmxName string) (*Map, error) {
+func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 	m := new(Map)
-	tmxMap, err := data.Map(tmxDir, tmxName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)
-	}
-	m.tmxMap = tmxMap
+	m.tmxMap = mapData
 	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
 		float64(m.tmxMap.TileHeight))
 	m.tilescount = pixel.V(float64(m.tmxMap.Width),
@@ -68,7 +62,7 @@ func NewMap(tmxDir, tmxName string) (*Map, error) {
 	m.tilesBatches = make(map[pixel.Picture]*pixel.Batch)
 	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
-		tsPath := filepath.FromSlash(tmxDir + "/" + ts.Image.Source)
+		tsPath := filepath.FromSlash(mapDir + "/" + ts.Image.Source)
 		tsPic, err := data.PictureFromDir(tsPath)
 		if err != nil {
 			return nil, fmt.Errorf("fail_to_retrieve_tilset_source:%v",
@@ -83,12 +77,12 @@ func NewMap(tmxDir, tmxName string) (*Map, error) {
 		case "ground":
 			l, err := mapLayer(m, l)
 			if err != nil {
-				return nil,
-				fmt.Errorf("fail_to_create_ground_layer:%v", err)
+				return nil, fmt.Errorf("fail_to_create_ground_layer:%v",
+					err)
 			}
 			m.ground = l
 		default:
-			log.Err.Printf("map_builder:unknown_layer:%s", l.Name)
+			fmt.Printf("map_builder:unknown_layer:%s\n", l.Name)
 		}
 	}
 	return m, nil
@@ -96,20 +90,23 @@ func NewMap(tmxDir, tmxName string) (*Map, error) {
 
 // Draw draws map tiles with positions within specified
 // draw area.
-func (m *Map) Draw(win *mtk.Window, drawArea pixel.Rect) {
+// TODO: don't work well.
+func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
+	drawArea := pixel.R(matrix[4], matrix[5], size.X, size.Y)
 	// Clear all tilesets draw batches.
 	for _, batch := range m.tilesBatches {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
-		tileDrawPos := MapDrawPos(t.Position(), drawArea.Min)
+		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		if drawArea.Contains(tileDrawPos) {
 			batch := m.tilesBatches[t.Picture()]
 			if batch == nil {
 				continue
 			}
-			t.Draw(batch, mtk.Matrix().Moved(tileDrawPos))
+			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+				matrix[0]).Moved(tileDrawPos))
 		}
 	}
 	// Draw bateches with layers tiles.
@@ -119,19 +116,20 @@ func (m *Map) Draw(win *mtk.Window, drawArea pixel.Rect) {
 }
 
 // DrawFull draws whole map starting from specified position.
-func (m *Map) DrawFull(win *mtk.Window, drawStart pixel.Vec) {
+func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 	// Clear all tilesets draw batches.
 	for _, batch := range m.tilesBatches {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
-		tileDrawPos := MapDrawPos(t.Position(), drawStart)
+		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		batch := m.tilesBatches[t.Picture()]
 		if batch == nil {
 			continue
 		}
-		t.Draw(batch, mtk.Matrix().Moved(tileDrawPos))
+		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+			matrix[0]).Moved(tileDrawPos))
 	}
 	// Draw bateches with layers tiles.
 	for _, batch := range m.tilesBatches {
@@ -179,8 +177,7 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 		if tileset != nil {
 			tilesetPic := m.tilesets[tileset.Name]
 			if tilesetPic == nil {
-				return nil, fmt.Errorf(
-					"fail_to_found_tileset_source:%s",
+				return nil, fmt.Errorf("fail_to_found_tileset_source:%s",
 					tileset.Name)
 			}
 			tileBounds := m.tileBounds(tilesetPic, dt.ID)
@@ -200,11 +197,13 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 }
 
 // MapDrawPos translates real position to map draw position.
-func MapDrawPos(pos, drawPos pixel.Vec) pixel.Vec {
-	posX := mtk.ConvSize(pos.X)
-	posY := mtk.ConvSize(pos.Y)
-	drawX := mtk.ConvSize(drawPos.X)
-	drawY := mtk.ConvSize(drawPos.Y)
+func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
+	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) // 
+	drawScale := drawMatrix[0]
+	posX := pos.X * drawScale
+	posY := pos.Y * drawScale
+	drawX := drawPos.X * drawScale
+	drawY := drawPos.Y * drawScale
 	return pixel.V(posX - drawX, posY - drawY)
 }
 

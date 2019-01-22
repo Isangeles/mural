@@ -76,7 +76,8 @@ func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates progress bar.
 func (pb *ProgressBar) Update(win *Window) {
-
+	// TODO: update bar background for current
+	// progress value.
 }
 
 // Frame returns bar size bounds.
@@ -85,6 +86,28 @@ func (pb *ProgressBar) Frame() pixel.Rect {
 		return pb.bgSpr.Frame()
 	}
 	return pb.size.BarSize()
+}
+
+// Value retruns current progress value.
+func (pb *ProgressBar) Value() int {
+	return pb.value
+}
+
+// SetValue sets specified value as
+// current progress value.
+func (pb *ProgressBar) SetValue(val int) {
+	pb.value = val
+}
+
+// Max retruns maximal progress value.
+func (pb *ProgressBar) Max() int {
+	return pb.max
+}
+
+// SetMax sets specified value as progress
+// maximal value.
+func (pb *ProgressBar) SetMax(max int) {
+	pb.max = max
 }
 
 // drawIMBackground draws bar background with pixel IMDraw.

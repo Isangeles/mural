@@ -83,7 +83,7 @@ func PosTR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X - (size.Size().X / 2), pos.Y - (size.Size().Y))
 }
 
-// PosTL returns top leftt point for specified position
+// PosTL returns top left point for specified position
 // of specified rectangle.
 func PosTL(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X + (size.Size().X / 2), pos.Y - (size.Size().Y))

@@ -150,6 +150,16 @@ func (s Size) ListSize() pixel.Rect {
 	}
 }
 
+// BarSize returns size parameters for progress bar.
+func (s Size) BarSize() pixel.Rect {
+	switch {
+	case s <= SIZE_MINI:
+		return pixel.R(0, 0, ConvSize(100), ConvSize(10))
+	default:
+		return pixel.R(0, 0, 0, 0)
+	}
+}
+
 // Sets specified truetype font as current main font of
 // the interface.
 func SetMainFont(font *truetype.Font) {

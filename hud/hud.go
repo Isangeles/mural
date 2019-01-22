@@ -62,6 +62,7 @@ var (
 type HUD struct {
 	loadScreen *LoadingScreen
 	camera     *Camera
+	pcFrame    *CharFrame
 	chat       *Chat
 
 	game     *flamecore.Game
@@ -90,6 +91,13 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
 	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	// Active player character frame.
+	pcFrame, err := newCharFrame(hud, hud.ActivePlayer())
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_create_active_pc_frame:%v",
+			err)
+	}
+	hud.pcFrame = pcFrame
 	// Chat window.
 	hud.chat = newChat(hud)
 	// Start game loading.
@@ -102,8 +110,13 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
 	} else {
+		// Elements positions.
+		pcFramePos := mtk.PosTL(hud.pcFrame.Bounds(),
+			win.PointTL())
+		// Draw elements.
 		hud.camera.Draw(win)
 		hud.chat.Draw(win)
+		hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
 	}
 }
 
@@ -151,6 +164,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
 	hud.chat.Update(win)
+	hud.pcFrame.Update(win)
 }
 
 // Camera position returns current position of

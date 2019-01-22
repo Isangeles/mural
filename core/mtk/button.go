@@ -1,7 +1,7 @@
 /*
  * button.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +164,6 @@ func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
 	b.bgDraw.Clear()
 	b.bgDraw.Color = pixel.ToRGBA(color)
 	b.bgDraw.Push(b.drawArea.Min)
-	b.bgDraw.Color = pixel.ToRGBA(color)
 	b.bgDraw.Push(b.drawArea.Max)
 	b.bgDraw.Rectangle(0)
 	b.bgDraw.Draw(t)

@@ -47,7 +47,7 @@ var (
 	g_dir_path  string
 	g_arch_path string
 	// Textures & fonts.
-	uiData      map[string]pixel.Picture
+	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
@@ -98,7 +98,7 @@ func LoadUIData() error {
 	if err != nil {
 		return fmt.Errorf("fail to load UI textures")
 	}
-	uiData = texs
+	uiTexs = texs
 	// Fonts.
 	ttfs, err := loadFontsFromArch(g_arch_path, "font")
 	if err != nil {
@@ -111,7 +111,7 @@ func LoadUIData() error {
 // PictureUI loads image with specified name from UI data
 // in gdata archive.
 func PictureUI(fileName string) (pixel.Picture, error) {
-	pic := uiData[fileName]
+	pic := uiTexs[fileName]
 	if pic != nil {
 		return pic, nil
 	}

@@ -174,9 +174,9 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 		s.info.Draw(t)
 	}
 	// Buttons.
-	s.prevButton.Draw(t, pixel.IM.Moved(LeftOf(valueDA, s.prevButton.Frame(),
+	s.prevButton.Draw(t, Matrix().Moved(LeftOf(valueDA, s.prevButton.Frame(),
 		10)))
-	s.nextButton.Draw(t, pixel.IM.Moved(RightOf(valueDA, s.nextButton.Frame(),
+	s.nextButton.Draw(t, Matrix().Moved(RightOf(valueDA, s.nextButton.Frame(),
 		10)))
 }
 

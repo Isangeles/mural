@@ -92,3 +92,9 @@ func (w *Window) PointBR() pixel.Vec {
 	return pixel.V(w.Bounds().Max.X,
 		w.Bounds().Min.Y)
 }
+
+// PointBL returns position of bottom left corner
+// of window.
+func (w *Window) PointBL() pixel.Vec {
+	return w.Bounds().Min
+}

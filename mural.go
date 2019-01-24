@@ -139,8 +139,10 @@ func run() {
 	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
 	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
+	fpsInfo.JustRight()
 	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
+	versionInfo.JustRight()
 	// Main loop.
 	for !win.Closed() {
 		// Draw.
@@ -153,8 +155,8 @@ func run() {
 		if config.Debug() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
 				fpsInfo.Bounds(), win.Bounds().Max)))
-			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTL(
-				versionInfo.Bounds(), win.PointTL())))
+			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.LeftOf(
+				fpsInfo.DrawArea(), versionInfo.Bounds(), 5)))
 		}
 		// Update.
 		win.Update()

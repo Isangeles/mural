@@ -35,6 +35,7 @@ const (
 
 var (
 	scale float64 = 0.0
+	res   pixel.Vec
 )
 
 // Scale return scale value for current resolution.
@@ -101,6 +102,24 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 	return pixel.V(pos.X - (size.Size().X / 2), pos.Y + (size.Size().Y / 2))
 }
 
+// DrawPosTR returns top left position for draw specifed
+// object with specified size.
+func DrawPosTL(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Min.X + ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+}
+
+// DrawPosTR returns top right draw position(center) on specified
+// background for specified object.
+func DrawPosTR(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Max.X - ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+} 
+
+// DrawPosCT returns center top draw position(center) on specified
+// background for specified object.
+func DrawPosCT(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Center().X - ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+}
+
 // TopOf returns position for specified rect at the top of specified
 // draw area, with specified offset value.
 func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
@@ -153,7 +172,8 @@ func MatrixToDrawArea(matrix pixel.Matrix, rect pixel.Rect) (drawArea pixel.Rect
 // initScale calculates global scale for MTK elements for specified
 // resolution.
 // Called on new MTK window create.
-func initScale(res pixel.Vec) {
+func initScale(r pixel.Vec) {
+	res = r
 	scaleX := res.X / def_res_x;
 	scaleY := res.Y / def_res_y;
 	scale = math.Round(math.Min(scaleX, scaleY) * 10) / 10;

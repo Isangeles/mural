@@ -52,6 +52,7 @@ type Camera struct {
 	avatars    []*object.Avatar
 	// Debug mode.
 	cameraInfo *mtk.Text
+	cursorInfo *mtk.Text
 }
 
 // newCamera creates new instance of camera.
@@ -60,8 +61,9 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.hud = hud
 	c.size = size
 	c.position = pixel.V(0, 0)
-	c.cameraInfo = mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	c.fow = imdraw.New(nil)
+	c.cameraInfo = mtk.NewText("", mtk.SIZE_MEDIUM, 0)
+	c.cursorInfo = mtk.NewText("", mtk.SIZE_MEDIUM, 0)
 	return c
 }
 
@@ -90,6 +92,8 @@ func (c *Camera) Draw(win *mtk.Window) {
 	if config.Debug() {
 		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBR(
 			c.cameraInfo.Bounds(), win.PointBR())))
+		c.cursorInfo.Draw(win, mtk.Matrix().Moved(mtk.TopOf(
+			c.cameraInfo.DrawArea(), c.cursorInfo.Bounds(), 10)))
 	}
 }
 
@@ -136,6 +140,8 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
 		c.Position()))
+	c.cursorInfo.SetText(fmt.Sprintf("cursor_pos:%v",
+		win.MousePosition()))
 }
 
 // SetMap sets maps for camera.

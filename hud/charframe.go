@@ -27,6 +27,8 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
+	"github.com/isangeles/flame/core/data/text/lang"
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
@@ -38,8 +40,9 @@ import (
 type CharFrame struct {
 	hud      *HUD
 	char     *object.Avatar
-	bg       *pixel.Sprite
+	bgSpr    *pixel.Sprite
 	bgDraw   *imdraw.IMDraw
+	drawArea pixel.Rect
 	hpBar    *mtk.ProgressBar
 }
 
@@ -51,7 +54,7 @@ func newCharFrame(hud *HUD, char *object.Avatar) (*CharFrame, error) {
 	// Background.
 	bg, err := data.PictureUI("charframe.png")
 	if err == nil {
-		cf.bg = pixel.NewSprite(bg, bg.Bounds())
+		cf.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else { // fallback
 		cf.bgDraw = imdraw.New(nil)
 		log.Err.Printf("hud_char_frame:bg_texture_not_found:%v", err)
@@ -59,28 +62,33 @@ func newCharFrame(hud *HUD, char *object.Avatar) (*CharFrame, error) {
 	// Bars.
 	hpBarPic, err := data.PictureUI("bar_red.png")
 	if err == nil {
-		cf.hpBar = mtk.NewProgressBarSprite(hpBarPic, mtk.SIZE_MINI, "HP:")
+		cf.hpBar = mtk.NewProgressBarSprite(hpBarPic, mtk.SIZE_MINI,
+			lang.Text("gui", "char_frame_hp_bar_label"), 100)
 	} else { // fallback
-		cf.hpBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color, "HP:")
+		cf.hpBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color,
+			lang.Text("gui", "char_frame_hp_bar_label"), 100)
 		log.Err.Printf("hud_char_frame:hp_bar_texture_not_found:%v", err)
 	}
+	cf.hpBar.SetValue(50)
 	return cf, nil
 }
 
 // Draw draws character frame.
 func (cf *CharFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
+	cf.drawArea = mtk.MatrixToDrawArea(matrix, cf.Bounds())
 	// Background.
-	if cf.bg != nil {
-		cf.bg.Draw(win.Window, matrix)
+	if cf.bgSpr != nil {
+		cf.bgSpr.Draw(win.Window, matrix)
 	} else {
 		cf.drawIMBackground(win)
 	}
 	// Portrait.
-	portraitPos := pixel.V(matrix[4] - 65, matrix[5] - 10)
-	cf.char.Portrait().Draw(win, matrix.Moved(pixel.V(-30, 0)).Scaled(portraitPos,
-		0.5))
+	portraitPos := pixel.V(mtk.ConvSize(-70), mtk.ConvSize(5))
+	cf.char.Portrait().Draw(win, matrix.Scaled(cf.DrawArea().Center(),
+		0.5).Moved(portraitPos))
 	// Bars.
-	cf.hpBar.Draw(win.Window, matrix)
+	hpBarPos := pixel.V(mtk.ConvSize(35), mtk.ConvSize(25))
+	cf.hpBar.Draw(win.Window, matrix.Moved(hpBarPos))
 }
 
 // Update updates character frame.
@@ -90,10 +98,16 @@ func (cf *CharFrame) Update(win *mtk.Window) {
 
 // Bounds returns size bounds of character frame.
 func (cf *CharFrame) Bounds() pixel.Rect {
-	if cf.bg == nil {
+	if cf.bgSpr == nil {
+		// TODO: bounds for draw background.
 		return pixel.R(0, 0, 0, 0)
 	}
-	return cf.bg.Frame()
+	return cf.bgSpr.Frame()
+}
+
+// DrawArea retruns current frame draw area.
+func (cf *CharFrame) DrawArea() pixel.Rect {
+	return cf.drawArea
 }
 
 // drawIMBackground draw character frame with pixel

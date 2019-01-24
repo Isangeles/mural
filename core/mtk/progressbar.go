@@ -44,28 +44,30 @@ type ProgressBar struct {
 // NewProgressBar creates new progress bar with IMDraw
 // background bar with specified size, color and label text.
 func NewProgressBar(size Size, color color.Color,
-	labelText string) *ProgressBar {
+	labelText string, max int) *ProgressBar {
 	pb := new(ProgressBar)
 	pb.size = size
 	pb.color = color
 	pb.bgDraw = imdraw.New(nil)
 	pb.label = NewText(labelText, pb.size-1, 0)
+	pb.SetMax(max)
 	return pb
 }
 
 // NewProgressBarSprite creates new progress bar with
 // specified background texture, and label.
 func NewProgressBarSprite(bgPic pixel.Picture,
-	labelSize Size, labelText string) *ProgressBar {
+	labelSize Size, labelText string, max int) *ProgressBar {
 	pb := new(ProgressBar)
 	pb.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
 	pb.label = NewText(labelText, labelSize, 0)
+	pb.SetMax(max)
 	return pb
 }
 
 // Draw draws progress bar.
 func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
-	pb.drawArea = MatrixToDrawArea(matrix, pb.Frame())
+	pb.drawArea = MatrixToDrawArea(matrix, pb.Bounds())
 	// Background.
 	if pb.bgSpr != nil {
 		pb.bgSpr.Draw(t, matrix)
@@ -76,12 +78,10 @@ func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates progress bar.
 func (pb *ProgressBar) Update(win *Window) {
-	// TODO: update bar background for current
-	// progress value.
 }
 
-// Frame returns bar size bounds.
-func (pb *ProgressBar) Frame() pixel.Rect {
+// Bounds returns bar size bounds.
+func (pb *ProgressBar) Bounds() pixel.Rect {
 	if pb.bgSpr != nil {
 		return pb.bgSpr.Frame()
 	}
@@ -97,6 +97,7 @@ func (pb *ProgressBar) Value() int {
 // current progress value.
 func (pb *ProgressBar) SetValue(val int) {
 	pb.value = val
+	pb.updateProgress()
 }
 
 // Max retruns maximal progress value.
@@ -108,6 +109,7 @@ func (pb *ProgressBar) Max() int {
 // maximal value.
 func (pb *ProgressBar) SetMax(max int) {
 	pb.max = max
+	pb.updateProgress()
 }
 
 // drawIMBackground draws bar background with pixel IMDraw.
@@ -117,4 +119,19 @@ func (pb *ProgressBar) drawIMBackground(t pixel.Target) {
 	pb.bgDraw.Push(pb.drawArea.Max)
 	pb.bgDraw.Rectangle(0)
 	pb.bgDraw.Draw(t)
+}
+
+// updateProgress updates bar progress to current
+// progress value.
+func (pb *ProgressBar) updateProgress() {
+	valPercent := float64(pb.Value()) * 1.0 / float64(pb.Max())
+	if pb.bgSpr != nil {
+		origiBounds := pb.bgSpr.Picture().Bounds()
+		bgWidth := origiBounds.W() * valPercent
+		bgBounds := pixel.R(origiBounds.Min.X, origiBounds.Min.Y,
+			bgWidth, origiBounds.Max.Y)
+		pb.bgSpr = pixel.NewSprite(pb.bgSpr.Picture(), bgBounds)
+	} else if pb.bgDraw != nil {
+		// TODO: update draw bg.
+	}
 }

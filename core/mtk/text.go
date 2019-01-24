@@ -1,7 +1,7 @@
 /*
  * text.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ type Text struct {
 
 // NewText creates new text with specified text content,
 // font size and with max width of text line(0 for no max width).
-// Note that text is adjusted to center by default.
 func NewText(content string, fontSize Size, width float64) *Text {
 	t := new(Text)
 	// Parameters.
@@ -121,15 +120,15 @@ func (tx *Text) Bounds() pixel.Rect {
 	return tx.text.Bounds()
 }
 
-// Clear clears texts,
-func (tx *Text) Clear() {
-	tx.text.Clear()
-}
-
 // BoundsOf returns bounds of specified text
 // while displayed.
 func (tx *Text) BoundsOf(text string) pixel.Rect {
 	return tx.text.BoundsOf(text)
+}
+
+// Clear clears texts,
+func (tx *Text) Clear() {
+	tx.text.Clear()
 }
 
 // DrawArea returns current draw area of text.

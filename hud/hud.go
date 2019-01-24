@@ -111,8 +111,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 		hud.loadScreen.Draw(win)
 	} else {
 		// Elements positions.
-		pcFramePos := mtk.PosTL(hud.pcFrame.Bounds(),
-			win.PointTL())
+		pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
 		// Draw elements.
 		hud.camera.Draw(win)
 		hud.chat.Draw(win)

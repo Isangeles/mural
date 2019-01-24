@@ -42,4 +42,5 @@ loadgame_menu_title:Load game;
 load_b_label:Load;
 load_map_info:Loading map...;
 load_avatars_info:Loading characters avatars...;
+char_frame_hp_bar_label:Health:;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

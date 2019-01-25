@@ -39,6 +39,8 @@ type ProgressBar struct {
 	color      color.Color
 	label      *Text
 	drawArea   pixel.Rect
+	maxBounds  pixel.Rect
+	bounds     pixel.Rect
 }
 
 // NewProgressBar creates new progress bar with IMDraw
@@ -50,16 +52,18 @@ func NewProgressBar(size Size, color color.Color,
 	pb.color = color
 	pb.bgDraw = imdraw.New(nil)
 	pb.label = NewText(labelText, pb.size-1, 0)
+	pb.maxBounds = pb.size.BarSize()
 	pb.SetMax(max)
 	return pb
 }
 
 // NewProgressBarSprite creates new progress bar with
 // specified background texture, and label.
-func NewProgressBarSprite(bgPic pixel.Picture,
-	labelSize Size, labelText string, max int) *ProgressBar {
+func NewProgressBarSprite(bgPic pixel.Picture, labelSize Size,
+	labelText string, max int) *ProgressBar {
 	pb := new(ProgressBar)
 	pb.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
+	pb.maxBounds = pb.bgSpr.Picture().Bounds()
 	pb.label = NewText(labelText, labelSize, 0)
 	pb.SetMax(max)
 	return pb
@@ -67,10 +71,13 @@ func NewProgressBarSprite(bgPic pixel.Picture,
 
 // Draw draws progress bar.
 func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
-	pb.drawArea = MatrixToDrawArea(matrix, pb.Bounds())
+	widthDiff := ConvSize(pb.maxBounds.W() - pb.Bounds().W())
+	barPos := pixel.V(-widthDiff/2, 0)
+	mx := matrix.Moved(barPos)
+	pb.drawArea = MatrixToDrawArea(mx, pb.Bounds())
 	// Background.
 	if pb.bgSpr != nil {
-		pb.bgSpr.Draw(t, matrix)
+		pb.bgSpr.Draw(t, mx)
 	} else {
 		pb.drawIMBackground(t)
 	}
@@ -82,10 +89,7 @@ func (pb *ProgressBar) Update(win *Window) {
 
 // Bounds returns bar size bounds.
 func (pb *ProgressBar) Bounds() pixel.Rect {
-	if pb.bgSpr != nil {
-		return pb.bgSpr.Frame()
-	}
-	return pb.size.BarSize()
+	return pb.bounds
 }
 
 // Value retruns current progress value.
@@ -125,13 +129,10 @@ func (pb *ProgressBar) drawIMBackground(t pixel.Target) {
 // progress value.
 func (pb *ProgressBar) updateProgress() {
 	valPercent := float64(pb.Value()) * 1.0 / float64(pb.Max())
+	bgWidth := pb.maxBounds.W() * valPercent
+	pb.bounds = pixel.R(pb.maxBounds.Min.X, pb.maxBounds.Min.Y,
+		bgWidth, pb.maxBounds.Max.Y)
 	if pb.bgSpr != nil {
-		origiBounds := pb.bgSpr.Picture().Bounds()
-		bgWidth := origiBounds.W() * valPercent
-		bgBounds := pixel.R(origiBounds.Min.X, origiBounds.Min.Y,
-			bgWidth, origiBounds.Max.Y)
-		pb.bgSpr = pixel.NewSprite(pb.bgSpr.Picture(), bgBounds)
-	} else if pb.bgDraw != nil {
-		// TODO: update draw bg.
+		pb.bgSpr = pixel.NewSprite(pb.bgSpr.Picture(), pb.bounds)
 	}
 }

@@ -24,6 +24,7 @@
 package mtk
 
 import (
+	"fmt"
 	"image/color"
 	
 	"github.com/faiface/pixel"
@@ -33,6 +34,8 @@ import (
 // Struct for progress bars.
 type ProgressBar struct {
 	value, max int
+	labelText  string
+	hovered    bool
 	bgDraw     *imdraw.IMDraw
 	bgSpr      *pixel.Sprite
 	size       Size
@@ -50,9 +53,10 @@ func NewProgressBar(size Size, color color.Color,
 	pb := new(ProgressBar)
 	pb.size = size
 	pb.color = color
+	pb.labelText = labelText
 	pb.bgDraw = imdraw.New(nil)
-	pb.label = NewText(labelText, pb.size-1, 0)
 	pb.maxBounds = pb.size.BarSize()
+	pb.label = NewText("", pb.size-1, 0)
 	pb.SetMax(max)
 	return pb
 }
@@ -62,9 +66,10 @@ func NewProgressBar(size Size, color color.Color,
 func NewProgressBarSprite(bgPic pixel.Picture, labelSize Size,
 	labelText string, max int) *ProgressBar {
 	pb := new(ProgressBar)
+	pb.labelText = labelText
 	pb.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
 	pb.maxBounds = pb.bgSpr.Picture().Bounds()
-	pb.label = NewText(labelText, labelSize, 0)
+	pb.label = NewText("", labelSize, 0)
 	pb.SetMax(max)
 	return pb
 }
@@ -81,10 +86,20 @@ func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
 	} else {
 		pb.drawIMBackground(t)
 	}
+	// Label.
+	if pb.hovered {
+		pb.label.Draw(t, matrix)
+	} 
 }
 
 // Update updates progress bar.
 func (pb *ProgressBar) Update(win *Window) {
+	// On-hover.
+	if pb.DrawArea().Contains(win.MousePosition()) {
+		pb.hovered = true
+	} else {
+		pb.hovered = false
+	}
 }
 
 // Bounds returns bar size bounds.
@@ -116,6 +131,12 @@ func (pb *ProgressBar) SetMax(max int) {
 	pb.updateProgress()
 }
 
+// DrawArea returns current last draw area of
+// this element.
+func (pb *ProgressBar) DrawArea() pixel.Rect {
+	return pb.drawArea
+}
+
 // drawIMBackground draws bar background with pixel IMDraw.
 func (pb *ProgressBar) drawIMBackground(t pixel.Target) {
 	pb.bgDraw.Color = pixel.ToRGBA(pb.color)
@@ -135,4 +156,6 @@ func (pb *ProgressBar) updateProgress() {
 	if pb.bgSpr != nil {
 		pb.bgSpr = pixel.NewSprite(pb.bgSpr.Picture(), pb.bounds)
 	}
+	pb.label.SetText(fmt.Sprintf("%s:%d/%d", pb.labelText, pb.Value(),
+		pb.Max()))
 }

@@ -130,12 +130,12 @@ func (b *Button) Update(win *Window) {
 	}
 	// Mouse events.
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		if b.ContainsPosition(win.MousePosition()) {
+		if b.DrawArea().Contains(win.MousePosition()) {
 			b.pressed = true
 		}
 	}
 	if win.JustReleased(pixelgl.MouseButtonLeft) {
-		if b.pressed && b.ContainsPosition(win.MousePosition()) {
+		if b.pressed && b.DrawArea().Contains(win.MousePosition()) {
 			if b.onClick != nil {
 				b.onClick(b)
 			}
@@ -143,7 +143,7 @@ func (b *Button) Update(win *Window) {
 		b.pressed = false
 	}
 	// On-hover.
-	if b.ContainsPosition(win.MousePosition()) || b.Focused() {
+	if b.DrawArea().Contains(win.MousePosition()) || b.Focused() {
 		b.hovered = true
 		if b.info != nil {	
 			b.info.Update(win)
@@ -157,16 +157,6 @@ func (b *Button) Update(win *Window) {
 			b.onClick(b)
 		}
 	}
-}
-
-// Draws button background with IMDraw.
-func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
-	b.bgDraw.Clear()
-	b.bgDraw.Color = pixel.ToRGBA(color)
-	b.bgDraw.Push(b.drawArea.Min)
-	b.bgDraw.Push(b.drawArea.Max)
-	b.bgDraw.Rectangle(0)
-	b.bgDraw.Draw(t)
 }
 
 // Focus sets/removes focus from button
@@ -210,8 +200,12 @@ func (b *Button) Frame() pixel.Rect {
 	}
 }
 
-// ContainsPosition checks if specified position is
-// within current draw area.
-func (b *Button) ContainsPosition(pos pixel.Vec) bool {
-	return b.drawArea.Contains(pos)
+// Draws button background with IMDraw.
+func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
+	b.bgDraw.Clear()
+	b.bgDraw.Color = pixel.ToRGBA(color)
+	b.bgDraw.Push(b.DrawArea().Min)
+	b.bgDraw.Push(b.DrawArea().Max)
+	b.bgDraw.Rectangle(0)
+	b.bgDraw.Draw(t)
 }

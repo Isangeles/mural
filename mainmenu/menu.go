@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
-	//"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 )
 
@@ -53,7 +52,7 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m := new(Menu)
 	m.mainmenu = mainmenu
 	// Title.
-	m.title = mtk.NewText(flame.Mod().Name(), mtk.SIZE_BIG, mtk.ConvSize(900)) 
+	m.title = mtk.NewText(flame.Mod().Name(), mtk.SIZE_BIG, mtk.ConvSize(900))
 	// Buttons.
 	m.newgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newgame_b_label"),

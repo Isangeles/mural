@@ -4,13 +4,13 @@
 
   Currently in a very early development stage.
   
-## Install & Run
+## Build
 
-  Get [Pixel](https://github.com/faiface/pixel), [go-tmx](https://github.com/salviati/go-tmx/tree/master/tmx) and [Flame](https://github.com/Isangeles/flame).
+  Get [Pixel](https://github.com/faiface/pixel), [Beep](https://github.com/faiface/beep), [go-tmx](https://github.com/salviati/go-tmx/tree/master/tmx) and [Flame](https://github.com/Isangeles/flame).
 
   Get sources from git:
 ```
-$ go get github.com/isangeles/mural
+$ go get -u github.com/isangeles/mural
 ```
 
   Build GUI:

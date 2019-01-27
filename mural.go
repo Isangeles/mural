@@ -26,9 +26,14 @@ package main
 
 import (
 	"fmt"
+	"time"
+	//"os"
 
 	"golang.org/x/image/colornames"
 
+	"github.com/faiface/beep/speaker"
+	//"github.com/faiface/beep/vorbis"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
@@ -78,6 +83,20 @@ func init() {
 }
 
 func main() {
+	// Load UI data.
+	err := data.LoadUIData()
+	if err != nil {
+		panic(fmt.Errorf("data_load_fail:%v", err))
+	}
+	// Music.
+	s, format, err := data.Music("maintheme.ogg")
+	if err != nil {
+		log.Err.Printf("fail_to_load_main_theme_audio_stream:%v", err)
+	} else {
+		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+		speaker.Play(s)
+	}
+	// Graphic.
 	pixelgl.Run(run)
 }
 
@@ -107,11 +126,6 @@ func run() {
 	win, err := mtk.NewWindow(cfg)
 	if err != nil {
 		panic(err)
-	}
-	// Load UI data.
-	err = data.LoadUIData()
-	if err != nil {
-		panic(fmt.Errorf("data_load_fail:%v", err))
 	}
 	uiFont, err := data.Font(config.MainFontName())
 	if err == nil { // if font from config was found

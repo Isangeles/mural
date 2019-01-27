@@ -51,12 +51,13 @@ var (
 	resolution pixel.Vec
 	lang = flame.LangID()
 	mainFontName = ""
+	menuMusic = ""
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
 	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
-		"resolution", "map_fow", "main_font")
+		"resolution", "map_fow", "main_font", "menu_music")
 	if err != nil {
 		return err
 	}
@@ -74,6 +75,7 @@ func LoadConfig() error {
 	// Map FOW effect.
 	mapfow = confValues[2] == "true"
 	mainFontName = confValues[3]
+	menuMusic = confValues[4]
 	
 	log.Dbg.Print("config file loaded")
 	return nil
@@ -94,6 +96,7 @@ func SaveConfig() error {
 		resolution.Y))
 	w.WriteString(fmt.Sprintf("map_fow:%v;\n", mapfow))
 	w.WriteString(fmt.Sprintf("main_font:%s;\n", mainFontName))
+	w.WriteString(fmt.Sprintf("menu_music:%s;\n", menuMusic))
 	w.Flush()
 
 	log.Dbg.Print("config file saved")
@@ -132,6 +135,12 @@ func MainFontName() string  {
 	return mainFontName
 }
 
+// MenuMusicFile returns name of audio file
+// with main menu music theme.
+func MenuMusicFile() string {
+	return menuMusic
+}
+
 // SetFullscreen toggles fullscreen mode.
 func SetFullscreen(fs bool) {
 	fullscreen = fs
@@ -159,6 +168,12 @@ func SetMapFOW(fow bool) {
 // as name for main UI font.
 func SetMainFontName(font string) {
 	mainFontName = font
+}
+
+// SetMenuMusicFile sets name of audio file with
+// main menu music theme.
+func SetMenuMusicFile(fileName string) {
+	menuMusic = fileName
 }
 
 // SupportedResolutions returns all resolutions

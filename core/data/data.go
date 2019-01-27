@@ -35,6 +35,8 @@ import (
 
 	"github.com/salviati/go-tmx/tmx"
 
+	"github.com/faiface/beep"
+	
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
@@ -44,8 +46,10 @@ import (
 
 var (
 	// Paths.
+	a_dir_path  string
 	g_dir_path  string
 	g_arch_path string
+	a_arch_path string
 	// Textures & fonts.
 	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
@@ -214,6 +218,14 @@ func Map(mapDir, mapName string) (*tmx.Map, error) {
 	return tmxMap, nil
 }
 
+// Music returns streamer with music from file with specified name
+// in audio archive.
+func Music(fileName string) (beep.Streamer, beep.Format, error) {
+	path := filepath.FromSlash("music/" + fileName)
+	return loadAudioFromArch(a_arch_path, path)
+	//return loadAudioFromDir(a_dir_path + "/" + path)
+}
+
 // Load loads grpahic directories.
 func loadPaths() error {
 	if flame.Mod() == nil {
@@ -221,7 +233,11 @@ func loadPaths() error {
 	}
 	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
 		flame.Mod().Name()))
+	a_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
+		flame.Mod().Name()))
 	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
+		flame.Mod().Name()))
+	a_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
 		flame.Mod().Name()))
 	return nil
 }

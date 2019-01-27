@@ -24,15 +24,14 @@
 package data
 
 import (
-	_ "image/png"
-	"strings"
-
 	"archive/zip"
 	"fmt"
 	"image"
+	_ "image/png"
 	"io/ioutil"
-	"path/filepath"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/golang/freetype/truetype"
 
@@ -87,7 +86,7 @@ func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) 
 				return nil, err
 			}
 			defer rc.Close()
-			
+
 			bytes, err := ioutil.ReadAll(rc)
 			if err != nil {
 				return nil, err
@@ -192,7 +191,7 @@ func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
 			if err != nil {
 				continue
 			}
-			pics = append(pics, img)	
+			pics = append(pics, img)
 		}
 	}
 	return pics, nil

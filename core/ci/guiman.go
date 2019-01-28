@@ -32,7 +32,8 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/cmd/burn"
-	
+
+	"github.com/isangeles/mural/audio"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
@@ -43,6 +44,7 @@ import (
 var (
 	gui_mmenu *mainmenu.MainMenu
 	gui_hud   *hud.HUD
+	gui_music *audio.Player
 )
 
 // SetMainMenu sets specified main menu as main
@@ -55,6 +57,12 @@ func SetMainMenu(menu *mainmenu.MainMenu) {
 // guiman to manage.
 func SetHUD(h *hud.HUD) {
 	gui_hud = h
+}
+
+// SetMusicPlayer sets specified audio player as
+// player for guiman to manage.
+func SetMusicPlayer(p *audio.Player) {
+	gui_music = p
 }
 
 // handleGUICommand handles guiman tool commands.
@@ -75,6 +83,8 @@ func handleGUICommand(cmd burn.Command) (int, string) {
 		return exportGUIOption(cmd)
 	case "import", "load":
 		return importGUIOption(cmd)
+	case "start", "play":
+		return startGUIOption(cmd)
 	case "exit":
 		if gui_hud != nil {
 			gui_hud.Exit()
@@ -238,3 +248,34 @@ func importGUIOption(cmd burn.Command) (int, string) {
 	}
 }
 
+// startGUIOption handles import option for guiman.
+func startGUIOption(cmd burn.Command) (int, string) {
+	if len(cmd.TargetArgs()) < 1 {
+		return 5, fmt.Sprintf("%s:no_enought_target_args_for:%s", GUI_MAN,
+			cmd.OptionArgs()[0])
+	}
+	switch cmd.TargetArgs()[0] {
+	case "music":
+		if gui_music == nil {
+			return 7, fmt.Sprintf("%s:%s:no audio player set",
+				GUI_MAN, cmd.TargetArgs()[0])
+		}
+		if len(cmd.Args()) < 1 {
+			return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
+				GUI_MAN, cmd.TargetArgs()[0])
+		}
+		switch cmd.Args()[0] {
+		case "next":
+			gui_music.Next()
+			return 0, ""
+		case "prev":
+			gui_music.Prev()
+			return 0, ""
+		default:
+			return 9, "only 'next' and 'prev' arguments supported for now"
+		}
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
+	}
+}

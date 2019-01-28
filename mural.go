@@ -26,13 +26,8 @@ package main
 
 import (
 	"fmt"
-	"time"
-	//"os"
 
 	"golang.org/x/image/colornames"
-
-	"github.com/faiface/beep/speaker"
-	//"github.com/faiface/beep/vorbis"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -45,6 +40,7 @@ import (
 	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
+	"github.com/isangeles/mural/audio"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
@@ -63,6 +59,7 @@ const (
 var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
+	player   *audio.Player
 	game     *flamecore.Game
 	inGame   bool
 
@@ -89,13 +86,15 @@ func main() {
 		panic(fmt.Errorf("data_load_fail:%v", err))
 	}
 	// Music.
-	s, format, err := data.Music("maintheme.ogg")
+	player = audio.NewPlayer()
+	ci.SetMusicPlayer(player)
+	m, err := data.Music(config.MenuMusicFile())
 	if err != nil {
 		log.Err.Printf("fail_to_load_main_theme_audio_stream:%v", err)
 	} else {
-		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-		speaker.Play(s)
+		player.Add(m)
 	}
+	player.Play()
 	// Graphic.
 	pixelgl.Run(run)
 }

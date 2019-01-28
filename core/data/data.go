@@ -34,8 +34,6 @@ import (
 	"github.com/golang/freetype/truetype"
 
 	"github.com/salviati/go-tmx/tmx"
-
-	"github.com/faiface/beep"
 	
 	"github.com/faiface/pixel"
 
@@ -55,6 +53,7 @@ var (
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
+	music       map[string]*AudioData
 	fonts       map[string]*truetype.Font
 )
 
@@ -82,7 +81,7 @@ func LoadGameData() error {
 	// Items spritesheets.
 	itTexs, err := loadPicturesFromArch(g_arch_path, "item/spritesheet")
 	if err != nil {
-		return fmt.Errorf("fail_to_load_items_spritesheets:%V", err)
+		return fmt.Errorf("fail_to_load_items_spritesheets:%v", err)
 	}
 	itemsTexs = itTexs
 	return nil
@@ -220,7 +219,7 @@ func Map(mapDir, mapName string) (*tmx.Map, error) {
 
 // Music returns streamer with music from file with specified name
 // in audio archive.
-func Music(fileName string) (beep.Streamer, beep.Format, error) {
+func Music(fileName string) (*AudioData, error) {
 	path := filepath.FromSlash("music/" + fileName)
 	return loadAudioFromArch(a_arch_path, path)
 	//return loadAudioFromDir(a_dir_path + "/" + path)

@@ -45,7 +45,7 @@ type Map struct {
 	mapsize      pixel.Vec
 	tilescount   pixel.Vec
 	// Layers.
-	ground      []*tile
+	ground       []*tile
 }
 
 // NewMap creates new map for specified scenario area.

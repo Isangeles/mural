@@ -40,11 +40,13 @@ type Player struct {
 	control  *beep.Ctrl
 }
 
-// NewPlayer creates new audio player.
-func NewPlayer() *Player {
+// NewPlayer creates new audio player for specified
+// stream format.
+func NewPlayer(format beep.Format) *Player {
 	ap := new(Player)
 	ap.playlist = make([]*data.AudioData, 0)
 	ap.control = &beep.Ctrl{}
+	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 	return ap
 }
 
@@ -67,8 +69,7 @@ func (p *Player) Play() {
 	}
 	m := p.playlist[p.playID]
 	p.control.Streamer = m.Stream
-	speaker.Init(m.Format.SampleRate, m.Format.SampleRate.N(time.Second/10))
-	speaker.Play(m.Stream)
+	speaker.Play(p.control)
 }
 
 // Stop stops player.

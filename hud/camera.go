@@ -103,30 +103,30 @@ func (c *Camera) Update(win *mtk.Window) {
 		return
 	}
 	if !c.locked {
-		offset := pixel.V(c.areaMap.TileSize().X*16,
-			c.areaMap.TileSize().Y*16)
-		mapSizePlus := pixel.V(c.areaMap.Size().X + offset.X,
-			c.areaMap.Size().Y + offset.Y)
+		mSize := c.areaMap.Size()
+		mTileSize := c.areaMap.TileSize()
+		offset := pixel.V(mTileSize.X*16, mTileSize.Y*16)
+		mapSizePlus := pixel.V(mSize.X + offset.X, mSize.Y + offset.Y)
 		// Key events.
 		if c.position.Y < mapSizePlus.Y &&
 			(win.JustPressed(pixelgl.KeyW) ||
-				win.JustPressed(pixelgl.KeyUp)) {
-			c.position.Y += c.areaMap.TileSize().Y
+			win.JustPressed(pixelgl.KeyUp)) {
+			c.position.Y += mTileSize.Y
 		}
 		if c.position.X < mapSizePlus.X &&
 			(win.JustPressed(pixelgl.KeyD) ||
-				win.JustPressed(pixelgl.KeyRight)) {
-			c.position.X += c.areaMap.TileSize().X
+			win.JustPressed(pixelgl.KeyRight)) {
+			c.position.X += mTileSize.X
 		}
 		if c.position.Y > 0 - offset.Y &&
 			(win.JustPressed(pixelgl.KeyS) ||
-				win.JustPressed(pixelgl.KeyDown)) {
-			c.position.Y -= c.areaMap.TileSize().Y
+			win.JustPressed(pixelgl.KeyDown)) {
+			c.position.Y -= mTileSize.Y
 		}
 		if c.position.X > 0 - offset.X &&
 			win.JustPressed(pixelgl.KeyA) ||
 			win.JustPressed(pixelgl.KeyLeft) {
-			c.position.X -= c.areaMap.TileSize().X
+			c.position.X -= mTileSize.X
 		}
 	}
 	// Objects.
@@ -179,6 +179,14 @@ func (c *Camera) Position() pixel.Vec {
 // Size returns camera size.
 func (c *Camera) Size() pixel.Vec {
 	return c.size
+}
+
+// Frame returns current camera frame bounds.
+func (c *Camera) Frame() pixel.Rect {
+	cpos := c.Position()
+	csize := c.Size()
+	return pixel.R(cpos.X, cpos.Y, cpos.X + csize.X,
+		cpos.Y + csize.Y)
 }
 
 // Lock toggles camera lock.

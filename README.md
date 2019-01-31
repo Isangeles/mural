@@ -35,8 +35,8 @@ $ ./mural
 ```
 
 ## Commands
-[Flame](https://github.com/Isangeles/flame) CI handles commands execution.
-Additionally to Flame CI tools, Mural implements guiman tool to manage game GUI.
+[Burn](https://github.com/Isangeles/flame/tree/master/cmd/burn) CI handles commands execution.
+Additionally to Burn tools, Mural implements guiman tool to manage game GUI.
 You can access CI by dropdown console in main menu or chat window in HUD,
 both accessible by pressing [`](grave).
 Note: all commands entered in HUD chat window must be prefixed by '$' character.

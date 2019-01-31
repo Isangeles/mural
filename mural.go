@@ -28,6 +28,8 @@ import (
 	"fmt"
 
 	"golang.org/x/image/colornames"
+
+	"github.com/faiface/beep"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -86,7 +88,7 @@ func main() {
 		panic(fmt.Errorf("data_load_fail:%v", err))
 	}
 	// Music.
-	player = audio.NewPlayer()
+	player = audio.NewPlayer(beep.Format{44100, 2, 2})
 	ci.SetMusicPlayer(player)
 	m, err := data.Music(config.MenuMusicFile())
 	if err != nil {

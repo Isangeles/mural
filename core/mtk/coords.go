@@ -148,7 +148,7 @@ func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
 		drawArea.Min.Y + (rect.H() / 2))
 }
 
-// Range returns range from specified position to other specified position.
+// Range returns range between two specified positions.
 func Range(from, to pixel.Vec) float64 {
 	return math.Hypot(to.X - from.X, to.Y - from.Y)
 }
@@ -157,6 +157,12 @@ func Range(from, to pixel.Vec) float64 {
 // to value for current resolution.
 func ConvSize(size1080p float64) float64 {
 	return size1080p * Scale()
+}
+
+// ConvVec converts specified default Pixel XY vector values(for 1080p)
+// to vector with values for current resolution.
+func ConvVec(vec1080p pixel.Vec) pixel.Vec {
+	return pixel.V(ConvSize(vec1080p.X), ConvSize(vec1080p.Y))
 }
 
 // MatrixToDrawArea calculates draw area based on specified

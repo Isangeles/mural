@@ -85,6 +85,8 @@ func handleGUICommand(cmd burn.Command) (int, string) {
 		return importGUIOption(cmd)
 	case "start", "play":
 		return startGUIOption(cmd)
+	case "music":
+		return musicGUIOption(cmd)
 	case "exit":
 		if gui_hud != nil {
 			gui_hud.Exit()
@@ -255,25 +257,35 @@ func startGUIOption(cmd burn.Command) (int, string) {
 			cmd.OptionArgs()[0])
 	}
 	switch cmd.TargetArgs()[0] {
-	case "music":
-		if gui_music == nil {
-			return 7, fmt.Sprintf("%s:%s:no audio player set",
-				GUI_MAN, cmd.TargetArgs()[0])
-		}
-		if len(cmd.Args()) < 1 {
-			return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
-				GUI_MAN, cmd.TargetArgs()[0])
-		}
-		switch cmd.Args()[0] {
-		case "next":
-			gui_music.Next()
-			return 0, ""
-		case "prev":
-			gui_music.Prev()
-			return 0, ""
-		default:
-			return 9, "only 'next' and 'prev' arguments supported for now"
-		}
+	default:
+		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
+			cmd.OptionArgs()[0], cmd.TargetArgs()[0])
+	}
+}
+
+// musicGUIOption handles import option for guiman.
+func musicGUIOption(cmd burn.Command) (int, string) {
+	if gui_music == nil {
+		return 7, fmt.Sprintf("%s:%s:no audio player set",
+			GUI_MAN, cmd.TargetArgs()[0])
+	}
+	if len(cmd.Args()) < 1 {
+		return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
+			GUI_MAN, cmd.TargetArgs()[0])
+	}
+	switch cmd.Args()[0] {
+	case "play":
+		gui_music.Play()
+		return 0, ""
+	case "stop":
+		gui_music.Stop()
+		return 0, ""
+	case "next":
+		gui_music.Next()
+		return 0, ""
+	case "prev":
+		gui_music.Prev()
+		return 0, ""
 	default:
 		return 6, fmt.Sprintf("%s:no_vaild_target_for_%s:'%s'", GUI_MAN,
 			cmd.OptionArgs()[0], cmd.TargetArgs()[0])

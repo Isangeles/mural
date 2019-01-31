@@ -92,7 +92,8 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 // draw area.
 // TODO: don't work well.
 func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
-	drawArea := pixel.R(matrix[4], matrix[5], size.X, size.Y)
+	drawArea := pixel.R(matrix[4], matrix[5], matrix[4] + size.X,
+		matrix[5] + size.Y)
 	// Clear all tilesets draw batches.
 	for _, batch := range m.tilesBatches {
 		batch.Clear()
@@ -100,7 +101,7 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 	// Draw layers tiles to tilesets batechs.
 	for _, t := range m.ground {
 		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		if drawArea.Contains(tileDrawPos) {
+		if drawArea.Contains(t.Position()) {
 			batch := m.tilesBatches[t.Picture()]
 			if batch == nil {
 				continue
@@ -145,6 +146,17 @@ func (m *Map) TileSize() pixel.Vec {
 // Size returns size of the map.
 func (m *Map) Size() pixel.Vec {
 	return m.mapsize
+}
+
+// MapDrawPos translates real position to map draw position.
+func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
+	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) 
+	drawScale := drawMatrix[0]
+	posX := pos.X * drawScale
+	posY := pos.Y * drawScale
+	drawX := drawPos.X //* drawScale
+	drawY := drawPos.Y //* drawScale
+	return pixel.V(posX - drawX, posY - drawY)
 }
 
 // tileBounds returns bounds for tile with specified size and ID
@@ -194,17 +206,6 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 		}
 	}
 	return tiles, nil
-}
-
-// MapDrawPos translates real position to map draw position.
-func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
-	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) // 
-	drawScale := drawMatrix[0]
-	posX := pos.X * drawScale
-	posY := pos.Y * drawScale
-	drawX := drawPos.X * drawScale
-	drawY := drawPos.Y * drawScale
-	return pixel.V(posX - drawX, posY - drawY)
 }
 
 // roundTilesetSize rounds tileset size to to value that can be divided

@@ -28,6 +28,8 @@ import (
 
 	"golang.org/x/image/colornames"
 
+	"github.com/faiface/beep"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
@@ -50,6 +52,7 @@ type Button struct {
 	disabled   bool
 	drawArea   pixel.Rect // updated on each draw
 	onClick    func(b *Button)
+	clickSound *beep.Buffer
 }
 
 // NewButton creates new instance of button with specified size, color and
@@ -139,6 +142,9 @@ func (b *Button) Update(win *Window) {
 			if b.onClick != nil {
 				b.onClick(b)
 			}
+			if Audio() != nil && b.clickSound != nil {
+				Audio().Play(b.clickSound)
+			}
 		}
 		b.pressed = false
 	}
@@ -183,6 +189,12 @@ func (b *Button) Disabled() bool {
 // callback function.
 func (b *Button) SetOnClickFunc(callback func(b *Button)) {
 	b.onClick = callback
+}
+
+// SetClickSound sets specified audio buffer as
+// on-click audio effect.
+func (b *Button) SetClickSound(s *beep.Buffer) {
+	b.clickSound = s
 }
 
 // DrawArea returns current button background position and size.

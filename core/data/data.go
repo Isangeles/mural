@@ -34,6 +34,8 @@ import (
 	"github.com/golang/freetype/truetype"
 
 	"github.com/salviati/go-tmx/tmx"
+
+	"github.com/faiface/beep"
 	
 	"github.com/faiface/pixel"
 
@@ -53,7 +55,7 @@ var (
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
-	music       map[string]*AudioData
+	music       map[string]*beep.Buffer
 	fonts       map[string]*truetype.Font
 )
 
@@ -217,12 +219,18 @@ func Map(mapDir, mapName string) (*tmx.Map, error) {
 	return tmxMap, nil
 }
 
-// Music returns streamer with music from file with specified name
-// in audio archive.
-func Music(fileName string) (*AudioData, error) {
+// Music returns audio stream data from file with specified name
+// inside audio archive.
+func Music(fileName string) (*beep.Buffer, error) {
 	path := filepath.FromSlash("music/" + fileName)
 	return loadAudioFromArch(a_arch_path, path)
-	//return loadAudioFromDir(a_dir_path + "/" + path)
+}
+
+// AudioEffect returns audio stream data from file with specified
+// name inside audio archive.
+func AudioEffect(fileName string) (*beep.Buffer, error) {
+	path := filepath.FromSlash("effect/" + fileName)
+	return loadAudioFromArch(a_arch_path, path)
 }
 
 // Load loads grpahic directories.

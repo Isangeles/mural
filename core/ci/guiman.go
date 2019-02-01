@@ -33,10 +33,10 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/cmd/burn"
 
-	"github.com/isangeles/mural/audio"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/hud"
 )
@@ -44,7 +44,7 @@ import (
 var (
 	gui_mmenu *mainmenu.MainMenu
 	gui_hud   *hud.HUD
-	gui_music *audio.Player
+	gui_music *mtk.AudioPlayer
 )
 
 // SetMainMenu sets specified main menu as main
@@ -61,7 +61,7 @@ func SetHUD(h *hud.HUD) {
 
 // SetMusicPlayer sets specified audio player as
 // player for guiman to manage.
-func SetMusicPlayer(p *audio.Player) {
+func SetMusicPlayer(p *mtk.AudioPlayer) {
 	gui_music = p
 }
 
@@ -85,8 +85,8 @@ func handleGUICommand(cmd burn.Command) (int, string) {
 		return importGUIOption(cmd)
 	case "start", "play":
 		return startGUIOption(cmd)
-	case "music":
-		return musicGUIOption(cmd)
+	case "audio":
+		return audioGUIOption(cmd)
 	case "exit":
 		if gui_hud != nil {
 			gui_hud.Exit()
@@ -263,8 +263,8 @@ func startGUIOption(cmd burn.Command) (int, string) {
 	}
 }
 
-// musicGUIOption handles import option for guiman.
-func musicGUIOption(cmd burn.Command) (int, string) {
+// audioGUIOption handles audio option for guiman.
+func audioGUIOption(cmd burn.Command) (int, string) {
 	if gui_music == nil {
 		return 7, fmt.Sprintf("%s:%s:no audio player set",
 			GUI_MAN, cmd.TargetArgs()[0])
@@ -274,11 +274,11 @@ func musicGUIOption(cmd burn.Command) (int, string) {
 			GUI_MAN, cmd.TargetArgs()[0])
 	}
 	switch cmd.Args()[0] {
-	case "play":
-		gui_music.Play()
+	case "play-music":
+		gui_music.PlayMusic()
 		return 0, ""
-	case "stop":
-		gui_music.Stop()
+	case "stop-music":
+		gui_music.StopMusic()
 		return 0, ""
 	case "next":
 		gui_music.Next()

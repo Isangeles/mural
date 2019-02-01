@@ -21,11 +21,10 @@
  *
  */
 
-// Tool kit package for mural GUI.
+// Toolkit package for mural GUI.
 package mtk
 
 import (
-	//"fmt"
 	"time"
 
 	"golang.org/x/image/font"
@@ -33,6 +32,8 @@ import (
 
 	"github.com/golang/freetype/truetype"
 
+	"github.com/faiface/beep"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
 )
@@ -51,6 +52,7 @@ const (
 var (
 	fallback_font  font.Face = basicfont.Face7x13
 	main_font_base *truetype.Font
+	audio          *AudioPlayer
 	sec_timer = time.Tick(time.Second)
 )
 
@@ -192,6 +194,16 @@ func Atlas(f *font.Face) *text.Atlas {
 // Matrix return scaled identity matrix.
 func Matrix() pixel.Matrix {
 	return pixel.IM.Scaled(pixel.V(0, 0), Scale())
+}
+
+// Audio returns toolkit audio player.
+func Audio() *AudioPlayer {
+	return audio
+}
+
+// InitAudio creates audio player for toolkit.
+func InitAudio(format beep.Format) {
+	audio = NewAudioPlayer(format)
 }
 
 // createMainFont creates new main font face with

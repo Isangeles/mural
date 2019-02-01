@@ -1,5 +1,5 @@
 /*
- * player.go
+ * audioplayer.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,102 +21,111 @@
  *
  */
 
-package audio
+package mtk
 
 import (
+	"fmt"
 	"time"
 	
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
-	
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/log"
 )
 
-// Struct for music player.
-type Player struct {
-	playlist []*data.AudioData
-	playID   int
-	control  *beep.Ctrl
+// Struct for audio player.
+type AudioPlayer struct {
+	playlist  []beep.Streamer
+	playID    int
+	mixer     *beep.Mixer
+	ctrlMusic *beep.Ctrl
 }
 
-// NewPlayer creates new audio player for specified
+// NewAudioPlayer creates new audio player for specified
 // stream format.
-func NewPlayer(format beep.Format) *Player {
-	ap := new(Player)
-	ap.playlist = make([]*data.AudioData, 0)
-	ap.control = &beep.Ctrl{}
+func NewAudioPlayer(format beep.Format) *AudioPlayer {
+	p := new(AudioPlayer)
+	p.playlist = make([]beep.Streamer, 0)
+	p.mixer = new(beep.Mixer)
+	p.ctrlMusic = new(beep.Ctrl)
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	return ap
+	speaker.Play(p.mixer)
+	return p
 }
 
-// Add adds specified audio data to playlist.
-func (p *Player) Add(a *data.AudioData) {
-	p.playlist = append(p.playlist, a)
+// Add adds specified audio stream to playlist.
+func (p *AudioPlayer) AddMusic(ab *beep.Buffer) error { 
+	s := ab.Streamer(0, ab.Len())
+	p.playlist = append(p.playlist, s)
+	return nil
 }
 
-// SetPlaylist sets specified slice with audio data
+// SetPlaylist sets specified slice with audio streams
 // as player playlist.
-func (p *Player) SetPlaylist(playlist []*data.AudioData) {
+func (p *AudioPlayer) SetPlaylist(playlist []beep.Streamer) {
 	p.playlist = playlist
 }
 
 // Play starts player.
-func (p *Player) Play() {
-	if p.playlist[p.playID] == nil {
-		log.Err.Printf("audio_player:current playlist position nil")
-		return
+func (p *AudioPlayer) PlayMusic() error {
+	if p.playID < 0 || p.playID > len(p.playlist)-1 {
+		return fmt.Errorf("audio_player:current playlist position nil")
 	}
 	m := p.playlist[p.playID]
-	p.control.Streamer = m.Stream
-	speaker.Play(p.control)
+	p.ctrlMusic.Streamer = m
+	p.mixer.Play(p.ctrlMusic)
+	return nil
+}
+
+// Play starts playing specified audio stream.
+func (p *AudioPlayer) Play(ab *beep.Buffer) error {
+	s := ab.Streamer(0, ab.Len())
+	p.mixer.Play(s)
+	return nil
 }
 
 // Stop stops player.
-func (p *Player) Stop() {
-	// TODO: don't work.
-	if p.control.Streamer == nil {
+func (p *AudioPlayer) StopMusic() {
+	if p.ctrlMusic.Streamer == nil {
 		return
 	}
 	speaker.Lock()
-	p.control.Streamer = nil
+	p.ctrlMusic.Streamer = nil
 	speaker.Unlock()
 }
 
 // Reset stops player and moves play index to
-// first playlist index.
-func (p *Player) Reset() {
-	p.Stop()
+// first music playlist index.
+func (p *AudioPlayer) Reset() {
+	p.StopMusic()
 	p.SetPlayIndex(0)
 }
 
 // Next moves play index to next position
-// on player playlist.
-func (p *Player) Next() {
-	p.Stop()
+// on music playlist.
+func (p *AudioPlayer) Next() {
+	p.StopMusic()
 	p.SetPlayIndex(p.playID+1)
-	p.Play()
+	p.PlayMusic()
 }
 
 // Prev moves play index to previous position
-// on player playlist.
-func (p *Player) Prev() {
-	p.Stop()
+// on music playlist.
+func (p *AudioPlayer) Prev() {
+	p.StopMusic()
 	p.SetPlayIndex(p.playID-1)
-	p.Play()
+	p.PlayMusic()
 }
 
-// Clear clears player playlist.
-func (p *Player) Clear() {
-	p.playlist = make([]*data.AudioData, 0)
+// Clear clears music playlist.
+func (p *AudioPlayer) Clear() {
+	p.playlist = make([]beep.Streamer, 0)
 }
 
 // SetPlayIndex sets specified index as current index
-// on player playlist.
+// on music playlist.
 // If specified value is bigger than playlist lenght
 // then first index is set, if is lower than 0 then
 // last index is set.
-func (p *Player) SetPlayIndex(id int) {
+func (p *AudioPlayer) SetPlayIndex(id int) {
 	switch {
 	case id > len(p.playlist)-1:
 		p.playID = 0

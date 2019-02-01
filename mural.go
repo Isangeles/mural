@@ -42,7 +42,6 @@ import (
 	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
-	"github.com/isangeles/mural/audio"
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
@@ -61,7 +60,7 @@ const (
 var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
-	player   *audio.Player
+	audio    *mtk.AudioPlayer
 	game     *flamecore.Game
 	inGame   bool
 
@@ -81,33 +80,35 @@ func init() {
 	}
 }
 
+// Main function.
 func main() {
+	// Check whether Flame module is loaded.
+	if flame.Mod() == nil {
+		panic(fmt.Sprintf("%s\n", lang.Text("gui", "no_mod_loaded_err")))
+	}
 	// Load UI data.
 	err := data.LoadUIData()
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
 	}
 	// Music.
-	player = audio.NewPlayer(beep.Format{44100, 2, 2})
-	ci.SetMusicPlayer(player)
-	m, err := data.Music(config.MenuMusicFile())
-	if err != nil {
-		log.Err.Printf("fail_to_load_main_theme_audio_stream:%v", err)
-	} else {
-		player.Add(m)
+	mtk.InitAudio(beep.Format{44100, 2, 2})
+	if mtk.Audio() != nil {
+		ci.SetMusicPlayer(mtk.Audio())
+		m, err := data.Music(config.MenuMusicFile())
+		if err != nil {
+			log.Err.Printf("fail_to_load_main_theme_audio_data:%v", err)
+		} else {
+			mtk.Audio().AddMusic(m)
+		}
+		mtk.Audio().PlayMusic()
 	}
-	player.Play()
 	// Graphic.
 	pixelgl.Run(run)
 }
 
 // All window code fired from there.
 func run() {
-	// Check whether Flame module is loaded.
-	if flame.Mod() == nil {
-		log.Err.Printf("%s\n", lang.Text("gui", "no_mod_loaded_err"))
-		return
-	}
 	// Configure window.
 	resolution := config.Resolution()
 	if resolution.X == 0 || resolution.Y == 0 {

@@ -1,5 +1,9 @@
 ## Introduction
 
-   MTK(Mural ToolKit) is simple graphical toolkit written in Go with [Pixel](https://github.com/faiface/pixel) library.
+   MTK(Mural Toolkit) is a simple graphical toolkit written in Go with [Pixel](https://github.com/faiface/pixel) library.
 
-   Toolkit provides basic UI elements like buttons, text boxes, switches, lists, etc.
+   The toolkit provides basic UI elements(buttons, text boxes, switches, lists, etc.) and simple audio handling.
+
+## Examples
+
+  Check [examples](https://github.com/Isangeles/mural/tree/master/core/mtk/examples) package for few MTK usage examples.

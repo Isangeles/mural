@@ -1,6 +1,8 @@
 ## Introduction
 
-  Mural is 2D graphical frontend for Flame RPG engine written in Go with Pixel library.
+  Mural is a 2D graphical frontend for Flame RPG engine written in Go with Pixel library.
+
+  GUI uses [MTK](https://github.com/Isangeles/mural/tree/master/core/mtk), simple toolkit built with Pixel library.
 
   Currently in a very early development stage.
   
@@ -20,8 +22,9 @@ $ go build github.com/isangeles/mural
 
 Copy 'data' directory from /res to directory with Mural executable.
 
-Now, specify the path to a valid Flame module in Flame configuration file,
-create file '.flame' in Mural executable directory(or run Mural to create it
+Now, specify the path to a valid Flame module in Flame configuration file.
+
+Create file '.flame' in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
   module:[module name];[module path](optional);
@@ -37,8 +40,9 @@ $ ./mural
 ## Commands
 [Burn](https://github.com/Isangeles/flame/tree/master/cmd/burn) CI handles commands execution.
 Additionally to Burn tools, Mural implements guiman tool to manage game GUI.
-You can access CI by dropdown console in main menu or chat window in HUD,
+You can access CI by the dropdown console in the main menu or chat window in HUD,
 both accessible by pressing [`](grave).
+
 Note: all commands entered in HUD chat window must be prefixed by '$' character.
 
   Exit mural:

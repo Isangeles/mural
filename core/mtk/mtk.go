@@ -50,9 +50,13 @@ const (
 )
 
 var (
+	// Font.
 	fallback_font  font.Face = basicfont.Face7x13
 	main_font_base *truetype.Font
-	audio          *AudioPlayer
+	// Audio.
+	audio              *AudioPlayer
+	button_click_sound *beep.Buffer
+	// Time.
 	sec_timer = time.Tick(time.Second)
 )
 
@@ -166,6 +170,12 @@ func (s Size) BarSize() pixel.Rect {
 // the interface.
 func SetMainFont(font *truetype.Font) {
 	main_font_base = font
+}
+
+// SetButtonClickSound sets specified audio buffer
+// as on-click audio effect for all buttons.
+func SetButtonClickSound(s *beep.Buffer) {
+	button_click_sound = s
 }
 
 // MainFont returns main font in specified size from

@@ -62,16 +62,16 @@ var (
 type HUD struct {
 	loadScreen *LoadingScreen
 	camera     *Camera
+	menu       *Menu
 	pcFrame    *CharFrame
 	chat       *Chat
-
-	game     *flamecore.Game
-	pcs      []*object.Avatar
-	activePC *object.Avatar
-	destPos  pixel.Vec
-	loading  bool
-	exiting  bool
-	loaderr  error
+	game       *flamecore.Game
+	pcs        []*object.Avatar
+	activePC   *object.Avatar
+	destPos    pixel.Vec
+	loading    bool
+	exiting    bool
+	loaderr    error
 }
 
 // NewHUD creates new HUD instance.
@@ -91,6 +91,8 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
 	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	// Menu.
+	hud.menu = newMenu(hud)
 	// Active player character frame.
 	pcFrame, err := newCharFrame(hud, hud.ActivePlayer())
 	if err != nil {
@@ -109,13 +111,17 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
-	} else {
-		// Elements positions.
-		pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
-		// Draw elements.
-		hud.camera.Draw(win)
-		hud.chat.Draw(win)
-		hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
+		return
+	}
+	// Elements positions.
+	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
+	// Draw elements.
+	hud.camera.Draw(win)
+	hud.chat.Draw(win)
+	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
+	if hud.menu.Opened() {
+		menuPos := win.Bounds().Center()
+		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
 	}
 }
 
@@ -156,14 +162,17 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		// Move active PC.
-		hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
-		hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
+		if !hud.game.Paused() {
+			// Move active PC.
+			hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
+			hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
+		}
 	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
 	hud.chat.Update(win)
 	hud.pcFrame.Update(win)
+	hud.menu.Update(win)
 }
 
 // Camera position returns current position of

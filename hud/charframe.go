@@ -51,6 +51,7 @@ type CharFrame struct {
 // specified character avatar.
 func newCharFrame(hud *HUD, char *object.Avatar) (*CharFrame, error) {
 	cf := new(CharFrame)
+	cf.hud = hud
 	cf.char = char
 	// Background.
 	bg, err := data.PictureUI("charframe.png")
@@ -110,12 +111,13 @@ func (cf *CharFrame) Update(win *mtk.Window) {
 	cf.hpBar.SetValue(cf.char.Health())
 	cf.manaBar.SetMax(cf.char.MaxMana())
 	cf.manaBar.SetValue(cf.char.Mana())
-	
+	// Bars.
 	cf.hpBar.Update(win)
 	cf.manaBar.Update(win)
 }
 
-// Bounds returns size bounds of character frame.
+// Bounds returns size bounds of character frame
+// background.
 func (cf *CharFrame) Bounds() pixel.Rect {
 	if cf.bgSpr == nil {
 		return pixel.R(0, 0, mtk.ConvSize(200), mtk.ConvSize(50))

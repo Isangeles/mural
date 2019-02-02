@@ -129,10 +129,18 @@ func run() {
 	if err != nil {
 		panic(err)
 	}
+	// UI Font.
 	uiFont, err := data.Font(config.MainFontName())
 	if err == nil { // if font from config was found
 		mtk.SetMainFont(uiFont)
 	}
+	// Audio effects.
+	bClickSound1, err := data.AudioEffect("click1.mp3")
+	if err != nil {
+		log.Err.Printf("init_run:fail_to_retrieve_button_click_audio_data:%v",
+			err)
+	}
+	mtk.SetButtonClickSound(bClickSound1) // global button click sound
 	// Load game data.
 	err = flamedata.LoadModuleData(flame.Mod())
 	data.LoadGameData()

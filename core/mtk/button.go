@@ -73,7 +73,9 @@ func NewButton(size Size, shape Shape, color color.Color,
 	if len(infoText) > 0 {	
 		button.info = NewInfoWindow(infoText)
 	}
-
+	// Global click sound.
+	button.SetClickSound(button_click_sound)
+	
 	return button
 }
 
@@ -92,6 +94,8 @@ func NewButtonSprite(bgPic pixel.Picture, fontSize Size, labelText,
 	if len(infoText) > 0 {	
 		button.info = NewInfoWindow(infoText)
 	}
+	// Global click sound.
+	button.SetClickSound(button_click_sound)
 
 	return button
 }

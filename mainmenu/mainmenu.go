@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,19 +30,15 @@ import (
 	"image/color"
 
 	"golang.org/x/image/colornames"
-
-	"github.com/faiface/beep"
 	
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save" 
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
-	"github.com/isangeles/mural/log"
 )
 
 var (
@@ -50,8 +46,6 @@ var (
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red
-	// Main menu audio effect.
-	b_click_sound_1 *beep.Buffer
 )
 
 // MainMenu struct reperesents container with
@@ -77,13 +71,6 @@ type MainMenu struct {
 // New returns new main menu
 func New() (*MainMenu, error) {
 	mm := new(MainMenu)
-	// Audio effects.
-	bClickSound1, err := data.AudioEffect("click1.mp3")
-	if err != nil {
-		log.Err.Printf("main_menu_create:fail_to_retrieve_button_click_audio_data:%v",
-			err)
-	}
-	b_click_sound_1 = bClickSound1
 	// Menu.
 	m, err := newMenu(mm)
 	if err != nil {

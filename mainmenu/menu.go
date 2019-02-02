@@ -58,33 +58,22 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 		colornames.Red, lang.Text("gui", "newgame_b_label"),
 		lang.Text("gui", "newgame_b_info"))
 	m.newgameB.SetOnClickFunc(m.onNewGameButtonClicked)
-	m.newgameB.SetClickSound(b_click_sound_1)
 	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newchar_b_label"),
 		lang.Text("gui", "newchar_b_info"))
 	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
-	//m.newcharB.SetClickSound(b_click_sound_1)
 	m.loadgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "loadgame_b_label"),
 		lang.Text("gui", "loadgame_b_info"))
 	m.loadgameB.SetOnClickFunc(m.onLoadGameButtonClicked)
-	m.loadgameB.SetClickSound(b_click_sound_1)
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "settings_b_label"),
 		lang.Text("gui", "settings_b_info"))
 	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
-	//m.settingsB.SetClickSound(b_click_sound_1)
-	//exitButtonBG, err := data.PictureUI("buttonS.png")
-	//if err != nil {
-	//	return nil, err
-	//}
-	//m.exitB = mtk.NewButtonSprite(exitButtonBG, mtk.SIZE_MEDIUM,
-	//	lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_b_info"))
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "exit_b_label"),
 		lang.Text("gui", "exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
-	//m.exitB.SetClickSound(b_click_sound_1)
 
 	return m, nil
 }
@@ -135,9 +124,6 @@ func (m *Menu) Show(show bool) {
 
 // Triggered after new game button clicked.
 func (m *Menu) onNewGameButtonClicked(b *mtk.Button) {
-	//if mtk.Audio() != nil && b_click_sound_1 != nil {
-	//	mtk.Audio().Play(b_click_sound_1)
-	//}
 	m.mainmenu.OpenNewGameMenu()
 }
 

@@ -67,10 +67,8 @@ func run() {
 	for !win.Closed() {
 		// Clear window.
 		win.Clear(colornames.Black)
-		// Create exit button position.
-		exitBPos := mtk.DrawPosC(win.Bounds(), exitB.Frame())
 		// Draw exit button.
-		exitB.Draw(win, mtk.Matrix().Moved(exitBPos))
+		exitB.Draw(win, mtk.Matrix().Moved(win.Bounds().Center()))
 		// Update.
 		win.Update()
 		exitB.Update(win)

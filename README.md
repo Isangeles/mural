@@ -39,9 +39,10 @@ $ ./mural
 
 ## Commands
 [Burn](https://github.com/Isangeles/flame/tree/master/cmd/burn) CI handles commands execution.
+
 Additionally to Burn tools, Mural implements guiman tool to manage game GUI.
 You can access CI by the dropdown console in the main menu or chat window in HUD,
-both accessible by pressing [`](grave).
+both accessible by pressing '`'(grave).
 
 Note: all commands entered in HUD chat window must be prefixed by '$' character.
 
@@ -69,7 +70,7 @@ Description: load HUD state from file in current /savegames directory(/savegames
 
 ## License
 
-Copyright 2018 Dariusz Sikora <<dev@isangeles.pl>>
+Copyright 2018-2019 Dariusz Sikora <<dev@isangeles.pl>>
  
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

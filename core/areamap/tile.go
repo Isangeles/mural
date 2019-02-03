@@ -38,8 +38,8 @@ type tile struct {
 func newTile(spr *pixel.Sprite, pos pixel.Vec) *tile {
 	t := new(tile)
 	t.Sprite = spr
-	t.bounds = pixel.R(pos.X, pos.Y, t.Sprite.Frame().W(),
-		t.Sprite.Frame().H())
+	t.bounds = pixel.R(pos.X, pos.Y, pos.X + t.Sprite.Frame().W(),
+		pos.Y + t.Sprite.Frame().H())
 	return t
 }
 

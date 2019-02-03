@@ -43,6 +43,8 @@ load_b_label:Load;
 load_map_info:Loading map...;
 load_avatars_info:Loading characters avatars...;
 hud_menu_title:Menu;
+hud_bar_menu_open_info:Open menu;
+hud_bar_inv_open_info:Open inventory;
 char_frame_hp_bar_label:Health;
 char_frame_mana_bar_label:Mana;
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;

@@ -114,10 +114,16 @@ func DrawPosTR(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
 	return pixel.V(bg.Max.X - ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
 } 
 
-// DrawPosCT returns center top draw position(center) on specified
+// DrawPosTC returns top center draw position(center) on specified
 // background for specified object.
-func DrawPosCT(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Center().X - ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+func DrawPosTC(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+}
+
+// DrawPosBC returns bottom center draw position(center) on specified
+// background for specified object.
+func DrawPosBC(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Min.Y + ConvSize(ob.Max.Y)/2)
 }
 
 // TopOf returns position for specified rect at the top of specified

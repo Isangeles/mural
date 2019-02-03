@@ -165,6 +165,11 @@ func (c *Camera) CenterAt(pos pixel.Vec) {
 		pos.Y - c.Size().Y/2))
 }
 
+// Map returns current map.
+func (c *Camera) Map() *areamap.Map {
+	return c.areaMap
+}
+
 // Avatars returns all avatars from current
 // area.
 func (c *Camera) Avatars() []*object.Avatar {

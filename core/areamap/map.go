@@ -148,6 +148,17 @@ func (m *Map) Size() pixel.Vec {
 	return m.mapsize
 }
 
+// Moveable checks whether specified position is
+// passable.
+func (m *Map) Passable(pos pixel.Vec) bool {
+	for _, t := range m.ground {
+		if t.Bounds().Contains(pos) {
+			return true
+		}
+	}
+	return false
+}
+
 // MapDrawPos translates real position to map draw position.
 func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
 	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) 

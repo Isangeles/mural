@@ -62,6 +62,7 @@ var (
 type HUD struct {
 	loadScreen *LoadingScreen
 	camera     *Camera
+	bar        *MenuBar
 	menu       *Menu
 	pcFrame    *CharFrame
 	chat       *Chat
@@ -91,6 +92,8 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
 	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	// Bar.
+	hud.bar = newMenuBar(hud)
 	// Menu.
 	hud.menu = newMenu(hud)
 	// Active player character frame.
@@ -115,8 +118,10 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	// Elements positions.
 	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
+	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
 	// Draw elements.
 	hud.camera.Draw(win)
+	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
 	hud.chat.Draw(win)
 	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
 	if hud.menu.Opened() {
@@ -133,7 +138,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.loading {
 		if hud.loaderr != nil { // on loading error
-			log.Err.Printf("loading_fail:%v", hud.loaderr)
+			log.Err.Printf("hud_loading_fail:%v", hud.loaderr)
 			hud.Exit()
 		}
 	}
@@ -162,14 +167,16 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		if !hud.game.Paused() {
+		destPos := hud.camera.ConvCameraPos(win.MousePosition())
+		if !hud.game.Paused() && hud.camera.Map().Passable(destPos) {
 			// Move active PC.
-			hud.destPos = hud.camera.ConvCameraPos(win.MousePosition())
+			hud.destPos = destPos
 			hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
 		}
 	}
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
+	hud.bar.Update(win)
 	hud.chat.Update(win)
 	hud.pcFrame.Update(win)
 	hud.menu.Update(win)

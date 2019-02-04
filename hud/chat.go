@@ -30,6 +30,7 @@ import (
 	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/enginelog"
 	
@@ -44,6 +45,9 @@ var (
 // Chat represents HUD chat window.
 type Chat struct {
 	hud       *HUD
+	bgSpr     *pixel.Sprite
+	bgDraw    *imdraw.IMDraw
+	drawArea  pixel.Rect
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
 	activated bool
@@ -67,7 +71,8 @@ func newChat(hud *HUD) *Chat {
 }
 
 // Draw draws chat window.
-func (c *Chat) Draw(win *mtk.Window) {
+func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
+	// TODO: draw chat background.
 	textboxDA := pixel.R(
 		win.Bounds().Min.X + mtk.ConvSize(10),
 		win.Bounds().Min.Y + c.texteditSize.Y + mtk.ConvSize(10),
@@ -84,6 +89,7 @@ func (c *Chat) Draw(win *mtk.Window) {
 
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
+	// Content update.
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
 	/* 
@@ -95,11 +101,26 @@ func (c *Chat) Update(win *mtk.Window) {
 		msgs = append(msgs, msg)
 	}
 	c.textbox.Insert(msgs)
-	
+	// Elements update.
 	c.textbox.Update(win)
+	c.Active(c.textedit.Focused())
 	if c.Activated() {
 		c.textedit.Update(win)
 	}
+}
+
+// DrawArea returns current chat draw area.
+func (c *Chat) DrawArea() pixel.Rect {
+	return c.drawArea
+}
+
+// Bounds returns bounds of chat background.
+func (c *Chat) Bounds() pixel.Rect {
+	// TODO: return background bounds.
+	if c.bgSpr == nil {
+		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+	}
+	return pixel.R(0, 0, 0, 0)
 }
 
 // Activated checks whether chat input is

@@ -1,7 +1,7 @@
 /*
  * messagesqueue.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,5 +76,16 @@ func (mq *MessagesQueue) Append(m *MessageWindow) {
 // Remove removes message with specified index from queue.
 func (mq *MessagesQueue) Remove(i int) {
 	mq.queue = append(mq.queue[:i], mq.queue[i+1:]...)
+}
+
+// ContainsPosition checks whether specified position is
+// contained by any message window in the queue.
+func (mq *MessagesQueue) ContainsPosition(pos pixel.Vec) bool {
+	for _, msg := range mq.queue {
+		if msg.DrawArea().Contains(pos) {
+			return true
+		}
+	}
+	return false
 }
 

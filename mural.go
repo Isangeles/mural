@@ -135,7 +135,7 @@ func run() {
 		mtk.SetMainFont(uiFont)
 	}
 	// Audio effects.
-	bClickSound1, err := data.AudioEffect("click1.mp3")
+	bClickSound1, err := data.AudioEffect(config.ButtonClickSoundFile())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_retrieve_button_click_audio_data:%v",
 			err)

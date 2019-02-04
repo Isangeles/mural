@@ -66,10 +66,13 @@ type HUD struct {
 	menu       *Menu
 	pcFrame    *CharFrame
 	chat       *Chat
+	inv        *InventoryMenu
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
 	destPos    pixel.Vec
+	userFocus  *mtk.Focus
+	msgs       *mtk.MessagesQueue
 	loading    bool
 	exiting    bool
 	loaderr    error
@@ -105,6 +108,11 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	hud.pcFrame = pcFrame
 	// Chat window.
 	hud.chat = newChat(hud)
+	// Inventory window.
+	hud.inv = newInventoryMenu(hud)
+	// Messages & focus.
+	hud.userFocus = new(mtk.Focus)
+	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
 	// Start game loading.
 	go hud.LoadGame(g)
 	return hud, nil
@@ -119,21 +127,30 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	// Elements positions.
 	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
 	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
+	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
+	menuPos := win.Bounds().Center()
+	invPos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
-	hud.chat.Draw(win)
+	hud.chat.Draw(win, mtk.Matrix().Moved(chatPos))
 	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
 	if hud.menu.Opened() {
-		menuPos := win.Bounds().Center()
 		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
 	}
+	if hud.inv.Opened() {
+		hud.inv.Draw(win, mtk.Matrix().Moved(invPos))
+	}
+	// Messages.
+	msgPos := win.Bounds().Center()
+	hud.msgs.Draw(win.Window, mtk.Matrix().Moved(msgPos))
 }
 
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
+	// HUD state.
 	if hud.exiting {
-		// TODO: exit back to menu.
+		// TODO: exit back to main menu.
 		win.SetClosed(true)
 	}
 	if hud.loading {
@@ -143,19 +160,18 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	// Key events.
-	if win.JustPressed(pixelgl.KeyGraveAccent) {
+	if win.JustPressed(pixelgl.KeyGraveAccent) { // grave
 		// Toggle chat activity.
 		if !hud.chat.Activated() {
 			hud.chat.Active(true)
 			hud.camera.Lock(true)
-
 		} else {
 			hud.chat.Active(false)
 			hud.camera.Lock(false)
 		}
 	}
 	if !hud.chat.Activated() { // block rest of key events if chat is active
-		if win.JustPressed(pixelgl.KeySpace) {
+		if win.JustPressed(pixelgl.KeySpace) { // Spacebar
 			// Pause game.
 			if !hud.game.Paused() {
 				hud.game.Pause(true)
@@ -165,27 +181,45 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.camera.Lock(false)
 			}
 		}
+		if win.JustPressed(pixelgl.KeyEscape) { // Esc
+			// Show menu.
+			if !hud.menu.Opened() {
+				hud.menu.Show(true)
+			} else {
+				hud.menu.Show(false)
+			}
+		}
+		if win.JustPressed(pixelgl.KeyB) { // B
+			// Show inventory.
+			if !hud.inv.Opened() {
+				hud.inv.Show(true)
+			} else {
+				hud.inv.Show(false)
+			}
+		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		destPos := hud.camera.ConvCameraPos(win.MousePosition())
-		if !hud.game.Paused() && hud.camera.Map().Passable(destPos) {
+		if !hud.game.Paused() && hud.camera.Map().Passable(destPos) &&
+			!hud.containsPos(win.MousePosition()){
 			// Move active PC.
 			hud.destPos = destPos
 			hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
 		}
 	}
+	// Elements update.
 	hud.loadScreen.Update(win)
 	hud.camera.Update(win)
 	hud.bar.Update(win)
 	hud.chat.Update(win)
 	hud.pcFrame.Update(win)
-	hud.menu.Update(win)
-}
-
-// Camera position returns current position of
-// HUD camera.
-func (hud *HUD) CameraPosition() pixel.Vec {
-	return hud.camera.Position()
+	if hud.menu.Opened() {
+		hud.menu.Update(win)
+	}
+	if hud.inv.Opened() {
+		hud.inv.Update(win)
+	}
+	hud.msgs.Update(win)
 }
 
 // Players returns player characters
@@ -215,9 +249,26 @@ func (hud *HUD) Chat() *Chat {
 	return hud.chat
 }
 
+// Camera returns HUD camera.
+func (hud *HUD) Camera() *Camera {
+	return hud.camera
+}
+
 // Game returns HUD current game.
 func (hud *HUD) Game() *flamecore.Game {
 	return hud.game
+}
+
+// UserFocus returns HUD user focus.
+func (hud *HUD) UserFocus() *mtk.Focus {
+	return hud.userFocus
+}
+
+// ShowMessage displays specified message window in HUD
+// messages queue.
+func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
+	msg.Show(true)
+	hud.msgs.Append(msg)
 }
 
 // LoadNewGame load all game data.
@@ -321,8 +372,8 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 		sav.PlayersData = append(sav.PlayersData, &avData)
 	}
 	// Save camera XY position.
-	sav.CameraPosX = hud.CameraPosition().X
-	sav.CameraPosY = hud.CameraPosition().Y
+	sav.CameraPosX = hud.Camera().Position().X
+	sav.CameraPosY = hud.Camera().Position().Y
 	return sav
 }
 
@@ -336,4 +387,16 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
 	return nil
+}
+
+// containsPos checks is specified position is contained
+// by any HUD element(except camera).
+func (hud *HUD) containsPos(pos pixel.Vec) bool {
+	if hud.bar.DrawArea().Contains(pos) ||
+		hud.chat.DrawArea().Contains(pos) ||
+		hud.pcFrame.DrawArea().Contains(pos) ||
+		hud.inv.DrawArea().Contains(pos) {
+		return true
+	}
+	return false
 }

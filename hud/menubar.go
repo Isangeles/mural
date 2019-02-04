@@ -129,5 +129,9 @@ func (mb *MenuBar) onMenuButtonClicked(b *mtk.Button) {
 
 // Triggered after inventory button clicked.
 func (mb *MenuBar) onInvButtonClicked(b *mtk.Button) {
-	
+	if mb.hud.inv.Opened() {
+		mb.hud.inv.Show(false)
+	} else {
+		mb.hud.inv.Show(true)
+	}
 }

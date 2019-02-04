@@ -25,7 +25,6 @@ package hud
 
 import (
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -45,6 +44,7 @@ type Menu struct {
 	closeButton *mtk.Button
 	exitButton  *mtk.Button
 	opened      bool
+	focused     bool
 }
 
 // newMenu creates menu for HUD.
@@ -75,8 +75,8 @@ func newMenu(hud *HUD) *Menu {
 		m.exitButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE, accent_color,
 			lang.Text("gui", ""), lang.Text("gui", ""))
 	} else {
-		m.exitButton = mtk.NewButtonSprite(exitButtonBG, mtk.SIZE_SMALL, lang.Text("gui", "exit_b_label"),
-			lang.Text("gui", "exit_b_info"))
+		m.exitButton = mtk.NewButtonSprite(exitButtonBG, mtk.SIZE_SMALL,
+			lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_b_info"))
 	}
 	m.exitButton.SetOnClickFunc(m.onExitButtonClicked)
 	return m
@@ -96,7 +96,8 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextPos := mtk.ConvVec(pixel.V(0, m.Bounds().Max.Y/2 - 25))
 	m.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(m.Bounds().Max.X/2 - 20, m.Bounds().Max.Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(m.Bounds().Max.X/2 - 20,
+		m.Bounds().Max.Y/2 - 15))
 	m.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Bounds().Max.X/2 - 20))
 	m.exitButton.Draw(win.Window, matrix.Moved(exitButtonPos))
@@ -104,16 +105,7 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu.
 func (m *Menu) Update(win *mtk.Window) {
-	if !m.hud.chat.Activated() { // block key events if chat is active
-		if win.JustPressed(pixelgl.KeyEscape) {
-			// Show menu.
-			if !m.hud.menu.Opened() {
-				m.Show(true)
-			} else {
-				m.Show(false)
-			}
-		}
-	}
+	// Elements update.
 	m.closeButton.Update(win)
 	m.exitButton.Update(win)
 }
@@ -140,8 +132,23 @@ func (m *Menu) Opened() bool {
 // Show toggles menu visibility.
 func (m *Menu) Show(show bool) {
 	m.opened = show
-	m.hud.camera.Lock(show)
-	m.hud.game.Pause(show)
+	m.hud.camera.Lock(m.Opened())
+	m.hud.game.Pause(m.Opened())
+	if m.Opened() {
+		m.hud.UserFocus().Focus(m)
+	} else {
+		m.hud.UserFocus().Focus(nil)
+	}
+}
+
+// Focused checks whether menu is focused.
+func (m *Menu) Focused() bool {
+	return m.focused
+}
+
+// Focus toggles menu focus.
+func (m *Menu) Focus(focus bool) {
+	m.focused = focus
 }
 
 // drawIMBackground draws menu background with

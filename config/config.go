@@ -52,12 +52,13 @@ var (
 	lang = flame.LangID()
 	mainFontName = ""
 	menuMusic = ""
+	bClickSound = ""
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
 	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
-		"resolution", "map_fow", "main_font", "menu_music")
+		"resolution", "map_fow", "main_font", "menu_music", "button_click_sound")
 	if err != nil {
 		return err
 	}
@@ -76,6 +77,7 @@ func LoadConfig() error {
 	mapfow = confValues[2] == "true"
 	mainFontName = confValues[3]
 	menuMusic = confValues[4]
+	bClickSound = confValues[5]
 	
 	log.Dbg.Print("config file loaded")
 	return nil
@@ -92,11 +94,11 @@ func SaveConfig() error {
 	w := bufio.NewWriter(f)
 	w.WriteString(fmt.Sprintf("%s\n", "# Mural GUI configuration file.")) // default header
 	w.WriteString(fmt.Sprintf("fullscreen:%v;\n", fullscreen))
-	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X,
-		resolution.Y))
+	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X, resolution.Y))
 	w.WriteString(fmt.Sprintf("map_fow:%v;\n", mapfow))
 	w.WriteString(fmt.Sprintf("main_font:%s;\n", mainFontName))
 	w.WriteString(fmt.Sprintf("menu_music:%s;\n", menuMusic))
+	w.WriteString(fmt.Sprintf("button_click_sound:%s;\n", bClickSound))
 	w.Flush()
 
 	log.Dbg.Print("config file saved")
@@ -141,6 +143,12 @@ func MenuMusicFile() string {
 	return menuMusic
 }
 
+// ButtonClickSoundFile returns name of audio file
+// with button click audio effect.
+func ButtonClickSoundFile() string {
+	return bClickSound
+}
+
 // SetFullscreen toggles fullscreen mode.
 func SetFullscreen(fs bool) {
 	fullscreen = fs
@@ -174,6 +182,13 @@ func SetMainFontName(font string) {
 // main menu music theme.
 func SetMenuMusicFile(fileName string) {
 	menuMusic = fileName
+}
+
+// SetButtonClickSoundFile sets specified file name
+// as name of audio file with global button click
+// effect.
+func SetButtonClickSoundFile(fileName string) {
+	bClickSound = fileName
 }
 
 // SupportedResolutions returns all resolutions

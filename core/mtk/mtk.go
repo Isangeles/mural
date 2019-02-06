@@ -26,6 +26,7 @@ package mtk
 
 import (
 	"time"
+	"image/color"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -36,6 +37,7 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
+	"github.com/faiface/pixel/imdraw"
 )
 
 const (
@@ -166,6 +168,17 @@ func (s Size) BarSize() pixel.Rect {
 	}
 }
 
+// SlotSize returns size parameters for slot with specified
+// shape.
+func (s Size) SlotSize(sh Shape) pixel.Rect {
+	switch {
+	case s <= SIZE_SMALL && sh == SHAPE_SQUARE:
+		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
+	default:
+		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
+	}
+}
+
 // Sets specified truetype font as current main font of
 // the interface.
 func SetMainFont(font *truetype.Font) {
@@ -214,6 +227,18 @@ func Audio() *AudioPlayer {
 // InitAudio creates audio player for toolkit.
 func InitAudio(format beep.Format) {
 	audio = NewAudioPlayer(format)
+}
+
+// DrawRectangle draw rectangle on specified target with
+// specified draw area(position and size) and color.
+func DrawRectangle(t pixel.Target, drawArea pixel.Rect, color color.Color) {
+	draw := imdraw.New(nil)
+	draw.Clear()
+	draw.Color = color
+	draw.Push(drawArea.Min)
+	draw.Push(drawArea.Max)
+	draw.Rectangle(0)
+	draw.Draw(t)
 }
 
 // createMainFont creates new main font face with

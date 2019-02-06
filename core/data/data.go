@@ -54,6 +54,7 @@ var (
 	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
+	icons       map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
 	music       map[string]*beep.Buffer
 	fonts       map[string]*truetype.Font
@@ -86,6 +87,12 @@ func LoadGameData() error {
 		return fmt.Errorf("fail_to_load_items_spritesheets:%v", err)
 	}
 	itemsTexs = itTexs
+	// Icons.
+	itemIcons, err := loadPicturesFromArch(g_arch_path, "item/icon")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_items_icons:%v", err)
+	}
+	icons = itemIcons
 	return nil
 }
 
@@ -166,6 +173,20 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_items_spritesheet_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("item/spritesheet/" + fileName)
+	return loadPictureFromArch(g_arch_path, path)
+}
+
+// ItemIcon returns picture with specified name for
+// item icon.
+func ItemIcon(fileName string) (pixel.Picture, error) {
+	icon := icons[fileName]
+	if icon != nil {
+		return icon, nil
+	}
+	// Fallback.
+	log.Dbg.Printf("data_items_icon_fallback_load:%s",
+		fileName)
+	path := filepath.FromSlash("item/icon/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
 }
 

@@ -65,8 +65,7 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	// Textbox.
 	textbox := NewTextbox(mw.Frame().Max, SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
-	tex := []string{msg}
-	mw.textbox.InsertText(tex)
+	mw.textbox.InsertText(msg)
 	// Buttons.
 	acceptB := NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "accept_b_label"), "")

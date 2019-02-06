@@ -28,10 +28,16 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/object/item"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
+)
+
+const (
+	inv_slots_number = 20
 )
 
 // Struct for inventory menu.
@@ -42,12 +48,12 @@ type InventoryMenu struct {
 	drawArea    pixel.Rect
 	titleText   *mtk.Text
 	closeButton *mtk.Button
+	slots       *mtk.SlotList
 	opened      bool
 	focused     bool
 }
 
-// newInventoryMenu creates new inventory menu for
-// HUD.
+// newInventoryMenu creates new inventory menu for HUD.
 func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im := new(InventoryMenu)
 	im.hud = hud
@@ -69,6 +75,14 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.closeButton = mtk.NewButtonSprite(closeButtonBG, mtk.SIZE_SMALL, "", "")
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
+	// Slots.
+	rows, cols := 9, 10
+	slotsBGColor := pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)), slotsBGColor, mtk.SIZE_MINI)
+	for i := 0; i < rows * cols; i ++ { // create empty slots
+		s := mtk.NewSlot(mtk.SIZE_MINI, mtk.SIZE_MINI, mtk.SHAPE_SQUARE)
+		im.slots.Add(s)
+	}
 	return im
 }
 
@@ -89,11 +103,15 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	closeButtonPos := mtk.ConvVec(pixel.V(im.Bounds().Max.X/2 - 20,
 		im.Bounds().Max.Y/2 - 15))
 	im.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
+	// Slots.
+	//firstSlotPos := mtk.ConvVec(pixel.V(-im.Bounds().W()/2 + 30, im.Bounds().H()/2 - 70))
+	im.slots.Draw(win, matrix)
 }
 
 // Update updates menu.
 func (im *InventoryMenu) Update(win *mtk.Window) {
 	// Elements update.
+	im.slots.Update(win)
 	im.closeButton.Update(win)
 }
 
@@ -107,6 +125,7 @@ func (im *InventoryMenu) Show(show bool) {
 	im.opened = show
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
+		im.insert(im.hud.ActivePlayer().Inventory().Items()...)
 	} else {
 		im.hud.UserFocus().Focus(nil)
 	}
@@ -141,7 +160,29 @@ func (im *InventoryMenu) drawIMBackground(t pixel.Target) {
 	// TODO: draw background with IMDraw.
 }
 
+// insert inserts specified items in inventory slots.
+func (im *InventoryMenu) insert(items ...item.Item) {
+	for _, i := range items {
+		slot := im.slots.Slots()[0]
+		itemGraphic := res.ItemData(i.ID())
+		if itemGraphic == nil {
+			log.Err.Printf("hud_inv_menu:fail_to_find_item_graphic:%s",
+				i.ID())
+			slot.SetValue(i)
+			continue
+		}
+		slot.SetValue(i)
+		slot.SetIcon(itemGraphic.IconPic)
+		slot.SetInfo(i.Name())
+	}
+}
+
 // Triggered after close button clicked.
 func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 	im.Show(false)
+}
+
+// Triggered after one of item slots was clicked.
+func (im *InventoryMenu) onSlotClicked(s *mtk.Slot) {
+
 }

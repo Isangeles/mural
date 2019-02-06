@@ -120,8 +120,10 @@ func DrawPosTC(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
 	return pixel.V(bg.Center().X, bg.Max.Y - ConvSize(ob.Max.Y)/2)
 }
 
+// DrawPosBL returns bottom left draw position(center) on specified
+// background for specified object.
 func DrawPosBL(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Min.X + ConvSize(ob.W()/2), bg.Min.Y + ConvSize(ob.Max.Y)/2)
+	return pixel.V(bg.Min.X + ConvSize(ob.W()/2), bg.Min.Y + ConvSize(ob.H())/2)
 }
 
 // DrawPosBC returns bottom center draw position(center) on specified

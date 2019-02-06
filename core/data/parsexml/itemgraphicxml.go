@@ -41,6 +41,7 @@ type ItemGraphicNodeXML struct {
 	XMLName      xml.Name `xml:"item"`
 	ID           string   `xml:"id,attr"`
 	Spritesheet  string   `xml:"spritesheet,attr"`
+	Icon         string   `xml:"icon,attr"`
 }
 
 // UnmarshalItemsGraphicsBase parses specified XML data

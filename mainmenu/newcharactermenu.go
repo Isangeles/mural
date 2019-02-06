@@ -267,7 +267,7 @@ func (ncm *NewCharacterMenu) canCreate() bool {
 
 // updatePoints updates points box value.
 func (ncm *NewCharacterMenu) updatePoints() {
-	ncm.pointsBox.InsertText([]string{fmt.Sprintf("%d", ncm.attrPoints)})
+	ncm.pointsBox.InsertText(fmt.Sprintf("%d", ncm.attrPoints))
 }
 
 // createChar creates new game character.

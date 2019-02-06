@@ -1,7 +1,7 @@
 /*
  * infowindow.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 package mtk
 
 import (
-	"golang.org/x/image/colornames"
+	"image/color"
 	
 	"github.com/faiface/pixel"
 )
@@ -32,26 +32,25 @@ import (
 // InfoWindow struct for small text boxes with information about UI
 // elements.
 type InfoWindow struct {
-	text     *Textbox
+	*Textbox
 	drawArea pixel.Rect
 }
 
 // NewInfoWindow creates new information window.
-func NewInfoWindow(infoText string) *InfoWindow {
+func NewInfoWindow(size Size, color color.Color) *InfoWindow {
 	iw := new(InfoWindow)
-	iw.text = NewTextbox(pixel.V(0, 0), SIZE_SMALL, colornames.Grey)
-	iw.text.Add(infoText)
+	iw.Textbox = NewTextbox(pixel.V(0, 0), size, color)
 	return iw
 }
 
 // Draw draws info window.
 func (iw *InfoWindow) Draw(t pixel.Target) {
-	iw.text.Draw(iw.drawArea, t)
+	iw.Textbox.Draw(iw.drawArea, t)
 }
 
 // Update updates info window.
 func (iw *InfoWindow) Update(win *Window) {
 	iw.drawArea = pixel.R(win.MousePosition().X, win.MousePosition().Y,
-		win.MousePosition().X + iw.text.Bounds().Size().X,
-		win.MousePosition().Y + iw.text.Bounds().Size().Y * 1.5)
+		win.MousePosition().X + iw.Bounds().Size().X,
+		win.MousePosition().Y + iw.Bounds().Size().Y * 1.5)
 }

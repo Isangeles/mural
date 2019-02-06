@@ -1,7 +1,7 @@
 /*
  * switch.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,9 +113,12 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
 	s.nextButton = NewButton(s.size-2, SHAPE_SQUARE, colornames.Red, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
-	// Label & info window.
+	// Label & info.
 	s.label = NewText(label, s.size-1, s.Frame().W())
-	s.info = NewInfoWindow(info)
+	if len(info) > 0 {
+		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
+		s.info.Add(info)
+	}
 	// Values.
 	s.values = values
 	s.index = 0
@@ -139,9 +142,12 @@ func NewSwitchSprite(bgPic, nextButtonPic, prevButtonPic pixel.Picture,
 	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
 	s.nextButton = NewButtonSprite(nextButtonPic, s.size-2, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
-	// Label & info window.
+	// Label & info.
 	s.label = NewText(label, s.size-1, s.Frame().W())
-	s.info = NewInfoWindow(info)
+	if len(info) > 0 {
+		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
+		s.info.Add(info)
+	}
 	// Values.
 	s.values = values
 	s.index = 0

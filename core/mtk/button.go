@@ -35,10 +35,14 @@ import (
 	"github.com/faiface/pixel/imdraw"
 )
 
+var (
+	button_push_color = colornames.Grey
+	button_hover_color = colornames.Crimson
+)
+
 // Button struct for UI button.
 type Button struct {
 	bgSpr      *pixel.Sprite
-	bgDraw     *imdraw.IMDraw
 	label      *Text
 	info       *InfoWindow
 	size       Size
@@ -59,45 +63,46 @@ type Button struct {
 // label text.
 func NewButton(size Size, shape Shape, color color.Color,
 	labelText, infoText string) *Button {
-	button := new(Button)
+	b := new(Button)
 	// Background.
-	button.bgDraw = imdraw.New(nil)
-	button.size = size
-	button.shape = shape
-	button.color = color
-	button.colorPush = colornames.Grey
-	button.colorHover = colornames.Crimson
+	b.size = size
+	b.shape = shape
+	b.color = color
+	b.colorPush = button_push_color
+	b.colorHover = button_hover_color
 	// Label.
-	button.label = NewText(labelText, size, button.Frame().W()) 
+	b.label = NewText(labelText, size, b.Frame().W()) 
 	// Info window.
 	if len(infoText) > 0 {	
-		button.info = NewInfoWindow(infoText)
+		b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
+		b.info.Add(infoText)
 	}
 	// Global click sound.
-	button.SetClickSound(button_click_sound)
+	b.SetClickSound(button_click_sound)
 	
-	return button
+	return b
 }
 
 // NewButtonSprite creates new instance of button with specified
 // background image and label text.
 func NewButtonSprite(bgPic pixel.Picture, fontSize Size, labelText,
 	infoText string) *Button {
-	button := new(Button)
+	b := new(Button)
 	// Backround.
-	button.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
-	button.colorPush = colornames.Grey
-	button.colorHover = colornames.Crimson
+	b.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
+	b.colorPush = button_push_color
+	b.colorHover = button_hover_color
 	// Label.
-	button.label = NewText(labelText, fontSize, button.Frame().W()) 
+	b.label = NewText(labelText, fontSize, b.Frame().W()) 
 	// Info window.
 	if len(infoText) > 0 {	
-		button.info = NewInfoWindow(infoText)
+		b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
+		b.info.Add(infoText)
 	}
 	// Global click sound.
-	button.SetClickSound(button_click_sound)
+	b.SetClickSound(button_click_sound)
 
-	return button
+	return b
 }
 
 // Draw draws button.
@@ -153,13 +158,11 @@ func (b *Button) Update(win *Window) {
 		b.pressed = false
 	}
 	// On-hover.
-	if b.DrawArea().Contains(win.MousePosition()) || b.Focused() {
-		b.hovered = true
+	b.hovered = b.DrawArea().Contains(win.MousePosition())
+	if b.hovered || b.Focused() {
 		if b.info != nil {	
 			b.info.Update(win)
 		}
-	} else {
-		b.hovered = false
 	}
 	// On-focus events.
 	if b.Focused() {
@@ -209,19 +212,19 @@ func (b *Button) DrawArea() pixel.Rect {
 // Frame returns button background size, in form
 // of rectangle.
 func (b *Button) Frame() pixel.Rect {
-	if b.bgSpr != nil {
-		return b.bgSpr.Frame()
-	} else {
+	if b.bgSpr == nil {
 		return b.size.ButtonSize(b.shape)
 	}
+	return b.bgSpr.Frame()
 }
 
 // Draws button background with IMDraw.
 func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
-	b.bgDraw.Clear()
-	b.bgDraw.Color = pixel.ToRGBA(color)
-	b.bgDraw.Push(b.DrawArea().Min)
-	b.bgDraw.Push(b.DrawArea().Max)
-	b.bgDraw.Rectangle(0)
-	b.bgDraw.Draw(t)
+	draw := imdraw.New(nil)
+	draw.Clear()
+	draw.Color = pixel.ToRGBA(color)
+	draw.Push(b.DrawArea().Min)
+	draw.Push(b.DrawArea().Max)
+	draw.Rectangle(0)
+	draw.Draw(t)
 }

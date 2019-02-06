@@ -1,7 +1,7 @@
 /*
  * textbox.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,6 @@ func (tb *Textbox) drawIMBackground(t pixel.Target) {
 	tb.bg.Clear()
 	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	tb.bg.Push(tb.drawArea.Min)
-	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	tb.bg.Push(tb.drawArea.Max)
 	tb.bg.Rectangle(0)
 	tb.bg.Draw(t)
@@ -118,7 +117,8 @@ func (tb *Textbox) SetMaxTextWidth(width float64) {
 	tb.textarea.SetMaxWidth(width)
 }
 
-// Insert clears textbox and inserts specified text.
+// Insert clears textbox and inserts text from
+// String() function of specified stringers.
 func (t *Textbox) Insert(text []fmt.Stringer) {
 	t.Clear()
 	for _, txt := range text {
@@ -128,7 +128,7 @@ func (t *Textbox) Insert(text []fmt.Stringer) {
 }
 
 // InsertText clears textbox and inserts specified text.
-func (t *Textbox) InsertText(text []string) {
+func (t *Textbox) InsertText(text ...string) {
 	t.Clear()
 	t.textContent = text
 	t.updateTextVisibility()
@@ -148,9 +148,8 @@ func (t *Textbox) Clear() {
 
 // updateTextVisibility updates content of visible
 // text area.
-// TODO: height of visible text is calculated wrong,
-// value is too big.
-// TODO: break to wide text into more lines.
+// TODO: height of visible text is calculated wrong, value is too big.
+// TODO: break too wide text into more lines.
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string

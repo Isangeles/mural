@@ -34,6 +34,7 @@ import (
 
 	"github.com/isangeles/flame/core/enginelog"
 	
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -52,37 +53,46 @@ type Chat struct {
 	textedit  *mtk.Textedit
 	activated bool
 	onCommand func(line string) (int, string, error)
-
-	textboxSize  pixel.Vec
-	texteditSize pixel.Vec
 }
 
 // newChat creates new chat window for HUD.
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
+	// Background.
+	c.bgDraw = imdraw.New(nil)
+	bg, err := data.PictureUI("chatbg.png")
+	if err == nil { // fallback
+		c.bgSpr = pixel.NewSprite(bg, bg.Bounds())
+	}
+	// Textbox.
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL,
 		colornames.Grey)
+	// Textedit.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
-	c.textboxSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(300))
-	c.texteditSize = pixel.V(mtk.ConvSize(600), mtk.ConvSize(40))
 	return c
 }
 
 // Draw draws chat window.
 func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
-	// TODO: draw chat background.
+	// Background.
+	if c.bgSpr != nil {
+		c.bgSpr.Draw(win, matrix)
+	}
+	// Textbox & textedit.
+	textboxSize := pixel.V(mtk.ConvSize(545), mtk.ConvSize(250))
+	texteditSize := pixel.V(mtk.ConvSize(545), mtk.ConvSize(40))
 	textboxDA := pixel.R(
 		win.Bounds().Min.X + mtk.ConvSize(10),
-		win.Bounds().Min.Y + c.texteditSize.Y + mtk.ConvSize(10),
-		win.Bounds().Min.X + c.textboxSize.X,
-		win.Bounds().Min.Y + c.texteditSize.Y + c.textboxSize.Y)
+		win.Bounds().Min.Y + texteditSize.Y + mtk.ConvSize(10),
+		win.Bounds().Min.X + textboxSize.X,
+		win.Bounds().Min.Y + texteditSize.Y + textboxSize.Y)
 	texteditDA := pixel.R(
 		win.Bounds().Min.X + mtk.ConvSize(10),
 		win.Bounds().Min.Y + mtk.ConvSize(10),
-		win.Bounds().Min.X + c.texteditSize.X,
-		win.Bounds().Min.Y + c.texteditSize.Y)
+		win.Bounds().Min.X + texteditSize.X,
+		win.Bounds().Min.Y + texteditSize.Y)
 	c.textbox.Draw(textboxDA, win)
 	c.textedit.Draw(texteditDA, win)
 }
@@ -116,11 +126,11 @@ func (c *Chat) DrawArea() pixel.Rect {
 
 // Bounds returns bounds of chat background.
 func (c *Chat) Bounds() pixel.Rect {
-	// TODO: return background bounds.
 	if c.bgSpr == nil {
+		// TODO: return draw background bounds.
 		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return pixel.R(0, 0, 0, 0)
+	return c.bgSpr.Frame()
 }
 
 // Activated checks whether chat input is

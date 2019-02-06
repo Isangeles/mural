@@ -120,16 +120,20 @@ func ImportItemsGraphicsDir(mod *module.Module, dirPath string) ([]*res.ItemGrap
 
 // buildXMLItemGraphic creates item graphic object for
 // specified item.
-func buildXMLItemGraphicData(item flameitem.Item, xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData,
-	error) {
+func buildXMLItemGraphicData(item flameitem.Item,
+	xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData, error) {
 	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v",
 			err)
 	}
-	// TODO: retrieve item icon picture.
+	itIcon, err := data.ItemIcon(xmlItem.Icon)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
+	}
 	itData := res.ItemGraphicData {
 		Item: item,
+		IconPic: itIcon,
 		SpritesheetPic: itSprite,
 	}
 	return &itData, nil

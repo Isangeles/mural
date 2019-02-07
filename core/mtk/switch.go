@@ -114,7 +114,7 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	s.nextButton = NewButton(s.size-2, SHAPE_SQUARE, colornames.Red, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label & info.
-	s.label = NewText(label, s.size-1, s.Frame().W())
+	s.label = NewText(label, s.size-1, s.Bounds().W())
 	if len(info) > 0 {
 		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 		s.info.Add(info)
@@ -143,7 +143,7 @@ func NewSwitchSprite(bgPic, nextButtonPic, prevButtonPic pixel.Picture,
 	s.nextButton = NewButtonSprite(nextButtonPic, s.size-2, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label & info.
-	s.label = NewText(label, s.size-1, s.Frame().W())
+	s.label = NewText(label, s.size-1, s.Bounds().W())
 	if len(info) > 0 {
 		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 		s.info.Add(info)
@@ -159,7 +159,7 @@ func NewSwitchSprite(bgPic, nextButtonPic, prevButtonPic pixel.Picture,
 // Draw draws switch.
 func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	s.drawArea = MatrixToDrawArea(matrix, s.Frame())
+	s.drawArea = MatrixToDrawArea(matrix, s.Bounds())
 	// Background.
 	if s.bgSpr != nil {
 		s.bgSpr.Draw(t, matrix)
@@ -175,15 +175,16 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 		valueDA = MatrixToDrawArea(matrix, s.valueSprite.Frame())
 	}
 	// Label & info window.
-	s.label.Draw(t, pixel.IM.Moved(PosBL(s.label.Bounds(), s.drawArea.Min)))
+	labelPos := MoveBC(s.Bounds(), s.label.Bounds().Max)
+	s.label.Draw(t, matrix.Moved(labelPos))
 	if s.info != nil && s.hovered {
 		s.info.Draw(t)
 	}
 	// Buttons.
-	s.prevButton.Draw(t, Matrix().Moved(LeftOf(valueDA, s.prevButton.Frame(),
-		10)))
-	s.nextButton.Draw(t, Matrix().Moved(RightOf(valueDA, s.nextButton.Frame(),
-		10)))
+	prevButtonPos := LeftOf(valueDA, s.prevButton.Frame(), 10)
+	nextButtonPos := RightOf(valueDA, s.nextButton.Frame(), 10)
+	s.prevButton.Draw(t, Matrix().Moved(prevButtonPos))
+	s.nextButton.Draw(t, Matrix().Moved(nextButtonPos))
 }
 
 // Update updates switch and all elements.
@@ -276,14 +277,13 @@ func (s *Switch) Disabled() bool {
 	return s.disabled
 }
 
-// Frame returns switch background size, in form
+// Bounds returns switch background size, in form
 // of rectangle.
-func (s *Switch) Frame() pixel.Rect {
-	if s.bgSpr != nil {
-		return s.bgSpr.Frame()
-	} else {
+func (s *Switch) Bounds() pixel.Rect {
+	if s.bgSpr == nil {
 		return s.size.SwitchSize()
 	}
+	return s.bgSpr.Frame()
 }
 
 // DrawArea returns current switch background position and size.

@@ -1,7 +1,7 @@
 /*
  * messagewindow.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.color = colornames.Grey
 	mw.colorDisable = colornames.Darkgrey
 	// Textbox.
-	textbox := NewTextbox(mw.Frame().Max, SIZE_MEDIUM, colornames.Grey)
+	textbox := NewTextbox(mw.Bounds().Max, SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
 	mw.textbox.InsertText(msg)
 	// Buttons.
@@ -90,7 +90,7 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow) {
 // Draw draws window.
 func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	mw.drawArea = MatrixToDrawArea(matrix, mw.Frame())
+	mw.drawArea = MatrixToDrawArea(matrix, mw.Bounds())
 	// Background.
 	if mw.Disabled() {
 		mw.drawIMBackground(t, mw.colorDisable)
@@ -98,11 +98,11 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 		mw.drawIMBackground(t, mw.color)
 	}
 	// Buttons.
-	mw.acceptButton.Draw(t, pixel.IM.Moved(PosBR(mw.acceptButton.Frame(),
-		pixel.V(mw.drawArea.Max.X, mw.drawArea.Min.Y))))
+	acceptButtonPos := MoveBR(mw.Bounds(), mw.acceptButton.Frame().Max)
+	mw.acceptButton.Draw(t, matrix.Moved(acceptButtonPos))
 	if mw.cancelButton != nil {
-		mw.cancelButton.Draw(t, pixel.IM.Moved(PosBL(mw.acceptButton.Frame(),
-		mw.drawArea.Min)))
+		cancelButtonPos := MoveBL(mw.Bounds(), mw.cancelButton.Frame().Max)
+		mw.cancelButton.Draw(t, matrix.Moved(cancelButtonPos))
 	}
 	// Textbox.
 	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
@@ -186,8 +186,8 @@ func (mw *MessageWindow) Disabled() bool {
 	return mw.disabled
 }
 
-// Frame resturns message window size bounds.
-func (mw *MessageWindow) Frame() pixel.Rect {
+// Bounds resturns message window size bounds.
+func (mw *MessageWindow) Bounds() pixel.Rect {
 	return mw.size.MessageWindowSize()
 }
 

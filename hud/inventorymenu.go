@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	inv_slots_number = 20
+	inv_slots = 90
 )
 
 // Struct for inventory menu.
@@ -76,10 +76,9 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
 	// Slots.
-	rows, cols := 9, 10
 	slotsBGColor := pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)), slotsBGColor, mtk.SIZE_MINI)
-	for i := 0; i < rows * cols; i ++ { // create empty slots
+	for i := 0; i < inv_slots; i ++ { // create empty slots
 		s := mtk.NewSlot(mtk.SIZE_MINI, mtk.SIZE_MINI, mtk.SHAPE_SQUARE)
 		im.slots.Add(s)
 	}

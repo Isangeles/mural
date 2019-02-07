@@ -1,7 +1,7 @@
 /*
  * newcharactermenu.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,23 +185,23 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 		win.Bounds().Center().Y+mtk.ConvSize(40)), win.Window)
 	// Switches.
 	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(
-		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Frame(), 100)))
+		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Bounds(), 100)))
 	ncm.strSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.pointsBox.DrawArea(), ncm.strSwitch.Frame(), 5)))
+		ncm.pointsBox.DrawArea(), ncm.strSwitch.Bounds(), 5)))
 	ncm.conSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.strSwitch.DrawArea(), ncm.conSwitch.Frame(), 15)))
+		ncm.strSwitch.DrawArea(), ncm.conSwitch.Bounds(), 15)))
 	ncm.dexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.conSwitch.DrawArea(), ncm.dexSwitch.Frame(), 15)))
+		ncm.conSwitch.DrawArea(), ncm.dexSwitch.Bounds(), 15)))
 	ncm.intSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.dexSwitch.DrawArea(), ncm.intSwitch.Frame(), 15)))
+		ncm.dexSwitch.DrawArea(), ncm.intSwitch.Bounds(), 15)))
 	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.intSwitch.DrawArea(), ncm.wisSwitch.Frame(), 15)))
+		ncm.intSwitch.DrawArea(), ncm.wisSwitch.Bounds(), 15)))
 	ncm.sexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Frame(), 30)))
+		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Bounds(), 30)))
 	ncm.raceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Frame(), 10)))
+		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Bounds(), 10)))
 	ncm.aliSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		ncm.raceSwitch.DrawArea(), ncm.aliSwitch.Frame(), 10)))
+		ncm.raceSwitch.DrawArea(), ncm.aliSwitch.Bounds(), 10)))
 	// Buttons.
 	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
 		ncm.doneButton.Frame(), pixel.V(win.Bounds().Max.X,

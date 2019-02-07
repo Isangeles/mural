@@ -1,7 +1,7 @@
 /*
  * console.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ func newConsole() (*Console, error) {
 // Draw draws console.
 func (c *Console) Draw(win *mtk.Window) {
 	drawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-	drawMax := mtk.DisTR(win.Bounds(), 0)
+	drawMax := win.Bounds().Max
 	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
 	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X,
 		drawMin.Y), win)

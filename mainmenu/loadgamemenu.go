@@ -86,13 +86,12 @@ func (lgm *LoadGameMenu) Draw(win *mtk.Window) {
 	lgm.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Saves list.
 	lgm.savesList.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		lgm.title.DrawArea(), lgm.savesList.Frame(), 10)))
+		lgm.title.DrawArea(), lgm.savesList.Bounds(), 10)))
 	// Buttons.
-	winBRPos := pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y)
-	lgm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
-		lgm.backButton.Frame(), win.Bounds().Min)))
-	lgm.loadButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
-		lgm.loadButton.Frame(), winBRPos)))
+	backButtonPos := mtk.DrawPosBL(win.Bounds(), lgm.backButton.Frame())
+	loadButtonPos := mtk.DrawPosBR(win.Bounds(), lgm.loadButton.Frame())
+	lgm.backButton.Draw(win.Window, mtk.Matrix().Moved(backButtonPos))
+	lgm.loadButton.Draw(win.Window, mtk.Matrix().Moved(loadButtonPos))
 }
 
 // Update updates all menu elements.

@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 		ngm.backButton.Frame(), win.Bounds().Min)))
 	// Switches & text.
 	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		ngm.title.DrawArea(), ngm.charSwitch.Frame(), 10)))
+		ngm.title.DrawArea(), ngm.charSwitch.Bounds(), 10)))
 	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X,
 		ngm.backButton.DrawArea().Max.Y, win.Bounds().Max.X,
 		ngm.charSwitch.DrawArea().Min.Y), win.Window)

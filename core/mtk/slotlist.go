@@ -25,7 +25,9 @@ package mtk
 
 import (
 	"image/color"
-	
+
+	"golang.org/x/image/colornames"
+                                       
 	"github.com/faiface/pixel"
 )
 
@@ -48,8 +50,14 @@ func NewSlotList(bgSize pixel.Vec, bgColor color.Color, slotSize Size) *SlotList
 	sl := new(SlotList)
 	sl.bgSize = bgSize
 	sl.bgColor = bgColor
-	sl.spl = int(bgSize.X / slotSize.SlotSize(SHAPE_SQUARE).W()) - 1
-	sl.lines = int(bgSize.Y / slotSize.SlotSize(SHAPE_SQUARE).H())
+	sl.upButton = NewButton(slotSize, SHAPE_SQUARE, colornames.Red, "+", "")
+	sl.upButton.SetOnClickFunc(sl.onUpButtonClicked)
+	sl.downButton = NewButton(slotSize, SHAPE_SQUARE, colornames.Red, "-", "")
+	sl.downButton.SetOnClickFunc(sl.onDownButtonClicked)
+	slotBounds := slotSize.SlotSize(SHAPE_SQUARE)
+	bgWidth := sl.bgSize.X - sl.upButton.Frame().W()
+	sl.spl = int(bgWidth/(slotBounds.W() + ConvSize(2)))
+	sl.lines = int(sl.Bounds().H() / (slotBounds.H() + ConvSize(2))) - 1
 	return sl
 }
 
@@ -64,12 +72,17 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 	} else {
 		DrawRectangle(t, sl.drawArea, sl.bgColor)
 	}
+	// Buttons.
+	upButtonPos := MoveTR(sl.Bounds(), sl.upButton.Frame().Max)
+	downButtonPos := MoveBR(sl.Bounds(), sl.downButton.Frame().Max)
+	sl.upButton.Draw(t, matrix.Moved(upButtonPos))
+	sl.downButton.Draw(t, matrix.Moved(downButtonPos))
 	// Slots.
 	if len(sl.slots) < 1 {
 		return
 	}
-	slotStart := pixel.V(-sl.Bounds().W()/2 + sl.slots[0].Bounds().W()/2,
-		sl.Bounds().H()/2 - sl.slots[0].Bounds().H()/2)
+	slotStart := pixel.V(-sl.Bounds().W()/2+sl.slots[0].Bounds().W()/2,
+		sl.Bounds().H()/2-sl.slots[0].Bounds().H()/2)
 	slotMove := slotStart
 	splCount := 0
 	lineCount := 0
@@ -96,6 +109,10 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates list.
 func (sl *SlotList) Update(win *Window) {
+	// Buttons.
+	sl.upButton.Update(win)
+	sl.downButton.Update(win)
+	// Slots.
 	for _, s := range sl.slots {
 		s.Update(win)
 	}
@@ -117,4 +134,22 @@ func (sl *SlotList) Bounds() pixel.Rect {
 		return pixel.R(0, 0, sl.bgSize.X, sl.bgSize.Y)
 	}
 	return sl.bgSpr.Frame()
+}
+
+// setStartLine sets specified 
+func (sl *SlotList) setStartLine(line int) {
+	if line*sl.spl > len(sl.slots) || line*sl.spl < 0 {
+		return
+	}
+	sl.lineID = line
+}
+
+// Triggered after up button clicked.
+func (sl *SlotList) onUpButtonClicked(b *Button) {
+	sl.setStartLine(sl.lineID - 1)
+}
+
+// Triggered after down button clicked.
+func (sl *SlotList) onDownButtonClicked(b *Button) {
+	sl.setStartLine(sl.lineID + 1)
 }

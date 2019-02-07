@@ -25,7 +25,7 @@ package mtk
 
 import (
 	"math"
-	
+
 	"github.com/faiface/pixel"
 )
 
@@ -41,128 +41,158 @@ var (
 // Scale return scale value for current resolution.
 func Scale() float64 {
 	/*
-	res := config.Resolution()
-	scaleX := res.X / def_res_x;
-	scaleY := res.Y / def_res_y;
-	s := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
-	return s
-        */
+		res := config.Resolution()
+		scaleX := res.X / def_res_x;
+		scaleY := res.Y / def_res_y;
+		s := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+		return s
+	*/
 	return scale
 }
 
 // DisBR returns bottom right position of specified rectangle
 // multiplied by specified value.
 func DisBR(rect pixel.Rect, scale float64) pixel.Vec {
-	return pixel.V(rect.Min.X - (rect.Max.X * scale),
-		rect.Min.Y + (rect.Max.Y * scale))
+	return pixel.V(rect.Min.X-(rect.Max.X*scale),
+		rect.Min.Y+(rect.Max.Y*scale))
 }
 
 // DisBL returns bottom left position of specified rectangle
 // multiplied by specified value.
 func DisBL(rect pixel.Rect, scale float64) pixel.Vec {
-	return pixel.V(rect.Min.X + (rect.Max.X * scale),
-		rect.Min.Y + (rect.Max.Y * scale))
+	return pixel.V(rect.Min.X+(rect.Max.X*scale),
+		rect.Min.Y+(rect.Max.Y*scale))
 }
 
 // DisTR returns top right position of specified rectangle
 // multiplied by specified value.
 func DisTR(rect pixel.Rect, scale float64) pixel.Vec {
-	return pixel.V(rect.Max.X - (rect.Max.X * scale),
-		rect.Max.Y - (rect.Max.Y * scale))
+	return pixel.V(rect.Max.X-(rect.Max.X*scale),
+		rect.Max.Y-(rect.Max.Y*scale))
 }
 
 // DisTL returns top left position of specified rectangle
 // multiplied by specified value.
 func DisTL(rect pixel.Rect, scale float64) pixel.Vec {
-	return pixel.V(rect.Min.X + (rect.Max.X * scale),
-	        rect.Max.Y - (rect.Max.Y * scale))
+	return pixel.V(rect.Min.X+(rect.Max.X*scale),
+		rect.Max.Y-(rect.Max.Y*scale))
 }
 
 // PosTR returns top right point for specified position
 // of specified rectangle.
 func PosTR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X - (size.Size().X / 2), pos.Y - (size.Size().Y))
+	return pixel.V(pos.X-(size.Size().X/2), pos.Y-(size.Size().Y))
 }
 
 // PosTL returns top left point for specified position
 // of specified rectangle.
 func PosTL(size pixel.Rect, pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X + (size.Size().X / 2), pos.Y - (size.Size().Y))
+	return pixel.V(pos.X+(size.Size().X/2), pos.Y-(size.Size().Y))
 }
 
 // PosBL returns bottom left point for specified position
 // of specified rectangle.
 func PosBL(size pixel.Rect, pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X + (size.Size().X / 2), pos.Y + (size.Size().Y / 2))
+	return pixel.V(pos.X+(size.Size().X/2), pos.Y+(size.Size().Y/2))
 }
 
 // PosBR returns bottom right point for specified position
 // of specified rectangle.
 func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X - (size.Size().X / 2), pos.Y + (size.Size().Y / 2))
+	return pixel.V(pos.X-(size.Size().X/2), pos.Y+(size.Size().Y/2))
 }
 
 // DrawPosTR returns top left position for draw specifed
 // object with specified size.
-func DrawPosTL(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Min.X + ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+func DrawPosTL(bg, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Min.X+ConvSize(ob.Max.X)/2, bg.Max.Y-ConvSize(ob.Max.Y)/2)
 }
 
 // DrawPosTR returns top right draw position(center) on specified
 // background for specified object.
-func DrawPosTR(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Max.X - ConvSize(ob.Max.X)/2, bg.Max.Y - ConvSize(ob.Max.Y)/2)
-} 
+func DrawPosTR(bg, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Max.X-ConvSize(ob.Max.X)/2, bg.Max.Y-ConvSize(ob.Max.Y)/2)
+}
 
 // DrawPosTC returns top center draw position(center) on specified
 // background for specified object.
-func DrawPosTC(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Max.Y - ConvSize(ob.Max.Y)/2)
+func DrawPosTC(bg, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Max.Y-ConvSize(ob.Max.Y)/2)
 }
 
 // DrawPosBL returns bottom left draw position(center) on specified
 // background for specified object.
 func DrawPosBL(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Min.X + ConvSize(ob.W()/2), bg.Min.Y + ConvSize(ob.H())/2)
+	return pixel.V(bg.Min.X+ConvSize(ob.W()/2), bg.Min.Y+ConvSize(ob.H())/2)
+}
+
+// DrawPosBR returns bottom right draw position(center) on specified
+// background for specified object.
+func DrawPosBR(bg, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Max.X-ConvSize(ob.W()/2), bg.Min.Y+ConvSize(ob.H())/2)
 }
 
 // DrawPosBC returns bottom center draw position(center) on specified
 // background for specified object.
-func DrawPosBC(bg pixel.Rect, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Min.Y + ConvSize(ob.Max.Y)/2)
+func DrawPosBC(bg, ob pixel.Rect) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Min.Y+ConvSize(ob.Max.Y)/2)
+}
+
+// MoveTR returns move vector from center of specified background
+// to top right point draw position(center) for specified size.
+func MoveTR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.W()/2-size.X/2, bg.H()/2-size.Y/2)
+}
+
+// MoveBR returns move vector from center of specified background
+// to bottom right point draw position(center) for specified size.
+func MoveBR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.W()/2-size.X/2, -bg.H()/2+size.Y/2)
+}
+
+// MoveBL returns move vector from center of specified background
+// to bottom left point draw position(center) for specified size.
+func MoveBL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(-bg.W()/2+size.X/2, -bg.H()/2+size.Y/2)
+}
+
+// MoveBC returns move vector from center of specified background
+// to bottom center point draw position(center) for specified size.
+func MoveBC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(0, -bg.H()/2+size.Y/2)
 }
 
 // TopOf returns position for specified rect at the top of specified
 // draw area, with specified offset value.
 func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Max.Y +
-		(rect.H() / 2) + ConvSize(offset))
+	return pixel.V(drawArea.Min.X+(rect.W()/2), drawArea.Max.Y+
+		(rect.H()/2)+ConvSize(offset))
 }
 
 // ReightOf returns position for specified rect at the right side of specified
 // draw area, with specified offset value.
 func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Max.X + (rect.Max.X / 2) + ConvSize(offset),
-		drawArea.Min.Y + (rect.H() / 2))
+	return pixel.V(drawArea.Max.X+(rect.Max.X/2)+ConvSize(offset),
+		drawArea.Min.Y+(rect.H()/2))
 }
 
 // BottomOf returns position of specified rect at the bottom side of speicified
 // draw area, width specified offset value.
 func BottomOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X + (rect.W() / 2), drawArea.Min.Y -
-		(rect.H() / 2) - ConvSize(offset))
+	return pixel.V(drawArea.Min.X+(rect.W()/2), drawArea.Min.Y-
+		(rect.H()/2)-ConvSize(offset))
 }
 
 // LeftOf returns position for specified rect at the left side of specified
 // draw area, with specified offset value.
 func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X - (rect.Max.X / 2) - ConvSize(offset),
-		drawArea.Min.Y + (rect.H() / 2))
+	return pixel.V(drawArea.Min.X-(rect.Max.X/2)-ConvSize(offset),
+		drawArea.Min.Y+(rect.H()/2))
 }
 
 // Range returns range between two specified positions.
 func Range(from, to pixel.Vec) float64 {
-	return math.Hypot(to.X - from.X, to.Y - from.Y)
+	return math.Hypot(to.X-from.X, to.Y-from.Y)
 }
 
 // Size converts specified default size value(for 1080p)
@@ -192,7 +222,7 @@ func MatrixToDrawArea(matrix pixel.Matrix, rect pixel.Rect) (drawArea pixel.Rect
 // Called on new MTK window create.
 func initScale(r pixel.Vec) {
 	res = r
-	scaleX := res.X / def_res_x;
-	scaleY := res.Y / def_res_y;
-	scale = math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+	scaleX := res.X / def_res_x
+	scaleY := res.Y / def_res_y
+	scale = math.Round(math.Min(scaleX, scaleY)*10) / 10
 }

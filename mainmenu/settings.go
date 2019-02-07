@@ -1,7 +1,7 @@
 /*
  * settings.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,11 +94,11 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons & switches.
 	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.title.DrawArea(), s.fullscrSwitch.Frame(), 50)))
+		s.title.DrawArea(), s.fullscrSwitch.Bounds(), 50)))
 	s.resSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.fullscrSwitch.DrawArea(), s.resSwitch.Frame(), 30)))
+		s.fullscrSwitch.DrawArea(), s.resSwitch.Bounds(), 30)))
 	s.langSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.resSwitch.DrawArea(), s.langSwitch.Frame(), 30)))
+		s.resSwitch.DrawArea(), s.langSwitch.Bounds(), 30)))
 	s.backButton.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
 		s.langSwitch.DrawArea(), s.backButton.Frame(), 30)))
 }

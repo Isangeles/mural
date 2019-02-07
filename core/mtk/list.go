@@ -75,7 +75,7 @@ func NewList(size Size, bgColor, secColor,
 // Draw draws list.
 func (l *List) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	l.drawArea = MatrixToDrawArea(matrix, l.Frame())
+	l.drawArea = MatrixToDrawArea(matrix, l.Bounds())
 	// Background.
 	if l.bgSpr != nil {
 		l.bgSpr.Draw(t, matrix)
@@ -85,11 +85,10 @@ func (l *List) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// List.
 	l.drawListItems(t)
 	// Buttons.
-	bgBRPos := pixel.V(l.DrawArea().Max.X, l.DrawArea().Min.Y)
-	l.upButton.Draw(t, Matrix().Moved(PosTR(l.upButton.Frame(),
-		l.DrawArea().Max)))
-	l.downButton.Draw(t, Matrix().Moved(PosBR(l.upButton.Frame(),
-		bgBRPos)))
+	upButtonPos := MoveTR(l.Bounds(), l.upButton.Frame().Max)
+	downButtonPos := MoveBR(l.Bounds(), l.downButton.Frame().Max)
+	l.upButton.Draw(t, matrix.Moved(upButtonPos))
+	l.downButton.Draw(t, matrix.Moved(downButtonPos))
 }
 
 // Update updates list.
@@ -136,14 +135,13 @@ func (l *List) Disabled() bool {
 	return l.disabled
 }
 
-// Frame returns list background size, in from
+// Bounds returns list background size, in from
 // of rectangle.
-func (l *List) Frame() pixel.Rect {
-	if l.bgSpr != nil {
-		return l.bgSpr.Frame()
-	} else {
+func (l *List) Bounds() pixel.Rect {
+	if l.bgSpr == nil {
 		return l.size.ListSize()
 	}
+	return l.bgSpr.Frame()
 }
 
 // SetStartIndex sets specified integer as index

@@ -128,34 +128,6 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	return s
 }
 
-// NewSwitchSprite creates new instance of switch with specified picture
-// as background.
-func NewSwitchSprite(bgPic, nextButtonPic, prevButtonPic pixel.Picture,
-	fontSize Size, label, info string,
-	values []SwitchValue) *Switch {
-	s := new(Switch)
-	// Background.
-	s.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
-	s.size = fontSize
-	// Buttons.
-	s.prevButton = NewButtonSprite(prevButtonPic, s.size-2, "-", "")
-	s.prevButton.SetOnClickFunc(s.onPrevButtonClicked)
-	s.nextButton = NewButtonSprite(nextButtonPic, s.size-2, "+", "")
-	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
-	// Label & info.
-	s.label = NewText(label, s.size-1, s.Bounds().W())
-	if len(info) > 0 {
-		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-		s.info.Add(info)
-	}
-	// Values.
-	s.values = values
-	s.index = 0
-	s.valueText = NewText("", s.size, 100)
-	
-	return s
-}
-
 // Draw draws switch.
 func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
@@ -164,7 +136,7 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if s.bgSpr != nil {
 		s.bgSpr.Draw(t, matrix)
 	} else {
-		s.drawIMBackground(t)
+		DrawRectangle(t, s.DrawArea(), s.color)
 	}
 	// Value view.
 	valueDA := s.valueText.DrawArea()
@@ -204,14 +176,22 @@ func (s *Switch) Update(win *Window) {
 	}
 }
 
-// drawIMBackground draws IMDraw background.
-func (s *Switch) drawIMBackground(t pixel.Target) {
-	s.bgDraw.Color = pixel.ToRGBA(s.color)
-	s.bgDraw.Push(s.drawArea.Min)
-	s.bgDraw.Color = pixel.ToRGBA(s.color)
-	s.bgDraw.Push(s.drawArea.Max)
-	s.bgDraw.Rectangle(0)
-	s.bgDraw.Draw(t)
+// SetBackground sets specified sprite as switch background.
+func (s *Switch) SetBackground(spr *pixel.Sprite) {
+	s.bgSpr = spr
+	s.color = nil
+}
+
+// SetNextButtonBackground sets specified sprite as next
+// button background.
+func (s *Switch) SetNextButtonBackground(spr *pixel.Sprite) {
+	s.nextButton.SetBackground(spr)
+}
+
+// SetPrevButtonBackground sets specified sprite as previous
+// button background.
+func (s *Switch) SetPrevButtonBackground(spr *pixel.Sprite) {
+	s.prevButton.SetBackground(spr)
 }
 
 // SetValues sets specified list with values as switch values.

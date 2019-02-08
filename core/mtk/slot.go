@@ -40,7 +40,6 @@ type Slot struct {
 	drawArea pixel.Rect
 	size     Size
 	fontSize Size
-	shape    Shape
 	label    *Text
 	info     *InfoWindow
 	icon     *pixel.Sprite
@@ -50,11 +49,10 @@ type Slot struct {
 }
 
 // NewSlot creates new slot without background.
-func NewSlot(size, fontSize Size, shape Shape) *Slot {
+func NewSlot(size, fontSize Size) *Slot {
 	s := new(Slot)
 	s.size = size
 	s.fontSize = fontSize
-	s.shape = shape
 	// Label & info.
 	s.label = NewText("", fontSize, 0)
 	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
@@ -140,7 +138,7 @@ func (s *Slot) DrawArea() pixel.Rect {
 // Bounds returns slot size bounds.
 func (s *Slot) Bounds() pixel.Rect {
 	if s.bgSpr == nil {
-		return s.size.SlotSize(s.shape)
+		return s.size.SlotSize()
 	}
 	return s.bgSpr.Frame()
 }

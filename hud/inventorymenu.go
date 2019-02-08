@@ -75,11 +75,29 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.closeButton = mtk.NewButtonSprite(closeButtonBG, mtk.SIZE_SMALL, "", "")
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
-	// Slots.
+	// Slots list.
 	slotsBGColor := pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)), slotsBGColor, mtk.SIZE_MINI)
+	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)),
+		slotsBGColor, mtk.SIZE_MEDIUM)
+	upButtonBG, err := data.PictureUI("scrollup.png")
+	if err != nil {
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
+			err)
+	} else {
+		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
+		im.slots.SetUpButtonSprite(upBG)
+	}
+	downButtonBG, err := data.PictureUI("scrolldown.png")
+	if err != nil {
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_buttons_texture:%v",
+			err)
+	} else {
+		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
+		im.slots.SetDownButtonSprite(downBG)
+	}
+	
 	for i := 0; i < inv_slots; i ++ { // create empty slots
-		s := mtk.NewSlot(mtk.SIZE_MINI, mtk.SIZE_MINI, mtk.SHAPE_SQUARE)
+		s := mtk.NewSlot(mtk.SIZE_MEDIUM, mtk.SIZE_MINI)
 		im.slots.Add(s)
 	}
 	return im

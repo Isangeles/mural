@@ -170,10 +170,12 @@ func (s Size) BarSize() pixel.Rect {
 
 // SlotSize returns size parameters for slot with specified
 // shape.
-func (s Size) SlotSize(sh Shape) pixel.Rect {
+func (s Size) SlotSize() pixel.Rect {
 	switch {
-	case s <= SIZE_SMALL && sh == SHAPE_SQUARE:
+	case s <= SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
+	case s == SIZE_MEDIUM:
+		return pixel.R(0, 0, ConvSize(35), ConvSize(35))
 	default:
 		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
 	}

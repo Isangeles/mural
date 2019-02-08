@@ -50,12 +50,14 @@ func NewSlotList(bgSize pixel.Vec, bgColor color.Color, slotSize Size) *SlotList
 	sl := new(SlotList)
 	sl.bgSize = bgSize
 	sl.bgColor = bgColor
-	sl.upButton = NewButton(slotSize, SHAPE_SQUARE, colornames.Red, "+", "")
+	sl.upButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red, "+", "")
 	sl.upButton.SetOnClickFunc(sl.onUpButtonClicked)
-	sl.downButton = NewButton(slotSize, SHAPE_SQUARE, colornames.Red, "-", "")
+	sl.downButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red, "-", "")
 	sl.downButton.SetOnClickFunc(sl.onDownButtonClicked)
-	slotBounds := slotSize.SlotSize(SHAPE_SQUARE)
-	bgWidth := sl.bgSize.X - sl.upButton.Frame().W()
+	// Calculating amount of slots based on background and
+	// buttons sizes.
+	slotBounds := slotSize.SlotSize()
+	bgWidth := sl.Bounds().W() - sl.upButton.Frame().W()
 	sl.spl = int(bgWidth/(slotBounds.W() + ConvSize(2)))
 	sl.lines = int(sl.Bounds().H() / (slotBounds.H() + ConvSize(2))) - 1
 	return sl
@@ -78,6 +80,7 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 	sl.upButton.Draw(t, matrix.Moved(upButtonPos))
 	sl.downButton.Draw(t, matrix.Moved(downButtonPos))
 	// Slots.
+	// TODO: too slow.
 	if len(sl.slots) < 1 {
 		return
 	}
@@ -105,6 +108,20 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 			break
 		}
 	}
+}
+
+// SetUpButtonSprite sets specified sprite as scroll up button
+// background.
+func (sl *SlotList) SetUpButtonSprite(s *pixel.Sprite) {
+	sl.upButton.SetBackground(s)
+	sl.upButton.SetColor(nil)
+}
+
+// SetDownButtonSprite sets specified sprite as scroll down button
+// background.
+func (sl *SlotList) SetDownButtonSprite(s *pixel.Sprite) {
+	sl.downButton.SetBackground(s)
+	sl.downButton.SetColor(nil)
 }
 
 // Update updates list.

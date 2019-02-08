@@ -32,7 +32,6 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/imdraw"
 )
 
 var (
@@ -123,7 +122,7 @@ func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 			b.bgSpr.DrawColorMask(t, matrix, bgColor)
 		}
 	} else {
-		b.drawIMBackground(t, bgColor)
+		DrawRectangle(t, b.DrawArea(), bgColor)
 	}
 	// Drawing label.
 	if b.label != nil {
@@ -172,6 +171,18 @@ func (b *Button) Update(win *Window) {
 	}
 }
 
+// SetBackground sets specified sprite as button background.
+func (b *Button) SetBackground(s *pixel.Sprite) {
+	b.bgSpr = s
+	b.color = nil
+}
+
+// SetColor sets specified color as current
+// button backgroun color.
+func (b *Button) SetColor(c color.Color) {
+	b.color = c
+}
+
 // Focus sets/removes focus from button
 func (b *Button) Focus(focus bool) {
 	b.focused = focus
@@ -216,15 +227,4 @@ func (b *Button) Frame() pixel.Rect {
 		return b.size.ButtonSize(b.shape)
 	}
 	return b.bgSpr.Frame()
-}
-
-// Draws button background with IMDraw.
-func (b *Button) drawIMBackground(t pixel.Target, color color.Color) {
-	draw := imdraw.New(nil)
-	draw.Clear()
-	draw.Color = pixel.ToRGBA(color)
-	draw.Push(b.DrawArea().Min)
-	draw.Push(b.DrawArea().Max)
-	draw.Rectangle(0)
-	draw.Draw(t)
 }

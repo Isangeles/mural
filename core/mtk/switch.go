@@ -30,7 +30,6 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 )
 
 // Tuple for switch values, contains value to
@@ -81,7 +80,6 @@ func (s SwitchValue) TextValue() (string, error) {
 
 // Switch struct represents graphical switch for values.
 type Switch struct {
-	bgDraw                 *imdraw.IMDraw
 	bgSpr                  *pixel.Sprite
 	prevButton, nextButton *Button
 	valueText              *Text
@@ -105,7 +103,6 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	values []SwitchValue) *Switch {
 	s := new(Switch)
 	// Background.
-	s.bgDraw = imdraw.New(nil)
 	s.size = size
 	s.color = color
 	// Buttons.
@@ -114,7 +111,8 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	s.nextButton = NewButton(s.size-2, SHAPE_SQUARE, colornames.Red, "+", "")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label & info.
-	s.label = NewText(label, s.size-1, s.Bounds().W())
+	s.label = NewText(s.size-1, s.Bounds().W())
+	s.label.SetText(label)
 	if len(info) > 0 {
 		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 		s.info.Add(info)
@@ -122,7 +120,7 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	// Values.
 	s.values = values
 	s.index = 0
-	s.valueText = NewText("", s.size, 100)
+	s.valueText = NewText(s.size, 100)
 	s.updateValueView()
 
 	return s
@@ -176,7 +174,8 @@ func (s *Switch) Update(win *Window) {
 	}
 }
 
-// SetBackground sets specified sprite as switch background.
+// SetBackground sets specified sprite as switch
+// background, also removes background color.
 func (s *Switch) SetBackground(spr *pixel.Sprite) {
 	s.bgSpr = spr
 	s.color = nil

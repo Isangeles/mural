@@ -41,11 +41,11 @@ var (
 // Scale return scale value for current resolution.
 func Scale() float64 {
 	/*
-		res := config.Resolution()
-		scaleX := res.X / def_res_x;
-		scaleY := res.Y / def_res_y;
-		s := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
-		return s
+	res := config.Resolution()
+	scaleX := res.X / def_res_x;
+	scaleY := res.Y / def_res_y;
+	s := math.Round(math.Min(scaleX, scaleY) * 10) / 10;
+	return s
 	*/
 	return scale
 }

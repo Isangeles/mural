@@ -28,7 +28,6 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/imdraw"
 )
 
 // Struct for 'chackable' slots.
@@ -48,7 +47,8 @@ func NewCheckSlot(label string, value interface{},
 	cs := new(CheckSlot)
 	cs.bgColor = color
 	cs.checkColor = checkColor
-	cs.label = NewText(label, SIZE_MEDIUM, 0);
+	cs.label = NewText(SIZE_MEDIUM, 0);
+	cs.label.SetText(label)
 	cs.label.JustLeft()
 	cs.value = value
 	return cs
@@ -57,7 +57,11 @@ func NewCheckSlot(label string, value interface{},
 // Draw draws slot.
 func (cs *CheckSlot) Draw(t pixel.Target, drawArea pixel.Rect) {
 	cs.drawArea = drawArea
-	cs.drawIMBackground(t)
+	color := cs.bgColor
+	if cs.Checked() {
+		color = cs.checkColor
+	}
+	DrawRectangle(t, cs.DrawArea(), color)
 	cs.label.Draw(t, Matrix().Moved(drawArea.Min))
 }
 
@@ -113,21 +117,5 @@ func (cs *CheckSlot) Checked() bool {
 // after slot was selected.
 func (cs *CheckSlot) SetOnCheckFunc(f func(s *CheckSlot)) {
 	cs.onCheck = f
-}
-
-// drawIMBackground draws IMDraw background in siaze of
-// current draw area.
-func (cs *CheckSlot) drawIMBackground(t pixel.Target) {
-	color := cs.bgColor
-	if cs.Checked() {
-		color = cs.checkColor
-	}
-	draw := imdraw.New(nil)
-	draw.Color = pixel.ToRGBA(color)
-	draw.Push(cs.drawArea.Min)
-	draw.Color = pixel.ToRGBA(color)
-	draw.Push(cs.drawArea.Max)
-	draw.Rectangle(0)
-	draw.Draw(t)
 }
 

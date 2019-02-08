@@ -55,8 +55,8 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	lgm := new(LoadGameMenu)
 	lgm.mainmenu = mainmenu
 	// Title.
-	lgm.title = mtk.NewText(lang.Text("gui", "loadgame_menu_title"),
-		mtk.SIZE_BIG, 0)
+	lgm.title = mtk.NewText(mtk.SIZE_BIG, 0)
+	lgm.title.SetText(lang.Text("gui", "loadgame_menu_title"))
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)

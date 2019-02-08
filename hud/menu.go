@@ -60,7 +60,8 @@ func newMenu(hud *HUD) *Menu {
 		m.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	m.titleText = mtk.NewText(lang.Text("gui", "hud_menu_title"), mtk.SIZE_SMALL, 0)
+	m.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
 	// Buttons.
 	m.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color,
 		"", "")
@@ -93,7 +94,7 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if m.bgSpr != nil {
 		m.bgSpr.Draw(win.Window, matrix)
 	} else {
-		m.drawIMBackground(win.Window)
+		mtk.DrawRectangle(win.Window, m.Bounds(), nil)
 	}
 	// Title.
 	titleTextPos := mtk.ConvVec(pixel.V(0, m.Bounds().Max.Y/2 - 25))
@@ -152,12 +153,6 @@ func (m *Menu) Focused() bool {
 // Focus toggles menu focus.
 func (m *Menu) Focus(focus bool) {
 	m.focused = focus
-}
-
-// drawIMBackground draws menu background with
-// Pixel IMDraw.
-func (m *Menu) drawIMBackground(t pixel.Target) {
-	// TODO: draw background with IMDraw.
 }
 
 // Triggered after close button clicked.

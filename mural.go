@@ -60,7 +60,6 @@ const (
 var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
-	audio    *mtk.AudioPlayer
 	game     *flamecore.Game
 	inGame   bool
 
@@ -162,10 +161,11 @@ func run() {
 	ci.SetMainMenu(mainMenu)
 	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
-	fpsInfo := mtk.NewText("", mtk.SIZE_MEDIUM, 0)
+	fpsInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
 	fpsInfo.JustRight()
-	versionInfo := mtk.NewText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
-		flame.NAME, flame.VERSION), mtk.SIZE_MEDIUM, 0)
+	versionInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
+	versionInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
+		flame.NAME, flame.VERSION))
 	versionInfo.JustRight()
 	// Main loop.
 	for !win.Closed() {

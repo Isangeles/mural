@@ -54,19 +54,7 @@ func NewSlot(size, fontSize Size) *Slot {
 	s.size = size
 	s.fontSize = fontSize
 	// Label & info.
-	s.label = NewText("", fontSize, 0)
-	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-	return s
-}
-
-// NewSlotSprite creates new slot with specified picture
-// as background.
-func NewSlotSprite(bg pixel.Picture, fontSize Size) *Slot {
-	s := new(Slot)
-	s.fontSize = fontSize
-	s.bgSpr = pixel.NewSprite(bg, bg.Bounds())
-	// Label & info.
-	s.label = NewText("", fontSize, 0)
+	s.label = NewText(fontSize, 0)
 	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 	return s
 }
@@ -108,8 +96,8 @@ func (s *Slot) Value() interface{} {
 
 // SetIcon sets specified sprite as current
 // slot icon.
-func (s *Slot) SetIcon(icon pixel.Picture) {
-	s.icon = pixel.NewSprite(icon, s.Bounds())
+func (s *Slot) SetIcon(spr *pixel.Sprite) {
+	s.icon = spr
 }
 
 // SetValue sets specified interface as current
@@ -127,6 +115,15 @@ func (s *Slot) SetLabel(text string) {
 // slot info window.
 func (s *Slot) SetInfo(text string) {
 	s.info.InsertText(text)
+}
+
+// Clear removes slot value, icon,
+// label and text.
+func (s *Slot) Clear() {
+	s.SetValue(nil)
+	s.SetIcon(nil)
+	s.SetLabel("")
+	s.SetInfo("")
 }
 
 // DrawArea returns current slot background

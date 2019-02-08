@@ -36,8 +36,10 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
-const (
+var (
 	inv_slots = 90
+	inv_slot_size = mtk.SIZE_BIG
+	inv_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // Struct for inventory menu.
@@ -64,28 +66,28 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	im.titleText = mtk.NewText(lang.Text("gui", "hud_inv_title"), mtk.SIZE_SMALL, 0)
+	im.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
 	// Buttons.
+	im.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color, "", "")
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err != nil { // fallback
+	if err != nil {
 		log.Err.Printf("hud_inventory:fail_to_retrieve_background_tex:%v", err)
-		im.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color,
-			"", "")
 	} else {
-		im.closeButton = mtk.NewButtonSprite(closeButtonBG, mtk.SIZE_SMALL, "", "")
+		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
+		im.closeButton.SetBackground(closeButtonSpr)
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
 	// Slots list.
-	slotsBGColor := pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)),
-		slotsBGColor, mtk.SIZE_MEDIUM)
+		inv_slot_color, inv_slot_size)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err != nil {
 		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
 			err)
 	} else {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
-		im.slots.SetUpButtonSprite(upBG)
+		im.slots.SetUpButtonBackground(upBG)
 	}
 	downButtonBG, err := data.PictureUI("scrolldown.png")
 	if err != nil {
@@ -93,11 +95,11 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 			err)
 	} else {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
-		im.slots.SetDownButtonSprite(downBG)
+		im.slots.SetDownButtonBackground(downBG)
 	}
-	
-	for i := 0; i < inv_slots; i ++ { // create empty slots
-		s := mtk.NewSlot(mtk.SIZE_MEDIUM, mtk.SIZE_MINI)
+	// Create empty slots.
+	for i := 0; i < inv_slots; i ++ {
+		s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
 		im.slots.Add(s)
 	}
 	return im
@@ -111,7 +113,7 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if im.bgSpr != nil {
 		im.bgSpr.Draw(win.Window, matrix)
 	} else {
-		im.drawIMBackground(win.Window)
+		mtk.DrawRectangle(win.Window, im.DrawArea(), nil)
 	}
 	// Title.
 	titleTextPos := mtk.ConvVec(pixel.V(0, im.Bounds().Max.Y/2 - 25))
@@ -121,7 +123,6 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		im.Bounds().Max.Y/2 - 15))
 	im.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
-	//firstSlotPos := mtk.ConvVec(pixel.V(-im.Bounds().W()/2 + 30, im.Bounds().H()/2 - 70))
 	im.slots.Draw(win, matrix)
 }
 
@@ -142,6 +143,7 @@ func (im *InventoryMenu) Show(show bool) {
 	im.opened = show
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
+		im.slots.Clear()
 		im.insert(im.hud.ActivePlayer().Inventory().Items()...)
 	} else {
 		im.hud.UserFocus().Focus(nil)
@@ -172,15 +174,14 @@ func (im *InventoryMenu) Bounds() pixel.Rect {
 	return im.bgSpr.Frame()
 }
 
-// drawIMBackground draw menu background with IMDraw.
-func (im *InventoryMenu) drawIMBackground(t pixel.Target) {
-	// TODO: draw background with IMDraw.
-}
-
 // insert inserts specified items in inventory slots.
 func (im *InventoryMenu) insert(items ...item.Item) {
 	for _, i := range items {
-		slot := im.slots.Slots()[0]
+		slot := im.slots.EmptySlot()
+		if slot == nil {
+			slot = mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
+			im.slots.Add(slot)
+		}
 		itemGraphic := res.ItemData(i.ID())
 		if itemGraphic == nil {
 			log.Err.Printf("hud_inv_menu:fail_to_find_item_graphic:%s",
@@ -189,7 +190,9 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 			continue
 		}
 		slot.SetValue(i)
-		slot.SetIcon(itemGraphic.IconPic)
+		iconSpr := pixel.NewSprite(itemGraphic.IconPic,
+			itemGraphic.IconPic.Bounds())
+		slot.SetIcon(iconSpr)
 		slot.SetInfo(i.Name())
 	}
 }
@@ -201,5 +204,5 @@ func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 
 // Triggered after one of item slots was clicked.
 func (im *InventoryMenu) onSlotClicked(s *mtk.Slot) {
-
+	
 }

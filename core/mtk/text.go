@@ -41,17 +41,15 @@ type Text struct {
 
 // NewText creates new text with specified text content,
 // font size and with max width of text line(0 for no max width).
-func NewText(content string, fontSize Size, width float64) *Text {
+func NewText(fontSize Size, width float64) *Text {
 	t := new(Text)
 	// Parameters.
 	t.fontSize = fontSize
 	t.width = width
  	// Text.
-	t.content = content
 	font := MainFont(t.fontSize)
 	atlas := Atlas(&font)
 	t.text = text.New(pixel.V(0, 0), atlas)
-	t.SetText(t.content)
 	
 	return t
 }

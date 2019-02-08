@@ -70,7 +70,8 @@ func NewButton(size Size, shape Shape, color color.Color,
 	b.colorPush = button_push_color
 	b.colorHover = button_hover_color
 	// Label.
-	b.label = NewText(labelText, size, b.Frame().W()) 
+	b.label = NewText(size, b.Frame().W())
+	b.label.SetText(labelText)
 	// Info window.
 	if len(infoText) > 0 {	
 		b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
@@ -79,28 +80,6 @@ func NewButton(size Size, shape Shape, color color.Color,
 	// Global click sound.
 	b.SetClickSound(button_click_sound)
 	
-	return b
-}
-
-// NewButtonSprite creates new instance of button with specified
-// background image and label text.
-func NewButtonSprite(bgPic pixel.Picture, fontSize Size, labelText,
-	infoText string) *Button {
-	b := new(Button)
-	// Backround.
-	b.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
-	b.colorPush = button_push_color
-	b.colorHover = button_hover_color
-	// Label.
-	b.label = NewText(labelText, fontSize, b.Frame().W()) 
-	// Info window.
-	if len(infoText) > 0 {	
-		b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-		b.info.Add(infoText)
-	}
-	// Global click sound.
-	b.SetClickSound(button_click_sound)
-
 	return b
 }
 
@@ -171,7 +150,8 @@ func (b *Button) Update(win *Window) {
 	}
 }
 
-// SetBackground sets specified sprite as button background.
+// SetBackground sets specified sprite as button
+// background, also removes background color.
 func (b *Button) SetBackground(s *pixel.Sprite) {
 	b.bgSpr = s
 	b.color = nil
@@ -181,6 +161,17 @@ func (b *Button) SetBackground(s *pixel.Sprite) {
 // button backgroun color.
 func (b *Button) SetColor(c color.Color) {
 	b.color = c
+}
+
+// SetLabel sets specified text as button label.
+func (b *Button) SetLabel(t string) {
+	b.label.SetText(t)
+}
+
+// SetInfo sets specified text as content of
+// button info window.
+func (b *Button) SetInfo(t string) {
+	b.info.InsertText(t)
 }
 
 // Focus sets/removes focus from button

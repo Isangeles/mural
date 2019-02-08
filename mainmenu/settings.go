@@ -56,8 +56,8 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
-	s.title = mtk.NewText(lang.Text("gui", "settings_menu_title"),
-		mtk.SIZE_BIG, 900)
+	s.title = mtk.NewText(mtk.SIZE_BIG, 900)
+	s.title.SetText(lang.Text("gui", "settings_menu_title"))
 	// Buttons.
 	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM,
 		mtk.SHAPE_RECTANGLE, colornames.Red,

@@ -30,14 +30,12 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 )
 
 // MessageWindow struct represents UI message window.
 type MessageWindow struct {
-	bg           *imdraw.IMDraw
 	drawArea     pixel.Rect
 	size         Size
 	color        color.Color
@@ -58,7 +56,6 @@ type MessageWindow struct {
 func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw := new(MessageWindow)
 	// Background.
-	mw.bg = imdraw.New(nil)
 	mw.size = size
 	mw.color = colornames.Grey
 	mw.colorDisable = colornames.Darkgrey
@@ -92,11 +89,11 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
 	mw.drawArea = MatrixToDrawArea(matrix, mw.Bounds())
 	// Background.
+	color := mw.color
 	if mw.Disabled() {
-		mw.drawIMBackground(t, mw.colorDisable)
-	} else {
-		mw.drawIMBackground(t, mw.color)
+		color = mw.colorDisable
 	}
+	DrawRectangle(t, mw.DrawArea(), color)
 	// Buttons.
 	acceptButtonPos := MoveBR(mw.Bounds(), mw.acceptButton.Frame().Max)
 	mw.acceptButton.Draw(t, matrix.Moved(acceptButtonPos))
@@ -108,16 +105,6 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
 		mw.acceptButton.DrawArea().Max.Y, mw.drawArea.Max.X, mw.drawArea.Max.Y)
 	mw.textbox.Draw(textboxDrawArea, t)
-}
-
-// drawIMBackround Draws IMDraw background.
-func (mw *MessageWindow) drawIMBackground(t pixel.Target, color color.Color) {
-	mw.bg.Color = pixel.ToRGBA(color)
-	mw.bg.Push(mw.drawArea.Min)
-	mw.bg.Color = pixel.ToRGBA(color)
-	mw.bg.Push(mw.drawArea.Max)
-	mw.bg.Rectangle(0)
-	mw.bg.Draw(t)
 }
 
 // Update handles key press events.

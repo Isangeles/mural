@@ -62,23 +62,25 @@ func newCharFrame(hud *HUD, char *object.Avatar) (*CharFrame, error) {
 		cf.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Bars.
+	cf.hpBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color)
+	cf.hpBar.SetMax(char.MaxHealth())
+	cf.hpBar.SetLabel(lang.Text("gui", "char_frame_hp_bar_label"))
 	hpBarPic, err := data.PictureUI("bar_red.png")
-	if err != nil { // fallback
-		cf.hpBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color,
-			lang.Text("gui", "char_frame_hp_bar_label"), char.MaxHealth())
+	if err != nil {
 		log.Err.Printf("hud_char_frame:hp_bar_texture_not_found:%v", err)
-	} else { 
-		cf.hpBar = mtk.NewProgressBarSprite(hpBarPic, mtk.SIZE_MINI,
-			lang.Text("gui", "char_frame_hp_bar_label"), char.MaxHealth())
+	} else {
+		hpBarSpr := pixel.NewSprite(hpBarPic, hpBarPic.Bounds())
+		cf.hpBar.SetBackground(hpBarSpr)
 	}
+	cf.manaBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color)
+	cf.manaBar.SetMax(char.MaxMana())
+	cf.manaBar.SetLabel(lang.Text("gui", "char_frame_mana_bar_label"))
 	manaBarPic, err := data.PictureUI("bar_blue.png")
-	if err != nil { // fallback
-		cf.manaBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color,
-			lang.Text("gui", "char_frame_mana_bar_label"), char.MaxMana())
+	if err != nil {
 		log.Err.Printf("hud_char_frame:mana_bar_texture_not_found:%v", err)
 	} else {
-		cf.manaBar = mtk.NewProgressBarSprite(manaBarPic, mtk.SIZE_MINI,
-			lang.Text("gui", "char_frame_mana_bar_label"), char.MaxMana())
+		manaBarSpr := pixel.NewSprite(manaBarPic, manaBarPic.Bounds())
+		cf.manaBar.SetBackground(manaBarSpr)
 	}
 	return cf, nil
 }

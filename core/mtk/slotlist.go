@@ -110,16 +110,16 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 }
 
-// SetUpButtonSprite sets specified sprite as scroll up button
+// SetUpButtonBackground sets specified sprite as scroll up button
 // background.
-func (sl *SlotList) SetUpButtonSprite(s *pixel.Sprite) {
+func (sl *SlotList) SetUpButtonBackground(s *pixel.Sprite) {
 	sl.upButton.SetBackground(s)
 	sl.upButton.SetColor(nil)
 }
 
-// SetDownButtonSprite sets specified sprite as scroll down button
+// SetDownButtonBackground sets specified sprite as scroll down button
 // background.
-func (sl *SlotList) SetDownButtonSprite(s *pixel.Sprite) {
+func (sl *SlotList) SetDownButtonBackground(s *pixel.Sprite) {
 	sl.downButton.SetBackground(s)
 	sl.downButton.SetColor(nil)
 }
@@ -145,6 +145,23 @@ func (sl *SlotList) Slots() []*Slot {
 	return sl.slots
 }
 
+// EmptySlot returns first empty slot.
+func (sl *SlotList) EmptySlot() *Slot {
+	for _, s := range sl.slots {
+		if s.Value() == nil {
+			return s
+		}
+	}
+	return nil
+}
+
+// Clear clears all slots on the list.
+func (sl *SlotList) Clear() {
+	for _, s := range sl.slots {
+		s.Clear()
+	}
+}
+
 // Bounds retruns background size bounds.
 func (sl *SlotList) Bounds() pixel.Rect {
 	if sl.bgSpr == nil {
@@ -153,7 +170,8 @@ func (sl *SlotList) Bounds() pixel.Rect {
 	return sl.bgSpr.Frame()
 }
 
-// setStartLine sets specified 
+// setStartLine sets specified line ID as current
+// line ID.
 func (sl *SlotList) setStartLine(line int) {
 	if line*sl.spl > len(sl.slots) || line*sl.spl < 0 {
 		return

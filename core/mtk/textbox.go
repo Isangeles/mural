@@ -29,14 +29,12 @@ import (
 	"image/color"
 	
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	//"golang.org/x/image/colornames"
 )
 
 // Struct for textboxes.
 type Textbox struct {
-	bg          *imdraw.IMDraw
 	color       color.Color
 	textarea    *Text
 	textSize    pixel.Vec
@@ -54,10 +52,9 @@ func NewTextbox(textSize pixel.Vec, fontSize Size,
 	t := new(Textbox)
 	t.textSize = textSize
 	// Background.
-	t.bg = imdraw.New(nil)
 	t.color = color
 	// Text.
-	t.textarea = NewText("", fontSize, t.textSize.X)
+	t.textarea = NewText(fontSize, t.textSize.X)
 	t.textarea.JustLeft()
 	return t
 }
@@ -66,7 +63,7 @@ func NewTextbox(textSize pixel.Vec, fontSize Size,
 func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	// Background.
 	tb.drawArea = drawArea
-	tb.drawIMBackground(t)
+	DrawRectangle(t, tb.DrawArea(), pixel.RGBA{0.1, 0.1, 0.1, 0.5})
 	// Text content.
 	tb.textarea.Draw(t, Matrix().Moved(pixel.V(tb.DrawArea().Min.X,
 		tb.DrawArea().Max.Y - tb.textarea.BoundsOf("AA").H()))) 
@@ -86,18 +83,6 @@ func (t *Textbox) Update(win *Window) {
 			t.updateTextVisibility()
 		}
 	}
-}
-
-// drawIMBackground draws IMDraw background in size of
-// current draw area.
-func (tb *Textbox) drawIMBackground(t pixel.Target) {
-	// TODO: use color from constructor.
-	tb.bg.Clear()
-	tb.bg.Color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	tb.bg.Push(tb.drawArea.Min)
-	tb.bg.Push(tb.drawArea.Max)
-	tb.bg.Rectangle(0)
-	tb.bg.Draw(t)
 }
 
 // Bounds returns size parameters of textbox textarea.

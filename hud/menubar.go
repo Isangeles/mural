@@ -31,6 +31,7 @@ import (
 	
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for HUD menu bar.
@@ -55,22 +56,24 @@ func newMenuBar(hud *HUD) *MenuBar {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Buttons.
+	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
+		"", lang.Text("gui", "hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
-	if err != nil { // fallback
-		mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
-			"", lang.Text("gui", "hud_bar_menu_open_info"))
+	if err != nil {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_menu_button_texture:%v", err)
 	} else {
-		mb.menuButton = mtk.NewButtonSprite(menuButtonBG, mtk.SIZE_MINI, "",
-			lang.Text("gui", "hud_bar_menu_open_info"))
+		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
+		mb.menuButton.SetBackground(menuButtonSpr)
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
+	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
+		"", lang.Text("gui", "hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
-	if err != nil { // fallback
-		mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
-			"", lang.Text("gui", "hud_bar_menu_open_info"))
+	if err != nil {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_inv_button_texture:%v", err)
 	} else {
-		mb.invButton = mtk.NewButtonSprite(invButtonBG, mtk.SIZE_MINI, "",
-			lang.Text("gui", "hud_bar_inv_open_info"))
+		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
+		mb.invButton.SetBackground(invButtonSpr)
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	return mb

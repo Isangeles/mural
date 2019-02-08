@@ -395,7 +395,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 	if hud.bar.DrawArea().Contains(pos) ||
 		hud.chat.DrawArea().Contains(pos) ||
 		hud.pcFrame.DrawArea().Contains(pos) ||
-		hud.inv.DrawArea().Contains(pos) {
+		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
+		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

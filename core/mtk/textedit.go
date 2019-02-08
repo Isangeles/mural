@@ -31,13 +31,11 @@ import (
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/text"
 )
 
 // Struct for text edit fields.
 type Textedit struct {
-	bg         *imdraw.IMDraw
 	drawArea   pixel.Rect
 	color      color.Color
 	colorFocus color.Color
@@ -54,7 +52,6 @@ type Textedit struct {
 func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 	t := new(Textedit)
 	// Background.
-	t.bg = imdraw.New(nil)
 	t.color = color
 	t.colorFocus = colornames.Crimson
 	// Label & Text input.
@@ -84,7 +81,7 @@ func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
 	if te.Focused() {
 		color = te.colorFocus
 	}
-	te.drawIMBackground(t, color)
+	DrawRectangle(t, te.DrawArea(), color)
 	// Text input.
 	te.input.Draw(t, pixel.IM.Moved(te.drawArea.Min))
 }
@@ -165,16 +162,4 @@ func (te *Textedit) DrawArea() pixel.Rect {
 // input in text edit was accepted(i.e. enter key was pressed).
 func (te *Textedit) SetOnInputFunc(f func(t *Textedit)) {
 	te.onInput = f
-}
-
-// drawIMBackground draws IMDraw background in size of current draw area
-// on specified target and with specified color.
-func (te *Textedit) drawIMBackground(t pixel.Target, color color.Color) {
-	te.bg.Clear()
-	te.bg.Color = pixel.ToRGBA(color)
-	te.bg.Push(te.drawArea.Min)
-	te.bg.Color = pixel.ToRGBA(color)
-	te.bg.Push(te.drawArea.Max)
-	te.bg.Rectangle(0)
-	te.bg.Draw(t)
 }

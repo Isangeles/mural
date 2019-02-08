@@ -28,7 +28,6 @@ import (
 	"image/color"
 	
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 )
 
 // Struct for progress bars.
@@ -36,7 +35,6 @@ type ProgressBar struct {
 	value, max int
 	labelText  string
 	hovered    bool
-	bgDraw     *imdraw.IMDraw
 	bgSpr      *pixel.Sprite
 	size       Size
 	color      color.Color
@@ -48,29 +46,12 @@ type ProgressBar struct {
 
 // NewProgressBar creates new progress bar with IMDraw
 // background bar with specified size, color and label text.
-func NewProgressBar(size Size, color color.Color,
-	labelText string, max int) *ProgressBar {
+func NewProgressBar(size Size, color color.Color) *ProgressBar {
 	pb := new(ProgressBar)
 	pb.size = size
 	pb.color = color
-	pb.labelText = labelText
-	pb.bgDraw = imdraw.New(nil)
 	pb.maxBounds = pb.size.BarSize()
-	pb.label = NewText("", pb.size-1, 0)
-	pb.SetMax(max)
-	return pb
-}
-
-// NewProgressBarSprite creates new progress bar with
-// specified background texture, and label.
-func NewProgressBarSprite(bgPic pixel.Picture, labelSize Size,
-	labelText string, max int) *ProgressBar {
-	pb := new(ProgressBar)
-	pb.labelText = labelText
-	pb.bgSpr = pixel.NewSprite(bgPic, bgPic.Bounds())
-	pb.maxBounds = pb.bgSpr.Picture().Bounds()
-	pb.label = NewText("", labelSize, 0)
-	pb.SetMax(max)
+	pb.label = NewText(pb.size-1, 0)
 	return pb
 }
 
@@ -84,7 +65,7 @@ func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if pb.bgSpr != nil {
 		pb.bgSpr.Draw(t, mx)
 	} else {
-		pb.drawIMBackground(t)
+		DrawRectangle(t, pb.DrawArea(), pb.color)
 	}
 	// Label.
 	if pb.hovered {
@@ -100,6 +81,24 @@ func (pb *ProgressBar) Update(win *Window) {
 	} else {
 		pb.hovered = false
 	}
+}
+
+// SetBackground sets specified sprite as bar
+// background, also removes current background color.
+func (pb *ProgressBar) SetBackground(s *pixel.Sprite) {
+	pb.bgSpr = s
+	pb.maxBounds = pb.bgSpr.Picture().Bounds()
+	pb.SetColor(nil)
+}
+
+// SetColor sets specified color as background color.
+func (pb *ProgressBar) SetColor(c color.Color) {
+	pb.color = c
+}
+
+// SetLabel sets specified text as progress label.
+func (pb *ProgressBar) SetLabel(t string) {
+	pb.labelText = t
 }
 
 // Bounds returns bar size bounds.
@@ -135,15 +134,6 @@ func (pb *ProgressBar) SetMax(max int) {
 // this element.
 func (pb *ProgressBar) DrawArea() pixel.Rect {
 	return pb.drawArea
-}
-
-// drawIMBackground draws bar background with pixel IMDraw.
-func (pb *ProgressBar) drawIMBackground(t pixel.Target) {
-	pb.bgDraw.Color = pixel.ToRGBA(pb.color)
-	pb.bgDraw.Push(pb.drawArea.Min)
-	pb.bgDraw.Push(pb.drawArea.Max)
-	pb.bgDraw.Rectangle(0)
-	pb.bgDraw.Draw(t)
 }
 
 // updateProgress updates bar progress to current

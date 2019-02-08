@@ -164,7 +164,7 @@ func (s Size) BarSize() pixel.Rect {
 	case s <= SIZE_MINI:
 		return pixel.R(0, 0, ConvSize(100), ConvSize(10))
 	default:
-		return pixel.R(0, 0, 0, 0)
+		return pixel.R(0, 0, ConvSize(100), ConvSize(10))
 	}
 }
 
@@ -175,7 +175,9 @@ func (s Size) SlotSize() pixel.Rect {
 	case s <= SIZE_SMALL:
 		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
 	case s == SIZE_MEDIUM:
-		return pixel.R(0, 0, ConvSize(35), ConvSize(35))
+		return pixel.R(0, 0, ConvSize(30), ConvSize(30))
+	case s >= SIZE_BIG:
+		return pixel.R(0, 0, ConvSize(40), ConvSize(40))
 	default:
 		return pixel.R(0, 0, ConvSize(25), ConvSize(25))
 	}

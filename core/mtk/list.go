@@ -28,14 +28,10 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"github.com/faiface/pixel/imdraw"
 )
 
 // Struct for list with 'selectable' items.
-// TODO: constructror for list with sprite
-// background.
 type List struct {
-	bgDraw      *imdraw.IMDraw
 	bgSpr       *pixel.Sprite
 	size        Size
 	bgColor     color.Color
@@ -57,7 +53,6 @@ func NewList(size Size, bgColor, secColor,
 	accentColor color.Color) *List {
 	l := new(List)
 	// Background.
-	l.bgDraw = imdraw.New(nil)
 	l.size = size
 	l.bgColor = bgColor
 	l.secColor = secColor
@@ -80,7 +75,7 @@ func (l *List) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if l.bgSpr != nil {
 		l.bgSpr.Draw(t, matrix)
 	} else {
-		l.drawIMBackground(t)
+		DrawRectangle(t, l.DrawArea(), l.bgColor)
 	}
 	// List.
 	l.drawListItems(t)
@@ -185,16 +180,6 @@ func (l *List) SelectedValue() interface{} {
 // and size.
 func (l *List) DrawArea() pixel.Rect {
 	return l.drawArea
-}
-
-// drawIMBackground draws IMDraw background.
-func (l *List) drawIMBackground(t pixel.Target) {
-	l.bgDraw.Color = pixel.ToRGBA(l.bgColor)
-	l.bgDraw.Push(l.DrawArea().Min)
-	l.bgDraw.Color = pixel.ToRGBA(l.bgColor)
-	l.bgDraw.Push(l.DrawArea().Max)
-	l.bgDraw.Rectangle(0)
-	l.bgDraw.Draw(t)
 }
 
 // drawListItems draws visible list content.

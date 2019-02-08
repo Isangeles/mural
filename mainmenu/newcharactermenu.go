@@ -80,8 +80,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	rngSrc := rand.NewSource(time.Now().UnixNano())
 	ncm.rng = rand.New(rngSrc)
 	// Title.
-	ncm.title = mtk.NewText(lang.Text("gui", "newchar_menu_title"),
-		mtk.SIZE_BIG, 0)
+	ncm.title = mtk.NewText(mtk.SIZE_BIG, 0)
+	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
 	// Text fields.
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_name_edit_label"))

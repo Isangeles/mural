@@ -34,14 +34,12 @@ import (
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object/internal"
-	"github.com/isangeles/mural/log"
 )
 
 // Avatar struct for graphical representation of
 // game character.
 type Avatar struct {
 	*character.Character
-
 	sprite         *internal.AvatarSprite
 	portrait       *pixel.Sprite
 	portraitName   string
@@ -67,10 +65,6 @@ func NewAvatar(data *res.AvatarData) *Avatar {
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	// Items.
 	av.eqItems = make(map[string]*ItemGraphic, 0)
-	for _, eqItemData := range data.EqItemsGraphics {
-		eqItem := NewItemGraphic(eqItemData)
-		av.Equip(eqItem)
-	}
 	return av
 }
 
@@ -90,10 +84,6 @@ func NewStaticAvatar(data *res.AvatarData) (*Avatar, error) {
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	// Items.
 	av.eqItems = make(map[string]*ItemGraphic, 0)
-	for _, eqItemData := range data.EqItemsGraphics {
-		eqItem := NewItemGraphic(eqItemData)
-		av.Equip(eqItem)
-	}
 	return av, nil
 }
 
@@ -167,25 +157,40 @@ func (av *Avatar) DestPoint() pixel.Vec {
 	return pixel.V(x, y)
 }
 
-// Equip equips specified graphical item.
-func (av *Avatar) Equip(gItem *ItemGraphic) error {
-	switch it := gItem.Item.(type) {
+// equip equips specified graphical item.
+func (av *Avatar) equip(gItem *ItemGraphic) error {
+	switch gItem.Item.(type) {
 	case *flameitem.Weapon:
-		err := av.Equipment().EquipHandRight(it)
-		if err != nil {
-			return err
-		}
-		av.eqItems[it.SerialID()] = gItem
 		av.sprite.SetWeapon(gItem.Spritesheet())
 		av.eqItems[gItem.SerialID()] = gItem
 		return nil
 	default:
-		return fmt.Errorf("unequipable_item_type")
+		return fmt.Errorf("not_equipable_item_type")
+	}
+}
+
+// unequip removes graphic of specified item from
+// avatar(if equiped).
+func (av *Avatar) unequip(gItem *ItemGraphic) {
+	switch gItem.Item.(type) {
+	case *flameitem.Weapon:
+		av.sprite.SetWeapon(nil)
+		delete(av.eqItems, gItem.SerialID())
 	}
 }
 
 // updateApperance updates avatar sprite apperance.
 func (av *Avatar) updateApperance() {
+	// Clear equipped items.
+	for _, itemGraphic := range av.eqItems {
+		eit, ok := itemGraphic.Item.(flameitem.Equiper)
+		if !ok {
+			continue
+		}
+		if !av.Equipment().Equiped(eit) {
+			av.unequip(itemGraphic)
+		}
+	}
 	// Update graphical items list.
 	for _, eqi := range av.Equipment().Items() {
 		if av.eqItems[eqi.SerialID()] != nil {
@@ -195,18 +200,11 @@ func (av *Avatar) updateApperance() {
 		if itemGData == nil {
 			continue
 		}
-		itemGraphic := NewItemGraphic(itemGData)
-		av.eqItems[eqi.SerialID()] = itemGraphic
-	}
-	// Equipped items.
-	for _, eqItemGraphic := range av.eqItems {
-		if av.Equipment().Equiped(eqItemGraphic.Item) {
+		it, ok := eqi.(flameitem.Item)
+		if !ok {
 			continue
 		}
-		err := av.Equip(eqItemGraphic)
-		if err != nil {
-			log.Err.Printf("new_avatar:%s:fail_to_equip_graphical_item:%v",
-				av.SerialID(), err)
-		}
+		itemGraphic := NewItemGraphic(it, itemGData)
+		av.equip(itemGraphic)
 	}
 }

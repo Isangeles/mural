@@ -1,7 +1,7 @@
 /*
  * avatarsprite.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import (
 	"github.com/faiface/pixel"
 	
 	"github.com/isangeles/mural/core/mtk"
-	//"github.com/isangeles/mural/log"
 )
 
 // Struct for avatar sprite animations.
@@ -187,6 +186,10 @@ func (spr *AvatarSprite) SetFullBody(spritesheet pixel.Picture) {
 // SetWeapon creates new weapon animations from specified
 // avatar spritesheet.
 func (spr *AvatarSprite) SetWeapon(spritesheet pixel.Picture) {
+	if spritesheet == nil {
+		spr.weapon = nil
+		return
+	}
 	spr.weapon = newAvatarBodyPart(spritesheet)
 }
 

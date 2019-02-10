@@ -25,13 +25,11 @@ package res
 
 import (
 	"github.com/faiface/pixel"
-
-	"github.com/isangeles/flame/core/module/object/item"
 )
 
 // Struct for item graphic data.
 type ItemGraphicData struct {
-	Item            item.Item
+	ItemID          string
 	IconPic         pixel.Picture
 	SpritesheetPic  pixel.Picture
 }

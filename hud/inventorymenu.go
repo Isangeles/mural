@@ -40,6 +40,7 @@ var (
 	inv_slots = 90
 	inv_slot_size = mtk.SIZE_BIG
 	inv_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	inv_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
 )
 
 // Struct for inventory menu.
@@ -99,8 +100,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	}
 	// Create empty slots.
 	for i := 0; i < inv_slots; i ++ {
-		s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
-		im.slots.Add(s)
+		im.createSlot()
 	}
 	return im
 }
@@ -179,8 +179,7 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 	for _, i := range items {
 		slot := im.slots.EmptySlot()
 		if slot == nil {
-			slot = mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
-			im.slots.Add(slot)
+			im.createSlot()
 		}
 		itemGraphic := res.ItemData(i.ID())
 		if itemGraphic == nil {
@@ -197,12 +196,44 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 	}
 }
 
+// createSlot creates empty slot on inventory slots list.
+func (im *InventoryMenu) createSlot() {
+	s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
+	s.SetColor(inv_slot_color)
+	s.SetOnRightClickFunc(im.onSlotRightClicked)
+	im.slots.Add(s)
+}
+
 // Triggered after close button clicked.
 func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 	im.Show(false)
 }
 
 // Triggered after one of item slots was clicked.
-func (im *InventoryMenu) onSlotClicked(s *mtk.Slot) {
-	
+func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
+	it, ok := s.Value().(item.Item)
+	if !ok {
+		log.Err.Printf("hud_inv_menu:%v:is not item", it)
+		return
+	}
+	eit, ok := it.(item.Equiper)
+	if !ok {
+		log.Err.Printf("hud_inv_menu:%s:is not equipable item", it.SerialID())
+		return
+	}
+	if im.hud.ActivePlayer().Equipment().Equiped(eit) {
+		err := im.hud.ActivePlayer().Equipment().Unequip(eit)
+		if err != nil {
+			log.Err.Printf("hud_inv_menu:%s:fail_to_unequip:%v", eit.SerialID(), err)
+			return
+		}
+		s.SetColor(inv_slot_color)
+	} else {
+		err := im.hud.ActivePlayer().Equipment().Equip(eit)
+		if err != nil {
+			log.Err.Printf("hud_inv_menu:%s:fail_to_equip:%v", eit.SerialID(), err)
+			return
+		}
+		s.SetColor(inv_slot_eq_color)
+	}
 }

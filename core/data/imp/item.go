@@ -32,8 +32,6 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/module"
-	flamedata "github.com/isangeles/flame/core/data"
-	flameitem "github.com/isangeles/flame/core/module/object/item"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
@@ -55,7 +53,7 @@ func LoadResources() error {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}
 	for _, itGraphic := range itGraphics {
-		itemsData[itGraphic.Item.ID()] = itGraphic
+		itemsData[itGraphic.ItemID] = itGraphic
 	}
 	res.SetItemsData(itemsData)
 	return nil
@@ -75,13 +73,7 @@ func ImportItemsGraphics(mod *module.Module, path string) ([]*res.ItemGraphicDat
 	}
 	items := make([]*res.ItemGraphicData, 0)
 	for _, xmlItem := range xmlItems {
-		item, err := flamedata.Item(mod, xmlItem.ID)
-		if err != nil {
-			log.Err.Printf("data_imp_item_graphic:%s:fail_to_retrieve_item:%v",
-				xmlItem.ID, err)
-			continue
-		}
-		data, err := buildXMLItemGraphicData(item, &xmlItem)
+		data, err := buildXMLItemGraphicData(&xmlItem)
 		if err != nil {
 			log.Err.Printf("data_imp_item_graphic:%s:fail_to_build_data:%v",
 				xmlItem.ID, err)
@@ -120,8 +112,7 @@ func ImportItemsGraphicsDir(mod *module.Module, dirPath string) ([]*res.ItemGrap
 
 // buildXMLItemGraphic creates item graphic object for
 // specified item.
-func buildXMLItemGraphicData(item flameitem.Item,
-	xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData, error) {
+func buildXMLItemGraphicData(xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData, error) {
 	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v",
@@ -132,7 +123,7 @@ func buildXMLItemGraphicData(item flameitem.Item,
 		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
 	}
 	itData := res.ItemGraphicData {
-		Item: item,
+		ItemID: xmlItem.ID,
 		IconPic: itIcon,
 		SpritesheetPic: itSprite,
 	}

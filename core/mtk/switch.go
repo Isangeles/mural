@@ -112,6 +112,7 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label & info.
 	s.label = NewText(s.size-1, s.Bounds().W())
+	s.label.JustCenter()
 	s.label.SetText(label)
 	if len(info) > 0 {
 		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
@@ -162,9 +163,8 @@ func (s *Switch) Update(win *Window) {
 	if s.Disabled() {
 		return
 	}
-	s.prevButton.Update(win)
-	s.nextButton.Update(win)
-	if s.ContainsPosition(win.MousePosition()) {
+	// Mouse events.
+	if s.DrawArea().Contains(win.MousePosition()) {
 		s.hovered = true
 		if s.info != nil {	
 			s.info.Update(win)
@@ -172,6 +172,9 @@ func (s *Switch) Update(win *Window) {
 	} else {
 		s.hovered = false
 	}
+	// Elements update.
+	s.prevButton.Update(win)
+	s.nextButton.Update(win)
 }
 
 // SetBackground sets specified sprite as switch
@@ -179,6 +182,12 @@ func (s *Switch) Update(win *Window) {
 func (s *Switch) SetBackground(spr *pixel.Sprite) {
 	s.bgSpr = spr
 	s.color = nil
+}
+
+// SetColor sets specified color as switch background
+// color.
+func (s *Switch) SetColor(c color.Color) {
+	s.color = c
 }
 
 // SetNextButtonBackground sets specified sprite as next
@@ -324,12 +333,6 @@ func (s *Switch) SetIndex(index int) {
 // Sets specified function as function triggered on on switch value change.
 func (s *Switch) SetOnChangeFunc(f func(s *Switch, old, new *SwitchValue)) {
 	s.onChange = f
-}
-
-// ContainsPosition checks if specified position is wthin current
-// draw area.
-func (s *Switch) ContainsPosition(pos pixel.Vec) bool {
-	return s.DrawArea().Contains(pos)
 }
 
 // updateValueView updates value view with current switch value.

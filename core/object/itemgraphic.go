@@ -41,12 +41,12 @@ type ItemGraphic struct {
 
 // NewItemGraphic creates new graphical wrapper from
 // specified data.
-func NewItemGraphic(data *res.ItemGraphicData) *ItemGraphic {
-	item := new(ItemGraphic)
-	item.Item = data.Item
-	item.spritesheet = data.SpritesheetPic
+func NewItemGraphic(item flameitem.Item, data *res.ItemGraphicData) *ItemGraphic {
+	itg := new(ItemGraphic)
+	itg.Item = item
+	itg.spritesheet = data.SpritesheetPic
 	// TODO: icon sprite.
-	return item
+	return itg
 }
 
 // Spritesheet returns item spritesheet.

@@ -24,28 +24,32 @@
 package mtk
 
 import (
+	"image/color"
+
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
 
 var (
-	slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	def_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5} // default color
 )
 
 // Struct for slot.
 type Slot struct {
-	bgSpr    *pixel.Sprite
-	drawArea pixel.Rect
-	size     Size
-	fontSize Size
-	label    *Text
-	info     *InfoWindow
-	icon     *pixel.Sprite
-	value    interface{}
-	onClick  func(s *Slot)
-	hovered  bool
+	bgSpr        *pixel.Sprite
+	drawArea     pixel.Rect
+	size         Size
+	color        color.Color
+	fontSize     Size
+	label        *Text
+	info         *InfoWindow
+	icon         *pixel.Sprite
+	value        interface{}
+	onRightClick func(s *Slot)
+	onLeftClick  func(s *Slot)
+	hovered      bool
 }
 
 // NewSlot creates new slot without background.
@@ -53,6 +57,7 @@ func NewSlot(size, fontSize Size) *Slot {
 	s := new(Slot)
 	s.size = size
 	s.fontSize = fontSize
+	s.color = def_slot_color
 	// Label & info.
 	s.label = NewText(fontSize, 0)
 	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
@@ -65,7 +70,7 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if s.bgSpr != nil {
 		s.bgSpr.Draw(t, matrix)
 	} else {
-		DrawRectangle(t, s.DrawArea(), slot_color)
+		DrawRectangle(t, s.DrawArea(), s.color)
 	}
 	if s.icon != nil {
 		s.icon.Draw(t, matrix)
@@ -78,9 +83,16 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 // Update updates slot.
 func (s *Slot) Update(win *Window) {
 	// Mouse events.
-	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		if s.onClick != nil {
-			s.onClick(s)
+	if s.DrawArea().Contains(win.MousePosition()) {
+		if win.JustPressed(pixelgl.MouseButtonRight) {
+			if s.onRightClick != nil {
+				s.onRightClick(s)
+			}
+		}
+		if win.JustPressed(pixelgl.MouseButtonLeft) {
+			if s.onLeftClick != nil {
+				s.onLeftClick(s)
+			}
 		}
 	}
 	// On-hover.
@@ -92,6 +104,12 @@ func (s *Slot) Update(win *Window) {
 // Value returns current slot value.
 func (s *Slot) Value() interface{} {
 	return s.value
+}
+
+// SetColor sets specified color as slot
+// color.
+func (s *Slot) SetColor(c color.Color) {
+	s.color = c
 }
 
 // SetIcon sets specified sprite as current
@@ -140,8 +158,14 @@ func (s *Slot) Bounds() pixel.Rect {
 	return s.bgSpr.Frame()
 }
 
+// SetOnLeftClickFunc set speicfied function as function
+// triggered after on-click event.
+func (s *Slot) SetOnleftClickFunc(f func(s *Slot)) {
+	s.onLeftClick = f
+}
+
 // SetOnClickFunc set speicfied function as function
 // triggered after on-click event.
-func (s *Slot) SetOnClickFunc(f func(s *Slot)) {
-	s.onClick = f
+func (s *Slot) SetOnRightClickFunc(f func(s *Slot)) {
+	s.onRightClick = f
 }

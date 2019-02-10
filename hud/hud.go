@@ -73,6 +73,7 @@ type HUD struct {
 	destPos    pixel.Vec
 	userFocus  *mtk.Focus
 	msgs       *mtk.MessagesQueue
+	layouts    map[string]*Layout
 	loading    bool
 	exiting    bool
 	loaderr    error
@@ -113,6 +114,9 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
+	// Layout.
+	hud.layouts = make(map[string]*Layout)
+	hud.layouts[hud.ActivePlayer().SerialID()] = NewLayout()
 	// Start game loading.
 	go hud.LoadGame(g)
 	return hud, nil
@@ -360,8 +364,10 @@ func (hud *HUD) Save(saveName string) error {
 // Saves GUI to save struct.
 func (hud *HUD) NewGUISave() *res.GUISave {
 	sav := new(res.GUISave)
-	// Save players avatars.
+	// Players.
 	for _, pc := range hud.Players() {
+		pcData := new(res.PlayerSave)
+		// Avatar.
 		avData := res.AvatarData{
 			Character:      pc.Character,
 			PortraitName:   pc.PortraitName(),
@@ -369,9 +375,15 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 			SSTorsoName:    pc.TorsoSpritesheetName(),
 			SSFullBodyName: pc.FullBodySpritesheetName(),
 		}
-		sav.PlayersData = append(sav.PlayersData, &avData)
+		pcData.Avatar = &avData
+		// Layout.
+		layout := hud.layouts[pc.SerialID()]
+		if layout != nil {
+			pcData.InvSlots = layout.InvSlots
+		}
+		sav.PlayersData = append(sav.PlayersData, pcData)
 	}
-	// Save camera XY position.
+	// Camera XY position.
 	sav.CameraPosX = hud.Camera().Position().X
 	sav.CameraPosY = hud.Camera().Position().Y
 	return sav
@@ -381,8 +393,11 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Players.
 	for _, pcData := range save.PlayersData {
-		pc := object.NewAvatar(pcData)
-		hud.pcs = append(hud.pcs, pc)
+		//pc := object.NewAvatar(pcData.Avatar)
+		//hud.pcs = append(hud.pcs, pc)
+		layout := NewLayout()
+		layout.InvSlots = pcData.InvSlots
+		hud.layouts[pcData.Avatar.Character.SerialID()] = layout
 	}
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))

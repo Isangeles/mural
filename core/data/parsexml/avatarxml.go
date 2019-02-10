@@ -43,16 +43,16 @@ type AvatarsBaseXML struct {
 // Struct for representation of XML avatar
 // node.
 type AvatarXML struct {
-	XMLName     xml.Name                 `xml:"avatar"`
-	ID          string                   `xml:"id,attr"`
-	Serial      string                   `xml:"serial,attr"`
-	Portrait    string                   `xml:"portrait,value"`
-	Spritesheet AvatarSpritesheetNodeXML `xml:"spritesheet"`
+	XMLName     xml.Name            `xml:"avatar"`
+	ID          string              `xml:"id,attr"`
+	Serial      string              `xml:"serial,attr"`
+	Portrait    string              `xml:"portrait,value"`
+	Spritesheet AvatarSpriteNodeXML `xml:"sprite"`
 }
 
 // Struct for spritesheet node of avatar node.
-type AvatarSpritesheetNodeXML struct {
-	XMLName  xml.Name `xml:"spritesheet"`
+type AvatarSpriteNodeXML struct {
+	XMLName  xml.Name `xml:"sprite"`
 	Head     string   `xml:"head,value"`
 	Torso    string   `xml:"torso,value"`
 	FullBody string   `xml:"fullbody,value"`

@@ -98,20 +98,28 @@ func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.G
 	// Save name.
 	save.Name = xmlSave.Name
 	// Players.
-	for _, xmlAvatar := range xmlSave.Players.Avatars {
+	for _, xmlPC := range xmlSave.PlayersNode.Players {
 		for _, pc := range game.Players() {
-			if xmlAvatar.Serial == pc.Serial() {
-				avData, err := buildXMLAvatarData(pc, &xmlAvatar)
+			if xmlPC.Avatar.Serial == pc.Serial() {
+				pcData := new(res.PlayerSave)
+				// Avatar.
+				avData, err := buildXMLAvatarData(pc, &xmlPC.Avatar)
 				if err != nil {
 					return nil, fmt.Errorf("player:%s:fail_to_load_player_avatar:%v",
 						pc.SerialID, err)
 				}
-				save.PlayersData = append(save.PlayersData, avData)
+				pcData.Avatar = avData
+				// Inventory layout.
+				pcData.InvSlots = make(map[string]int)
+				for _, xmlSlot := range xmlPC.Inventory.Slots {
+					pcData.InvSlots[xmlSlot.Content] = xmlSlot.ID
+				}
+				save.PlayersData = append(save.PlayersData, pcData)
 			}
 		}
 	}
 	// Camera position.
-	camX, camY, err := flameparsexml.UnmarshalPosition(xmlSave.Camera.Position)
+	camX, camY, err := flameparsexml.UnmarshalPosition(xmlSave.CameraNode.Position)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
 			err)

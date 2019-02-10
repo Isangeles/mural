@@ -145,6 +145,7 @@ func (im *InventoryMenu) Show(show bool) {
 		im.hud.UserFocus().Focus(im)
 		im.slots.Clear()
 		im.insert(im.hud.ActivePlayer().Inventory().Items()...)
+		im.updateLayout()
 	} else {
 		im.hud.UserFocus().Focus(nil)
 	}
@@ -178,6 +179,13 @@ func (im *InventoryMenu) Bounds() pixel.Rect {
 func (im *InventoryMenu) insert(items ...item.Item) {
 	for _, i := range items {
 		slot := im.slots.EmptySlot()
+		layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
+		slotID, prs := layout.InvSlots[i.SerialID()]
+		if prs {
+			if slotID > -1 && slotID < len(im.slots.Slots())-1 {
+				slot = im.slots.Slots()[slotID]
+			}
+		}
 		if slot == nil {
 			im.createSlot()
 		}
@@ -194,6 +202,28 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 		slot.SetIcon(iconSpr)
 		slot.SetInfo(i.Name())
 	}
+}
+
+// updateLayout updates inventory layout for active player.
+func (im *InventoryMenu) updateLayout() {
+	layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
+	if layout == nil {
+		layout = NewLayout()
+	}
+	if layout.InvSlots == nil {
+		layout.InvSlots = make(map[string]int)
+	}
+	for i, s := range im.slots.Slots() {
+		if s.Value() == nil {
+			continue
+		}
+		it, ok := s.Value().(item.Item)
+		if !ok {
+			continue
+		}
+		layout.InvSlots[it.SerialID()] = i
+	}
+	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
 }
 
 // createSlot creates empty slot on inventory slots list.

@@ -1,7 +1,7 @@
 /*
- * guisave.go
+ * layout.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,16 @@
  *
  */
 
-package res
+package hud
 
-// Struct for GUI state save.
-type GUISave struct {
-	Name                   string
-	PlayersData            []*PlayerSave
-	CameraPosX, CameraPosY float64
+// Struct for HUD layout.
+type Layout struct {
+	InvSlots map[string]int
 }
 
-// Struct for saved GUI user data
-// (avatar, inventory layoutm, etc.).
-type PlayerSave struct {
-	Avatar   *AvatarData
-	InvSlots map[string]int
+// NewLayout creates new HUD layout.
+func NewLayout() *Layout {
+	l := new(Layout)
+	l.InvSlots = make(map[string]int)
+	return l
 }

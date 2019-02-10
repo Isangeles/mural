@@ -34,16 +34,23 @@ import (
 
 // Struct for XML GUI save.
 type GUISaveXML struct {
-	XMLName xml.Name   `xml:"save"`
-	Name    string     `xml:"name,attr"`
-	Players PlayersXML `xml:"players"`
-        Camera  CameraXML  `xml:"camera"`
+	XMLName     xml.Name   `xml:"save"`
+	Name        string     `xml:"name,attr"`
+	PlayersNode PlayersXML `xml:"players"`
+        CameraNode  CameraXML  `xml:"camera"`
 }
 
 // Struct for PCs avatars node.
 type PlayersXML struct {
-	XMLName xml.Name  `xml:"players"`
-	Avatars []AvatarXML `xml:"avatar"`
+	XMLName xml.Name    `xml:"players"`
+	Players []PlayerXML `xml:"player"`
+}
+
+// Struct for PC node.
+type PlayerXML struct {
+	XMLName   xml.Name     `xml:"player"`
+	Avatar    AvatarXML    `xml:"avatar"`
+	Inventory InventoryXML `xml:"inventory"`
 }
 
 // Struct for GUI camera XML node.
@@ -52,16 +59,37 @@ type CameraXML struct {
 	Position string   `xml:"position,attr"`
 }
 
+// Struct for inventory node of avatar node.
+type InventoryXML struct {
+	XMLName xml.Name  `xml:"inventory"`
+	Slots   []SlotXML `xml:"slot"`
+}
+
+// Struct for slot node of inventory node.
+type SlotXML struct {
+	XMLName xml.Name `xml:"slot"`
+	ID      int      `xml:"id,attr"`
+	Content string   `xml:"content,attr"`
+}
+
 // MarshalGUISave parses specified game save to XML
 // data.
 func MarshalGUISave(save *res.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
 	xmlGUI.Name = save.Name
+	xmlGUI.PlayersNode.Players = make([]PlayerXML, 0)
 	for _, pcData := range save.PlayersData {
-		av := buildAvatarDataXML(pcData)
-		xmlGUI.Players.Avatars = append(xmlGUI.Players.Avatars, av)
+		xmlPC := new(PlayerXML)
+		xmlPC.Avatar = buildAvatarDataXML(pcData.Avatar)
+		for serial, slot := range pcData.InvSlots {
+			xmlSlot := new(SlotXML)
+			xmlSlot.ID = slot
+			xmlSlot.Content = serial
+			xmlPC.Inventory.Slots = append(xmlPC.Inventory.Slots, *xmlSlot)
+		}
+		xmlGUI.PlayersNode.Players = append(xmlGUI.PlayersNode.Players, *xmlPC)
 	}
-	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX,
+	xmlGUI.CameraNode.Position = fmt.Sprintf("%fx%f", save.CameraPosX,
 		save.CameraPosY)
 	out, err := xml.Marshal(xmlGUI)
 	if err != nil {

@@ -133,3 +133,8 @@ func (tx *Text) Clear() {
 func (tx *Text) DrawArea() pixel.Rect {
 	return tx.drawArea
 }
+
+// String returns text content.
+func (tx *Text) String() string {
+	return tx.content
+}

@@ -24,12 +24,15 @@
 package hud
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
-
+	
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
@@ -200,7 +203,7 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 		iconSpr := pixel.NewSprite(itemGraphic.IconPic,
 			itemGraphic.IconPic.Bounds())
 		slot.SetIcon(iconSpr)
-		slot.SetInfo(i.Name())
+		slot.SetInfo(itemInfo(i))
 	}
 }
 
@@ -231,6 +234,7 @@ func (im *InventoryMenu) createSlot() {
 	s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
 	s.SetColor(inv_slot_color)
 	s.SetOnRightClickFunc(im.onSlotRightClicked)
+	s.SetOnLeftClickFunc(im.onSlotLeftClicked)
 	im.slots.Add(s)
 }
 
@@ -239,7 +243,8 @@ func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 	im.Show(false)
 }
 
-// Triggered after one of item slots was clicked.
+// Triggered after one of item slots was clicked with
+// right mosue button.
 func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	it, ok := s.Value().(item.Item)
 	if !ok {
@@ -265,5 +270,43 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 			return
 		}
 		s.SetColor(inv_slot_eq_color)
+	}
+}
+
+// Triggered after on of item slots was clicked with
+// laft mouse button.
+func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
+	for _, ds := range im.slots.Slots() {
+		if !ds.Dragged() {
+			continue
+		}
+		if s == ds {
+			ds.Drag(false)
+			return
+		} else if s.Value() == nil {
+			s.Transfer(ds)
+			im.updateLayout()
+			return
+		}
+	}
+	s.Drag(true)
+}
+
+// itemInfo returns formated string with
+// informations about specified item.
+func itemInfo(it item.Item) string {
+	switch i := it.(type) {
+	case *item.Weapon:
+		infoForm := "%s\n%d-%d"
+		dmgMin, dmgMax := i.Damage()
+		info := fmt.Sprintf(infoForm, i.Name(),
+			dmgMin, dmgMax)
+		if config.Debug() {
+			info = fmt.Sprintf("%s\n[%s]", info,
+				i.SerialID())
+		}
+		return info
+	default:
+		return ""
 	}
 }

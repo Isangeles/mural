@@ -21,12 +21,14 @@
  *
  */
 
-// Example for creating simple MTK button with draw background
-// and custom on-click function.
+// Example for creating simple MTK animation.
 package main
 
 import (
 	"fmt"
+	"image"
+	_ "image/png"
+	"os"
 
 	"golang.org/x/image/colornames"
 
@@ -34,10 +36,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/core/mtk"
-)
-
-var (
-	exitreq bool // menu exit request flag
 )
 
 // Main function.
@@ -50,7 +48,7 @@ func main() {
 func run() {
 	// Create Pixel window configuration.
 	cfg := pixelgl.WindowConfig{
-		Title:  "MTK button example",
+		Title:  "MTK animation example",
 		Bounds: pixel.R(0, 0, 1600, 900),
 	}
 	// Create MTK warpper for Pixel window.
@@ -58,29 +56,49 @@ func run() {
 	if err != nil {
 		panic(fmt.Errorf("fail_to_create_mtk_window:%v", err))
 	}
-	// Create MTK button for exit.
-	exitB := mtk.NewButton(mtk.SIZE_BIG, mtk.SHAPE_RECTANGLE, colornames.Red,
-		"Exit", "Exit menu")
-	// Set function for exit button click event.
-	exitB.SetOnClickFunc(onExitButtonClicked)
+	// Load spritesheet image.
+	ss, err := loadPicture("spritesheet.png")
+	if err != nil {
+		panic(fmt.Errorf("fail_to_load_spritesheet:%v", err))
+	}
+	// Retrieve frames from spritesheet.
+	frames := cutFrames(ss)
+	// Create animation from frames,
+	// 2 frames per second.
+	anim := mtk.NewAnimation(frames, 2)
 	// Main loop.
 	for !win.Closed() {
 		// Clear window.
 		win.Clear(colornames.Black)
-		// Draw exit button.
-		exitB.Draw(win, mtk.Matrix().Moved(win.Bounds().Center()))
+		// Draw.
+		animPos := win.Bounds().Center()
+		anim.Draw(win.Window, mtk.Matrix().Moved(animPos))
 		// Update.
 		win.Update()
-		exitB.Update(win)
-		// On exit request.
-		if exitreq {
-			win.SetClosed(true)
-		}
+		anim.Update(win)
 	}
 }
 
-// onExitButtonClicked handles exit button click
-// event.
-func onExitButtonClicked(b *mtk.Button) {
-	exitreq = true
+// loadPicture loads picture from file with specified path.
+func loadPicture(path string) (pixel.Picture, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_open_image_file:%v", err)
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_decode_image:%v", err)
+	}
+	return pixel.PictureDataFromImage(img), nil
+}
+
+// cutFrames retrieves all frames from 100x100
+// spritesheet(4 50x50 frames).
+func cutFrames(ss pixel.Picture) []*pixel.Sprite {
+	frame1 := pixel.NewSprite(ss, pixel.R(0, 0, 50, 50))
+	frame2 := pixel.NewSprite(ss, pixel.R(50, 0, 100, 50))
+	frame3 := pixel.NewSprite(ss, pixel.R(0, 50, 50, 100))
+	frame4 := pixel.NewSprite(ss, pixel.R(50, 50, 100, 100))
+	return []*pixel.Sprite{frame1, frame2, frame3, frame4}
 }

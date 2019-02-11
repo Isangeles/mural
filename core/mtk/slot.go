@@ -47,9 +47,11 @@ type Slot struct {
 	info         *InfoWindow
 	icon         *pixel.Sprite
 	value        interface{}
+	mousePos     pixel.Vec
 	onRightClick func(s *Slot)
 	onLeftClick  func(s *Slot)
 	hovered      bool
+	dragged      bool
 }
 
 // NewSlot creates new slot without background.
@@ -73,7 +75,11 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 		DrawRectangle(t, s.DrawArea(), s.color)
 	}
 	if s.icon != nil {
-		s.icon.Draw(t, matrix)
+		if s.dragged {
+			s.icon.Draw(t, Matrix().Moved(s.mousePos))
+		} else {
+			s.icon.Draw(t, matrix)
+		}
 	}
 	if s.hovered {
 		s.info.Draw(t)
@@ -95,8 +101,9 @@ func (s *Slot) Update(win *Window) {
 			}
 		}
 	}
+	s.mousePos = win.MousePosition()
 	// On-hover.
-	s.hovered = s.DrawArea().Contains(win.MousePosition())
+	s.hovered = s.DrawArea().Contains(s.mousePos)
 	// Elements update.
 	s.info.Update(win)
 }
@@ -104,6 +111,23 @@ func (s *Slot) Update(win *Window) {
 // Value returns current slot value.
 func (s *Slot) Value() interface{} {
 	return s.value
+}
+
+// Icon returns current slot icon.
+func (s *Slot) Icon() *pixel.Sprite {
+	return s.icon
+}
+
+// Drag toggles slot drag mode(icon
+// follows mouse cursor).
+func (s *Slot) Drag(drag bool) {
+	s.dragged = drag
+}
+
+// Dragged checks whether slot is in
+// drag mode(icon follows mouse cursor).
+func (s *Slot) Dragged() bool {
+	return s.dragged
 }
 
 // SetColor sets specified color as slot
@@ -135,6 +159,16 @@ func (s *Slot) SetInfo(text string) {
 	s.info.InsertText(text)
 }
 
+// Transfer transfers all content(value, icon,
+// labels, info) from specified slot.
+func (s *Slot) Transfer(oldSlot *Slot) {
+	s.SetValue(oldSlot.Value())
+	s.SetIcon(oldSlot.Icon())
+	s.SetInfo(oldSlot.info.String())
+	s.SetLabel(oldSlot.label.String())
+	oldSlot.Clear()
+}
+
 // Clear removes slot value, icon,
 // label and text.
 func (s *Slot) Clear() {
@@ -142,6 +176,7 @@ func (s *Slot) Clear() {
 	s.SetIcon(nil)
 	s.SetLabel("")
 	s.SetInfo("")
+	s.Drag(false)
 }
 
 // DrawArea returns current slot background
@@ -160,7 +195,7 @@ func (s *Slot) Bounds() pixel.Rect {
 
 // SetOnLeftClickFunc set speicfied function as function
 // triggered after on-click event.
-func (s *Slot) SetOnleftClickFunc(f func(s *Slot)) {
+func (s *Slot) SetOnLeftClickFunc(f func(s *Slot)) {
 	s.onLeftClick = f
 }
 

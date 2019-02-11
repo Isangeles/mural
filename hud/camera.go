@@ -85,7 +85,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 		}
 	}
 	// FOW effect.
-	if config.MapFOW() {
+	if c.areaMap != nil || config.MapFOW() {
 		c.drawMapFOW(win.Window)
 	}
 	// Debug mode.

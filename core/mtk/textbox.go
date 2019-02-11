@@ -27,10 +27,10 @@ import (
 	"bytes"
 	"fmt"
 	"image/color"
-	
+	"strings"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	//"golang.org/x/image/colornames"
 )
 
 // Struct for textboxes.
@@ -48,7 +48,7 @@ type Textbox struct {
 // background color and maximal size of text content (0 for
 // no maximal values).
 func NewTextbox(textSize pixel.Vec, fontSize Size,
-	color color.Color) (*Textbox) {
+	color color.Color) *Textbox {
 	t := new(Textbox)
 	t.textSize = textSize
 	// Background.
@@ -66,20 +66,20 @@ func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 	DrawRectangle(t, tb.DrawArea(), pixel.RGBA{0.1, 0.1, 0.1, 0.5})
 	// Text content.
 	tb.textarea.Draw(t, Matrix().Moved(pixel.V(tb.DrawArea().Min.X,
-		tb.DrawArea().Max.Y - tb.textarea.BoundsOf("AA").H()))) 
+		tb.DrawArea().Max.Y-tb.textarea.BoundsOf("AA").H())))
 }
 
 // Update handles key events.
 func (t *Textbox) Update(win *Window) {
 	if win.JustPressed(pixelgl.KeyDown) {
-		if t.startID < len(t.textContent) - 1 {
-			t.startID ++
+		if t.startID < len(t.textContent)-1 {
+			t.startID++
 			t.updateTextVisibility()
 		}
 	}
 	if win.JustPressed(pixelgl.KeyUp) {
 		if t.startID > 0 {
-			t.startID --
+			t.startID--
 			t.updateTextVisibility()
 		}
 	}
@@ -131,6 +131,15 @@ func (t *Textbox) Clear() {
 	t.updateTextVisibility()
 }
 
+// String returns textbox content.
+func (t *Textbox) String() string {
+	content := ""
+	for _, line := range t.textContent {
+		content = fmt.Sprintf("%s\n%s", content, line)
+	}
+	return strings.TrimSpace(content)
+}
+
 // updateTextVisibility updates content of visible
 // text area.
 // TODO: height of visible text is calculated wrong, value is too big.
@@ -138,9 +147,9 @@ func (t *Textbox) Clear() {
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string
-		visibleTextHeight float64 
+		visibleTextHeight float64
 	)
-	
+
 	for i := 0; i < len(t.textContent); i++ {
 		if i < t.startID {
 			continue
@@ -148,7 +157,7 @@ func (t *Textbox) updateTextVisibility() {
 		if visibleTextHeight > t.drawArea.H() {
 			break
 		}
-		
+
 		line := t.textContent[i]
 		visibleText = append(visibleText, line)
 		visibleTextHeight += t.textarea.BoundsOf(line).H()
@@ -163,20 +172,20 @@ func (t *Textbox) updateTextVisibility() {
 // Splits string at specified index.
 // Author: mozey(@stackoverflow).
 func SplitSubN(s string, n int) []string {
-    sub := ""
-    subs := []string{}
+	sub := ""
+	subs := []string{}
 
-    runes := bytes.Runes([]byte(s))
-    l := len(runes)
-    for i, r := range runes {
-        sub = sub + string(r)
-        if (i + 1) % n == 0 {
-            subs = append(subs, sub)
-            sub = ""
-        } else if (i + 1) == l {
-            subs = append(subs, sub)
-        }
-    }
+	runes := bytes.Runes([]byte(s))
+	l := len(runes)
+	for i, r := range runes {
+		sub = sub + string(r)
+		if (i+1)%n == 0 {
+			subs = append(subs, sub)
+			sub = ""
+		} else if (i + 1) == l {
+			subs = append(subs, sub)
+		}
+	}
 
-    return subs
+	return subs
 }

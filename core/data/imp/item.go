@@ -40,7 +40,7 @@ import (
 )
 
 var (
-	ITEMS_GRAPHIC_FILE_EXT = ".itemsgraphic"
+	ITEMS_GRAPHIC_FILE_EXT = ".itg"
 )
 
 // LoadData loads all data(like items, skill, etc.) from module
@@ -126,6 +126,7 @@ func buildXMLItemGraphicData(xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGra
 		ItemID: xmlItem.ID,
 		IconPic: itIcon,
 		SpritesheetPic: itSprite,
+		MaxStack: xmlItem.MaxStack,
 	}
 	return &itData, nil
 }

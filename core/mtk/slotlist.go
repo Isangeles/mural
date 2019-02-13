@@ -148,7 +148,7 @@ func (sl *SlotList) Slots() []*Slot {
 // EmptySlot returns first empty slot.
 func (sl *SlotList) EmptySlot() *Slot {
 	for _, s := range sl.slots {
-		if s.Value() == nil {
+		if len(s.Values()) < 1 {
 			return s
 		}
 	}

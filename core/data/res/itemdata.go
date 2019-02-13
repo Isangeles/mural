@@ -32,6 +32,7 @@ type ItemGraphicData struct {
 	ItemID          string
 	IconPic         pixel.Picture
 	SpritesheetPic  pixel.Picture
+	MaxStack        int
 }
 
 

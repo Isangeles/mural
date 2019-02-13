@@ -24,12 +24,14 @@
 package mtk
 
 import (
+	"fmt"
 	"image/color"
 
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/imdraw"
 )
 
 var (
@@ -38,42 +40,62 @@ var (
 
 // Struct for slot.
 type Slot struct {
-	bgSpr        *pixel.Sprite
-	drawArea     pixel.Rect
-	size         Size
-	color        color.Color
-	fontSize     Size
-	label        *Text
-	info         *InfoWindow
-	icon         *pixel.Sprite
-	value        interface{}
-	mousePos     pixel.Vec
-	onRightClick func(s *Slot)
-	onLeftClick  func(s *Slot)
-	hovered      bool
-	dragged      bool
+	bgSpr              *pixel.Sprite
+	bgDraw             *imdraw.IMDraw
+	drawArea           pixel.Rect
+	size               Size
+	color              color.Color
+	fontSize           Size
+	label              *Text
+	countLabel         *Text
+	info               *InfoWindow
+	icon               *pixel.Sprite
+	values             []interface{}
+	mousePos           pixel.Vec
+	specialKey         pixelgl.Button
+	onRightClick       func(s *Slot)
+	onLeftClick        func(s *Slot)
+	onSpecialLeftClick func(s *Slot)
+	hovered            bool
+	dragged            bool
 }
 
 // NewSlot creates new slot without background.
 func NewSlot(size, fontSize Size) *Slot {
 	s := new(Slot)
+	// Background.
+	s.bgDraw = imdraw.New(nil)
 	s.size = size
-	s.fontSize = fontSize
 	s.color = def_slot_color
-	// Label & info.
+	// Labels & info.
+	s.fontSize = fontSize
 	s.label = NewText(fontSize, 0)
+	s.countLabel = NewText(fontSize, 0)
+	s.countLabel.JustCenter()
 	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 	return s
 }
 
+// SlotSwitch transfers all contant of slot A
+// (value, icon, label, info) to slot B and
+// vice versa.
+func SlotSwitch(slotA, slotB *Slot) {
+	slotC := *slotA
+	slotA.SetValues(slotB.Values())
+	slotA.SetIcon(slotB.Icon())
+	slotA.SetInfo(slotB.info.String())
+	slotA.SetLabel(slotB.label.String())
+	slotB.SetValues(slotC.Values())
+	slotB.SetIcon(slotC.Icon())
+	slotB.SetInfo(slotC.info.String())
+	slotB.SetLabel(slotC.label.String())	
+}
+
 // Draw draws slot.
 func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
+	// Draw area.
 	s.drawArea = MatrixToDrawArea(matrix, s.Bounds())
-	if s.bgSpr != nil {
-		s.bgSpr.Draw(t, matrix)
-	} else {
-		DrawRectangle(t, s.DrawArea(), s.color)
-	}
+	// Icon.
 	if s.icon != nil {
 		if s.dragged {
 			s.icon.Draw(t, Matrix().Moved(s.mousePos))
@@ -81,6 +103,18 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 			s.icon.Draw(t, matrix)
 		}
 	}
+	// Slot.
+	if s.bgSpr != nil {
+		s.bgSpr.Draw(t, matrix)
+	} else {
+		s.drawBG(t)
+	}
+	// Labels.
+	if len(s.values) > 0 {
+		countPos := MoveTL(s.DrawArea(), s.countLabel.Bounds().Size())
+		s.countLabel.Draw(t, matrix.Moved(countPos))
+	}
+	// Info window.
 	if s.hovered {
 		s.info.Draw(t)
 	}
@@ -88,29 +122,53 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates slot.
 func (s *Slot) Update(win *Window) {
+	// Mouse position.
+	s.mousePos = win.MousePosition()
 	// Mouse events.
-	if s.DrawArea().Contains(win.MousePosition()) {
-		if win.JustPressed(pixelgl.MouseButtonRight) {
+	if s.DrawArea().Contains(s.mousePos) {
+		switch {
+		case win.JustPressed(pixelgl.MouseButtonRight):
 			if s.onRightClick != nil {
 				s.onRightClick(s)
 			}
-		}
-		if win.JustPressed(pixelgl.MouseButtonLeft) {
+		case s.specialKey != 0 && win.Pressed(s.specialKey) &&
+			win.JustPressed(pixelgl.MouseButtonLeft):
+			if s.onSpecialLeftClick != nil {
+				s.onSpecialLeftClick(s)
+			}
+		case win.JustPressed(pixelgl.MouseButtonLeft):
 			if s.onLeftClick != nil {
 				s.onLeftClick(s)
 			}
 		}
 	}
-	s.mousePos = win.MousePosition()
 	// On-hover.
 	s.hovered = s.DrawArea().Contains(s.mousePos)
+	// Count label.
+	s.countLabel.SetText(fmt.Sprintf("%d", len(s.values)))
 	// Elements update.
 	s.info.Update(win)
 }
 
-// Value returns current slot value.
-func (s *Slot) Value() interface{} {
-	return s.value
+// Values returns all slot values.
+func (s *Slot) Values() []interface{} {
+	return s.values
+}
+
+// Pop removes and returns first value
+// from slot. Clears slot if removed value
+// was last value in slot.
+func (s *Slot) Pop() interface{} {
+	if s.values == nil {
+		return nil
+	}
+	lastID := len(s.values)-1
+	v := s.values[lastID]
+	s.values = s.values[:lastID]
+	if len(s.values) < 1 {
+		s.Clear()
+	}
+	return v
 }
 
 // Icon returns current slot icon.
@@ -142,10 +200,16 @@ func (s *Slot) SetIcon(spr *pixel.Sprite) {
 	s.icon = spr
 }
 
-// SetValue sets specified interface as current
-// slot value.
-func (s *Slot) SetValue(val interface{}) {
-	s.value = val
+// AddValue adds specified interface to slot
+// values list.
+func (s *Slot) AddValues(vls... interface{}) {
+	s.values = append(s.values, vls...)
+}
+
+// SetValues replaces current values with
+// specified ones.
+func (s *Slot) SetValues(vls []interface{}) {
+	s.values = vls
 }
 
 // SetLabel sets specified text as slot label.
@@ -159,20 +223,10 @@ func (s *Slot) SetInfo(text string) {
 	s.info.InsertText(text)
 }
 
-// Transfer transfers all content(value, icon,
-// labels, info) from specified slot.
-func (s *Slot) Transfer(oldSlot *Slot) {
-	s.SetValue(oldSlot.Value())
-	s.SetIcon(oldSlot.Icon())
-	s.SetInfo(oldSlot.info.String())
-	s.SetLabel(oldSlot.label.String())
-	oldSlot.Clear()
-}
-
 // Clear removes slot value, icon,
 // label and text.
 func (s *Slot) Clear() {
-	s.SetValue(nil)
+	s.SetValues(nil)
 	s.SetIcon(nil)
 	s.SetLabel("")
 	s.SetInfo("")
@@ -193,14 +247,37 @@ func (s *Slot) Bounds() pixel.Rect {
 	return s.bgSpr.Frame()
 }
 
+// SetSpecialKey sets special key for slot click
+// events.
+func (s *Slot) SetSpecialKey(k pixelgl.Button) {
+	s.specialKey = k
+}
+
+// SetOnClickFunc set speicfied function as function
+// triggered after right mouse click event.
+func (s *Slot) SetOnRightClickFunc(f func(s *Slot)) {
+	s.onRightClick = f
+}
+
 // SetOnLeftClickFunc set speicfied function as function
-// triggered after on-click event.
+// triggered after left mouse click event.
 func (s *Slot) SetOnLeftClickFunc(f func(s *Slot)) {
 	s.onLeftClick = f
 }
 
-// SetOnClickFunc set speicfied function as function
-// triggered after on-click event.
-func (s *Slot) SetOnRightClickFunc(f func(s *Slot)) {
-	s.onRightClick = f
+// SetOnSpecialLeftClickFunc set speicfied function as function
+// triggered after special key pressed + left mouse click event.
+func (s *Slot) SetOnSpecialLeftClickFunc(f func(s *Slot)) {
+	s.onSpecialLeftClick = f
+}
+
+// drawBG draw background within current draw area
+// with IMDraw.
+func (s *Slot) drawBG(t pixel.Target) {
+	s.bgDraw.Clear()
+	s.bgDraw.Color = s.color
+	s.bgDraw.Push(s.DrawArea().Min)
+	s.bgDraw.Push(s.DrawArea().Max)
+	s.bgDraw.Rectangle(0)
+	s.bgDraw.Draw(t)
 }

@@ -144,6 +144,12 @@ func MoveTR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
 	return pixel.V(bg.W()/2-size.X/2, bg.H()/2-size.Y/2)
 }
 
+// MoveTL returns move vector from center of specified background
+// to top left point draw position(center) for specified size.
+func MoveTL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(-bg.W()/2-size.X/2, bg.H()/2-size.Y/2)
+}
+
 // MoveBR returns move vector from center of specified background
 // to bottom right point draw position(center) for specified size.
 func MoveBR(bg pixel.Rect, size pixel.Vec) pixel.Vec {

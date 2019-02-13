@@ -27,6 +27,7 @@ import (
 	"fmt"
 	
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -36,6 +37,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -44,6 +46,7 @@ var (
 	inv_slot_size = mtk.SIZE_BIG
 	inv_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	inv_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
+	inv_special_key = pixelgl.KeyLeftShift
 )
 
 // Struct for inventory menu.
@@ -103,7 +106,8 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	}
 	// Create empty slots.
 	for i := 0; i < inv_slots; i ++ {
-		im.createSlot()
+		s := im.createSlot()
+		im.slots.Add(s)
 	}
 	return im
 }
@@ -181,6 +185,15 @@ func (im *InventoryMenu) Bounds() pixel.Rect {
 // insert inserts specified items in inventory slots.
 func (im *InventoryMenu) insert(items ...item.Item) {
 	for _, i := range items {
+		// Retrieve item data.
+		itemData := res.ItemData(i.ID())
+		if itemData == nil {
+			log.Err.Printf("hud_inv_menu:fail_to_retrieve_item_data:%s",
+				i.ID())
+			continue
+		}
+		itemGraphic := object.NewItemGraphic(i, itemData)
+		// Find proper slot.
 		slot := im.slots.EmptySlot()
 		layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
 		slotID, prs := layout.InvSlots[i.SerialID()]
@@ -188,22 +201,27 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 			if slotID > -1 && slotID < len(im.slots.Slots())-1 {
 				slot = im.slots.Slots()[slotID]
 			}
+		} else {
+			for _, s := range im.slots.Slots() {
+				if len(s.Values()) < 1 || len(s.Values()) >= itemGraphic.MaxStack() {
+					continue
+				}
+				it, ok := s.Values()[0].(item.Item)
+				if !ok {
+					continue
+				}
+				if it.ID() == i.ID() {
+					slot = s
+					break
+				}
+			}
 		}
 		if slot == nil {
-			im.createSlot()
+			log.Err.Printf("hud_inv:no empty slots")
+			return
 		}
-		itemGraphic := res.ItemData(i.ID())
-		if itemGraphic == nil {
-			log.Err.Printf("hud_inv_menu:fail_to_find_item_graphic:%s",
-				i.ID())
-			slot.SetValue(i)
-			continue
-		}
-		slot.SetValue(i)
-		iconSpr := pixel.NewSprite(itemGraphic.IconPic,
-			itemGraphic.IconPic.Bounds())
-		slot.SetIcon(iconSpr)
-		slot.SetInfo(itemInfo(i))
+		// Insert item to slot.
+		insertSlotItem(itemGraphic, slot)
 	}
 }
 
@@ -217,25 +235,30 @@ func (im *InventoryMenu) updateLayout() {
 		layout.InvSlots = make(map[string]int)
 	}
 	for i, s := range im.slots.Slots() {
-		if s.Value() == nil {
+		if len(s.Values()) < 1 {
 			continue
 		}
-		it, ok := s.Value().(item.Item)
-		if !ok {
-			continue
+		for _, v := range s.Values() {
+			it, ok := v.(*object.ItemGraphic)
+			if !ok {
+				log.Err.Printf("hud_inv:layout_update:fail to retrieve item from slot value")
+				continue
+			}
+			layout.InvSlots[it.SerialID()] = i
 		}
-		layout.InvSlots[it.SerialID()] = i
 	}
 	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
 }
 
 // createSlot creates empty slot on inventory slots list.
-func (im *InventoryMenu) createSlot() {
+func (im *InventoryMenu) createSlot() *mtk.Slot {
 	s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
 	s.SetColor(inv_slot_color)
+	s.SetSpecialKey(inv_special_key)
 	s.SetOnRightClickFunc(im.onSlotRightClicked)
 	s.SetOnLeftClickFunc(im.onSlotLeftClicked)
-	im.slots.Add(s)
+	s.SetOnSpecialLeftClickFunc(im.onSlotSpecialLeftClicked)
+	return s
 }
 
 // Triggered after close button clicked.
@@ -246,12 +269,15 @@ func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 // Triggered after one of item slots was clicked with
 // right mosue button.
 func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
-	it, ok := s.Value().(item.Item)
+	if len(s.Values()) < 1 {
+		return
+	}
+	it, ok := s.Values()[0].(*object.ItemGraphic)
 	if !ok {
 		log.Err.Printf("hud_inv_menu:%v:is not item", it)
 		return
 	}
-	eit, ok := it.(item.Equiper)
+	eit, ok := it.Item.(item.Equiper)
 	if !ok {
 		log.Err.Printf("hud_inv_menu:%s:is not equipable item", it.SerialID())
 		return
@@ -273,7 +299,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 }
 
-// Triggered after on of item slots was clicked with
+// Triggered after one of item slots was clicked with
 // laft mouse button.
 func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
 	for _, ds := range im.slots.Slots() {
@@ -283,13 +309,71 @@ func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
 		if s == ds {
 			ds.Drag(false)
 			return
-		} else if s.Value() == nil {
-			s.Transfer(ds)
-			im.updateLayout()
-			return
 		}
+		mtk.SlotSwitch(s, ds)
+		im.updateLayout()
+		ds.Drag(false)
+		return
+	}
+	if len(s.Values()) < 1 {
+		return
 	}
 	s.Drag(true)
+}
+
+// Triggered after one of items slots was clicked with
+// left mouse button and inv_slot_special_key pressed.
+func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
+	// Handle dragged slot.
+	for _, ds := range im.slots.Slots() {
+		if !ds.Dragged() {
+			continue
+		}
+		if s == ds {
+			ds.Drag(false)
+			return
+		}
+		if len(s.Values()) < 1 {
+			if dv := ds.Pop(); dv != nil {
+				ig, ok := dv.(*object.ItemGraphic)
+				if !ok {
+					ds.AddValues(dv) // return value back to dragged slot
+					return
+				}
+				insertSlotItem(ig, s)
+			}
+		} else {
+			v, ok := s.Values()[0].(*object.ItemGraphic)
+			if !ok {
+				return
+			}
+			dv, ok := ds.Pop().(*object.ItemGraphic)
+			if !ok {
+				ds.AddValues(dv) // return value back to dragged slot
+				return
+			}
+			if v.ID() != dv.ID() ||
+				len(s.Values()) >= v.MaxStack() {
+				return
+			}
+			s.AddValues(dv)
+		}
+		ds.Drag(false)
+		im.updateLayout()
+		return
+	}
+	if len(s.Values()) < 1 {
+		return
+	}
+	s.Drag(true)
+}
+
+
+// insertSlotItem inserts specified item to specified slot.xs
+func insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
+	s.AddValues(it)
+	s.SetInfo(itemInfo(it.Item))
+	s.SetIcon(it.Icon())
 }
 
 // itemInfo returns formated string with

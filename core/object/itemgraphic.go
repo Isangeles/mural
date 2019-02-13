@@ -37,6 +37,7 @@ type ItemGraphic struct {
 	flameitem.Item
 	spritesheet pixel.Picture
 	icon        *pixel.Sprite
+	maxStack    int
 }
 
 // NewItemGraphic creates new graphical wrapper from
@@ -45,11 +46,23 @@ func NewItemGraphic(item flameitem.Item, data *res.ItemGraphicData) *ItemGraphic
 	itg := new(ItemGraphic)
 	itg.Item = item
 	itg.spritesheet = data.SpritesheetPic
-	// TODO: icon sprite.
+	itg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
+	itg.maxStack = data.MaxStack
 	return itg
 }
 
 // Spritesheet returns item spritesheet.
-func (it *ItemGraphic) Spritesheet() pixel.Picture {
-	return it.spritesheet
+func (itg *ItemGraphic) Spritesheet() pixel.Picture {
+	return itg.spritesheet
+}
+
+// Icon returns item icon.
+func (itg *ItemGraphic) Icon() *pixel.Sprite {
+	return itg.icon
+}
+
+// MaxStack returns maximal number of stacked items
+// with same ID.
+func (itg *ItemGraphic) MaxStack() int {
+	return itg.maxStack
 }

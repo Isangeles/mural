@@ -1,7 +1,7 @@
 /*
  * itemgraphicxml.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ type ItemGraphicNodeXML struct {
 	ID           string   `xml:"id,attr"`
 	Spritesheet  string   `xml:"spritesheet,attr"`
 	Icon         string   `xml:"icon,attr"`
+	MaxStack     int      `xml:"stack,attr"`
 }
 
 // UnmarshalItemsGraphicsBase parses specified XML data

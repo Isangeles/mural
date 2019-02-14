@@ -108,13 +108,13 @@ func LoadUIData() error {
 	// GUI elements textures.
 	texs, err := loadPicturesFromArch(g_arch_path, "ui")
 	if err != nil {
-		return fmt.Errorf("fail to load UI textures")
+		return fmt.Errorf("fail_to_load_UI_textures:%v", err)
 	}
 	uiTexs = texs
 	// Fonts.
 	ttfs, err := loadFontsFromArch(g_arch_path, "font")
 	if err != nil {
-		return fmt.Errorf("fail to load fonts")
+		return fmt.Errorf("fail_to_load_fonts:%v", err)
 	}
 	fonts = ttfs
 	return nil

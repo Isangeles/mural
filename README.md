@@ -31,6 +31,7 @@ automatically) and add the following line:
 ```
 If no path provided, the engine will search default modules directory(data/modules).
 
+Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 
   Run Mural:
 ```

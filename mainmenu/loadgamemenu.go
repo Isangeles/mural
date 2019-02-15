@@ -156,7 +156,11 @@ func saveGamesFiles(dirPath string) ([]string, error) {
 // loadGame loads saved game file with
 // specified name.
 func (lgm *LoadGameMenu) loadGame(savName string) {
-	imp.LoadResources()
+	err := imp.LoadResources(flame.Mod())
+	if err != nil {
+		log.Err.Printf("fail_to_load_resources:%v", err)
+		return
+	}
 	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
 		savName)
 	if err != nil {

@@ -279,7 +279,7 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
-	err := imp.LoadResources()
+	err := imp.LoadResources(flame.Mod())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
 		return

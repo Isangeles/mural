@@ -30,7 +30,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/module"
 
 	"github.com/isangeles/mural/core/data"
@@ -45,10 +44,10 @@ var (
 
 // LoadData loads all data(like items, skill, etc.) from module
 // resources files.
-func LoadResources() error {
+func LoadResources(mod *module.Module) error {
 	// Items graphics.
 	itemsData := make(map[string]*res.ItemGraphicData)
-	itGraphics, err := ImportItemsGraphicsDir(flame.Mod(), flame.Mod().ItemsPath())
+	itGraphics, err := ImportItemsGraphicsDir(mod, mod.Conf().ItemsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}

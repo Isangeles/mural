@@ -30,7 +30,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/cmd/burn"
 
 	"github.com/isangeles/mural/config"
@@ -201,7 +201,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
 		savName := cmd.Args()[0]
-		savDir := flame.SavegamesPath()
+		savDir := flameconf.ModuleSavegamesPath()
 		sav := gui_hud.NewGUISave()
 		err := exp.ExportGUISave(sav, savDir, savName)
 		if err != nil {
@@ -231,7 +231,7 @@ func importGUIOption(cmd burn.Command) (int, string) {
 			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
 		savName := cmd.Args()[0]
-		savDir := flame.SavegamesPath()
+		savDir := flameconf.ModuleSavegamesPath()
 		save, err := imp.ImportGUISave(gui_hud.Game(), savDir, savName)
 		if err != nil {
 			return 9, fmt.Sprintf("%s:fail_to_load_save_file:%v",

@@ -37,6 +37,7 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/cmd/burn"
 	"github.com/isangeles/flame/cmd/burn/syntax"
+	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save"
@@ -68,11 +69,19 @@ var (
 
 // On init.
 func init() {
-	err := flame.LoadConfig()
+	// Load flame config.
+	err := flameconf.LoadConfig()
 	if err != nil {
 		log.Err.Printf("fail_to_load_flame_config_file:%v\n", err)
-		flame.SaveConfig() // override 'corrupted' config file with default configuration
+		flameconf.SaveConfig() // override 'corrupted' config file with default configuration
 	}
+	// Load module.
+	m, err := flamedata.Module(flameconf.ModulePath(), flameconf.LangID())
+	if err != nil {
+		log.Err.Printf("fail_to_load_config_module:%v", err)
+	}
+	flame.SetModule(m)
+	// Load GUI config.
 	err = config.LoadConfig()
 	if err != nil {
 		log.Err.Printf("fail_to_load_config_file:%v\n", err)
@@ -195,7 +204,7 @@ func run() {
 	// On exit.
 	if win.Closed() {
 		config.SaveConfig()
-		flame.SaveConfig()
+		flameconf.SaveConfig()
 	}
 }
 
@@ -216,7 +225,7 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	game = flamecore.LoadGame(gameSav)
 	flame.SetGame(game)
 	// Load saved GUI state.
-	guiSav, err := imp.ImportGUISave(game, flame.SavegamesPath(),
+	guiSav, err := imp.ImportGUISave(game, flameconf.ModuleSavegamesPath(),
 		gameSav.Name)
 	if err != nil {
 		log.Err.Printf("fail_to_load_gui_save:%v", err)

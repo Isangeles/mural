@@ -35,6 +35,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
+	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -344,7 +345,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 // savegames directory.
 func (hud *HUD) Save(saveName string) error {
 	// Retrieve saves path.
-	savesPath := flame.SavegamesPath()
+	savesPath := flameconf.ModuleSavegamesPath()
 	// Save current game.
 	err := flamedata.SaveGame(hud.Game(), savesPath, saveName)
 	if err != nil {

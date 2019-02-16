@@ -35,7 +35,7 @@ import (
 
 	"github.com/isangeles/mural/log"
 
-	"github.com/isangeles/flame"
+	flameconfig "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text"
 	"github.com/isangeles/flame/core/enginelog"
 )
@@ -49,7 +49,7 @@ var (
 	fullscreen bool
 	mapfow     bool = true
 	resolution pixel.Vec
-	lang = flame.LangID()
+	lang = flameconfig.LangID()
 	mainFontName = ""
 	menuMusic = ""
 	bClickSound = ""
@@ -163,7 +163,7 @@ func SetResolution(res pixel.Vec) {
 // SetLang sets language with specified ID as current
 // language.
 func SetLang(langID string) {
-	_ = flame.SetLang(langID)
+	_ = flameconfig.SetLang(langID)
 }
 
 // SetMapFOW toggles map 'Fog Of War' graphical

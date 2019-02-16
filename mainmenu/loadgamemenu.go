@@ -31,6 +31,7 @@ import (
 	"github.com/faiface/pixel"
 	
 	"github.com/isangeles/flame"
+	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 
@@ -60,7 +61,7 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)
-	gameSaves, err := saveGamesFiles(flame.SavegamesPath())
+	gameSaves, err := saveGamesFiles(flameconf.ModuleSavegamesPath())
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_saved_games_dir:%v",
 			err)
@@ -161,7 +162,7 @@ func (lgm *LoadGameMenu) loadGame(savName string) {
 		log.Err.Printf("fail_to_load_resources:%v", err)
 		return
 	}
-	sav, err := flamedata.ImportSavedGame(flame.Mod(), flame.SavegamesPath(),
+	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
 		savName)
 	if err != nil {
 		log.Err.Printf("load_game_menu:fail_to_load_saved_game:%v", err)

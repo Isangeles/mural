@@ -52,9 +52,9 @@ type Avatar struct {
 // NewAvatar creates new avatar for specified game character.
 // Portrait and spritesheet names are required for saving and
 // loading avatar file.
-func NewAvatar(data *res.AvatarData) *Avatar {
+func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
-	av.Character = data.Character
+	av.Character = char
 	// Portrait & spritesheets names.
 	av.portraitName = data.PortraitName
 	av.ssHeadName = data.SSHeadName
@@ -72,9 +72,9 @@ func NewAvatar(data *res.AvatarData) *Avatar {
 // equipped items) body sprite.
 // Portrait and spritesheet names are required for saving and
 // loading avatar file.
-func NewStaticAvatar(data *res.AvatarData) (*Avatar, error) {
+func NewStaticAvatar(char *character.Character, data *res.AvatarData) (*Avatar, error) {
 	av := new(Avatar)
-	av.Character = data.Character
+	av.Character = char
 	// Portrait & spritesheet names.
 	av.portraitName = data.PortraitName
 	av.ssFullBodyName = data.SSFullBodyName
@@ -196,7 +196,7 @@ func (av *Avatar) updateApperance() {
 		if av.eqItems[eqi.SerialID()] != nil {
 			continue
 		}
-		itemGData := res.ItemData(eqi.ID())
+		itemGData := res.Item(eqi.ID())
 		if itemGData == nil {
 			continue
 		}

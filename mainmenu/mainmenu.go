@@ -297,13 +297,18 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	if err != nil {
 		return fmt.Errorf("fail_to_import_characters:%v", err)
 	}
-	avsData, err := imp.ImportAvatarsDataDir(chars, path)
+	avsData, err := imp.ImportAvatarsDataDir(path)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_avatars:%v", err)
 	}
 	for _, avData := range avsData {
-		av := object.NewAvatar(avData)
-		mm.PlayableChars = append(mm.PlayableChars, av)
+		for _, char := range chars {
+			if avData.CharID != char.ID() {
+				continue
+			}
+			av := object.NewAvatar(char, avData)
+			mm.PlayableChars = append(mm.PlayableChars, av)
+		}
 	}
 	return nil
 }

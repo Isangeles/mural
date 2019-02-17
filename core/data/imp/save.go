@@ -31,7 +31,7 @@ import (
 	"strings"
 
 	flamecore "github.com/isangeles/flame/core"
-	flameparsexml "github.com/isangeles/flame/core/data/parsexml"
+	flamexml "github.com/isangeles/flame/core/data/parsexml"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
@@ -42,11 +42,10 @@ var (
 	SAVEGUI_FILE_EXT = ".savegui"
 )
 
-
 // ImportGUISave imports GUI state from file with specified name
 // in directory with specified path.
-func ImportGUISave(game *flamecore.Game, dirPath,
-	saveName string) (*res.GUISave, error) {
+func ImportGUISave(game *flamecore.Game, dirPath, saveName string) (*res.GUISave,
+	error) {
 	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
 		saveName = saveName + SAVEGUI_FILE_EXT
 	}
@@ -102,8 +101,10 @@ func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.G
 		for _, pc := range game.Players() {
 			if xmlPC.Avatar.Serial == pc.Serial() {
 				pcData := new(res.PlayerSave)
+				// Character.
+				pcData.Character = pc
 				// Avatar.
-				avData, err := buildXMLAvatarData(pc, &xmlPC.Avatar)
+				avData, err := buildXMLAvatarData(&xmlPC.Avatar)
 				if err != nil {
 					return nil, fmt.Errorf("player:%s:fail_to_load_player_avatar:%v",
 						pc.SerialID, err)
@@ -119,7 +120,7 @@ func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.G
 		}
 	}
 	// Camera position.
-	camX, camY, err := flameparsexml.UnmarshalPosition(xmlSave.CameraNode.Position)
+	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.CameraNode.Position)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
 			err)

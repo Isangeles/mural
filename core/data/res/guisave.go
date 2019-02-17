@@ -23,6 +23,10 @@
 
 package res
 
+import (
+	"github.com/isangeles/flame/core/module/object/character"
+)
+
 // Struct for GUI state save.
 type GUISave struct {
 	Name                   string
@@ -33,6 +37,7 @@ type GUISave struct {
 // Struct for saved GUI user data
 // (avatar, inventory layoutm, etc.).
 type PlayerSave struct {
-	Avatar   *AvatarData
-	InvSlots map[string]int
+	Character *character.Character
+	Avatar    *AvatarData
+	InvSlots  map[string]int
 }

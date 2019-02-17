@@ -186,7 +186,7 @@ func (im *InventoryMenu) Bounds() pixel.Rect {
 func (im *InventoryMenu) insert(items ...item.Item) {
 	for _, i := range items {
 		// Retrieve item data.
-		itemData := res.ItemData(i.ID())
+		itemData := res.Item(i.ID())
 		if itemData == nil {
 			log.Err.Printf("hud_inv_menu:fail_to_retrieve_item_data:%s",
 				i.ID())

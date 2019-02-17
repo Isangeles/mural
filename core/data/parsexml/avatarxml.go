@@ -108,8 +108,8 @@ func buildAvatarXML(av *object.Avatar) AvatarXML {
 // avatar.
 func buildAvatarDataXML(avData *res.AvatarData) AvatarXML {
 	xmlAvatar := AvatarXML{}
-	xmlAvatar.ID = avData.Character.ID()
-	xmlAvatar.Serial = avData.Character.Serial()
+	xmlAvatar.ID = avData.CharID
+	xmlAvatar.Serial = avData.CharSerial
 	xmlAvatar.Portrait = avData.PortraitName
 	xmlAvatar.Spritesheet.Head = avData.SSHeadName
 	xmlAvatar.Spritesheet.Torso = avData.SSTorsoName

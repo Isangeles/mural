@@ -1,5 +1,5 @@
 /*
- * item.go
+ * itemgraphic.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -39,24 +39,8 @@ import (
 )
 
 var (
-	ITEMS_GRAPHIC_FILE_EXT = ".itg"
+	ITEMS_GRAPHIC_FILE_EXT = ".graphic"
 )
-
-// LoadData loads all data(like items, skill, etc.) from module
-// resources files.
-func LoadResources(mod *module.Module) error {
-	// Items graphics.
-	itemsData := make(map[string]*res.ItemGraphicData)
-	itGraphics, err := ImportItemsGraphicsDir(mod, mod.Conf().ItemsPath())
-	if err != nil {
-		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
-	}
-	for _, itGraphic := range itGraphics {
-		itemsData[itGraphic.ItemID] = itGraphic
-	}
-	res.SetItemsData(itemsData)
-	return nil
-}
 
 // ImportItemsGraphics import all items grpahics from
 // base file with specified path.

@@ -350,7 +350,8 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	avData := res.AvatarData{
-		Character: char,
+		CharID: char.ID(),
+		CharSerial: char.Serial(),
 		PortraitName: portraitName,
 		SSHeadName: ssHeadName,
 		SSTorsoName: ssTorsoName,
@@ -358,7 +359,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		SSHeadPic: ssHeadPic,
 		SSTorsoPic: ssTorsoPic,
 	}
-	av := object.NewAvatar(&avData)
+	av := object.NewAvatar(char, &avData)
 	ncm.mainmenu.AddPlayableChar(av)
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
 		lang.Text("gui", "newchar_create_msg"))

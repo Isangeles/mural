@@ -26,17 +26,43 @@
 package res
 
 var (
-	itemsData map[string]*ItemGraphicData
+	avatarsData map[string]*AvatarData
+	itemsData   map[string]*ItemGraphicData
+	effectsData map[string]*EffectGraphicData
 )
 
-// SetItemsData sets specified map with item
+// Avatar returns avatar data for character
+// with specified ID.
+func Avatar(id string) *AvatarData {
+	return avatarsData[id]
+}
+
+// Item returns graphic data for item
+// with specified ID.
+func Item(itemID string) *ItemGraphicData {
+	return itemsData[itemID]
+}
+
+// Effect returns graphic data for effect
+// with specified ID.
+func Effect(id string) *EffectGraphicData {
+	return effectsData[id]
+}
+
+// SetAvatarsData sets specified map with avatars
+// data as loaded resources data.
+func SetAvatarsData(data map[string]*AvatarData) {
+	avatarsData = data
+}
+
+// SetItemsData sets specified map with items
 // graphic data as loaded resources data.
 func SetItemsData(data map[string]*ItemGraphicData) {
 	itemsData = data
 }
 
-// ItemData returns graphic data for item
-// with specified ID.
-func ItemData(itemID string) *ItemGraphicData {
-	return itemsData[itemID]
+// SetEffectsData sets specified map with effects
+// data as loaded resources data.
+func SetEffectsData(data map[string]*EffectGraphicData) {
+	effectsData = data
 }

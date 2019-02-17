@@ -1,5 +1,5 @@
 /*
- * avatar.go
+ * effectgraphicxml.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,23 +21,21 @@
  *
  */
 
-package res
+package parsexml
 
 import (
-	"github.com/faiface/pixel"
+	"encoding/xml"
 )
 
-// Struct for all avatar data.
-type AvatarData struct {
-	CharID          string
-	CharSerial      string
-	PortraitName    string
-	SSHeadName      string
-	SSTorsoName     string
-	SSFullBodyName  string
-	PortraitPic     pixel.Picture
-	SSHeadPic       pixel.Picture
-	SSTorsoPic      pixel.Picture
-	SSFullBodyPic   pixel.Picture
+// Struct for XML effect graphic base.
+type EffectsGraphicsBaseXML struct {
+	XMLName xml.Name `xml:"base"`
+	Effects []EffectGraphicNodeXML `xml:"effect"`
 }
 
+// Struct for XML effect graphic node.
+type EffectGraphicNodeXML struct {
+	XMLName xml.Name `xml:"effect"`
+	ID      string
+	Icon    string
+}

@@ -40,6 +40,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/scenario"
+	"github.com/isangeles/flame/core/module/modutil"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
@@ -280,7 +281,7 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
-	err := imp.LoadResources(flame.Mod())
+	err := imp.LoadChapterResources(flame.Mod().Chapter())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
 		return
@@ -315,7 +316,6 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	// Objects.
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*object.Avatar, 0)
-	npcPath := hud.Game().Module().Chapter().NPCPath()
 	for _, c := range area.Characters() {
 		var pcAvatar *object.Avatar
 		for _, pc := range hud.Players() {
@@ -328,13 +328,12 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 			avatars = append(avatars, pcAvatar)
 			continue
 		}
-		avData, err := imp.CharacterAvatarData(c, npcPath)
-		if err != nil {
-			log.Err.Printf("hud_area_change:char:%s:fail_to_retrieve_avatar:%v",
-				c.ID(), err)
+		avData := res.Avatar(c.ID())
+		if avData == nil {
+			log.Err.Printf("hud_area_change:avatar_data_not_found:%s", c.ID())
 			continue
 		}
-		av := object.NewAvatar(avData)
+		av := object.NewAvatar(c, avData)
 		avatars = append(avatars, av)
 	}
 	hud.camera.SetAvatars(avatars)
@@ -370,7 +369,8 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 		pcData := new(res.PlayerSave)
 		// Avatar.
 		avData := res.AvatarData{
-			Character:      pc.Character,
+			CharID:         pc.ID(),
+			CharSerial:     pc.Serial(),
 			PortraitName:   pc.PortraitName(),
 			SSHeadName:     pc.HeadSpritesheetName(),
 			SSTorsoName:    pc.TorsoSpritesheetName(),
@@ -398,7 +398,8 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		//hud.pcs = append(hud.pcs, pc)
 		layout := NewLayout()
 		layout.InvSlots = pcData.InvSlots
-		hud.layouts[pcData.Avatar.Character.SerialID()] = layout
+		layoutKey := modutil.SerialID(pcData.Avatar.CharID, pcData.Avatar.CharSerial)
+		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))

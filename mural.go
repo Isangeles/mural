@@ -233,7 +233,8 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	}
 	pcs := make([]*object.Avatar, 0)
 	for _, pcData := range guiSav.PlayersData {
-		pc := object.NewAvatar(pcData.Avatar)
+		
+		pc := object.NewAvatar(pcData.Character, pcData.Avatar)
 		pcs = append(pcs, pc)
 	}
 	HUD, err := hud.NewHUD(game, pcs)

@@ -1,5 +1,5 @@
 /*
- * itemdata.go
+ * itemgraphic.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *

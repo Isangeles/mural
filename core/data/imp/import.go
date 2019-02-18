@@ -36,7 +36,7 @@ import (
 func LoadModuleResources(mod *module.Module) error {
 	// Items graphics.
 	itemsData := make(map[string]*res.ItemGraphicData)
-	itGraphics, err := ImportItemsGraphicsDir(mod, mod.Conf().ItemsPath())
+	itGraphics, err := ImportItemsGraphicsDir(mod.Conf().ItemsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}
@@ -44,6 +44,16 @@ func LoadModuleResources(mod *module.Module) error {
 		itemsData[itGraphic.ItemID] = itGraphic
 	}
 	res.SetItemsData(itemsData)
+	// Effects graphic.
+	effectsData := make(map[string]*res.EffectGraphicData)
+	effGraphics, err := ImportEffectsGraphicsDir(mod.Conf().EffectsPath())
+	if err != nil {
+		return fmt.Errorf("fail_to_import_effects_graphics:%v", err)
+	}
+	for _, effGraphic := range effGraphics {
+		effectsData[effGraphic.EffectID] = effGraphic
+	}
+	res.SetEffectsData(effectsData)
 	return nil
 }
 

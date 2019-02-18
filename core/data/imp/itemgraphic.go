@@ -30,8 +30,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/flame/core/module"
-
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
@@ -42,13 +40,12 @@ var (
 	ITEMS_GRAPHIC_FILE_EXT = ".graphic"
 )
 
-// ImportItemsGraphics import all items grpahics from
+// ImportItemsGraphics imports all items grpahics from
 // base file with specified path.
-func ImportItemsGraphics(mod *module.Module, path string) ([]*res.ItemGraphicData, error) {
+func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_base_file:%s",
-			err)
+		return nil, fmt.Errorf("fail_to_open_base_file:%s", err)
 	}
 	xmlItems, err := parsexml.UnmarshalItemsGraphicsBase(f)
 	if err != nil {
@@ -69,7 +66,7 @@ func ImportItemsGraphics(mod *module.Module, path string) ([]*res.ItemGraphicDat
 
 // ImportItemsGraphicsDir imports all files with items graphics from
 // directory with specified path.
-func ImportItemsGraphicsDir(mod *module.Module, dirPath string) ([]*res.ItemGraphicData, error) {
+func ImportItemsGraphicsDir(dirPath string) ([]*res.ItemGraphicData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
@@ -80,7 +77,7 @@ func ImportItemsGraphicsDir(mod *module.Module, dirPath string) ([]*res.ItemGrap
 			continue
 		}
 		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
-		impItems, err := ImportItemsGraphics(mod, itemsGraphicFilePath)
+		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
 		if err != nil {
 			log.Err.Printf("data_items_graphic_import:%s:fail_to_parse_file:%v",
 				itemsGraphicFilePath, err)
@@ -93,15 +90,15 @@ func ImportItemsGraphicsDir(mod *module.Module, dirPath string) ([]*res.ItemGrap
 	return items, nil
 }
 
-// buildXMLItemGraphic creates item graphic object for
-// specified item.
+// buildXMLItemGraphic creates item graphic object from 
+// specified item XML data.
 func buildXMLItemGraphicData(xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData, error) {
 	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v",
 			err)
 	}
-	itIcon, err := data.ItemIcon(xmlItem.Icon)
+	itIcon, err := data.Icon(xmlItem.Icon)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
 	}

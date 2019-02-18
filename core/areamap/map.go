@@ -151,6 +151,9 @@ func (m *Map) Size() pixel.Vec {
 // Moveable checks whether specified position is
 // passable.
 func (m *Map) Passable(pos pixel.Vec) bool {
+	if m.ground == nil {
+		return false
+	}
 	for _, t := range m.ground {
 		if t.Bounds().Contains(pos) {
 			return true

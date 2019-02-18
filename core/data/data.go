@@ -88,11 +88,21 @@ func LoadGameData() error {
 	}
 	itemsTexs = itTexs
 	// Icons.
+	icons = make(map[string]pixel.Picture, 0)
 	itemIcons, err := loadPicturesFromArch(g_arch_path, "item/icon")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_items_icons:%v", err)
 	}
-	icons = itemIcons
+	for name, i := range itemIcons {
+		icons[name] = i
+	}
+	effectIcons, err := loadPicturesFromArch(g_arch_path, "effect/icon")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_effects_icons:%v", err)
+	}
+	for name, i := range effectIcons {
+		icons[name] = i
+	}
 	return nil
 }
 
@@ -176,9 +186,8 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 	return loadPictureFromArch(g_arch_path, path)
 }
 
-// ItemIcon returns picture with specified name for
-// item icon.
-func ItemIcon(fileName string) (pixel.Picture, error) {
+// Icon returns picture with specified name for icon.
+func Icon(fileName string) (pixel.Picture, error) {
 	icon := icons[fileName]
 	if icon != nil {
 		return icon, nil

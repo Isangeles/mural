@@ -25,6 +25,9 @@ package parsexml
 
 import (
 	"encoding/xml"
+	"fmt"
+	"io"
+	"io/ioutil"
 )
 
 // Struct for XML effect graphic base.
@@ -36,6 +39,18 @@ type EffectsGraphicsBaseXML struct {
 // Struct for XML effect graphic node.
 type EffectGraphicNodeXML struct {
 	XMLName xml.Name `xml:"effect"`
-	ID      string
-	Icon    string
+	ID      string   `xml:"id,attr"`
+	Icon    string   `xml:"icon,attr"`
+}
+
+// UnmarshalEffectsGraphicsBase parses specified XML data
+// for effects graphics XML nodes.
+func UnmarshalEffectsGraphicsBase(data io.Reader) ([]EffectGraphicNodeXML, error) {
+	doc, _ := ioutil.ReadAll(data)
+	xmlBase := new(EffectsGraphicsBaseXML)
+	err := xml.Unmarshal(doc, xmlBase)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+	}
+	return xmlBase.Effects, nil
 }

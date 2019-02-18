@@ -47,8 +47,7 @@ type Textbox struct {
 // NewTextbox creates new textbox with specified font size,
 // background color and maximal size of text content (0 for
 // no maximal values).
-func NewTextbox(textSize pixel.Vec, fontSize Size,
-	color color.Color) *Textbox {
+func NewTextbox(textSize pixel.Vec, fontSize Size, color color.Color) *Textbox {
 	t := new(Textbox)
 	t.textSize = textSize
 	// Background.
@@ -142,14 +141,13 @@ func (t *Textbox) String() string {
 
 // updateTextVisibility updates content of visible
 // text area.
-// TODO: height of visible text is calculated wrong, value is too big.
 // TODO: break too wide text into more lines.
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string
 		visibleTextHeight float64
 	)
-
+	boxWidth := t.DrawArea().W()
 	for i := 0; i < len(t.textContent); i++ {
 		if i < t.startID {
 			continue
@@ -157,21 +155,51 @@ func (t *Textbox) updateTextVisibility() {
 		if visibleTextHeight > t.drawArea.H() {
 			break
 		}
-
 		line := t.textContent[i]
-		visibleText = append(visibleText, line)
-		visibleTextHeight += t.textarea.BoundsOf(line).H()
+		if len(line) < 1 {
+			continue
+		}
+		breakLines := t.Break(line, boxWidth)
+		visibleText = append(visibleText, breakLines...)
+		visibleTextHeight += t.textarea.BoundsOf(line).H()*float64(len(breakLines))
 	}
 	t.textarea.Clear()
 	for _, txt := range visibleText {
 		fmt.Fprintf(t.textarea, txt)
 	}
-	//t.textarea.JustLeft()
+}
+
+// Break breaks specified line into few lines with specified
+// maximal width.
+func (t *Textbox) Break(line string, width float64) []string {
+	lines := make([]string, 0)
+	lineWidth := t.textarea.BoundsOf(line).W()
+	if width > 0 && lineWidth > width {
+		breakLines := SplitSubN(line, len(line)/2)
+		if len(breakLines) < 2 {
+			return breakLines
+		}
+		lines = append(lines, breakLines[0] + "\n")
+		breakLineWidth := t.textarea.BoundsOf(breakLines[1]).W()
+		if breakLineWidth > width {
+			for _, l := range t.Break(breakLines[1], width) {
+				lines = append(lines, l + "\n")
+			}
+		} else {
+			lines = append(lines, breakLines[1])
+		}
+	} else {
+		lines = append(lines, line)
+	}
+	return lines
 }
 
 // Splits string at specified index.
 // Author: mozey(@stackoverflow).
 func SplitSubN(s string, n int) []string {
+	if n == 0 {
+		return []string{s}
+	}
 	sub := ""
 	subs := []string{}
 

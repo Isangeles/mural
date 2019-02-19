@@ -26,23 +26,22 @@ package object
 import (
 	"github.com/faiface/pixel"
 	
-	flameitem "github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/object/item"
 	
 	"github.com/isangeles/mural/core/data/res"
 )
 
-// Struct for items with graphical
-// representation.
+// Struct for graphical wrapper
+// for items.
 type ItemGraphic struct {
-	flameitem.Item
+	item.Item
 	spritesheet pixel.Picture
 	icon        *pixel.Sprite
 	maxStack    int
 }
 
-// NewItemGraphic creates new graphical wrapper from
-// specified data.
-func NewItemGraphic(item flameitem.Item, data *res.ItemGraphicData) *ItemGraphic {
+// NewItemGraphic creates new graphical wrapper for specified item.
+func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	itg := new(ItemGraphic)
 	itg.Item = item
 	itg.spritesheet = data.SpritesheetPic

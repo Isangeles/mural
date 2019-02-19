@@ -104,6 +104,17 @@ func (cf *CharFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	cf.hpBar.Draw(win.Window, matrix.Moved(hpBarPos))
 	manaBarPos := pixel.V(mtk.ConvSize(35), mtk.ConvSize(10))
 	cf.manaBar.Draw(win.Window, matrix.Moved(manaBarPos))
+	// Effects icons.
+	iconsStartPos := pixel.V(mtk.ConvSize(0), mtk.ConvSize(-30))
+	for i, e := range cf.char.Effects() {
+		iconMove := iconsStartPos
+		iconMove.X += mtk.ConvSize(e.Icon().Frame().W()) * float64(i)
+		if i % 3 == 0 {
+			iconMove.X = iconsStartPos.X
+			iconMove.Y -= mtk.ConvSize(e.Icon().Frame().H()) * float64(i/3)
+		}
+		e.Icon().Draw(win.Window, matrix.Moved(iconMove))
+	}
 }
 
 // Update updates character frame.

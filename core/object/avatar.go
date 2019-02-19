@@ -29,7 +29,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/character"
-	flameitem "github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/object/item"
 
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
@@ -46,7 +46,8 @@ type Avatar struct {
 	ssHeadName     string
 	ssTorsoName    string
 	ssFullBodyName string
-	eqItems        map[string]*ItemGraphic
+	visibleItems   map[string]*ItemGraphic
+	visibleEffects map[string]*EffectGraphic
 }
 
 // NewAvatar creates new avatar for specified game character.
@@ -59,12 +60,12 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.portraitName = data.PortraitName
 	av.ssHeadName = data.SSHeadName
 	av.ssTorsoName = data.SSTorsoName
-	// Sprite.
+	// Sprite & portrait.
 	av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
-	// Portrait.
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
-	// Items.
-	av.eqItems = make(map[string]*ItemGraphic, 0)
+	// Visible items & effects.
+	av.visibleItems = make(map[string]*ItemGraphic, 0)
+	av.visibleEffects = make(map[string]*EffectGraphic, 0)
 	return av
 }
 
@@ -78,12 +79,12 @@ func NewStaticAvatar(char *character.Character, data *res.AvatarData) (*Avatar, 
 	// Portrait & spritesheet names.
 	av.portraitName = data.PortraitName
 	av.ssFullBodyName = data.SSFullBodyName
-	// Sprite.
+	// Sprite & portrait.
 	av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
-	// Portrait.
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
-	// Items.
-	av.eqItems = make(map[string]*ItemGraphic, 0)
+	// Visible items & effects.
+	av.visibleItems = make(map[string]*ItemGraphic, 0)
+	av.visibleEffects = make(map[string]*EffectGraphic, 0)
 	return av, nil
 }
 
@@ -157,12 +158,21 @@ func (av *Avatar) DestPoint() pixel.Vec {
 	return pixel.V(x, y)
 }
 
+// Effects returns all visible effects active on
+// avatar character.
+func (av *Avatar) Effects() (effects []*EffectGraphic) {
+	for _, eg := range av.visibleEffects {
+		effects = append(effects, eg)
+	}
+	return effects
+}
+
 // equip equips specified graphical item.
 func (av *Avatar) equip(gItem *ItemGraphic) error {
 	switch gItem.Item.(type) {
-	case *flameitem.Weapon:
+	case *item.Weapon:
 		av.sprite.SetWeapon(gItem.Spritesheet())
-		av.eqItems[gItem.SerialID()] = gItem
+		av.visibleItems[gItem.SerialID()] = gItem
 		return nil
 	default:
 		return fmt.Errorf("not_equipable_item_type")
@@ -173,38 +183,56 @@ func (av *Avatar) equip(gItem *ItemGraphic) error {
 // avatar(if equiped).
 func (av *Avatar) unequip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
-	case *flameitem.Weapon:
+	case *item.Weapon:
 		av.sprite.SetWeapon(nil)
-		delete(av.eqItems, gItem.SerialID())
+		delete(av.visibleItems, gItem.SerialID())
 	}
 }
 
 // updateApperance updates avatar sprite apperance.
 func (av *Avatar) updateApperance() {
-	// Clear equipped items.
-	for _, itemGraphic := range av.eqItems {
-		eit, ok := itemGraphic.Item.(flameitem.Equiper)
+	// Clear unequipped items.
+	for _, ig := range av.visibleItems {
+		eit, ok := ig.Item.(item.Equiper)
 		if !ok {
 			continue
 		}
 		if !av.Equipment().Equiped(eit) {
-			av.unequip(itemGraphic)
+			av.unequip(ig)
 		}
 	}
-	// Update graphical items list.
+	// Clear expired effects.
+	for id, eg := range av.visibleEffects {
+		if eg.Time() <= 0 {
+			delete(av.visibleEffects, id)
+		}
+	}
+	// Visible items.
 	for _, eqi := range av.Equipment().Items() {
-		if av.eqItems[eqi.SerialID()] != nil {
+		if av.visibleItems[eqi.SerialID()] != nil {
 			continue
 		}
 		itemGData := res.Item(eqi.ID())
 		if itemGData == nil {
 			continue
 		}
-		it, ok := eqi.(flameitem.Item)
+		it, ok := eqi.(item.Item)
 		if !ok {
 			continue
 		}
 		itemGraphic := NewItemGraphic(it, itemGData)
 		av.equip(itemGraphic)
+	}
+	// Visible effects.
+	for _, e := range av.Character.Effects() {
+		if av.visibleEffects[e.ID() + "_" + e.Serial()] != nil {
+			continue
+		}
+		effectGData := res.Effect(e.ID())
+		if effectGData == nil {
+			continue
+		}
+		effectGraphic := NewEffectGraphic(e, effectGData)
+		av.visibleEffects[e.ID() + "_" + e.Serial()] = effectGraphic
 	}
 }

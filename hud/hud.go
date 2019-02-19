@@ -181,10 +181,8 @@ func (hud *HUD) Update(win *mtk.Window) {
 			// Pause game.
 			if !hud.game.Paused() {
 				hud.game.Pause(true)
-				hud.camera.Lock(true)
 			} else {
 				hud.game.Pause(false)
-				hud.camera.Lock(false)
 			}
 		}
 		if win.JustPressed(pixelgl.KeyEscape) { // Esc

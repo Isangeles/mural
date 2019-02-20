@@ -30,11 +30,11 @@ import (
 	"image/color"
 
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	flamesave "github.com/isangeles/flame/core/data/save" 
+	flamesave "github.com/isangeles/flame/core/data/save"
 
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
@@ -52,20 +52,20 @@ var (
 // all menu screens(settings menu, new game menu, etc.).
 // Wraps all main menu screens.
 type MainMenu struct {
-	menu          *Menu
-	newgamemenu   *NewGameMenu
-	newcharmenu   *NewCharacterMenu
-	loadgamemenu  *LoadGameMenu
-	settings      *Settings
-	console       *Console
-	loadscreen    *LoadingScreen
-	userFocus     *mtk.Focus
-	msgs          *mtk.MessagesQueue
-	PlayableChars []*object.Avatar
-	onGameCreated func(g *flamecore.Game, player *object.Avatar)
-	onGameLoaded  func(gameSav *flamesave.SaveGame)
-	loading       bool
-	exiting       bool
+	menu           *Menu
+	newgamemenu    *NewGameMenu
+	newcharmenu    *NewCharacterMenu
+	loadgamemenu   *LoadGameMenu
+	settings       *Settings
+	console        *Console
+	loadscreen     *LoadingScreen
+	userFocus      *mtk.Focus
+	msgs           *mtk.MessagesQueue
+	PlayableChars  []*object.Avatar
+	onGameCreated  func(g *flamecore.Game, player *object.Avatar)
+	onSaveImported func(gameSav *flamesave.SaveGame)
+	loading        bool
+	exiting        bool
 }
 
 // New returns new main menu
@@ -198,10 +198,10 @@ func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
 	mm.onGameCreated = f
 }
 
-// SetOnGameLoadedFunc sets specified function as function
-// triggered after game loaded.
-func (mm *MainMenu) SetOnGameLoadedFunc(f func(gameSav *flamesave.SaveGame)) {
-	mm.onGameLoaded = f
+// SetOnSaveImportedFunc sets specified function as function
+// triggered after save game imported.
+func (mm *MainMenu) SetOnSaveImportedFunc(f func(gameSav *flamesave.SaveGame)) {
+	mm.onSaveImported = f
 }
 
 // OpenMenu opens menu.
@@ -231,7 +231,7 @@ func (mm *MainMenu) OpenLoadGameMenu() {
 // OpenSettings opens settings menu.
 func (mm *MainMenu) OpenSettings() {
 	mm.HideMenus()
-	mm.settings.Show(true) 
+	mm.settings.Show(true)
 }
 
 // OpenLoadingScreen opens loading screen
@@ -282,14 +282,6 @@ func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
 	mm.onGameCreated(g, player)
 }
 
-// Triggered after saved game was loaded.
-func (mm *MainMenu) OnGameLoaded(gameSav *flamesave.SaveGame) {
-	if mm.onGameLoaded == nil {
-		return
-	}
-	mm.onGameLoaded(gameSav)
-}
-
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
@@ -312,4 +304,3 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	}
 	return nil
 }
-

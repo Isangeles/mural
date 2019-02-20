@@ -24,18 +24,28 @@
 package object
 
 import (
+	"fmt"
+	
+	"golang.org/x/image/colornames"
+	
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/effect"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/mtk"
+)
+
+var (
+	time_label_color = colornames.Red
 )
 
 // Struct for graphical wrapper
 // for effects.
 type EffectGraphic struct {
 	*effect.Effect
-	icon *pixel.Sprite
+	icon     *pixel.Sprite
+	timeText *mtk.Text
 }
 
 // NewEffectGraphic creates new graphical wrapper for specified effect.
@@ -43,7 +53,17 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 	eg := new(EffectGraphic)
 	eg.Effect = effect
 	eg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
+	eg.timeText = mtk.NewText(mtk.SIZE_BIG, 0)
+	eg.timeText.SetColor(time_label_color)
 	return eg
+}
+
+// DrawIcon draws effect icon and text label with
+// remaining time(in seconds).
+func (eg *EffectGraphic) DrawIcon(t pixel.Target, matrix pixel.Matrix) {
+	eg.icon.Draw(t, matrix)
+	eg.timeText.SetText(fmt.Sprintf("%d", eg.Time()/1000))
+	eg.timeText.Draw(t, matrix)
 }
 
 // Icon returns effect icon.

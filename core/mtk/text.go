@@ -25,6 +25,9 @@ package mtk
 
 import (
 	"strings"
+	"image/color"
+
+	"golang.org/x/image/colornames"
 	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/text"
@@ -35,6 +38,7 @@ type Text struct {
 	text     *text.Text
 	content  string
 	drawArea pixel.Rect // updated on each draw
+	color    color.Color
 	fontSize Size
 	width    float64
 }
@@ -50,6 +54,7 @@ func NewText(fontSize Size, width float64) *Text {
 	font := MainFont(t.fontSize)
 	atlas := Atlas(&font)
 	t.text = text.New(pixel.V(0, 0), atlas)
+	t.color = colornames.White // default color white
 	
 	return t
 }
@@ -64,6 +69,12 @@ func (tx *Text) SetText(text string) {
 		tx.content = strings.Replace(tx.content, " ", "\n", 1)
 	}
 	tx.JustCenter()
+}
+
+// SetColor sets specified color as
+// current text color.
+func (tx *Text) SetColor(c color.Color) {
+	tx.color = c
 }
 
 // SetMaxWidth sets maximal width of single text line.
@@ -110,7 +121,7 @@ func (tx *Text) JustLeft() {
 // Draw draws text.
 func (tx *Text) Draw(t pixel.Target, matrix pixel.Matrix) {
 	tx.drawArea = MatrixToDrawArea(matrix, tx.Bounds())
-	tx.text.Draw(t, matrix)
+	tx.text.DrawColorMask(t, matrix, tx.color)
 }
 
 // Bounds return size of text.

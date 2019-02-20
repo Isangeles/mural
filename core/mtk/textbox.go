@@ -141,7 +141,6 @@ func (t *Textbox) String() string {
 
 // updateTextVisibility updates content of visible
 // text area.
-// TODO: break too wide text into more lines.
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string

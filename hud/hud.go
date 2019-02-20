@@ -128,7 +128,7 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
-		return
+		return	
 	}
 	// Elements positions.
 	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())

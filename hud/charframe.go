@@ -35,8 +35,8 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
-// Struct for character frame with portrait
-// and health/mana bars.
+// Struct for character frame with portrait,
+// health/mana bars and effects icons.
 type CharFrame struct {
 	hud      *HUD
 	char     *object.Avatar
@@ -107,13 +107,14 @@ func (cf *CharFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Effects icons.
 	iconsStartPos := pixel.V(mtk.ConvSize(0), mtk.ConvSize(-30))
 	for i, e := range cf.char.Effects() {
+		// Icon.
 		iconMove := iconsStartPos
 		iconMove.X += mtk.ConvSize(e.Icon().Frame().W()) * float64(i)
 		if i % 3 == 0 {
 			iconMove.X = iconsStartPos.X
 			iconMove.Y -= mtk.ConvSize(e.Icon().Frame().H()) * float64(i/3)
 		}
-		e.Icon().Draw(win.Window, matrix.Moved(iconMove))
+		e.DrawIcon(win.Window, matrix.Moved(iconMove))
 	}
 }
 

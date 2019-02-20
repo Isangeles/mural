@@ -156,12 +156,12 @@ func run() {
 		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
 	}
 	// Create main menu.
-	mainMenu, err := mainmenu.New()
+	mainMenu, err = mainmenu.New()
 	if err != nil {
 		panic(err)
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
-	mainMenu.SetOnGameLoadedFunc(EnterSavedGame)
+	mainMenu.SetOnSaveImportedFunc(EnterSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
@@ -222,28 +222,34 @@ func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 
 // EnterSavedGame creates game and HUD from saved data.
 func EnterSavedGame(gameSav *flamesave.SaveGame) {
+	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
+	// Load game.
 	game = flamecore.LoadGame(gameSav)
 	flame.SetGame(game)
-	// Load saved GUI state.
+	// Import saved GUI state.
 	guiSav, err := imp.ImportGUISave(game, flameconf.ModuleSavegamesPath(),
 		gameSav.Name)
 	if err != nil {
 		log.Err.Printf("fail_to_load_gui_save:%v", err)
 		return
 	}
+	// Retrieve PCs with saved avatars from imported GUI state.
 	pcs := make([]*object.Avatar, 0)
 	for _, pcData := range guiSav.PlayersData {
-		
 		pc := object.NewAvatar(pcData.Character, pcData.Avatar)
 		pcs = append(pcs, pc)
 	}
+	// Create HUD.
 	HUD, err := hud.NewHUD(game, pcs)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return
 	}
+	// Load HUD state.
 	HUD.LoadGUISave(guiSav)
+	// Show HUD.
 	setHUD(HUD)
+	mainMenu.CloseLoadingScreen()
 	inGame = true
 }
 

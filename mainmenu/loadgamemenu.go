@@ -63,8 +63,7 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 		accent_color)
 	gameSaves, err := saveGamesFiles(flameconf.ModuleSavegamesPath())
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_saved_games_dir:%v",
-			err)
+		log.Err.Printf("fail_to_read_saved_games_dir:%v", err)
 	}
 	for _, sav := range gameSaves {
 		lgm.savesList.AddItem(sav, sav)
@@ -133,8 +132,7 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		log.Err.Printf("load_game_menu:fail to retrieve save name from list value")
 		return
 	}
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_info"))
-	go lgm.loadGame(savName)
+	go lgm.importSave(savName)
 }
 
 // saveGamesFiles returns names of all save files
@@ -154,14 +152,18 @@ func saveGamesFiles(dirPath string) ([]string, error) {
 	return filesNames, nil
 }
 
-// loadGame loads saved game file with
+// importSave imports saved game from file with
 // specified name.
-func (lgm *LoadGameMenu) loadGame(savName string) {
+func (lgm *LoadGameMenu) importSave(savName string) {
+	// Load module resources.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_mod_res_info"))
 	err := imp.LoadModuleResources(flame.Mod())
 	if err != nil {
 		log.Err.Printf("fail_to_load_resources:%v", err)
 		return
 	}
+	// Import saved game from file.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
 	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
 		savName)
 	if err != nil {
@@ -169,5 +171,9 @@ func (lgm *LoadGameMenu) loadGame(savName string) {
 		return
 	}
 	lgm.mainmenu.CloseLoadingScreen()
-	lgm.mainmenu.OnGameLoaded(sav)
+	// Pass imported save.
+	if lgm.mainmenu.onSaveImported == nil {
+		return
+	}
+	lgm.mainmenu.onSaveImported(sav)
 }

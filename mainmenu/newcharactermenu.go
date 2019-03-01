@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
 
@@ -272,7 +273,9 @@ func (ncm *NewCharacterMenu) updatePoints() {
 
 // createChar creates new game character.
 func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
+	// Name.
 	name := ncm.nameEdit.Text()
+	// Attributes.
 	str, err := ncm.strSwitch.Value().IntValue()
 	if err != nil {
 		return nil, err
@@ -293,22 +296,38 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	if err != nil {
 		return nil, err
 	}
-	attrs := character.Attributes{str, con, dex, inte, wis}
+	// Gender.
 	gender, ok := ncm.sexSwitch.Value().Value.(character.Gender)
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrive_gender")
 	}
+	// Race.
 	race, ok := ncm.raceSwitch.Value().Value.(character.Race)
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrieve_race")
 	}
+	// Alignment.
 	alignment, ok := ncm.aliSwitch.Value().Value.(character.Alignment)
 	if !ok {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
+	// ID.
 	id := new_char_base_id + strings.ToLower(name)
-	char := character.NewCharacter(id, name, 1, gender, race,
-		character.Friendly, character.NewGuild("none"), attrs, alignment)
+	charData := flameres.CharacterBasicData{
+		ID: id,
+		Name: name,
+		Level: 1,
+		Sex: int(gender),
+		Race: int(race),
+		Alignment: int(alignment),
+		Attitude: int(character.Friendly),
+		Str: str,
+		Con: con,
+		Dex: dex,
+		Int: inte,
+		Wis: wis,
+	}
+	char := character.New(charData)
 	return char, nil
 }
 

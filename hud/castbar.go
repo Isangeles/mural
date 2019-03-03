@@ -1,5 +1,5 @@
 /*
- * avatar.go
+ * castbar.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,22 +21,4 @@
  *
  */
 
-package res
-
-import (
-	"github.com/faiface/pixel"
-)
-
-// Struct for all avatar data.
-type AvatarData struct {
-	CharID          string
-	CharSerial      string
-	PortraitName    string
-	SSHeadName      string
-	SSTorsoName     string
-	SSFullBodyName  string
-	PortraitPic     pixel.Picture
-	SSHeadPic       pixel.Picture
-	SSTorsoPic      pixel.Picture
-	SSFullBodyPic   pixel.Picture
-}
+package hud

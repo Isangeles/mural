@@ -97,10 +97,10 @@ func buildAvatarXML(av *object.Avatar) AvatarXML {
 	xmlAvatar := AvatarXML{}
 	xmlAvatar.ID = av.ID()
 	xmlAvatar.Serial = av.Serial()
-	xmlAvatar.Portrait = av.PortraitName()
-	xmlAvatar.Spritesheet.Head = av.HeadSpritesheetName()
-	xmlAvatar.Spritesheet.Torso = av.TorsoSpritesheetName()
-	xmlAvatar.Spritesheet.FullBody = av.FullBodySpritesheetName()
+	xmlAvatar.Portrait = av.Data().PortraitName
+	xmlAvatar.Spritesheet.Head = av.Data().SSHeadName
+	xmlAvatar.Spritesheet.Torso = av.Data().SSTorsoName
+	xmlAvatar.Spritesheet.FullBody = av.Data().SSFullBodyName
 	return xmlAvatar
 }
 

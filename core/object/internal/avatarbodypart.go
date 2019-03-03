@@ -95,6 +95,11 @@ func (part *AvatarBodyPart) Move() {
 	part.drawAnim = part.moveAnim
 }
 
+// DrawArea returns current draw area.
+func (part *AvatarBodyPart) DrawArea() pixel.Rect {
+	return part.drawAnim.DrawArea()
+}
+
 // buildIdleAnim creates idle animations for each direction(up, right, down,
 // left) with frames from specified spritesheet.
 func buildIdleAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {

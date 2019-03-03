@@ -66,3 +66,14 @@ func SetItemsData(data map[string]*ItemGraphicData) {
 func SetEffectsData(data map[string]*EffectGraphicData) {
 	effectsData = data
 }
+
+// AddAvatarData adds specified data to
+// avatars resources.
+func AddAvatarData(data ...*AvatarData) {
+	if avatarsData == nil {
+		avatarsData = make(map[string]*AvatarData)
+	}
+	for _, d := range data {
+		avatarsData[d.CharID] = d
+	}
+}

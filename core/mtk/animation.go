@@ -1,7 +1,7 @@
 /*
  * animation.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import (
 type Animation struct {
 	drawFrameID int
 	frames      []*pixel.Sprite
+	drawArea    pixel.Rect
 	fps         int
 	lastChange  int64
 }
@@ -47,7 +48,9 @@ func NewAnimation(frames []*pixel.Sprite, fps int) *Animation {
 
 // Draw draws current animation frame.
 func (anim *Animation) Draw(t pixel.Target, matrix pixel.Matrix) {
-	anim.frames[anim.drawFrameID].Draw(t, matrix)
+	frame := anim.frames[anim.drawFrameID]
+	anim.drawArea = MatrixToDrawArea(matrix, frame.Frame())
+	frame.Draw(t, matrix)
 }
 
 // Update updates animation.
@@ -57,6 +60,11 @@ func (anim *Animation) Update(win *Window) {
 		anim.SetCurrentFrameID(anim.drawFrameID + 1)
 		anim.lastChange = 0
 	}
+}
+
+// DrawArea returns current frame draw area.
+func (anim *Animation) DrawArea() pixel.Rect {
+	return anim.drawArea
 }
 
 // SetCurrentFrameID sets frame with specified ID as

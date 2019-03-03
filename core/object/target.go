@@ -1,5 +1,5 @@
 /*
- * avatar.go
+ * target.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,22 +21,30 @@
  *
  */
 
-package res
+package object
 
 import (
 	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame/core/module/object/effect"
 )
 
-// Struct for all avatar data.
-type AvatarData struct {
-	CharID          string
-	CharSerial      string
-	PortraitName    string
-	SSHeadName      string
-	SSTorsoName     string
-	SSFullBodyName  string
-	PortraitPic     pixel.Picture
-	SSHeadPic       pixel.Picture
-	SSTorsoPic      pixel.Picture
-	SSFullBodyPic   pixel.Picture
+// Interface for all graphical
+// targets.
+type Target interface {
+	ID() string
+	Serial() string
+	SetSerial(s string)
+	Health() int
+	MaxHealth() int
+	Mana() int
+	MaxMana() int
+	Portrait() *pixel.Sprite
+	Effects() []*EffectGraphic
+}
+
+// Equals checks whether specified targets
+// represents same object.
+func Equals(ob1, ob2 effect.Target) bool {
+	return ob1.ID() + ob1.Serial() == ob2.ID() + ob2.Serial()
 }

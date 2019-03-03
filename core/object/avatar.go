@@ -25,7 +25,7 @@ package object
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/character"
@@ -40,12 +40,9 @@ import (
 // game character.
 type Avatar struct {
 	*character.Character
+	data           *res.AvatarData
 	sprite         *internal.AvatarSprite
 	portrait       *pixel.Sprite
-	portraitName   string
-	ssHeadName     string
-	ssTorsoName    string
-	ssFullBodyName string
 	visibleItems   map[string]*ItemGraphic
 	visibleEffects map[string]*EffectGraphic
 }
@@ -56,10 +53,7 @@ type Avatar struct {
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	// Portrait & spritesheets names.
-	av.portraitName = data.PortraitName
-	av.ssHeadName = data.SSHeadName
-	av.ssTorsoName = data.SSTorsoName
+	av.data = data
 	// Sprite & portrait.
 	av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
@@ -76,9 +70,7 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 func NewStaticAvatar(char *character.Character, data *res.AvatarData) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
-	// Portrait & spritesheet names.
-	av.portraitName = data.PortraitName
-	av.ssFullBodyName = data.SSFullBodyName
+	av.data = data
 	// Sprite & portrait.
 	av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
@@ -116,33 +108,14 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.sprite.Update(win)
 }
 
+// DrawArea returns current draw area.
+func (av *Avatar) DrawArea() pixel.Rect {
+	return av.sprite.DrawArea()
+}
+
 // Portrait returns avatar portrait.
 func (av *Avatar) Portrait() *pixel.Sprite {
 	return av.portrait
-}
-
-// PortraitName returns name of portrait picture
-// file.
-func (av *Avatar) PortraitName() string {
-	return av.portraitName
-}
-
-// TorsoSpritesheetName returns name of base torso
-// spritesheet picture file.
-func (av *Avatar) TorsoSpritesheetName() string {
-	return av.ssTorsoName
-}
-
-// HeadSpritesheetName returns name of base head
-// spritesheet picture file.
-func (av *Avatar) HeadSpritesheetName() string {
-	return av.ssHeadName
-}
-
-// FullBodySpritesheetName returns name of base
-// full body spritesheet picture file.
-func (av *Avatar) FullBodySpritesheetName() string {
-	return av.ssFullBodyName
 }
 
 // Position return current position of avatar.
@@ -165,6 +138,11 @@ func (av *Avatar) Effects() (effects []*EffectGraphic) {
 		effects = append(effects, eg)
 	}
 	return effects
+}
+
+// Data returns avatar graphical data.
+func (av *Avatar) Data() *res.AvatarData {
+	return av.data
 }
 
 // equip equips specified graphical item.
@@ -225,7 +203,7 @@ func (av *Avatar) updateApperance() {
 	}
 	// Visible effects.
 	for _, e := range av.Character.Effects() {
-		if av.visibleEffects[e.ID() + "_" + e.Serial()] != nil {
+		if av.visibleEffects[e.ID()+"_"+e.Serial()] != nil {
 			continue
 		}
 		effectGData := res.Effect(e.ID())
@@ -233,6 +211,6 @@ func (av *Avatar) updateApperance() {
 			continue
 		}
 		effectGraphic := NewEffectGraphic(e, effectGData)
-		av.visibleEffects[e.ID() + "_" + e.Serial()] = effectGraphic
+		av.visibleEffects[e.ID()+"_"+e.Serial()] = effectGraphic
 	}
 }

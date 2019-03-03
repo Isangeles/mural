@@ -1,7 +1,7 @@
 /*
  * multianimation.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,4 +77,9 @@ func (ma *MultiAnimation) Down() {
 // Left sets animation direction to left.
 func (ma *MultiAnimation) Left() {
 	ma.drawAnim = ma.leftAnim
+}
+
+// DrawArea returns current draw area.
+func (ma *MultiAnimation) DrawArea() pixel.Rect {
+	return ma.drawAnim.DrawArea()
 }

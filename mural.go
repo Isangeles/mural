@@ -30,7 +30,7 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/faiface/beep"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
@@ -42,16 +42,18 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
-	"github.com/isangeles/mural/core/object"
 )
 
 const (
@@ -211,7 +213,8 @@ func run() {
 // EnterGame creates HUD for specified game.
 func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 	game = g
-	HUD, err := hud.NewHUD(game, []*object.Avatar{pc})
+	res.AddAvatarData(pc.Data())
+	HUD, err := hud.NewHUD(game, pc.Character)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return
@@ -234,13 +237,13 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 		return
 	}
 	// Retrieve PCs with saved avatars from imported GUI state.
-	pcs := make([]*object.Avatar, 0)
+	pcs := make([]*character.Character, 0)
 	for _, pcData := range guiSav.PlayersData {
-		pc := object.NewAvatar(pcData.Character, pcData.Avatar)
-		pcs = append(pcs, pc)
+		res.AddAvatarData(pcData.Avatar)
+		pcs = append(pcs, pcData.Character)
 	}
 	// Create HUD.
-	HUD, err := hud.NewHUD(game, pcs)
+	HUD, err := hud.NewHUD(game, pcs...)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return

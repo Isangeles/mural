@@ -39,8 +39,9 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/scenario"
 	"github.com/isangeles/flame/core/module/modutil"
+	"github.com/isangeles/flame/core/module/object/character"
+	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
@@ -66,7 +67,8 @@ type HUD struct {
 	camera     *Camera
 	bar        *MenuBar
 	menu       *Menu
-	pcFrame    *CharFrame
+	pcFrame    *ObjectFrame
+	tarFrame   *ObjectFrame
 	chat       *Chat
 	inv        *InventoryMenu
 	game       *flamecore.Game
@@ -81,17 +83,24 @@ type HUD struct {
 	loaderr    error
 }
 
-// NewHUD creates new HUD instance.
-// HUD loads all game data and setup specified
-// PC area as current HUD area.
-func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
+// NewHUD creates new HUD instance. HUD loads all game
+// data and setup specified PC area as current HUD area.
+func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
 	if len(pcs) < 1 {
 		return nil, fmt.Errorf("no player characters")
 	}
 	// Players.
-	hud.pcs = pcs
+	for _, pc := range pcs {
+		avData := res.Avatar(pc.ID())
+		if avData == nil {
+			return nil, fmt.Errorf("player:%sfail find avatar data",
+				pc.ID())
+		}
+		av := object.NewAvatar(pc, avData)
+		hud.pcs = append(hud.pcs, av)
+	}
 	hud.activePC = hud.pcs[0]
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
@@ -102,13 +111,11 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 	hud.bar = newMenuBar(hud)
 	// Menu.
 	hud.menu = newMenu(hud)
-	// Active player character frame.
-	pcFrame, err := newCharFrame(hud, hud.ActivePlayer())
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_active_pc_frame:%v",
-			err)
-	}
-	hud.pcFrame = pcFrame
+	// Active player frame.
+	hud.pcFrame = newObjectFrame(hud)
+	hud.pcFrame.SetObject(hud.ActivePlayer())
+	// Target frame.
+	hud.tarFrame = newObjectFrame(hud)
 	// Chat window.
 	hud.chat = newChat(hud)
 	// Inventory window.
@@ -128,10 +135,11 @@ func NewHUD(g *flamecore.Game, pcs []*object.Avatar) (*HUD, error) {
 func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
-		return	
+		return
 	}
 	// Elements positions.
 	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
+	tarFramePos := mtk.RightOf(hud.pcFrame.DrawArea(), hud.tarFrame.Bounds(), 0)
 	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
 	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
 	menuPos := win.Bounds().Center()
@@ -141,6 +149,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
 	hud.chat.Draw(win, mtk.Matrix().Moved(chatPos))
 	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
+	if hud.ActivePlayer().Targets()[0] != nil {
+		hud.tarFrame.Draw(win, mtk.Matrix().Moved(tarFramePos))
+	}
 	if hud.menu.Opened() {
 		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
 	}
@@ -204,11 +215,33 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		destPos := hud.camera.ConvCameraPos(win.MousePosition())
+		// Move active PC.
 		if !hud.game.Paused() && hud.camera.Map().Passable(destPos) &&
-			!hud.containsPos(win.MousePosition()){
-			// Move active PC.
+			!hud.containsPos(win.MousePosition()) {
 			hud.destPos = destPos
 			hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
+		}
+	}
+	if win.JustPressed(pixelgl.MouseButtonRight) {
+		pos := win.MousePosition()
+		// Set target.
+		for i, av := range hud.camera.Avatars() {
+			if av.DrawArea().Contains(pos) {
+				log.Dbg.Printf("hud:set_target:%s", av.ID() + "_" + av.Serial())
+				hud.ActivePlayer().SetTarget(av)
+				break
+			}
+			if i >= len(hud.camera.Avatars())-1 {
+				hud.ActivePlayer().SetTarget(nil)
+			}
+		}
+	}
+	// PC target.
+	if hud.ActivePlayer().Targets()[0] != nil {
+		for _, av := range hud.camera.Avatars() {
+			if object.Equals(hud.ActivePlayer().Targets()[0], av) {
+				hud.tarFrame.SetObject(av)
+			}
 		}
 	}
 	// Elements update.
@@ -217,6 +250,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.bar.Update(win)
 	hud.chat.Update(win)
 	hud.pcFrame.Update(win)
+	hud.tarFrame.Update(win)
 	if hud.menu.Opened() {
 		hud.menu.Update(win)
 	}
@@ -365,16 +399,7 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 	// Players.
 	for _, pc := range hud.Players() {
 		pcData := new(res.PlayerSave)
-		// Avatar.
-		avData := res.AvatarData{
-			CharID:         pc.ID(),
-			CharSerial:     pc.Serial(),
-			PortraitName:   pc.PortraitName(),
-			SSHeadName:     pc.HeadSpritesheetName(),
-			SSTorsoName:    pc.TorsoSpritesheetName(),
-			SSFullBodyName: pc.FullBodySpritesheetName(),
-		}
-		pcData.Avatar = &avData
+		pcData.Avatar = pc.Data()
 		// Layout.
 		layout := hud.layouts[pc.SerialID()]
 		if layout != nil {

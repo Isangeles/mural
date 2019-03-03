@@ -199,3 +199,11 @@ func (spr *AvatarSprite) Clear() {
 	spr.torso = spr.baseTorso
 }
 
+// DrawArea returns current draw area.
+func (spr *AvatarSprite) DrawArea() pixel.Rect {
+	if spr.fullBody != nil {
+		return spr.fullBody.DrawArea()
+	}
+	return spr.torso.DrawArea()
+}
+

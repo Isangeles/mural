@@ -129,10 +129,10 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
 		"race_gnome")
 	races := []mtk.SwitchValue{
-		mtk.SwitchValue{raceNames[0], character.Human},
-		mtk.SwitchValue{raceNames[1], character.Elf},
-		mtk.SwitchValue{raceNames[2], character.Dwarf},
-		mtk.SwitchValue{raceNames[3], character.Gnome},
+		mtk.SwitchValue{raceNames["race_human"], character.Human},
+		mtk.SwitchValue{raceNames["race_elf"], character.Elf},
+		mtk.SwitchValue{raceNames["race_dwarf"], character.Dwarf},
+		mtk.SwitchValue{raceNames["race_gnome"], character.Gnome},
 	}
 	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_race_switch_label"), "", races)
@@ -141,15 +141,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		"ali_law_neutral", "ali_tru_neutral", "ali_cha_neutral",
 		"ali_law_evil", "ali_neu_evil", "ali_cha_evil")
 	alis := []mtk.SwitchValue{
-		mtk.SwitchValue{aliNames[0], character.Lawful_good},
-		mtk.SwitchValue{aliNames[1], character.Neutral_good},
-		mtk.SwitchValue{aliNames[2], character.Chaotic_good},
-		mtk.SwitchValue{aliNames[3], character.Lawful_neutral},
-		mtk.SwitchValue{aliNames[4], character.True_neutral},
-		mtk.SwitchValue{aliNames[5], character.Chaotic_neutral},
-		mtk.SwitchValue{aliNames[6], character.Lawful_evil},
-		mtk.SwitchValue{aliNames[7], character.Neutral_evil},
-		mtk.SwitchValue{aliNames[8], character.Chaotic_evil},
+		mtk.SwitchValue{aliNames["ali_law_good"], character.Lawful_good},
+		mtk.SwitchValue{aliNames["ali_neu_good"], character.Neutral_good},
+		mtk.SwitchValue{aliNames["ali_cha_good"], character.Chaotic_good},
+		mtk.SwitchValue{aliNames["ali_law_neutral"], character.Lawful_neutral},
+		mtk.SwitchValue{aliNames["ali_tru_neutral"], character.True_neutral},
+		mtk.SwitchValue{aliNames["ali_cha_neutral"], character.Chaotic_neutral},
+		mtk.SwitchValue{aliNames["ali_law_evil"], character.Lawful_evil},
+		mtk.SwitchValue{aliNames["ali_neu_evil"], character.Neutral_evil},
+		mtk.SwitchValue{aliNames["ali_cha_evil"], character.Chaotic_evil},
 	}
 	ncm.aliSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
 		lang.Text("gui", "newchar_ali_switch_label"), "", alis)

@@ -60,24 +60,23 @@ func LoadConfig() error {
 	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
 		"resolution", "map_fow", "main_font", "menu_music", "button_click_sound")
 	if err != nil {
-		return err
+		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
 	}
 	// Fullscreen.
-	fullscreen = confValues[0] == "true"
+	fullscreen = confValues["fullscreen"] == "true"
 	// Resolution.
-	resValue := confValues[1]
-	resolution.X, err = strconv.ParseFloat(strings.Split(resValue,
-		"x")[0], 64)
-	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue,
-		"x")[1], 64)
+	resValue := confValues["resolution"]
+	resolution.X, err = strconv.ParseFloat(strings.Split(resValue, "x")[0], 64)
+	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue, "x")[1], 64)
 	if err != nil {
 		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
 	}
-	// Map FOW effect.
-	mapfow = confValues[2] == "true"
-	mainFontName = confValues[3]
-	menuMusic = confValues[4]
-	bClickSound = confValues[5]
+	// Graphic effects.
+	mapfow = confValues["map_fow"] == "true"
+	mainFontName = confValues["main_font"]
+	// Audio effects.
+	menuMusic = confValues["menu_music"]
+	bClickSound = confValues["button_click_sound"]
 	
 	log.Dbg.Print("config file loaded")
 	return nil

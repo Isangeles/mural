@@ -25,8 +25,6 @@ package object
 
 import (
 	"github.com/faiface/pixel"
-
-	"github.com/isangeles/flame/core/module/object/effect"
 )
 
 // Interface for all graphical
@@ -34,17 +32,10 @@ import (
 type Target interface {
 	ID() string
 	Serial() string
-	SetSerial(s string)
 	Health() int
 	MaxHealth() int
 	Mana() int
 	MaxMana() int
 	Portrait() *pixel.Sprite
 	Effects() []*EffectGraphic
-}
-
-// Equals checks whether specified targets
-// represents same object.
-func Equals(ob1, ob2 effect.Target) bool {
-	return ob1.ID() + ob1.Serial() == ob2.ID() + ob2.Serial()
 }

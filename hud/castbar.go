@@ -22,3 +22,52 @@
  */
 
 package hud
+
+import (
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame/core/module/object/skill"
+	
+	"github.com/isangeles/mural/core/mtk"
+)
+
+// Struct for HUD cast bar.
+// TODO: bar background.
+type CastBar struct {
+	hud   *HUD
+	owner skill.SkillUser
+	bar   *mtk.ProgressBar
+}
+
+// newCastBar creates new HUD cast bar.
+func newCastBar(hud *HUD) *CastBar {
+	cb := new(CastBar)
+	cb.hud = hud
+	cb.bar = mtk.NewProgressBar(mtk.SIZE_MEDIUM, accent_color)
+	return cb
+}
+
+// Draw draws cast bar.
+func (cb *CastBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
+	cb.bar.Draw(win.Window, matrix)
+}
+
+// Update updates cast bar.
+func (cb *CastBar) Update(win *mtk.Window) {
+	if cb.owner == nil {
+		return
+	}
+	for _, s := range cb.owner.Skills() {
+		if s.Casting() {
+			cb.bar.SetMax(int(s.CastTimeMax()))
+			cb.bar.SetValue(int(s.CastTime()))
+		}
+	}
+	cb.bar.Update(win)
+}
+
+// SetOwner sets specified skill user as cast
+// bar owner.
+func (cb *CastBar) SetOwner(o skill.SkillUser) {
+	cb.owner = o
+}

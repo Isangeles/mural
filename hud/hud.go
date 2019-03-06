@@ -40,6 +40,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/modutil"
+	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/scenario"
 
@@ -69,6 +70,7 @@ type HUD struct {
 	menu       *Menu
 	pcFrame    *ObjectFrame
 	tarFrame   *ObjectFrame
+	castBar    *CastBar
 	chat       *Chat
 	inv        *InventoryMenu
 	game       *flamecore.Game
@@ -111,11 +113,13 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	hud.bar = newMenuBar(hud)
 	// Menu.
 	hud.menu = newMenu(hud)
-	// Active player frame.
+	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
 	hud.pcFrame.SetObject(hud.ActivePlayer())
-	// Target frame.
 	hud.tarFrame = newObjectFrame(hud)
+	// Cast bar.
+	hud.castBar = newCastBar(hud)
+	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	// Chat window.
 	hud.chat = newChat(hud)
 	// Inventory window.
@@ -140,6 +144,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	// Elements positions.
 	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
 	tarFramePos := mtk.RightOf(hud.pcFrame.DrawArea(), hud.tarFrame.Bounds(), 0)
+	castBarPos := win.Bounds().Center()
 	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
 	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
 	menuPos := win.Bounds().Center()
@@ -157,6 +162,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.inv.Opened() {
 		hud.inv.Draw(win, mtk.Matrix().Moved(invPos))
+	}
+	if hud.ActivePlayer().Casting() {
+		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
 	}
 	// Messages.
 	msgPos := win.Bounds().Center()
@@ -227,8 +235,8 @@ func (hud *HUD) Update(win *mtk.Window) {
 		// Set target.
 		for i, av := range hud.camera.Avatars() {
 			if av.DrawArea().Contains(pos) {
-				log.Dbg.Printf("hud:set_target:%s", av.ID() + "_" + av.Serial())
-				hud.ActivePlayer().SetTarget(av)
+				log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
+				hud.ActivePlayer().SetTarget(av.Character)
 				break
 			}
 			if i >= len(hud.camera.Avatars())-1 {
@@ -239,7 +247,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	// PC target.
 	if hud.ActivePlayer().Targets()[0] != nil {
 		for _, av := range hud.camera.Avatars() {
-			if object.Equals(hud.ActivePlayer().Targets()[0], av) {
+			if flameobject.Equals(hud.ActivePlayer().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
 			}
 		}
@@ -251,6 +259,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.chat.Update(win)
 	hud.pcFrame.Update(win)
 	hud.tarFrame.Update(win)
+	hud.castBar.Update(win)
 	if hud.menu.Opened() {
 		hud.menu.Update(win)
 	}

@@ -164,7 +164,7 @@ func run() {
 	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveImportedFunc(EnterSavedGame)
-	err = mainMenu.ImportPlayableChars(flame.Mod().CharactersPath())
+	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
 			err)

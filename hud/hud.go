@@ -39,7 +39,6 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/modutil"
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/scenario"
@@ -430,7 +429,7 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		//hud.pcs = append(hud.pcs, pc)
 		layout := NewLayout()
 		layout.InvSlots = pcData.InvSlots
-		layoutKey := modutil.SerialID(pcData.Avatar.CharID, pcData.Avatar.CharSerial)
+		layoutKey := pcData.Avatar.CharID + "_" + pcData.Avatar.CharSerial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.

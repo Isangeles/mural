@@ -182,7 +182,8 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		}
 		for _, av := range gui_hud.AreaAvatars() {
 			if av.SerialID() == cmd.TargetArgs()[1] {
-				err := exp.ExportAvatar(av, gui_hud.Game().Module().CharactersPath())
+				err := exp.ExportAvatar(av,
+					gui_hud.Game().Module().Conf().CharactersPath())
 				if err != nil {
 					return 8, fmt.Sprintf("%s:fail_to_export_avatar:%v",
 						GUI_MAN, err)

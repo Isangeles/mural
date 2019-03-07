@@ -164,11 +164,11 @@ func (ngm *NewGameMenu) exportChar() error {
 	if !ok {
 		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
-	err := flamedata.ExportCharacter(c.Character, flame.Mod().CharactersPath())
+	err := flamedata.ExportCharacter(c.Character, flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		return err
 	}
-	err = exp.ExportAvatar(c, flame.Mod().CharactersPath())
+	err = exp.ExportAvatar(c, flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_export_avatar:%v", err)
 	}

@@ -326,7 +326,8 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
 		return
 	}
-	pcArea, err := hud.game.PlayerArea(hud.ActivePlayer().SerialID())
+	chapter := hud.game.Module().Chapter()
+	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 		return
@@ -340,8 +341,8 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	// Map.
 	// TODO: sometimes SetLoadInfo causes panic on load text draw.
 	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
-	mapsPath := filepath.FromSlash(hud.game.Module().Chapter().AreasPath() +
-		"/maps")
+	chapter := hud.game.Module().Chapter()
+	mapsPath := filepath.FromSlash(chapter.Conf().AreasPath() + "/maps")
 	tmxMap, err := data.Map(mapsPath, area.ID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)

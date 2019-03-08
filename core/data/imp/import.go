@@ -62,7 +62,7 @@ func LoadModuleResources(mod *module.Module) error {
 func LoadChapterResources(chapter *module.Chapter) error {
 	// Avatars.
 	avatarsData := make(map[string]*res.AvatarData)
-	avs, err := ImportAvatarsDataDir(chapter.NPCPath())
+	avs, err := ImportAvatarsDataDir(chapter.Conf().NPCPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
 	}

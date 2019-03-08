@@ -38,6 +38,40 @@ Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 $ ./mural
 ```
 
+## Configuration
+Configuration values are loaded from '.mural' file in Mural executable directory.
+
+### Configuration values:
+```
+  fullscreen:[true/false];
+```
+Description: enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
+
+```
+  resolution:[width]x[height];
+```
+Description: specifies current resolution.
+
+```
+  map_fow:[true/false];
+```
+Description: enables 'Fog of War' effect for area map, 'true' FOW, everything else sets FOW disabled.
+
+```
+  main_font:[file name];
+```
+Description: specifies name of font file(located in graphic archive) for main UI font.
+
+```
+  menu_music:[file name];
+```
+Description: specifies name of audio file(located in audio archive) for main menu music theme.
+
+```
+  button_click_sound:[file name];
+```
+Description: specifies name of audio file(located in audio archive) for button click sound.
+
 ## Commands
 [Burn](https://github.com/Isangeles/flame/tree/master/cmd/burn) CI handles commands execution.
 

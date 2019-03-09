@@ -36,12 +36,13 @@ import (
 
 // Struct for HUD menu bar.
 type MenuBar struct {
-	hud        *HUD
-	bgSpr      *pixel.Sprite
-	bgDraw     *imdraw.IMDraw
-	drawArea   pixel.Rect
-	menuButton *mtk.Button
-	invButton  *mtk.Button
+	hud          *HUD
+	bgSpr        *pixel.Sprite
+	bgDraw       *imdraw.IMDraw
+	drawArea     pixel.Rect
+	menuButton   *mtk.Button
+	invButton    *mtk.Button
+	skillsButton *mtk.Button
 }
 
 // neMenuBar creates new menu bar for HUD.
@@ -55,7 +56,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	} else {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
-	// Buttons.
+	// Menu Button.
 	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
 		"", lang.Text("gui", "hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
@@ -66,6 +67,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 		mb.menuButton.SetBackground(menuButtonSpr)
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
+	// Inventory button.
 	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
 		"", lang.Text("gui", "hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
@@ -76,6 +78,17 @@ func newMenuBar(hud *HUD) *MenuBar {
 		mb.invButton.SetBackground(invButtonSpr)
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
+	// Skills button.
+	mb.skillsButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
+		"", lang.Text("gui", "hud_bar_skills_open_info"))
+	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
+	if err != nil {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
+	} else {
+		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
+		mb.skillsButton.SetBackground(skillsButtonSpr)
+	}
+	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
 	return mb
 }
 
@@ -94,6 +107,8 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	mb.menuButton.Draw(win.Window, matrix.Moved(menuButtonPos))
 	invButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2 - 65, 0))
 	mb.invButton.Draw(win.Window, matrix.Moved(invButtonPos))
+	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2 - 100, 0))
+	mb.skillsButton.Draw(win.Window, matrix.Moved(skillsButtonPos))
 }
 
 // Update updates menu bar.
@@ -101,6 +116,7 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	// Buttons.
 	mb.menuButton.Update(win)
 	mb.invButton.Update(win)
+	mb.skillsButton.Update(win)
 }
 
 // Bounds returns bounds of bar background.
@@ -136,5 +152,14 @@ func (mb *MenuBar) onInvButtonClicked(b *mtk.Button) {
 		mb.hud.inv.Show(false)
 	} else {
 		mb.hud.inv.Show(true)
+	}
+}
+
+// Triggered after skills button clicked.
+func (mb *MenuBar) onSkillsButtonClicked(b *mtk.Button) {
+	if mb.hud.skills.Opened() {
+		mb.hud.skills.Show(false)
+	} else {
+		mb.hud.skills.Show(true)
 	}
 }

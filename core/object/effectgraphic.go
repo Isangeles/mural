@@ -40,8 +40,7 @@ var (
 	time_label_color = colornames.Red
 )
 
-// Struct for graphical wrapper
-// for effects.
+// Graphical wrapper for effects.
 type EffectGraphic struct {
 	*effect.Effect
 	icon     *pixel.Sprite

@@ -32,25 +32,25 @@ import (
 
 // Struct for XML effect graphic base.
 type EffectsGraphicsBaseXML struct {
-	XMLName xml.Name `xml:"base"`
-	Effects []EffectGraphicNodeXML `xml:"effect"`
+	XMLName xml.Name           `xml:"base"`
+	Nodes   []EffectGraphicXML `xml:"effect"`
 }
 
 // Struct for XML effect graphic node.
-type EffectGraphicNodeXML struct {
+type EffectGraphicXML struct {
 	XMLName xml.Name `xml:"effect"`
 	ID      string   `xml:"id,attr"`
 	Icon    string   `xml:"icon,attr"`
 }
 
 // UnmarshalEffectsGraphicsBase parses specified XML data
-// for effects graphics XML nodes.
-func UnmarshalEffectsGraphicsBase(data io.Reader) ([]EffectGraphicNodeXML, error) {
+// to effects graphics XML nodes.
+func UnmarshalEffectsGraphicsBase(data io.Reader) ([]EffectGraphicXML, error) {
 	doc, _ := ioutil.ReadAll(data)
 	xmlBase := new(EffectsGraphicsBaseXML)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
 	}
-	return xmlBase.Effects, nil
+	return xmlBase.Nodes, nil
 }

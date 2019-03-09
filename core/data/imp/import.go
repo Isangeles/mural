@@ -54,6 +54,16 @@ func LoadModuleResources(mod *module.Module) error {
 		effectsData[effGraphic.EffectID] = effGraphic
 	}
 	res.SetEffectsData(effectsData)
+	// Skills graphic.
+	skillsData := make(map[string]*res.SkillGraphicData)
+	skillGraphics, err := ImportSkillsGraphicsDir(mod.Conf().SkillsPath())
+	if err != nil {
+		return fmt.Errorf("fail_to_import_skills_graphics:%v", err)
+	}
+	for _, skillGraphic := range skillGraphics {
+		skillsData[skillGraphic.SkillID] = skillGraphic
+	}
+	res.SetSkillsData(skillsData)
 	return nil
 }
 

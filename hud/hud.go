@@ -72,6 +72,7 @@ type HUD struct {
 	castBar    *CastBar
 	chat       *Chat
 	inv        *InventoryMenu
+	skills     *SkillsMenu
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -123,6 +124,8 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	hud.chat = newChat(hud)
 	// Inventory window.
 	hud.inv = newInventoryMenu(hud)
+	// Skills window.
+	hud.skills = newSkillsMenu(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -148,6 +151,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
 	menuPos := win.Bounds().Center()
 	invPos := win.Bounds().Center()
+	skillsPos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
@@ -161,6 +165,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.inv.Opened() {
 		hud.inv.Draw(win, mtk.Matrix().Moved(invPos))
+	}
+	if hud.skills.Opened() {
+		hud.skills.Draw(win, mtk.Matrix().Moved(skillsPos))
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -219,6 +226,14 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.inv.Show(false)
 			}
 		}
+		if win.JustPressed(pixelgl.KeyK) { // K
+			// Show skills.
+			if !hud.skills.Opened() {
+				hud.skills.Show(true)
+			} else {
+				hud.skills.Show(false)
+			}
+		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		destPos := hud.camera.ConvCameraPos(win.MousePosition())
@@ -264,6 +279,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.inv.Opened() {
 		hud.inv.Update(win)
+	}
+	if hud.skills.Opened() {
+		hud.skills.Update(win)
 	}
 	hud.msgs.Update(win)
 }
@@ -445,7 +463,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		hud.chat.DrawArea().Contains(pos) ||
 		hud.pcFrame.DrawArea().Contains(pos) ||
 		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
-		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) {
+		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) ||
+		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

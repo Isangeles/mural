@@ -103,6 +103,13 @@ func LoadGameData() error {
 	for name, i := range effectIcons {
 		icons[name] = i
 	}
+	skillIcons, err := loadPicturesFromArch(g_arch_path, "skill/icon")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_skills_icons:%v", err)
+	}
+	for name, i := range skillIcons {
+		icons[name] = i
+	}
 	return nil
 }
 

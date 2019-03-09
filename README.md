@@ -55,7 +55,7 @@ Description: specifies current resolution.
 ```
   map_fow:[true/false];
 ```
-Description: enables 'Fog of War' effect for area map, 'true' FOW, everything else sets FOW disabled.
+Description: enables 'Fog of War' effect for area map, 'true' enables FOW, everything else sets FOW disabled.
 
 ```
   main_font:[file name];

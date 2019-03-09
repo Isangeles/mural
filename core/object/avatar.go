@@ -40,11 +40,11 @@ import (
 // game character.
 type Avatar struct {
 	*character.Character
-	data           *res.AvatarData
-	sprite         *internal.AvatarSprite
-	portrait       *pixel.Sprite
-	visibleItems   map[string]*ItemGraphic
-	visibleEffects map[string]*EffectGraphic
+	data     *res.AvatarData
+	sprite   *internal.AvatarSprite
+	portrait *pixel.Sprite
+	eqItems  map[string]*ItemGraphic
+	effects  map[string]*EffectGraphic
 }
 
 // NewAvatar creates new avatar for specified game character.
@@ -58,8 +58,8 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	// Visible items & effects.
-	av.visibleItems = make(map[string]*ItemGraphic, 0)
-	av.visibleEffects = make(map[string]*EffectGraphic, 0)
+	av.eqItems = make(map[string]*ItemGraphic, 0)
+	av.effects = make(map[string]*EffectGraphic, 0)
 	return av
 }
 
@@ -75,8 +75,8 @@ func NewStaticAvatar(char *character.Character, data *res.AvatarData) (*Avatar, 
 	av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	// Visible items & effects.
-	av.visibleItems = make(map[string]*ItemGraphic, 0)
-	av.visibleEffects = make(map[string]*EffectGraphic, 0)
+	av.eqItems = make(map[string]*ItemGraphic, 0)
+	av.effects = make(map[string]*EffectGraphic, 0)
 	return av, nil
 }
 
@@ -134,7 +134,7 @@ func (av *Avatar) DestPoint() pixel.Vec {
 // Effects returns all visible effects active on
 // avatar character.
 func (av *Avatar) Effects() (effects []*EffectGraphic) {
-	for _, eg := range av.visibleEffects {
+	for _, eg := range av.effects {
 		effects = append(effects, eg)
 	}
 	return effects
@@ -150,7 +150,7 @@ func (av *Avatar) equip(gItem *ItemGraphic) error {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(gItem.Spritesheet())
-		av.visibleItems[gItem.SerialID()] = gItem
+		av.eqItems[gItem.SerialID()] = gItem
 		return nil
 	default:
 		return fmt.Errorf("not_equipable_item_type")
@@ -163,14 +163,14 @@ func (av *Avatar) unequip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(nil)
-		delete(av.visibleItems, gItem.SerialID())
+		delete(av.eqItems, gItem.SerialID())
 	}
 }
 
 // updateApperance updates avatar sprite apperance.
 func (av *Avatar) updateApperance() {
 	// Clear unequipped items.
-	for _, ig := range av.visibleItems {
+	for _, ig := range av.eqItems {
 		eit, ok := ig.Item.(item.Equiper)
 		if !ok {
 			continue
@@ -180,14 +180,14 @@ func (av *Avatar) updateApperance() {
 		}
 	}
 	// Clear expired effects.
-	for id, eg := range av.visibleEffects {
+	for id, eg := range av.effects {
 		if eg.Time() <= 0 {
-			delete(av.visibleEffects, id)
+			delete(av.effects, id)
 		}
 	}
 	// Visible items.
 	for _, eqi := range av.Equipment().Items() {
-		if av.visibleItems[eqi.SerialID()] != nil {
+		if av.eqItems[eqi.SerialID()] != nil {
 			continue
 		}
 		itemGData := res.Item(eqi.ID())
@@ -203,7 +203,7 @@ func (av *Avatar) updateApperance() {
 	}
 	// Visible effects.
 	for _, e := range av.Character.Effects() {
-		if av.visibleEffects[e.ID()+"_"+e.Serial()] != nil {
+		if av.effects[e.ID()+"_"+e.Serial()] != nil {
 			continue
 		}
 		effectGData := res.Effect(e.ID())
@@ -211,6 +211,6 @@ func (av *Avatar) updateApperance() {
 			continue
 		}
 		effectGraphic := NewEffectGraphic(e, effectGData)
-		av.visibleEffects[e.ID()+"_"+e.Serial()] = effectGraphic
+		av.effects[e.ID()+"_"+e.Serial()] = effectGraphic
 	}
 }

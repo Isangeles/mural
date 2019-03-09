@@ -29,6 +29,7 @@ var (
 	avatarsData map[string]*AvatarData
 	itemsData   map[string]*ItemGraphicData
 	effectsData map[string]*EffectGraphicData
+	skillsData  map[string]*SkillGraphicData
 )
 
 // Avatar returns avatar data for character
@@ -49,6 +50,12 @@ func Effect(id string) *EffectGraphicData {
 	return effectsData[id]
 }
 
+// Skill returns graphic data for skill
+// with specified ID.
+func Skill(id string) *SkillGraphicData {
+	return skillsData[id]
+}
+
 // SetAvatarsData sets specified map with avatars
 // data as loaded resources data.
 func SetAvatarsData(data map[string]*AvatarData) {
@@ -65,6 +72,12 @@ func SetItemsData(data map[string]*ItemGraphicData) {
 // data as loaded resources data.
 func SetEffectsData(data map[string]*EffectGraphicData) {
 	effectsData = data
+}
+
+// SetSkillsData sets specified map with skills
+// data as loaded resources data.
+func SetSkillsData(data map[string]*SkillGraphicData) {
+	skillsData = data
 }
 
 // AddAvatarData adds specified data to

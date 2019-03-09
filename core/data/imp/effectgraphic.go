@@ -25,14 +25,14 @@ package imp
 
 import (
 	"fmt"
-	"os"
 	"io/ioutil"
-	"strings"
+	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/isangeles/mural/core/data"	
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -45,7 +45,7 @@ var (
 func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_base_file:%s", err)
+		return nil, fmt.Errorf("fail_to_open_base_file:%v", err)
 	}
 	xmlEffects, err := parsexml.UnmarshalEffectsGraphicsBase(f)
 	if err != nil {
@@ -57,6 +57,7 @@ func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 		if err != nil {
 			log.Err.Printf("data_imp_effect_graphic:%s:fail_to_build_data:%v",
 				xmlEffect.ID, err)
+			continue
 		}
 		effects = append(effects, data)
 	}
@@ -65,41 +66,39 @@ func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 
 // ImportEffectsGraphicsDir imports all files with effects graphics from
 // directory with specified path.
-func ImportEffectsGraphicsDir(dirPath string) ([]*res.EffectGraphicData, error) {
-	files, err := ioutil.ReadDir(dirPath)
+func ImportEffectsGraphicsDir(path string) ([]*res.EffectGraphicData, error) {
+	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
 	}
 	effects := make([]*res.EffectGraphicData, 0)
-	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), EFFECTS_GRAPHIC_FILE_EXT) {
+	for _, finfo := range files {
+		if !strings.HasSuffix(finfo.Name(), EFFECTS_GRAPHIC_FILE_EXT) {
 			continue
 		}
-		effectsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
-		impEffects, err := ImportEffectsGraphics(effectsGraphicFilePath)
+		basePath := filepath.FromSlash(path + "/" + finfo.Name())
+		impEffects, err := ImportEffectsGraphics(basePath)
 		if err != nil {
 			log.Err.Printf("data_effects_graphic_import:%s:fail_to_parse_file:%v",
-				effectsGraphicFilePath, err)
+				basePath, err)
 			continue
 		}
-		for _, eff := range impEffects {
-			effects = append(effects, eff)
-		}
+		effects = append(effects, impEffects...)
 	}
 	return effects, nil
 }
 
-// buildXMLEffectGraphicData creates effect graphic object from specified
+// buildXMLEffectGraphicData creates effect graphic data from specified
 // effect XML data.
-func buildXMLEffectGraphicData(xmlEffect *parsexml.EffectGraphicNodeXML) (*res.EffectGraphicData,
+func buildXMLEffectGraphicData(xmlEffect *parsexml.EffectGraphicXML) (*res.EffectGraphicData,
 	error) {
 	effIcon, err := data.Icon(xmlEffect.Icon)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_effect_icon:%v", err)
 	}
-	effData := res.EffectGraphicData {
+	effData := res.EffectGraphicData{
 		EffectID: xmlEffect.ID,
-		IconPic: effIcon,
+		IconPic:  effIcon,
 	}
 	return &effData, nil
 }

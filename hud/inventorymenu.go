@@ -25,28 +25,20 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	inv_slots = 90
-	inv_slot_size = mtk.SIZE_BIG
-	inv_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	inv_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
-	inv_special_key = pixelgl.KeyLeftShift
 )
 
 // Struct for inventory menu.
@@ -61,6 +53,14 @@ type InventoryMenu struct {
 	opened      bool
 	focused     bool
 }
+
+var (
+	inv_slots         = 90
+	inv_slot_size     = mtk.SIZE_BIG
+	inv_slot_color    = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	inv_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
+	inv_special_key   = pixelgl.KeyLeftShift
+)
 
 // newInventoryMenu creates new inventory menu for HUD.
 func newInventoryMenu(hud *HUD) *InventoryMenu {
@@ -105,7 +105,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.slots.SetDownButtonBackground(downBG)
 	}
 	// Create empty slots.
-	for i := 0; i < inv_slots; i ++ {
+	for i := 0; i < inv_slots; i++ {
 		s := im.createSlot()
 		im.slots.Add(s)
 	}
@@ -123,11 +123,11 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, im.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, im.Bounds().Max.Y/2 - 25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, im.Bounds().Max.Y/2-25))
 	im.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(im.Bounds().Max.X/2 - 20,
-		im.Bounds().Max.Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(im.Bounds().Max.X/2-20,
+		im.Bounds().Max.Y/2-15))
 	im.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	im.slots.Draw(win, matrix)
@@ -140,7 +140,7 @@ func (im *InventoryMenu) Update(win *mtk.Window) {
 	im.closeButton.Update(win)
 }
 
-// Opened checks wheter menu is open.
+// Opened checks whether menu is open.
 func (im *InventoryMenu) Opened() bool {
 	return im.opened
 }
@@ -250,7 +250,7 @@ func (im *InventoryMenu) updateLayout() {
 	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
 }
 
-// createSlot creates empty slot on inventory slots list.
+// createSlot creates empty slot for inventory slots list.
 func (im *InventoryMenu) createSlot() *mtk.Slot {
 	s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
 	s.SetColor(inv_slot_color)
@@ -368,8 +368,7 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 	s.Drag(true)
 }
 
-
-// insertSlotItem inserts specified item to specified slot.xs
+// insertSlotItem inserts specified item to specified slot.
 func insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 	s.AddValues(it)
 	s.SetInfo(itemInfo(it.Item))
@@ -385,7 +384,7 @@ func itemInfo(it item.Item) string {
 		dmgMin, dmgMax := i.Damage()
 		info := fmt.Sprintf(infoForm, i.Name(),
 			dmgMin, dmgMax)
-		if config.Debug() {
+		if config.Debug() { // add serial ID info
 			info = fmt.Sprintf("%s\n[%s]", info,
 				i.SerialID())
 		}

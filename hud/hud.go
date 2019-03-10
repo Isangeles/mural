@@ -72,7 +72,7 @@ type HUD struct {
 	castBar    *CastBar
 	chat       *Chat
 	inv        *InventoryMenu
-	skills     *SkillsMenu
+	skills     *SkillMenu
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -125,7 +125,7 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	// Inventory window.
 	hud.inv = newInventoryMenu(hud)
 	// Skills window.
-	hud.skills = newSkillsMenu(hud)
+	hud.skills = newSkillMenu(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -247,7 +247,8 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.MouseButtonRight) {
 		pos := win.MousePosition()
 		// Set target.
-		for i, av := range hud.camera.Avatars() {
+		for i := 0; i < len(hud.Camera().Avatars()) && !hud.containsPos(pos); i++ {
+			av := hud.Camera().Avatars()[i]
 			if av.DrawArea().Contains(pos) {
 				log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
 				hud.ActivePlayer().SetTarget(av.Character)

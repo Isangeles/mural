@@ -1,5 +1,5 @@
 /*
- * skillsmenu.go
+ * skillmenu.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -24,6 +24,8 @@
 package hud
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -38,7 +40,7 @@ import (
 )
 
 // Struct for skills menu.
-type SkillsMenu struct {
+type SkillMenu struct {
 	hud         *HUD
 	bgSpr       *pixel.Sprite
 	bgDraw      *imdraw.IMDraw
@@ -57,8 +59,8 @@ var (
 )
 
 // newSkillsMenu creates new skills menu for HUD.
-func newSkillsMenu(hud *HUD) *SkillsMenu {
-	sm := new(SkillsMenu)
+func newSkillMenu(hud *HUD) *SkillMenu {
+	sm := new(SkillMenu)
 	sm.hud = hud
 	// Background.
 	sm.bgDraw = imdraw.New(nil)
@@ -107,7 +109,7 @@ func newSkillsMenu(hud *HUD) *SkillsMenu {
 }
 
 // Draw draws menu.
-func (sm *SkillsMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
+func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
 	sm.drawArea = mtk.MatrixToDrawArea(matrix, sm.Bounds())
 	// Background.
@@ -129,19 +131,19 @@ func (sm *SkillsMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 }
 
 // Update updates window.
-func (sm *SkillsMenu) Update(win *mtk.Window) {
+func (sm *SkillMenu) Update(win *mtk.Window) {
 	// Elements update.
 	sm.closeButton.Update(win)
 	sm.slots.Update(win)
 }
 
 // Opened checks whether menu is open.
-func (sm *SkillsMenu) Opened() bool {
+func (sm *SkillMenu) Opened() bool {
 	return sm.opened
 }
 
 // Show toggles menu visibility.
-func (sm *SkillsMenu) Show(show bool) {
+func (sm *SkillMenu) Show(show bool) {
 	sm.opened = show
 	if sm.Opened() {
 		sm.slots.Clear()
@@ -155,22 +157,22 @@ func (sm *SkillsMenu) Show(show bool) {
 }
 
 // Focused checks whether menu us focused.
-func (sm *SkillsMenu) Focused() bool {
+func (sm *SkillMenu) Focused() bool {
 	return sm.focused
 }
 
 // Focus toggles menu focus.
-func (sm *SkillsMenu) Focus(focus bool) {
+func (sm *SkillMenu) Focus(focus bool) {
 	sm.focused = focus
 }
 
 // DrawArea returns menu draw area.
-func (sm *SkillsMenu) DrawArea() pixel.Rect {
+func (sm *SkillMenu) DrawArea() pixel.Rect {
 	return sm.drawArea
 }
 
 // Bounds returns size bounds of menu background.
-func (sm *SkillsMenu) Bounds() pixel.Rect {
+func (sm *SkillMenu) Bounds() pixel.Rect {
 	if sm.bgSpr == nil {
 		// TODO: bounds for draw background.
 		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
@@ -179,7 +181,7 @@ func (sm *SkillsMenu) Bounds() pixel.Rect {
 }
 
 // insert inserts specified skills in menu slots.
-func (sm *SkillsMenu) insert(skills ...*skill.Skill) {
+func (sm *SkillMenu) insert(skills ...*skill.Skill) {
 	for _, s := range skills {
 		// Retrieve graphic data.
 		skillData := res.Skill(s.ID())
@@ -200,19 +202,42 @@ func (sm *SkillsMenu) insert(skills ...*skill.Skill) {
 }
 
 // createSlot creates empty slot for skills slot list.
-func (sm *SkillsMenu) createSlot() *mtk.Slot {
+func (sm *SkillMenu) createSlot() *mtk.Slot {
 	s := mtk.NewSlot(skills_slot_size, mtk.SIZE_MINI)
 	s.SetColor(skills_slot_color)
+	s.SetOnRightClickFunc(sm.onSlotRightClicked)
 	return s
 }
 
 // Triggered after close button clicked.
-func (sm *SkillsMenu) onCloseButtonClicked(b *mtk.Button) {
+func (sm *SkillMenu) onCloseButtonClicked(b *mtk.Button) {
 	sm.Show(false)
+}
+
+// Triggered after one of skill slots was clicked with
+// right mouse button.
+func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
+	if len(s.Values()) < 1 {
+		return
+	}
+	skill, ok := s.Values()[0].(*object.SkillGraphic)
+	if !ok {
+		log.Err.Printf("hud_skills_menu:%v:is not skill", s.Values()[0])
+	}
+	sm.hud.ActivePlayer().UseSkill(skill.Skill)
 }
 
 // insertSlotSkill inserts specified skill to specified slot.
 func insertSlotSkill(skill *object.SkillGraphic, slot *mtk.Slot) {
 	slot.AddValues(skill)
 	slot.SetIcon(skill.Icon())
+	slot.SetInfo(skillInfo(skill.Skill))
+}
+
+// skillInfo returns formated string with
+// informations about specified skill.
+func skillInfo(s *skill.Skill) string {
+	infoForm := "%s"
+	info := fmt.Sprintf(infoForm, s.Name())
+	return info
 }

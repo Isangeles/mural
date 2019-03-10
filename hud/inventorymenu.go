@@ -274,7 +274,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	it, ok := s.Values()[0].(*object.ItemGraphic)
 	if !ok {
-		log.Err.Printf("hud_inv_menu:%v:is not item", it)
+		log.Err.Printf("hud_inv_menu:%v:is not item", s.Values()[0])
 		return
 	}
 	eit, ok := it.Item.(item.Equiper)

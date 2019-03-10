@@ -1,5 +1,5 @@
 <base>
-	<skill id="melee1" cast="0" cooldown="0" range="touch">
+	<skill id="melee1" cast="0" range="touch">
 	       <effects>
 			<effect id="hit1" />
 	       </effects>

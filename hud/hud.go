@@ -59,6 +59,12 @@ var (
 	main_color   color.Color = colornames.Grey
 	sec_color    color.Color = colornames.Blue
 	accent_color color.Color = colornames.Red
+	// Keys.
+	pause_key  = pixelgl.KeySpace
+	menu_key   = pixelgl.KeyEscape
+	chat_key   = pixelgl.KeyGraveAccent
+	inv_key    = pixelgl.KeyB
+	skills_key = pixelgl.KeyK
 )
 
 // Struct for 'head-up display'.
@@ -191,7 +197,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	// Key events.
-	if win.JustPressed(pixelgl.KeyGraveAccent) { // grave
+	if win.JustPressed(chat_key) {
 		// Toggle chat activity.
 		if !hud.chat.Activated() {
 			hud.chat.Active(true)
@@ -202,7 +208,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	if !hud.chat.Activated() { // block rest of key events if chat is active
-		if win.JustPressed(pixelgl.KeySpace) { // Spacebar
+		if win.JustPressed(pause_key) {
 			// Pause game.
 			if !hud.game.Paused() {
 				hud.game.Pause(true)
@@ -210,7 +216,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.game.Pause(false)
 			}
 		}
-		if win.JustPressed(pixelgl.KeyEscape) { // Esc
+		if win.JustPressed(menu_key) {
 			// Show menu.
 			if !hud.menu.Opened() {
 				hud.menu.Show(true)
@@ -218,7 +224,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.menu.Show(false)
 			}
 		}
-		if win.JustPressed(pixelgl.KeyB) { // B
+		if win.JustPressed(inv_key) {
 			// Show inventory.
 			if !hud.inv.Opened() {
 				hud.inv.Show(true)
@@ -226,7 +232,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.inv.Show(false)
 			}
 		}
-		if win.JustPressed(pixelgl.KeyK) { // K
+		if win.JustPressed(skills_key) {
 			// Show skills.
 			if !hud.skills.Opened() {
 				hud.skills.Show(true)

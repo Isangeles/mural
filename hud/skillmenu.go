@@ -206,7 +206,19 @@ func (sm *SkillMenu) createSlot() *mtk.Slot {
 	s := mtk.NewSlot(skills_slot_size, mtk.SIZE_MINI)
 	s.SetColor(skills_slot_color)
 	s.SetOnRightClickFunc(sm.onSlotRightClicked)
+	s.SetOnLeftClickFunc(sm.onSlotLeftClicked)
 	return s
+}
+
+// draggedSkill returns currently dragged slot
+// with skill.
+func (sm *SkillMenu) draggedSkill() *mtk.Slot {
+	for _, s := range sm.slots.Slots() {
+		if s.Dragged() {
+			return s
+		}
+	}
+	return nil
 }
 
 // Triggered after close button clicked.
@@ -225,6 +237,18 @@ func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
 		log.Err.Printf("hud_skills_menu:%v:is not skill", s.Values()[0])
 	}
 	sm.hud.ActivePlayer().UseSkill(skill.Skill)
+}
+
+// Triggered after one of skill slots was clicked with
+// left mouse button.
+func (sm *SkillMenu) onSlotLeftClicked(s *mtk.Slot) {
+	for _, s := range sm.slots.Slots() {
+		s.Drag(false)
+	}
+	if len(s.Values()) < 1 {
+		return
+	}
+	s.Drag(true)
 }
 
 // insertSlotSkill inserts specified skill to specified slot.

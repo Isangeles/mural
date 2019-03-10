@@ -25,12 +25,14 @@ package hud
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -43,7 +45,14 @@ type MenuBar struct {
 	menuButton   *mtk.Button
 	invButton    *mtk.Button
 	skillsButton *mtk.Button
+	slots        []*mtk.Slot
 }
+
+var (
+	bar_slots      = 10
+	bar_slot_size  = mtk.SIZE_MEDIUM
+	bar_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+)
 
 // neMenuBar creates new menu bar for HUD.
 func newMenuBar(hud *HUD) *MenuBar {
@@ -89,6 +98,11 @@ func newMenuBar(hud *HUD) *MenuBar {
 		mb.skillsButton.SetBackground(skillsButtonSpr)
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
+	// Slots.
+	for i := 0; i < bar_slots; i++ {
+		s := mb.createSlot()
+		mb.slots = append(mb.slots, s)
+	}
 	return mb
 }
 
@@ -103,20 +117,34 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mb.drawIMBackground(win.Window)
 	}
 	// Buttons.
-	menuButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2 - 30, 0))
+	menuButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-30, 0))
 	mb.menuButton.Draw(win.Window, matrix.Moved(menuButtonPos))
-	invButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2 - 65, 0))
+	invButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-65, 0))
 	mb.invButton.Draw(win.Window, matrix.Moved(invButtonPos))
-	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2 - 100, 0))
+	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-100, 0))
 	mb.skillsButton.Draw(win.Window, matrix.Moved(skillsButtonPos))
+	// Slots.
+	slotsStartPos := mtk.ConvVec(pixel.V(-163, 0))
+	for _, s := range mb.slots {
+		s.Draw(win.Window, matrix.Moved(slotsStartPos))
+		slotsStartPos.X += s.Bounds().W() + mtk.ConvSize(6)
+	}
 }
 
 // Update updates menu bar.
 func (mb *MenuBar) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(pixelgl.Key1) {
+		mb.useSlot(mb.slots[0])
+	}
 	// Buttons.
 	mb.menuButton.Update(win)
 	mb.invButton.Update(win)
 	mb.skillsButton.Update(win)
+	// Slots.
+	for _, s := range mb.slots {
+		s.Update(win)
+	}
 }
 
 // Bounds returns bounds of bar background.
@@ -135,6 +163,26 @@ func (mb *MenuBar) DrawArea() pixel.Rect {
 // drawIMBackground draws menu bar background with IMDraw.
 func (mb *MenuBar) drawIMBackground(t pixel.Target) {
 	// TODO: draw background.
+}
+
+// createSlot creates new slot for bar.
+func (mb *MenuBar) createSlot() *mtk.Slot {
+	s := mtk.NewSlot(bar_slot_size, mtk.SIZE_MINI)
+	s.SetOnRightClickFunc(mb.onSlotRightClicked)
+	s.SetOnLeftClickFunc(mb.onSlotLeftClicked)
+	return s
+}
+
+// useSlot starts action specific to current
+// slot content.
+func (mb *MenuBar) useSlot(s *mtk.Slot) {
+	if len(s.Values()) < 1 {
+		return
+	}
+	skill, ok := s.Values()[0].(*object.SkillGraphic)
+	if ok {
+		mb.hud.ActivePlayer().UseSkill(skill.Skill)
+	}
 }
 
 // Triggered after menu button clicked.
@@ -162,4 +210,28 @@ func (mb *MenuBar) onSkillsButtonClicked(b *mtk.Button) {
 	} else {
 		mb.hud.skills.Show(true)
 	}
+}
+
+// Triggered after one of bar slots was clicked with right
+// mouse button.
+func (mb *MenuBar) onSlotRightClicked(s *mtk.Slot) {
+	for _, s := range mb.slots {
+		s.Drag(false)
+	}
+	if len(s.Values()) < 1 {
+		return
+	}
+	s.Drag(true)
+}
+
+// Triggered after one of bar slots was clicked with
+// left mouse button.
+func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
+	skillSlot := mb.hud.skills.draggedSkill()
+	if skillSlot != nil {
+		mtk.SlotSwitch(s, skillSlot)
+		skillSlot.Drag(false)
+		return
+	}
+	mb.useSlot(s)
 }

@@ -82,13 +82,28 @@ func NewSlot(size, fontSize Size) *Slot {
 func SlotSwitch(slotA, slotB *Slot) {
 	slotC := *slotA
 	slotA.SetValues(slotB.Values())
-	slotA.SetIcon(slotB.Icon())
+	if slotA.Icon() != nil {
+		slotA.SetIcon(slotB.Icon().Picture())
+	}
 	slotA.SetInfo(slotB.info.String())
 	slotA.SetLabel(slotB.label.String())
 	slotB.SetValues(slotC.Values())
-	slotB.SetIcon(slotC.Icon())
+	if slotB.Icon() != nil {
+		slotB.SetIcon(slotC.Icon().Picture())
+	}
 	slotB.SetInfo(slotC.info.String())
 	slotB.SetLabel(slotC.label.String())	
+}
+
+// SlotCopy copies content from A to
+// slot B(overrites current content).
+func SlotCopy(slotA, slotB *Slot) {
+	slotB.SetValues(slotA.Values())
+	if slotA.Icon() != nil {
+		slotB.SetIcon(slotA.Icon().Picture())
+	}
+	slotB.SetInfo(slotA.info.String())
+	slotB.SetLabel(slotA.info.String())
 }
 
 // Draw draws slot.
@@ -96,7 +111,7 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Draw area.
 	s.drawArea = MatrixToDrawArea(matrix, s.Bounds())
 	// Icon.
-	if s.icon != nil {
+	if s.icon != nil && s.icon.Picture() != nil {
 		if s.dragged {
 			s.icon.Draw(t, Matrix().Moved(s.mousePos))
 		} else {
@@ -196,8 +211,8 @@ func (s *Slot) SetColor(c color.Color) {
 
 // SetIcon sets specified sprite as current
 // slot icon.
-func (s *Slot) SetIcon(spr *pixel.Sprite) {
-	s.icon = spr
+func (s *Slot) SetIcon(pic pixel.Picture) {
+	s.icon = pixel.NewSprite(pic, s.Bounds())
 }
 
 // AddValue adds specified interface to slot

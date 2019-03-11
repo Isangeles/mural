@@ -231,9 +231,6 @@ func (im *InventoryMenu) updateLayout() {
 	if layout == nil {
 		layout = NewLayout()
 	}
-	if layout.InvSlots == nil {
-		layout.InvSlots = make(map[string]int)
-	}
 	for i, s := range im.slots.Slots() {
 		if len(s.Values()) < 1 {
 			continue

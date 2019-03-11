@@ -2,7 +2,6 @@ MAJOR:
 * HUD: character window
 * HUD: journal window
 * HUD: map window
-* HUD: skills window
 * HUD: crafting window
 * Graphical effects
 * Objects
@@ -10,8 +9,10 @@ MAJOR:
 * Focusing UI elements with tab key
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
-* Fix for textbox visible content height[MTK]
-* Titles for messages windows[MTK]
+* MTK: fix for textbox visible content height
+* MTK: titles for messages windows
+* One constructor for avatar
 DONE: 
 * Avatar: handling character equipment
 * HUD: display items in inventory
+* HUD: skills window

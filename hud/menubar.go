@@ -25,12 +25,14 @@ package hud
 
 import (
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/serial"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -185,6 +187,49 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	}
 }
 
+// updateLayout updates menu bar layout for
+// active player.
+func (mb *MenuBar) updateLayout() {
+	layout := mb.hud.layouts[mb.hud.ActivePlayer().SerialID()]
+	if layout == nil {
+		layout = NewLayout()
+	}
+	for i, s := range mb.slots {
+		if len(s.Values()) < 1 {
+			continue
+		}
+		for _, v := range s.Values() {
+			ob, ok := v.(serial.Serialer)
+			if !ok {
+				log.Err.Printf("hud_skills:update_layout:fail to retrieve slot value")
+				continue
+			}
+			layout.BarSlots[ob.ID()+"_"+ob.Serial()] = i
+		}
+	}
+	mb.hud.layouts[mb.hud.ActivePlayer().SerialID()] = layout
+}
+
+// setLayout sets specified layout as
+// current bar layout.
+func (mb *MenuBar) setLayout(l *Layout) {
+	for _, s := range mb.hud.ActivePlayer().Skills() {
+		slotID, prs := l.BarSlots[s.ID()+"_"+s.Serial()]
+		if !prs {
+			continue
+		}
+		slot := mb.slots[slotID]
+		if slot == nil {
+			log.Err.Printf("hud_bar:set_layout:fail_to_find_slot:%d",
+				slotID)
+			continue
+		}
+		data := res.Skill(s.ID())
+		skillGraphic := object.NewSkillGraphic(s, data)
+		insertSlotSkill(skillGraphic, slot)
+	}
+}
+
 // Triggered after menu button clicked.
 func (mb *MenuBar) onMenuButtonClicked(b *mtk.Button) {
 	if mb.hud.menu.Opened() {
@@ -227,11 +272,14 @@ func (mb *MenuBar) onSlotRightClicked(s *mtk.Slot) {
 // Triggered after one of bar slots was clicked with
 // left mouse button.
 func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
+	// Insert dragged skill from skill menu.
 	skillSlot := mb.hud.skills.draggedSkill()
 	if skillSlot != nil {
-		mtk.SlotSwitch(s, skillSlot)
+		mtk.SlotCopy(skillSlot, s)
 		skillSlot.Drag(false)
+		mb.updateLayout()
 		return
 	}
+	// Use slot content.
 	mb.useSlot(s)
 }

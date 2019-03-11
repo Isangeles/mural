@@ -26,11 +26,13 @@ package hud
 // Struct for HUD layout.
 type Layout struct {
 	InvSlots map[string]int
+	BarSlots map[string]int
 }
 
 // NewLayout creates new HUD layout.
 func NewLayout() *Layout {
 	l := new(Layout)
 	l.InvSlots = make(map[string]int)
+	l.BarSlots = make(map[string]int)
 	return l
 }

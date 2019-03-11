@@ -26,7 +26,6 @@ package hud
 
 import (
 	"fmt"
-	"image/color"
 	"path/filepath"
 
 	"golang.org/x/image/colornames"
@@ -56,9 +55,9 @@ import (
 
 var (
 	// HUD colors.
-	main_color   color.Color = colornames.Grey
-	sec_color    color.Color = colornames.Blue
-	accent_color color.Color = colornames.Red
+	main_color   = colornames.Grey
+	sec_color    = colornames.Blue
+	accent_color = colornames.Red
 	// Keys.
 	pause_key  = pixelgl.KeySpace
 	menu_key   = pixelgl.KeyEscape
@@ -109,7 +108,7 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 		av := object.NewAvatar(pc, avData)
 		hud.pcs = append(hud.pcs, av)
 	}
-	hud.activePC = hud.pcs[0]
+	hud.SetActivePlayer(hud.pcs[0])
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
@@ -342,6 +341,23 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 	hud.msgs.Append(msg)
 }
 
+// SetActivePlayer sets specified avatar as active
+// player.
+func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
+	hud.activePC = pc
+	hud.Reload()
+}
+
+// Reload reloads HUD layouts for
+// active player.
+func (hud *HUD) Reload() {
+	layout := hud.layouts[hud.ActivePlayer().SerialID()]
+	if layout == nil {
+		return
+	}
+	hud.bar.setLayout(layout)
+}
+
 // LoadNewGame load all game data.
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.loading = true
@@ -438,6 +454,7 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 		layout := hud.layouts[pc.SerialID()]
 		if layout != nil {
 			pcData.InvSlots = layout.InvSlots
+			pcData.BarSlots = layout.BarSlots
 		}
 		sav.PlayersData = append(sav.PlayersData, pcData)
 	}
@@ -455,11 +472,14 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		//hud.pcs = append(hud.pcs, pc)
 		layout := NewLayout()
 		layout.InvSlots = pcData.InvSlots
+		layout.BarSlots = pcData.BarSlots
 		layoutKey := pcData.Avatar.CharID + "_" + pcData.Avatar.CharSerial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.
 	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
+	// Reload UI.
+	hud.Reload()
 	return nil
 }
 

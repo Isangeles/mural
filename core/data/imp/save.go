@@ -116,6 +116,11 @@ func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.G
 					pcData.InvSlots[xmlSlot.Content] = xmlSlot.ID
 				}
 				save.PlayersData = append(save.PlayersData, pcData)
+				// Menu bar layout.
+				pcData.BarSlots = make(map[string]int)
+				for _, xmlSlot := range xmlPC.MenuBar.Slots {
+					pcData.BarSlots[xmlSlot.Content] = xmlSlot.ID
+				}
 			}
 		}
 	}

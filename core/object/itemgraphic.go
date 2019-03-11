@@ -36,7 +36,7 @@ import (
 type ItemGraphic struct {
 	item.Item
 	spritesheet pixel.Picture
-	icon        *pixel.Sprite
+	icon        pixel.Picture
 	maxStack    int
 }
 
@@ -45,7 +45,7 @@ func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	itg := new(ItemGraphic)
 	itg.Item = item
 	itg.spritesheet = data.SpritesheetPic
-	itg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
+	itg.icon = data.IconPic
 	itg.maxStack = data.MaxStack
 	return itg
 }
@@ -56,7 +56,7 @@ func (itg *ItemGraphic) Spritesheet() pixel.Picture {
 }
 
 // Icon returns item icon.
-func (itg *ItemGraphic) Icon() *pixel.Sprite {
+func (itg *ItemGraphic) Icon() pixel.Picture {
 	return itg.icon
 }
 

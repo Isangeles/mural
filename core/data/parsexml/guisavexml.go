@@ -51,6 +51,7 @@ type PlayerXML struct {
 	XMLName   xml.Name     `xml:"player"`
 	Avatar    AvatarXML    `xml:"avatar"`
 	Inventory InventoryXML `xml:"inventory"`
+	MenuBar   BarXML       `xml:"bar"`
 }
 
 // Struct for GUI camera XML node.
@@ -62,6 +63,12 @@ type CameraXML struct {
 // Struct for inventory node of avatar node.
 type InventoryXML struct {
 	XMLName xml.Name  `xml:"inventory"`
+	Slots   []SlotXML `xml:"slot"`
+}
+
+// Struct for menu bar node of avatar node.
+type BarXML struct {
+	XMLName xml.Name  `xml:"bar"`
 	Slots   []SlotXML `xml:"slot"`
 }
 
@@ -78,14 +85,25 @@ func MarshalGUISave(save *res.GUISave) (string, error) {
 	xmlGUI := new(GUISaveXML)
 	xmlGUI.Name = save.Name
 	xmlGUI.PlayersNode.Players = make([]PlayerXML, 0)
+	// Players.
 	for _, pcData := range save.PlayersData {
 		xmlPC := new(PlayerXML)
+		// Avatar.
 		xmlPC.Avatar = buildAvatarDataXML(pcData.Avatar)
+		// Layouts.
 		for serial, slot := range pcData.InvSlots {
-			xmlSlot := new(SlotXML)
-			xmlSlot.ID = slot
-			xmlSlot.Content = serial
-			xmlPC.Inventory.Slots = append(xmlPC.Inventory.Slots, *xmlSlot)
+			xmlSlot := SlotXML{
+				ID:      slot,
+				Content: serial,
+			}
+			xmlPC.Inventory.Slots = append(xmlPC.Inventory.Slots, xmlSlot)
+		}
+		for serial, slot := range pcData.BarSlots {
+			xmlSlot := SlotXML{
+				ID:      slot,
+				Content: serial,
+			}
+			xmlPC.MenuBar.Slots = append(xmlPC.MenuBar.Slots, xmlSlot)
 		}
 		xmlGUI.PlayersNode.Players = append(xmlGUI.PlayersNode.Players, *xmlPC)
 	}

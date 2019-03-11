@@ -40,4 +40,5 @@ type PlayerSave struct {
 	Character *character.Character
 	Avatar    *AvatarData
 	InvSlots  map[string]int
+	BarSlots  map[string]int
 }

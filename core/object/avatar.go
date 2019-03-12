@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 
+	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/object/item"
 
@@ -43,41 +44,34 @@ type Avatar struct {
 	data     *res.AvatarData
 	sprite   *internal.AvatarSprite
 	portrait *pixel.Sprite
+	items    map[string]*ItemGraphic
 	eqItems  map[string]*ItemGraphic
 	effects  map[string]*EffectGraphic
+	skills   map[string]*SkillGraphic
 }
 
-// NewAvatar creates new avatar for specified game character.
-// Portrait and spritesheet names are required for saving and
-// loading avatar file.
+// NewAvatar creates new avatar for specified game character
+// from specified avatar resources.
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
 	av.data = data
-	// Sprite & portrait.
-	av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
+	// Sprite.
+	if data.SSFullBodyPic != nil {
+		av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
+	}
+	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
+		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
+	}
+	// Portrait.
 	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
-	// Visible items & effects.
+	// Items, effects, skills.
+	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	av.effects = make(map[string]*EffectGraphic, 0)
+	av.skills = make(map[string]*SkillGraphic, 0)
+	av.updateGraphic()
 	return av
-}
-
-// NewStaticAvatar creates new avatar with static(not affected by
-// equipped items) body sprite.
-// Portrait and spritesheet names are required for saving and
-// loading avatar file.
-func NewStaticAvatar(char *character.Character, data *res.AvatarData) (*Avatar, error) {
-	av := new(Avatar)
-	av.Character = char
-	av.data = data
-	// Sprite & portrait.
-	av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
-	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
-	// Visible items & effects.
-	av.eqItems = make(map[string]*ItemGraphic, 0)
-	av.effects = make(map[string]*EffectGraphic, 0)
-	return av, nil
 }
 
 // Draw draws avatar.
@@ -104,7 +98,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 	} else {
 		av.sprite.Idle()
 	}
-	av.updateApperance()
+	av.updateGraphic()
 	av.sprite.Update(win)
 }
 
@@ -131,13 +125,31 @@ func (av *Avatar) DestPoint() pixel.Vec {
 	return pixel.V(x, y)
 }
 
+// Items returns all avatar items(in form of
+// graphical wrappers).
+func (av *Avatar) Items() (items []*ItemGraphic) {
+	for _, ig := range av.items {
+		items = append(items, ig)
+	}
+	return
+}
+
 // Effects returns all visible effects active on
 // avatar character.
 func (av *Avatar) Effects() (effects []*EffectGraphic) {
 	for _, eg := range av.effects {
 		effects = append(effects, eg)
 	}
-	return effects
+	return
+}
+
+// Skills retruns all avatar skills(in form of
+// graphical wrappers).
+func (av *Avatar) Skills() (skills []*SkillGraphic) {
+	for _, sg := range av.skills {
+		skills = append(skills, sg)
+	}
+	return
 }
 
 // Data returns avatar graphical data.
@@ -167,8 +179,18 @@ func (av *Avatar) unequip(gItem *ItemGraphic) {
 	}
 }
 
-// updateApperance updates avatar sprite apperance.
-func (av *Avatar) updateApperance() {
+// updateApperance updates avatar grapphical
+// content.
+func (av *Avatar) updateGraphic() {
+	// Clear items.
+	for id, ig := range av.items {
+		for _, it := range av.Inventory().Items() {
+			if flameobject.Equals(it, ig) {
+				continue
+			}
+			delete(av.items, id)
+		}
+	}
 	// Clear unequipped items.
 	for _, ig := range av.eqItems {
 		eit, ok := ig.Item.(item.Equiper)
@@ -179,31 +201,58 @@ func (av *Avatar) updateApperance() {
 			av.unequip(ig)
 		}
 	}
-	// Clear expired effects.
+	// Clear effects.
 	for id, eg := range av.effects {
-		if eg.Time() <= 0 {
+		for _, eff := range av.Character.Effects() {
+			if flameobject.Equals(eg, eff) {
+				continue
+			}
 			delete(av.effects, id)
 		}
 	}
-	// Visible items.
+	// Clear skills.
+	for id, sg := range av.skills {
+		for _, skill := range av.Character.Skills() {
+			if flameobject.Equals(sg, skill) {
+				continue
+			}
+			delete(av.skills, id)
+		}
+	}
+	// Inventory.
+	for _, it := range av.Inventory().Items() {
+		if av.items[it.ID()+it.Serial()] != nil {
+			continue
+		}
+		data := res.Item(it.ID())
+		if data == nil {
+			continue
+		}
+		itemGraphic := NewItemGraphic(it, data)
+		av.items[it.ID()+it.Serial()] = itemGraphic
+	}
+	// Equipment.
 	for _, eqi := range av.Equipment().Items() {
-		if av.eqItems[eqi.SerialID()] != nil {
+		it, ok := eqi.(item.Item)
+		if !ok {
+			continue
+		}
+		if av.eqItems[it.ID()+it.Serial()] != nil {
 			continue
 		}
 		itemGData := res.Item(eqi.ID())
 		if itemGData == nil {
 			continue
 		}
-		it, ok := eqi.(item.Item)
-		if !ok {
-			continue
-		}
 		itemGraphic := NewItemGraphic(it, itemGData)
-		av.equip(itemGraphic)
+		err := av.equip(itemGraphic)
+		if err != nil {
+			av.eqItems[it.ID()+it.Serial()] = itemGraphic
+		}
 	}
-	// Visible effects.
+	// Effects.
 	for _, e := range av.Character.Effects() {
-		if av.effects[e.ID()+"_"+e.Serial()] != nil {
+		if av.effects[e.ID()+e.Serial()] != nil {
 			continue
 		}
 		effectGData := res.Effect(e.ID())
@@ -211,6 +260,18 @@ func (av *Avatar) updateApperance() {
 			continue
 		}
 		effectGraphic := NewEffectGraphic(e, effectGData)
-		av.effects[e.ID()+"_"+e.Serial()] = effectGraphic
+		av.effects[e.ID()+e.Serial()] = effectGraphic
+	}
+	// Skills.
+	for _, s := range av.Character.Skills() {
+		if av.skills[s.ID()+s.Serial()] != nil {
+			continue
+		}
+		data := res.Skill(s.ID())
+		if data == nil {
+			continue
+		}
+		skillGraphic := NewSkillGraphic(s, data)
+		av.skills[s.ID()+s.Serial()] = skillGraphic
 	}
 }

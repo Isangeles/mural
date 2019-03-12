@@ -32,7 +32,6 @@ import (
 	"github.com/isangeles/flame/core/module/serial"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -136,6 +135,16 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates menu bar.
 func (mb *MenuBar) Update(win *mtk.Window) {
 	// Key events.
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		if !mb.DrawArea().Contains(win.MousePosition()) {
+			for _, s := range mb.slots {
+				if !s.Dragged() {
+					continue
+				}
+				s.Clear()
+			}
+		}
+	}
 	if win.JustPressed(pixelgl.Key1) {
 		mb.useSlot(mb.slots[0])
 	}
@@ -224,9 +233,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 				slotID)
 			continue
 		}
-		data := res.Skill(s.ID())
-		skillGraphic := object.NewSkillGraphic(s, data)
-		insertSlotSkill(skillGraphic, slot)
+		insertSlotSkill(s, slot)
 	}
 }
 
@@ -273,12 +280,19 @@ func (mb *MenuBar) onSlotRightClicked(s *mtk.Slot) {
 // left mouse button.
 func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 	// Insert dragged skill from skill menu.
-	skillSlot := mb.hud.skills.draggedSkill()
-	if skillSlot != nil {
-		mtk.SlotCopy(skillSlot, s)
-		skillSlot.Drag(false)
+	dragSlot := mb.hud.skills.draggedSkill()
+	if dragSlot != nil {
+		mtk.SlotCopy(dragSlot, s)
+		dragSlot.Drag(false)
 		mb.updateLayout()
 		return
+	}
+	for _, dragSlot := range mb.slots {
+		if !dragSlot.Dragged() {
+			continue
+		}
+		mtk.SlotSwitch(dragSlot, s)
+		dragSlot.Drag(false)
 	}
 	// Use slot content.
 	mb.useSlot(s)

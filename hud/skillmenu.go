@@ -33,7 +33,6 @@ import (
 	"github.com/isangeles/flame/core/module/object/skill"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -147,9 +146,7 @@ func (sm *SkillMenu) Show(show bool) {
 	sm.opened = show
 	if sm.Opened() {
 		sm.slots.Clear()
-		for _, s := range sm.hud.ActivePlayer().Skills() {
-			sm.insert(s)	
-		}
+		sm.insert(sm.hud.ActivePlayer().Skills()...)	
 		sm.hud.UserFocus().Focus(sm)
 	} else {
 		sm.hud.UserFocus().Focus(nil)
@@ -181,23 +178,15 @@ func (sm *SkillMenu) Bounds() pixel.Rect {
 }
 
 // insert inserts specified skills in menu slots.
-func (sm *SkillMenu) insert(skills ...*skill.Skill) {
+func (sm *SkillMenu) insert(skills ...*object.SkillGraphic) {
 	for _, s := range skills {
-		// Retrieve graphic data.
-		skillData := res.Skill(s.ID())
-		if skillData == nil {
-			log.Err.Printf("hud_skills_menu:fail_to_retrieve_skill_data:%s",
-				s.ID())
-			continue
-		}
-		skillGraphic := object.NewSkillGraphic(s, skillData)
 		slot := sm.slots.EmptySlot()
 		if slot == nil {
 			log.Err.Printf("hud_skills:no empty slots")
 			return
 		}
-		// Insert skill to slot
-		insertSlotSkill(skillGraphic, slot)
+		// Insert skill to slot.
+		insertSlotSkill(s, slot)
 	}
 }
 

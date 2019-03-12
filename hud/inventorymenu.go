@@ -35,7 +35,6 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -151,7 +150,7 @@ func (im *InventoryMenu) Show(show bool) {
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
 		im.slots.Clear()
-		im.insert(im.hud.ActivePlayer().Inventory().Items()...)
+		im.insert(im.hud.ActivePlayer().Items()...)
 		im.updateLayout()
 	} else {
 		im.hud.UserFocus().Focus(nil)
@@ -183,34 +182,26 @@ func (im *InventoryMenu) Bounds() pixel.Rect {
 }
 
 // insert inserts specified items in inventory slots.
-func (im *InventoryMenu) insert(items ...item.Item) {
-	for _, i := range items {
-		// Retrieve item data.
-		itemData := res.Item(i.ID())
-		if itemData == nil {
-			log.Err.Printf("hud_inv_menu:fail_to_retrieve_item_data:%s",
-				i.ID())
-			continue
-		}
-		itemGraphic := object.NewItemGraphic(i, itemData)
+func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
+	for _, it := range items {
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
 		layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
-		slotID, prs := layout.InvSlots[i.SerialID()]
-		if prs {
+		slotID, prs := layout.InvSlots[it.SerialID()]
+		if prs { // insert item to slot from layout
 			if slotID > -1 && slotID < len(im.slots.Slots())-1 {
 				slot = im.slots.Slots()[slotID]
 			}
-		} else {
+		} else { // try to find slot with same content and available space
 			for _, s := range im.slots.Slots() {
-				if len(s.Values()) < 1 || len(s.Values()) >= itemGraphic.MaxStack() {
+				if len(s.Values()) < 1 || len(s.Values()) >= it.MaxStack() {
 					continue
 				}
-				it, ok := s.Values()[0].(item.Item)
+				slotIt, ok := s.Values()[0].(item.Item)
 				if !ok {
 					continue
 				}
-				if it.ID() == i.ID() {
+				if slotIt.ID() == it.ID() {
 					slot = s
 					break
 				}
@@ -221,7 +212,7 @@ func (im *InventoryMenu) insert(items ...item.Item) {
 			return
 		}
 		// Insert item to slot.
-		insertSlotItem(itemGraphic, slot)
+		insertSlotItem(it, slot)
 	}
 }
 

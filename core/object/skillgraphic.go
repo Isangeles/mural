@@ -34,18 +34,18 @@ import (
 // Graphical wrapper for skills.
 type SkillGraphic struct {
 	*skill.Skill
-	icon pixel.Picture
+	data *res.SkillGraphicData
 }
 
 // NewSkillGraphic creates new graphical wrapper for specified skill.
 func NewSkillGraphic(skill *skill.Skill, data *res.SkillGraphicData) *SkillGraphic {
 	sg := new(SkillGraphic)
 	sg.Skill = skill
-	sg.icon = data.IconPic
+	sg.data = data
 	return sg
 }
 
 // Icon returns skill icon sprite.
 func (sg *SkillGraphic) Icon() pixel.Picture {
-	return sg.icon
+	return sg.data.IconPic
 }

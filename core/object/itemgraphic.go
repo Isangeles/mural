@@ -35,33 +35,29 @@ import (
 // for items.
 type ItemGraphic struct {
 	item.Item
-	spritesheet pixel.Picture
-	icon        pixel.Picture
-	maxStack    int
+	data *res.ItemGraphicData
 }
 
 // NewItemGraphic creates new graphical wrapper for specified item.
 func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	itg := new(ItemGraphic)
 	itg.Item = item
-	itg.spritesheet = data.SpritesheetPic
-	itg.icon = data.IconPic
-	itg.maxStack = data.MaxStack
+	itg.data = data
 	return itg
 }
 
 // Spritesheet returns item spritesheet.
 func (itg *ItemGraphic) Spritesheet() pixel.Picture {
-	return itg.spritesheet
+	return itg.data.SpritesheetPic
 }
 
 // Icon returns item icon.
 func (itg *ItemGraphic) Icon() pixel.Picture {
-	return itg.icon
+	return itg.data.IconPic
 }
 
 // MaxStack returns maximal number of stacked items
 // with same ID.
 func (itg *ItemGraphic) MaxStack() int {
-	return itg.maxStack
+	return itg.data.MaxStack
 }

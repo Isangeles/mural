@@ -82,26 +82,20 @@ func NewSlot(size, fontSize Size) *Slot {
 func SlotSwitch(slotA, slotB *Slot) {
 	slotC := *slotA
 	slotA.SetValues(slotB.Values())
-	if slotA.Icon() != nil {
-		slotA.SetIcon(slotB.Icon().Picture())
-	}
+	slotA.SetIcon(slotB.Icon())
 	slotA.SetInfo(slotB.info.String())
 	slotA.SetLabel(slotB.label.String())
 	slotB.SetValues(slotC.Values())
-	if slotB.Icon() != nil {
-		slotB.SetIcon(slotC.Icon().Picture())
-	}
+	slotB.SetIcon(slotC.Icon())
 	slotB.SetInfo(slotC.info.String())
 	slotB.SetLabel(slotC.label.String())	
 }
 
 // SlotCopy copies content from A to
-// slot B(overrites current content).
+// slot B(overwrites current content).
 func SlotCopy(slotA, slotB *Slot) {
 	slotB.SetValues(slotA.Values())
-	if slotA.Icon() != nil {
-		slotB.SetIcon(slotA.Icon().Picture())
-	}
+	slotB.SetIcon(slotA.Icon())
 	slotB.SetInfo(slotA.info.String())
 	slotB.SetLabel(slotA.info.String())
 }
@@ -186,9 +180,13 @@ func (s *Slot) Pop() interface{} {
 	return v
 }
 
-// Icon returns current slot icon.
-func (s *Slot) Icon() *pixel.Sprite {
-	return s.icon
+// Icon returns current slot icon
+// picture.
+func (s *Slot) Icon() pixel.Picture {
+	if s.icon == nil {
+		return nil
+	}
+	return s.icon.Picture()
 }
 
 // Drag toggles slot drag mode(icon

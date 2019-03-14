@@ -193,7 +193,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		}
 		return 7, fmt.Sprintf("%s:avatar_not_found:%s", GUI_MAN,
 			cmd.TargetArgs()[1])
-	case "gui-state":
+	case "gui", "gui-state":
 		if len(cmd.Args()) < 1 {
 			return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
 				GUI_MAN, cmd.TargetArgs()[0])
@@ -223,7 +223,7 @@ func importGUIOption(cmd burn.Command) (int, string) {
 			cmd.OptionArgs()[0])
 	}
 	switch cmd.TargetArgs()[0] {
-	case "gui-state":
+	case "gui", "gui-state":
 		if len(cmd.Args()) < 1 {
 			return 7, fmt.Sprintf("%s:no_enought_args_for:%s",
 				GUI_MAN, cmd.TargetArgs()[0])

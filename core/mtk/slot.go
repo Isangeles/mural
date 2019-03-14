@@ -97,7 +97,7 @@ func SlotCopy(slotA, slotB *Slot) {
 	slotB.SetValues(slotA.Values())
 	slotB.SetIcon(slotA.Icon())
 	slotB.SetInfo(slotA.info.String())
-	slotB.SetLabel(slotA.info.String())
+	slotB.SetLabel(slotA.label.String())
 }
 
 // Draw draws slot.
@@ -123,6 +123,7 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 		countPos := MoveTL(s.DrawArea(), s.countLabel.Bounds().Size())
 		s.countLabel.Draw(t, matrix.Moved(countPos))
 	}
+	s.label.Draw(t, matrix)
 	// Info window.
 	if s.hovered {
 		s.info.Draw(t)

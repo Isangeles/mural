@@ -453,8 +453,8 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 		// Layout.
 		layout := hud.layouts[pc.SerialID()]
 		if layout != nil {
-			pcData.InvSlots = layout.InvSlots
-			pcData.BarSlots = layout.BarSlots
+			pcData.InvSlots = layout.InvSlots()
+			pcData.BarSlots = layout.BarSlots()
 		}
 		sav.PlayersData = append(sav.PlayersData, pcData)
 	}
@@ -471,8 +471,8 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		//pc := object.NewAvatar(pcData.Avatar)
 		//hud.pcs = append(hud.pcs, pc)
 		layout := NewLayout()
-		layout.InvSlots = pcData.InvSlots
-		layout.BarSlots = pcData.BarSlots
+		layout.SetInvSlots(pcData.InvSlots)
+		layout.SetBarSlots(pcData.BarSlots)
 		layoutKey := pcData.Avatar.CharID + "_" + pcData.Avatar.CharSerial
 		hud.layouts[layoutKey] = layout
 	}

@@ -187,9 +187,9 @@ func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
 		layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
-		slotID, prs := layout.InvSlots[it.SerialID()]
-		if prs { // insert item to slot from layout
-			if slotID > -1 && slotID < len(im.slots.Slots())-1 {
+		slotID := layout.InvSlotID(it)
+		if slotID > -1 { // insert item to slot from layout
+			if slotID < len(im.slots.Slots())-1 {
 				slot = im.slots.Slots()[slotID]
 			}
 		} else { // try to find slot with same content and available space
@@ -218,10 +218,14 @@ func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
 
 // updateLayout updates inventory layout for active player.
 func (im *InventoryMenu) updateLayout() {
+	// Retrieve layout for current PC.
 	layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
 	if layout == nil {
 		layout = NewLayout()
 	}
+	// Clear layout.
+	layout.SetInvSlots(make(map[string]int))
+	// Set Layout.
 	for i, s := range im.slots.Slots() {
 		if len(s.Values()) < 1 {
 			continue
@@ -229,10 +233,10 @@ func (im *InventoryMenu) updateLayout() {
 		for _, v := range s.Values() {
 			it, ok := v.(*object.ItemGraphic)
 			if !ok {
-				log.Err.Printf("hud_inv:layout_update:fail to retrieve item from slot value")
+				log.Err.Printf("hud_inv:update_layout:fail to retrieve slot value")
 				continue
 			}
-			layout.InvSlots[it.SerialID()] = i
+			layout.SaveInvSlot(it, i)
 		}
 	}
 	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
@@ -247,6 +251,17 @@ func (im *InventoryMenu) createSlot() *mtk.Slot {
 	s.SetOnLeftClickFunc(im.onSlotLeftClicked)
 	s.SetOnSpecialLeftClickFunc(im.onSlotSpecialLeftClicked)
 	return s
+}
+
+// draggedItems returns currently dragged slot
+// with items.
+func (im *InventoryMenu) draggedItems() *mtk.Slot {
+	for _, s := range im.slots.Slots() {
+		if s.Dragged() {
+			return s
+		}
+	}
+	return nil
 }
 
 // Triggered after close button clicked.

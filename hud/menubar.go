@@ -24,11 +24,14 @@
 package hud
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/serial"
 
 	"github.com/isangeles/mural/core/data"
@@ -102,6 +105,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	// Slots.
 	for i := 0; i < bar_slots; i++ {
 		s := mb.createSlot()
+		s.SetLabel(fmt.Sprintf("%d", i+1))
 		mb.slots = append(mb.slots, s)
 	}
 	return mb
@@ -142,11 +146,39 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 					continue
 				}
 				s.Clear()
+				mb.updateLayout()
 			}
 		}
 	}
 	if win.JustPressed(pixelgl.Key1) {
 		mb.useSlot(mb.slots[0])
+	}
+	if win.JustPressed(pixelgl.Key2) {
+		mb.useSlot(mb.slots[1])
+	}
+	if win.JustPressed(pixelgl.Key3) {
+		mb.useSlot(mb.slots[2])
+	}
+	if win.JustPressed(pixelgl.Key4) {
+		mb.useSlot(mb.slots[3])
+	}
+	if win.JustPressed(pixelgl.Key5) {
+		mb.useSlot(mb.slots[4])
+	}
+	if win.JustPressed(pixelgl.Key6) {
+		mb.useSlot(mb.slots[5])
+	}
+	if win.JustPressed(pixelgl.Key7) {
+		mb.useSlot(mb.slots[6])
+	}
+	if win.JustPressed(pixelgl.Key8) {
+		mb.useSlot(mb.slots[7])
+	}
+	if win.JustPressed(pixelgl.Key9) {
+		mb.useSlot(mb.slots[8])
+	}
+	if win.JustPressed(pixelgl.Key0) {
+		mb.useSlot(mb.slots[9])
 	}
 	// Buttons.
 	mb.menuButton.Update(win)
@@ -190,19 +222,38 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	if len(s.Values()) < 1 {
 		return
 	}
-	skill, ok := s.Values()[0].(*object.SkillGraphic)
+	val := s.Values()[0]
+	skill, ok := val.(*object.SkillGraphic)
 	if ok {
 		mb.hud.ActivePlayer().UseSkill(skill.Skill)
+		return
+	}
+	it, ok := val.(*object.ItemGraphic)
+	if ok {
+		eqit, ok := it.Item.(item.Equiper)
+		if ok {
+			pc := mb.hud.ActivePlayer()
+			if pc.Equipment().Equiped(eqit) {
+				pc.Equipment().Unequip(eqit)
+				return
+			} 
+			pc.Equipment().Equip(eqit)
+			return
+		}
 	}
 }
 
 // updateLayout updates menu bar layout for
 // active player.
 func (mb *MenuBar) updateLayout() {
+	// Retrieve layout for current PC.
 	layout := mb.hud.layouts[mb.hud.ActivePlayer().SerialID()]
 	if layout == nil {
 		layout = NewLayout()
 	}
+	// Clear layout.
+	layout.SetBarSlots(make(map[string]int))
+	// Set layout.
 	for i, s := range mb.slots {
 		if len(s.Values()) < 1 {
 			continue
@@ -213,7 +264,7 @@ func (mb *MenuBar) updateLayout() {
 				log.Err.Printf("hud_skills:update_layout:fail to retrieve slot value")
 				continue
 			}
-			layout.BarSlots[ob.ID()+"_"+ob.Serial()] = i
+			layout.SaveBarSlot(ob, i)
 		}
 	}
 	mb.hud.layouts[mb.hud.ActivePlayer().SerialID()] = layout
@@ -222,9 +273,10 @@ func (mb *MenuBar) updateLayout() {
 // setLayout sets specified layout as
 // current bar layout.
 func (mb *MenuBar) setLayout(l *Layout) {
+	// Skills.
 	for _, s := range mb.hud.ActivePlayer().Skills() {
-		slotID, prs := l.BarSlots[s.ID()+"_"+s.Serial()]
-		if !prs {
+		slotID := l.BarSlotID(s)
+		if slotID < 0 {
 			continue
 		}
 		slot := mb.slots[slotID]
@@ -234,6 +286,20 @@ func (mb *MenuBar) setLayout(l *Layout) {
 			continue
 		}
 		insertSlotSkill(s, slot)
+	}
+	// Items.
+	for _, i := range mb.hud.ActivePlayer().Items() {
+		slotID := l.BarSlotID(i)
+		if slotID < 0 {
+			continue
+		}
+		slot := mb.slots[slotID]
+		if slot == nil {
+			log.Err.Printf("hud_bar:set_layout:fail_to_find_slot:%d",
+				slotID)
+			continue
+		}
+		insertSlotItem(i, slot)
 	}
 }
 
@@ -287,6 +353,15 @@ func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 		mb.updateLayout()
 		return
 	}
+	// Insert dragged item from inventory menu.
+	dragSlot = mb.hud.inv.draggedItems()
+	if dragSlot != nil {
+		mtk.SlotCopy(dragSlot, s)
+		dragSlot.Drag(false)
+		mb.updateLayout()
+		return
+	}
+	// Move dragged content from another bar slot.
 	for _, dragSlot := range mb.slots {
 		if !dragSlot.Dragged() {
 			continue

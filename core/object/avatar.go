@@ -157,12 +157,12 @@ func (av *Avatar) Data() *res.AvatarData {
 	return av.data
 }
 
-// equip equips specified graphical item.
+// equip adds graphic of specified item to avatar.
 func (av *Avatar) equip(gItem *ItemGraphic) error {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(gItem.Spritesheet())
-		av.eqItems[gItem.SerialID()] = gItem
+		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
 		return nil
 	default:
 		return fmt.Errorf("not_equipable_item_type")
@@ -175,11 +175,11 @@ func (av *Avatar) unequip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(nil)
-		delete(av.eqItems, gItem.SerialID())
+		delete(av.eqItems, gItem.ID()+gItem.Serial())
 	}
 }
 
-// updateApperance updates avatar grapphical
+// updateGraphic updates avatar grapphical
 // content.
 func (av *Avatar) updateGraphic() {
 	// Clear items.

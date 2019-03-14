@@ -7,12 +7,15 @@ MAJOR:
 * Objects
 * Avatar: animations for kneel, lie, melee, range shoot and spell cast
 * Focusing UI elements with tab key
+* Spawning avatars
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * MTK: fix for textbox visible content height
 * MTK: titles for messages windows
-* One constructor for avatar
 DONE: 
 * Avatar: handling character equipment
 * HUD: display items in inventory
 * HUD: skills window
+* HUD: inventory window
+* HUD: menu bar
+* HUD: object frames

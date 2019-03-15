@@ -198,6 +198,9 @@ func run() {
 		if inGame {
 			pcHUD.Update(win)
 			game.Update(win.Delta()) // game update
+			if pcHUD.Exiting() {
+				inGame = false
+			}
 		} else {
 			mainMenu.Update(win)
 		}
@@ -212,6 +215,7 @@ func run() {
 
 // EnterGame creates HUD for specified game.
 func EnterGame(g *flamecore.Game, pc *object.Avatar) {
+	mainMenu.OpenLoadingScreen(lang.Text("gui", "enter_game_info"))
 	game = g
 	res.AddAvatarData(pc.Data())
 	HUD, err := hud.NewHUD(game, pc.Character)
@@ -220,6 +224,7 @@ func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 		return
 	}
 	setHUD(HUD)
+	mainMenu.CloseLoadingScreen()
 	inGame = true
 }
 

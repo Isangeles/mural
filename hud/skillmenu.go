@@ -25,13 +25,14 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/skill"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
@@ -146,7 +147,7 @@ func (sm *SkillMenu) Show(show bool) {
 	sm.opened = show
 	if sm.Opened() {
 		sm.slots.Clear()
-		sm.insert(sm.hud.ActivePlayer().Skills()...)	
+		sm.insert(sm.hud.ActivePlayer().Skills()...)
 		sm.hud.UserFocus().Focus(sm)
 	} else {
 		sm.hud.UserFocus().Focus(nil)
@@ -252,5 +253,9 @@ func insertSlotSkill(skill *object.SkillGraphic, slot *mtk.Slot) {
 func skillInfo(s *skill.Skill) string {
 	infoForm := "%s"
 	info := fmt.Sprintf(infoForm, s.Name())
+	if config.Debug() {
+		info = fmt.Sprintf("%s\n[%s_%s]", info,
+			s.ID(), s.Serial())
+	}
 	return info
 }

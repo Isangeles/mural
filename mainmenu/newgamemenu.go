@@ -176,29 +176,31 @@ func (ngm *NewGameMenu) exportChar() error {
 }
 
 // startGame starts new game.
-func (ngm *NewGameMenu) startGame() error {
+func (ngm *NewGameMenu) startGame() {
+	ngm.mainmenu.OpenLoadingScreen(lang.Text("gui", "newgame_start_info"))
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
-		return fmt.Errorf("no_char_switch_val")
+		log.Err.Printf("main_menu:new_game:no char switch value")
+		return
 	}
 	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
-		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
+		log.Err.Printf("main_menu:new_game:fail to retrieve avatar from switch")
+		return
 	}
 	g, err := flame.StartGame([]*character.Character{c.Character})
 	if err != nil {
-		return err
+		log.Err.Printf("main_menu:new_game:fail_to_start_game:%v", err)
+		return
 	}
+	ngm.mainmenu.CloseLoadingScreen()
 	ngm.mainmenu.OnNewGameCreated(g, c)
-	return nil
 }
 
 // Triggered after start button clicked.
 func (ngm *NewGameMenu) onStartButtonClicked(b *mtk.Button) {
-	err := ngm.startGame()
-	if err != nil {
-		log.Err.Printf("fail_to_start_new_game:%v\n", err)
-	}
+	go ngm.startGame()
+	ngm.mainmenu.OpenMenu()
 }
 
 // Triggered after back button clicked.
@@ -210,7 +212,7 @@ func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 	err := ngm.exportChar()
 	if err != nil {
-		log.Err.Printf("fail_to_export_character:%v", err)
+		log.Err.Printf("main_menu:new_game:fail_to_export_character:%v", err)
 		return
 	}
 	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL, lang.Text("gui",
@@ -223,6 +225,6 @@ func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
 		old, new *mtk.SwitchValue) {
 	err := ngm.updateCharInfo()
 	if err != nil {
-		log.Err.Printf("fail_to_update_char_info:%v\n", err)
+		log.Err.Printf("main_menu:new_game:fail_to_update_char_info:%v\n", err)
 	}
 }

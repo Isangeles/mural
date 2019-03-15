@@ -74,7 +74,7 @@ func newMenu(hud *HUD) *Menu {
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
 	m.exitButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE, accent_color,
-		lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_b_info"))
+		lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_hud_b_info"))
 	exitButtonBG, err := data.PictureUI("button_green.png")
 	if err != nil { // fallback
 		log.Err.Printf("hud_menu:fail_to_retrieve_exit_button_texture:%v", err)

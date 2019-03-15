@@ -388,8 +388,8 @@ func itemInfo(it item.Item) string {
 		info := fmt.Sprintf(infoForm, i.Name(),
 			dmgMin, dmgMax)
 		if config.Debug() { // add serial ID info
-			info = fmt.Sprintf("%s\n[%s]", info,
-				i.SerialID())
+			info = fmt.Sprintf("%s\n[%s_%s]", info,
+				i.ID(), i.Serial())
 		}
 		return info
 	default:

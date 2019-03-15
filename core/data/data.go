@@ -64,7 +64,7 @@ var (
 // Should be called by GUI before creating any
 // in-game elements.
 func LoadGameData() error {
-	// Load data sources paths.
+	// Load data resources paths.
 	err := loadPaths()
 	if err != nil {
 		return fmt.Errorf("fail_to_load_paths:%v", err)

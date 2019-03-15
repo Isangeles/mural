@@ -186,8 +186,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
 	if hud.exiting {
-		// TODO: exit back to main menu.
-		win.SetClosed(true)
+		//win.SetClosed(true)
 	}
 	if hud.loading {
 		if hud.loaderr != nil { // on loading error
@@ -312,6 +311,11 @@ func (hud *HUD) AreaAvatars() []*object.Avatar {
 // Exit sends exit request to HUD.
 func (hud *HUD) Exit() {
 	hud.exiting = true
+}
+
+// Checks whether exit was requested.
+func (hud *HUD) Exiting() bool {
+	return hud.exiting
 }
 
 // Chat returns HUD chat.

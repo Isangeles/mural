@@ -25,8 +25,6 @@ package mainmenu
 
 import (
 	"fmt"
-	"io/ioutil"
-	"strings"
 	
 	"github.com/faiface/pixel"
 	
@@ -35,6 +33,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
@@ -61,7 +60,8 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	// Saves list.
 	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
 		accent_color)
-	gameSaves, err := saveGamesFiles(flameconf.ModuleSavegamesPath())
+	savePattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
+	gameSaves, err := data.DirFilesNames(flameconf.ModuleSavegamesPath(), savePattern)
 	if err != nil {
 		log.Err.Printf("fail_to_read_saved_games_dir:%v", err)
 	}
@@ -116,6 +116,32 @@ func (lgm *LoadGameMenu) Opened() bool {
 	return lgm.opened
 }
 
+// importSave imports saved game from file with
+// specified name.
+func (lgm *LoadGameMenu) importSave(savName string) {
+	// Load module resources.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_mod_res_info"))
+	err := imp.LoadModuleResources(flame.Mod())
+	if err != nil {
+		log.Err.Printf("main_menu:load_game:fail_to_load_resources:%v", err)
+		return
+	}
+	// Import saved game from file.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
+	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
+		savName)
+	if err != nil {
+		log.Err.Printf("main_menu:load_game:fail_to_load_saved_game:%v", err)
+		return
+	}
+	lgm.mainmenu.CloseLoadingScreen()
+	// Pass imported save.
+	if lgm.mainmenu.onSaveImported == nil {
+		return
+	}
+	lgm.mainmenu.onSaveImported(sav)
+}
+
 // Triggered after back button clicked.
 func (lgm *LoadGameMenu) onBackButtonClicked(b *mtk.Button) {
 	lgm.mainmenu.OpenMenu()
@@ -129,51 +155,9 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 	selection := lgm.savesList.SelectedValue()
 	savName, ok := selection.(string)
 	if !ok {
-		log.Err.Printf("load_game_menu:fail to retrieve save name from list value")
+		log.Err.Printf("main_menu:load_game:fail to retrieve save name from list value")
 		return
 	}
 	go lgm.importSave(savName)
-}
-
-// saveGamesFiles returns names of all save files
-// in directory with specified path.
-func saveGamesFiles(dirPath string) ([]string, error) {
-	files, err := ioutil.ReadDir(dirPath)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v",
-			err)
-	}
-	filesNames := make([]string, 0)
-	for _, fInfo := range files {
-		if strings.HasSuffix(fInfo.Name(), flamedata.SAVEGAME_FILE_EXT) {
-			filesNames = append(filesNames, fInfo.Name())
-		}
-	}
-	return filesNames, nil
-}
-
-// importSave imports saved game from file with
-// specified name.
-func (lgm *LoadGameMenu) importSave(savName string) {
-	// Load module resources.
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_mod_res_info"))
-	err := imp.LoadModuleResources(flame.Mod())
-	if err != nil {
-		log.Err.Printf("fail_to_load_resources:%v", err)
-		return
-	}
-	// Import saved game from file.
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
-	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
-		savName)
-	if err != nil {
-		log.Err.Printf("load_game_menu:fail_to_load_saved_game:%v", err)
-		return
-	}
-	lgm.mainmenu.CloseLoadingScreen()
-	// Pass imported save.
-	if lgm.mainmenu.onSaveImported == nil {
-		return
-	}
-	lgm.mainmenu.onSaveImported(sav)
+	lgm.mainmenu.OpenMenu()
 }

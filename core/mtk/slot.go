@@ -91,7 +91,7 @@ func SlotSwitch(slotA, slotB *Slot) {
 	slotB.SetLabel(slotC.label.String())	
 }
 
-// SlotCopy copies content from A to
+// SlotCopy copies content from slot A to
 // slot B(overwrites current content).
 func SlotCopy(slotA, slotB *Slot) {
 	slotB.SetValues(slotA.Values())
@@ -188,6 +188,11 @@ func (s *Slot) Icon() pixel.Picture {
 		return nil
 	}
 	return s.icon.Picture()
+}
+
+// Label returns slot label text.
+func (s *Slot) Label() string {
+	return s.label.String()
 }
 
 // Drag toggles slot drag mode(icon

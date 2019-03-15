@@ -348,7 +348,7 @@ func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 	// Insert dragged skill from skill menu.
 	dragSlot := mb.hud.skills.draggedSkill()
 	if dragSlot != nil {
-		mtk.SlotCopy(dragSlot, s)
+		copyMenuSlot(dragSlot, s)
 		dragSlot.Drag(false)
 		mb.updateLayout()
 		return
@@ -356,7 +356,7 @@ func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 	// Insert dragged item from inventory menu.
 	dragSlot = mb.hud.inv.draggedItems()
 	if dragSlot != nil {
-		mtk.SlotCopy(dragSlot, s)
+		copyMenuSlot(dragSlot, s)
 		dragSlot.Drag(false)
 		mb.updateLayout()
 		return
@@ -366,9 +366,27 @@ func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 		if !dragSlot.Dragged() {
 			continue
 		}
-		mtk.SlotSwitch(dragSlot, s)
+		switchMenuSlot(dragSlot, s)
 		dragSlot.Drag(false)
 	}
 	// Use slot content.
 	mb.useSlot(s)
+}
+
+// copyMenuSlot copies content(without label)
+// from slot a to slot b.
+func copyMenuSlot(a, b *mtk.Slot) {
+	lab := b.Label()
+	mtk.SlotCopy(a, b)
+	b.SetLabel(lab)
+}
+
+// switchMenuSlot switches content between
+// slots a and b(leaves slots labels unchanged).
+func switchMenuSlot(a, b *mtk.Slot) {
+	labA := a.Label()
+	labB := b.Label()
+	mtk.SlotSwitch(a, b)
+	a.SetLabel(labA)
+	b.SetLabel(labB)
 }

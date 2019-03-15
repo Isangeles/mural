@@ -34,15 +34,19 @@ type Animation struct {
 	drawArea    pixel.Rect
 	fps         int
 	lastChange  int64
+	looping     bool
+	finished    bool
 }
 
 // NewAnimation creates new animation with specified
 // frames and FPS value.
+// Animation is looping by default.
 func NewAnimation(frames []*pixel.Sprite, fps int) *Animation {
 	anim := new(Animation)
 	anim.frames = frames
 	anim.drawFrameID = 0
 	anim.fps = fps
+	anim.looping = true
 	return anim
 }
 
@@ -55,8 +59,15 @@ func (anim *Animation) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates animation.
 func (anim *Animation) Update(win *Window) {
+	if anim.Finished() {
+		return
+	}
 	anim.lastChange += win.Delta()
 	if anim.lastChange >= int64(1000 / anim.fps) {
+		if !anim.looping && anim.drawFrameID == len(anim.frames)-1 {
+			anim.finished = true
+			return
+		}
 		anim.SetCurrentFrameID(anim.drawFrameID + 1)
 		anim.lastChange = 0
 	}
@@ -80,6 +91,28 @@ func (anim *Animation) SetCurrentFrameID(id int) {
 	default:
 		anim.drawFrameID = id
 	}
+}
+
+// Restarts restarts animation.
+func (anim *Animation) Restart() {
+	anim.finished = false
+	anim.SetCurrentFrameID(0)
+}
+
+// Loop toggles animation looping.
+func (anim *Animation) Loop(loop bool) {
+	anim.looping = loop
+}
+
+// Finished checks whether animation is finished, i.e.
+// current frame is last frame of animation.
+func (anim *Animation) Finished() bool {
+	return anim.finished
+}
+
+// SetFPS sets number of frames per second.
+func (anim *Animation) SetFPS(fps int) {
+	anim.fps = fps
 }
 
 

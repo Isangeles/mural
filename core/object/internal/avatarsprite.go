@@ -165,6 +165,75 @@ func (spr *AvatarSprite) Move() {
 	spr.torso.Move()
 }
 
+// Melee sets melee animations as current
+// draw animations.
+func (spr *AvatarSprite) Melee() {
+	if spr.weapon != nil {
+		spr.weapon.Melee()
+	}
+	if spr.fullBody != nil {
+		spr.fullBody.Melee()
+		return
+	}
+	spr.head.Melee()
+	spr.torso.Melee()
+}
+// Shoot sets shoot animations as current
+// draw animations.
+func (spr *AvatarSprite) Shoot() {
+	if spr.weapon != nil {
+		spr.weapon.Shoot()
+	}
+	if spr.fullBody != nil {
+		spr.fullBody.Shoot()
+		return
+	}
+	spr.head.Shoot()
+	spr.torso.Shoot()
+}
+
+// Cast sets cast animations as current
+// draw animations.
+func (spr *AvatarSprite) Cast() {
+	if spr.weapon != nil {
+		spr.weapon.Cast()
+	}
+	if spr.fullBody != nil {
+		spr.fullBody.Cast()
+		return
+	}
+	spr.head.Cast()
+	spr.torso.Cast()
+}
+
+// MeleeOnce starts one melee animation
+// for all sprite parts.
+func (spr *AvatarSprite) MeleeOnce() {
+	if spr.weapon != nil {
+		spr.weapon.MeleeOnce()
+	}
+	if spr.fullBody != nil {
+		spr.fullBody.MeleeOnce()
+		return
+	}
+	spr.head.MeleeOnce()
+	spr.torso.MeleeOnce()
+}
+
+// ShootOnce starts one shoot animation
+// for all sprite parts.
+func (spr *AvatarSprite) ShootOnce() {
+	if spr.weapon != nil {
+		spr.weapon.ShootOnce()
+	}
+	if spr.fullBody != nil {
+		spr.fullBody.ShootOnce()
+		return
+	}
+	spr.head.ShootOnce()
+	spr.torso.ShootOnce()
+}
+
 // SetHead creates head animations from specified
 // avatar spritesheet.
 func (spr *AvatarSprite) SetHead(spritesheet pixel.Picture) {

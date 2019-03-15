@@ -81,7 +81,9 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates avatar.
 func (av *Avatar) Update(win *mtk.Window) {
-	if av.InMove() {
+	if av.Casting() {
+		av.sprite.Cast()
+	} else if av.InMove() {
 		av.sprite.Move()
 		pos := av.Position()
 		dest := av.DestPoint()
@@ -184,10 +186,11 @@ func (av *Avatar) unequip(gItem *ItemGraphic) {
 func (av *Avatar) updateGraphic() {
 	// Clear items.
 	for id, ig := range av.items {
+		found := false
 		for _, it := range av.Inventory().Items() {
-			if flameobject.Equals(it, ig) {
-				continue
-			}
+			found = flameobject.Equals(it, ig)
+		}
+		if !found {
 			delete(av.items, id)
 		}
 	}
@@ -203,19 +206,21 @@ func (av *Avatar) updateGraphic() {
 	}
 	// Clear effects.
 	for id, eg := range av.effects {
+		found := false
 		for _, eff := range av.Character.Effects() {
-			if flameobject.Equals(eg, eff) {
-				continue
-			}
+			found = flameobject.Equals(eg, eff)
+		}
+		if !found {
 			delete(av.effects, id)
 		}
 	}
 	// Clear skills.
 	for id, sg := range av.skills {
+		found := false
 		for _, skill := range av.Character.Skills() {
-			if flameobject.Equals(sg, skill) {
-				continue
-			}
+			found = flameobject.Equals(sg, skill)
+		}
+		if !found {
 			delete(av.skills, id)
 		}
 	}

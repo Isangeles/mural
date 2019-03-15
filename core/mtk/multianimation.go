@@ -56,7 +56,10 @@ func (ma *MultiAnimation) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update updates animation for current direction.
 func (ma *MultiAnimation) Update(win *Window) {
-	ma.drawAnim.Update(win)
+	ma.upAnim.Update(win)
+	ma.rightAnim.Update(win)
+	ma.downAnim.Update(win)
+	ma.leftAnim.Update(win)
 }
 
 // Up sets animation direction to up.
@@ -82,4 +85,27 @@ func (ma *MultiAnimation) Left() {
 // DrawArea returns current draw area.
 func (ma *MultiAnimation) DrawArea() pixel.Rect {
 	return ma.drawAnim.DrawArea()
+}
+
+// Finished checks whether current animation
+// is finished.
+func (ma *MultiAnimation) Finished() bool {
+	return ma.drawAnim.Finished()
+}
+
+// Loop toggles animation looping for each
+// direction.
+func (ma *MultiAnimation) Loop(loop bool) {
+	ma.upAnim.Loop(loop)
+	ma.rightAnim.Loop(loop)
+	ma.downAnim.Loop(loop)
+	ma.leftAnim.Loop(loop)
+}
+
+// Restart restarts all animations.
+func (ma *MultiAnimation) Restart() {
+	ma.upAnim.Restart()
+	ma.rightAnim.Restart()
+	ma.downAnim.Restart()
+	ma.leftAnim.Restart()
 }

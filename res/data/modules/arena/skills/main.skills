@@ -4,4 +4,9 @@
 			<effect id="hit1" />
 	       </effects>
 	</skill>
+	<skill id="fireball1" cast="3" range="far">
+	       <effects>
+			<effect id="hit2" />
+	       </effects>
+	</skill>
 </base>

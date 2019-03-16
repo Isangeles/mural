@@ -37,7 +37,6 @@ import (
 
 	flameconfig "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text"
-	"github.com/isangeles/flame/core/enginelog"
 )
 
 const (
@@ -57,7 +56,7 @@ var (
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	confValues, err := text.ReadConfigValue(CONF_FILE_NAME, "fullscreen",
+	confValues, err := text.ReadValue(CONF_FILE_NAME, "fullscreen",
 		"resolution", "map_fow", "main_font", "menu_music", "button_click_sound")
 	if err != nil {
 		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
@@ -121,7 +120,7 @@ func Lang() string {
 
 // Debug checks whether debug mode is enabled.
 func Debug() bool {
-	return enginelog.IsDebug()
+	return flameconfig.Debug()
 }
 
 // MapFOW checks whether map 'Fog Of War' effect

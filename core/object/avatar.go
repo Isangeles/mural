@@ -31,10 +31,12 @@ import (
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/object/skill"
 
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object/internal"
+	"github.com/isangeles/mural/log"
 )
 
 // Avatar struct for graphical representation of
@@ -49,6 +51,20 @@ type Avatar struct {
 	effects  map[string]*EffectGraphic
 	skills   map[string]*SkillGraphic
 }
+
+// Type for avatar animations
+// types.
+type AvatarAnimType int
+
+const (
+	AvatarIdle AvatarAnimType = iota
+	AvatarMove
+	AvatarCast
+	AvatarMelee
+	AvatarShoot
+	AvatarKneel
+	AvatarLie
+)
 
 // NewAvatar creates new avatar for specified game character
 // from specified avatar resources.
@@ -70,6 +86,9 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
+	// Events.
+	av.SetOnSkillActivatedFunc(av.onSkillActivated)
+	// Update graphic.
 	av.updateGraphic()
 	return av
 }
@@ -83,7 +102,7 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (av *Avatar) Update(win *mtk.Window) {
 	if av.Casting() {
 		av.sprite.Cast()
-	} else if av.InMove() {
+	} else if av.Moving() {
 		av.sprite.Move()
 		pos := av.Position()
 		dest := av.DestPoint()
@@ -278,5 +297,19 @@ func (av *Avatar) updateGraphic() {
 		}
 		skillGraphic := NewSkillGraphic(s, data)
 		av.skills[s.ID()+s.Serial()] = skillGraphic
+	}
+}
+
+// Triggered after one of character skills was activated.
+func (av *Avatar) onSkillActivated(s *skill.Skill) {
+	sg := av.skills[s.ID()+s.Serial()]
+	if sg == nil {
+		log.Err.Printf("avatar:%s_%s:on_skill_activated:fail_to_find_skill_graphic:%s_%s",
+			av.ID(), av.Serial(), s.ID(), s.Serial())
+		return
+	}
+	switch sg.ActivationAnim() {
+	case AvatarMelee:
+		av.sprite.MeleeOnce()
 	}
 }

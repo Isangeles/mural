@@ -25,7 +25,7 @@ package object
 
 import (
 	"github.com/faiface/pixel"
-	
+
 	"github.com/isangeles/flame/core/module/object/skill"
 
 	"github.com/isangeles/mural/core/data/res"
@@ -34,7 +34,8 @@ import (
 // Graphical wrapper for skills.
 type SkillGraphic struct {
 	*skill.Skill
-	data *res.SkillGraphicData
+	data           *res.SkillGraphicData
+	activationAnim AvatarAnimType
 }
 
 // NewSkillGraphic creates new graphical wrapper for specified skill.
@@ -42,10 +43,16 @@ func NewSkillGraphic(skill *skill.Skill, data *res.SkillGraphicData) *SkillGraph
 	sg := new(SkillGraphic)
 	sg.Skill = skill
 	sg.data = data
+	sg.activationAnim = AvatarAnimType(data.ActivationAnim)
 	return sg
 }
 
 // Icon returns skill icon sprite.
 func (sg *SkillGraphic) Icon() pixel.Picture {
 	return sg.data.IconPic
+}
+
+// ActivationAnim returns skill activation animation.
+func (sg *SkillGraphic) ActivationAnim() AvatarAnimType {
+	return sg.activationAnim
 }

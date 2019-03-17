@@ -38,9 +38,17 @@ type SkillsGraphicsBaseXML struct {
 
 // Struct for skill graphic XML node.
 type SkillGraphicXML struct {
-	XMLName xml.Name `xml:"skill"`
-	ID      string   `xml:"id,attr"`
-	Icon    string   `xml:"icon,attr"`
+	XMLName    xml.Name           `xml:"skill"`
+	ID         string             `xml:"id,attr"`
+	Icon       string             `xml:"icon,attr"`
+	Animations SkillAnimationsXML `xml:"animations"`
+}
+
+// Struct for skill animations XML node.
+type SkillAnimationsXML struct {
+	XMLName    xml.Name `xml:"animations"`
+	Activation string   `xml:"activation,value"`
+	Cast       string   `xml:"cast,value"`
 }
 
 // UnmarshalSkillsGraphicsBase parses specified XML data

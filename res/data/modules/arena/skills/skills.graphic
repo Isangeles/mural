@@ -1,4 +1,8 @@
 <base>
-	<skill id="melee1" icon="melee1.png" />
+	<skill id="melee1" icon="melee1.png">
+	       <animations>
+			<activation>melee</activation>
+	       </animations>
+	</skill>
 	<skill id="fireball1" icon="fireball1.png" />
 </base>

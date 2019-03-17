@@ -1,5 +1,5 @@
 /*
- * skillgraphic.go
+ * unmarshal.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,15 +21,31 @@
  *
  */
 
-package res
+package parsexml
 
 import (
-	"github.com/faiface/pixel"
+	"github.com/isangeles/mural/core/object"
 )
 
-// Struct for skill graphical data.
-type SkillGraphicData struct {
-	SkillID        string
-	IconPic        pixel.Picture
-	ActivationAnim int
+// UnmarshalAvatarAnim parses specified string
+// to avatar animation type.
+func UnmarshalAvatarAnim(s string) object.AvatarAnimType {
+	switch s {
+	case "idle":
+		return object.AvatarIdle
+	case "move":
+		return object.AvatarMove
+	case "cast":
+		return object.AvatarCast
+	case "melee":
+		return object.AvatarMelee
+	case "shoot":
+		return object.AvatarShoot
+	case "kneel":
+		return object.AvatarKneel
+	case "lie":
+		return object.AvatarLie
+	default:
+		return -1
+	}
 }

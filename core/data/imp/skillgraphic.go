@@ -96,9 +96,11 @@ func buildXMLSkillGraphicData(xmlSkill *parsexml.SkillGraphicXML) (*res.SkillGra
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_skill_icon:%v", err)
 	}
+	activationAnim := parsexml.UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
 	skillData := res.SkillGraphicData{
-		SkillID: xmlSkill.ID,
-		IconPic: skillIcon,
+		SkillID:        xmlSkill.ID,
+		IconPic:        skillIcon,
+		ActivationAnim: int(activationAnim),
 	}
 	return &skillData, nil
 }

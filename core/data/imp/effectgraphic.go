@@ -30,7 +30,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -47,19 +46,9 @@ func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_base_file:%v", err)
 	}
-	xmlEffects, err := parsexml.UnmarshalEffectsGraphicsBase(f)
+	effects, err := parsexml.UnmarshalEffectsGraphicsBase(f)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
-	}
-	effects := make([]*res.EffectGraphicData, 0)
-	for _, xmlEffect := range xmlEffects {
-		data, err := buildXMLEffectGraphicData(&xmlEffect)
-		if err != nil {
-			log.Err.Printf("data_imp_effect_graphic:%s:fail_to_build_data:%v",
-				xmlEffect.ID, err)
-			continue
-		}
-		effects = append(effects, data)
 	}
 	return effects, nil
 }
@@ -86,19 +75,4 @@ func ImportEffectsGraphicsDir(path string) ([]*res.EffectGraphicData, error) {
 		effects = append(effects, impEffects...)
 	}
 	return effects, nil
-}
-
-// buildXMLEffectGraphicData creates effect graphic data from specified
-// effect XML data.
-func buildXMLEffectGraphicData(xmlEffect *parsexml.EffectGraphicXML) (*res.EffectGraphicData,
-	error) {
-	effIcon, err := data.Icon(xmlEffect.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_effect_icon:%v", err)
-	}
-	effData := res.EffectGraphicData{
-		EffectID: xmlEffect.ID,
-		IconPic:  effIcon,
-	}
-	return &effData, nil
 }

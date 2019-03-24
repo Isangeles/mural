@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 )
 
-// Struct for all avatar data.
+// Struct for avatar data.
 type AvatarData struct {
 	CharID          string
 	CharSerial      string

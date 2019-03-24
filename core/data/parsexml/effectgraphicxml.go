@@ -28,6 +28,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for XML effect graphic base.
@@ -43,14 +47,38 @@ type EffectGraphicXML struct {
 	Icon    string   `xml:"icon,attr"`
 }
 
-// UnmarshalEffectsGraphicsBase parses specified XML data
-// to effects graphics XML nodes.
-func UnmarshalEffectsGraphicsBase(data io.Reader) ([]EffectGraphicXML, error) {
+// UnmarshalEffectsGraphicsBase retrieves all effect graphic
+// data from specified XML data.
+func UnmarshalEffectsGraphicsBase(data io.Reader) ([]*res.EffectGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
 	xmlBase := new(EffectsGraphicsBaseXML)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
 	}
-	return xmlBase.Nodes, nil
+	effects := make([]*res.EffectGraphicData, 0)
+	for _, xmlData := range xmlBase.Nodes {
+		egd, err := buildEffectGraphicData(&xmlData)
+		if err != nil {
+			log.Err.Printf("xml:unmarshal_effect_graphic:%s:fail_to_build_data:%v",
+				xmlData.ID, err)
+			continue
+		}
+		effects = append(effects, egd)
+	}
+	return effects, nil
+}
+
+// buildEffectGraphicData creates effect graphic data from specified
+// effect XML data.
+func buildEffectGraphicData(xmlEffect *EffectGraphicXML) (*res.EffectGraphicData, error) {
+	effIcon, err := data.Icon(xmlEffect.Icon)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_effect_icon:%v", err)
+	}
+	effData := res.EffectGraphicData{
+		EffectID: xmlEffect.ID,
+		IconPic:  effIcon,
+	}
+	return &effData, nil
 }

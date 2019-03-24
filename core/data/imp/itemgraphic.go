@@ -30,7 +30,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -47,19 +46,9 @@ func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_base_file:%s", err)
 	}
-	xmlItems, err := parsexml.UnmarshalItemsGraphicsBase(f)
+	items, err := parsexml.UnmarshalItemsGraphicBase(f)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
-	}
-	items := make([]*res.ItemGraphicData, 0)
-	for _, xmlItem := range xmlItems {
-		data, err := buildXMLItemGraphicData(&xmlItem)
-		if err != nil {
-			log.Err.Printf("data_imp_item_graphic:%s:fail_to_build_data:%v",
-				xmlItem.ID, err)
-			continue
-		}
-		items = append(items, data)
 	}
 	return items, nil
 }
@@ -88,25 +77,4 @@ func ImportItemsGraphicsDir(dirPath string) ([]*res.ItemGraphicData, error) {
 		}
 	}
 	return items, nil
-}
-
-// buildXMLItemGraphic creates item graphic object from 
-// specified item XML data.
-func buildXMLItemGraphicData(xmlItem *parsexml.ItemGraphicNodeXML) (*res.ItemGraphicData, error) {
-	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v",
-			err)
-	}
-	itIcon, err := data.Icon(xmlItem.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
-	}
-	itData := res.ItemGraphicData {
-		ItemID: xmlItem.ID,
-		IconPic: itIcon,
-		SpritesheetPic: itSprite,
-		MaxStack: xmlItem.MaxStack,
-	}
-	return &itData, nil
 }

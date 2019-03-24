@@ -30,7 +30,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -47,19 +46,9 @@ func ImportSkillsGraphics(path string) ([]*res.SkillGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_base_file:%v", err)
 	}
-	xmlSkills, err := parsexml.UnmarshalSkillsGraphicsBase(f)
+	skills, err := parsexml.UnmarshalSkillsGraphicsBase(f)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
-	}
-	skills := make([]*res.SkillGraphicData, 0)
-	for _, xmlSkill := range xmlSkills {
-		data, err := buildXMLSkillGraphicData(&xmlSkill)
-		if err != nil {
-			log.Err.Printf("data_imp_skill_graphic:%s:fail_to_build_data:%v",
-				xmlSkill.ID, err)
-			continue
-		}
-		skills = append(skills, data)
 	}
 	return skills, nil
 }
@@ -86,21 +75,4 @@ func ImportSkillsGraphicsDir(path string) ([]*res.SkillGraphicData, error) {
 		skills = append(skills, impSkills...)
 	}
 	return skills, nil
-}
-
-// buildXMLSkillGraphicData creates skill graphic data from specified
-// skill XML data.
-func buildXMLSkillGraphicData(xmlSkill *parsexml.SkillGraphicXML) (*res.SkillGraphicData,
-	error) {
-	skillIcon, err := data.Icon(xmlSkill.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_skill_icon:%v", err)
-	}
-	activationAnim := parsexml.UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
-	skillData := res.SkillGraphicData{
-		SkillID:        xmlSkill.ID,
-		IconPic:        skillIcon,
-		ActivationAnim: int(activationAnim),
-	}
-	return &skillData, nil
 }

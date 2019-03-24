@@ -29,6 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 	
+	flamexml "github.com/isangeles/flame/core/data/parsexml"
+	
 	"github.com/isangeles/mural/core/data/res"
 )
 
@@ -118,7 +120,7 @@ func MarshalGUISave(save *res.GUISave) (string, error) {
 }
 
 // Unmarshal parses XML data to GUI save struct.
-func UnmarshalGUISave(data io.Reader) (*GUISaveXML, error) {
+func UnmarshalGUISave(data io.Reader) (*res.GUISave, error) {
 	doc, _ := ioutil.ReadAll(data)
 	xmlGUISave := new(GUISaveXML)
 	err := xml.Unmarshal(doc, xmlGUISave)
@@ -126,5 +128,46 @@ func UnmarshalGUISave(data io.Reader) (*GUISaveXML, error) {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v",
 			err)
 	}
-	return xmlGUISave, nil
+	save, err := buildGUISave(xmlGUISave)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_build_data:%v", err)
+	}
+	return save, nil
+}
+
+// buildGUISave builds GUI save from specified XML data.
+func buildGUISave(xmlSave *GUISaveXML) (*res.GUISave, error) {
+	save := new(res.GUISave)
+	// Save name.
+	save.Name = xmlSave.Name
+	// Players.
+	for _, xmlPC := range xmlSave.PlayersNode.Players {
+		pcData := new(res.PlayerSave)
+		// Avatar.
+		avData, err := buildAvatarData(&xmlPC.Avatar)
+		if err != nil {
+			return nil, fmt.Errorf("player:%s_%s:fail_to_load_player_avatar:%v",
+				pcData.Avatar.CharID, pcData.Avatar.CharSerial, err)
+		}
+		pcData.Avatar = avData
+		// Inventory layout.
+		pcData.InvSlots = make(map[string]int)
+		for _, xmlSlot := range xmlPC.Inventory.Slots {
+			pcData.InvSlots[xmlSlot.Content] = xmlSlot.ID
+		}
+		save.PlayersData = append(save.PlayersData, pcData)
+		// Menu bar layout.
+		pcData.BarSlots = make(map[string]int)
+		for _, xmlSlot := range xmlPC.MenuBar.Slots {
+			pcData.BarSlots[xmlSlot.Content] = xmlSlot.ID
+		}
+	}
+	// Camera position.
+	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.CameraNode.Position)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
+			err)
+	}
+	save.CameraPosX, save.CameraPosY = camX, camY
+	return save, nil
 }

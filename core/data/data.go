@@ -53,6 +53,7 @@ var (
 	// Textures & fonts.
 	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
+	objectsTexs map[string]pixel.Picture
 	itemsTexs   map[string]pixel.Picture
 	icons       map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
@@ -69,18 +70,34 @@ func LoadGameData() error {
 	if err != nil {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
-	// Portrait textures.
-	portraitsTexs, err := loadPicturesFromArch(g_arch_path, "avatar/portrait")
+	// Portraits.
+	portraits = make(map[string]pixel.Picture, 0)
+	avsPortraits, err := loadPicturesFromArch(g_arch_path, "avatar/portrait")
 	if err != nil {
-		return fmt.Errorf("fail_to_load_portraits:%v", err)
+		return fmt.Errorf("fail_to_load_avatars_portraits:%v", err)
 	}
-	portraits = portraitsTexs
+	for n, p := range avsPortraits {
+		portraits[n] = p
+	}
+	obPortraits, err := loadPicturesFromArch(g_arch_path, "object/portrait")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_objects_portraits:%v", err)
+	}
+	for n, p := range obPortraits {
+		portraits[n] = p
+	}
 	// Avatars spritesheets.
 	avTexs, err := loadPicturesFromArch(g_arch_path, "avatar/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_avatars_spritesheets:%v", err)
 	}
 	avatarsTexs = avTexs
+	// Objects spritesheets.
+	obTexs, err := loadPicturesFromArch(g_arch_path, "object/spritesheet")
+	if err != nil {
+		return fmt.Errorf("fail_to_load_objects_spritesheets:%v", err)
+	}
+	objectsTexs = obTexs
 	// Items spritesheets.
 	itTexs, err := loadPicturesFromArch(g_arch_path, "item/spritesheet")
 	if err != nil {
@@ -165,6 +182,17 @@ func AvatarPortrait(fileName string) (pixel.Picture, error) {
 	return loadPictureFromDir(path)
 }
 
+// Portrait returns portrait with specified name.
+func Portrait(fileName string) (pixel.Picture, error) {
+	portrait := portraits[fileName]
+	if portrait != nil {
+		return portrait, nil
+	}
+	path := filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
+		fileName)
+	return loadPictureFromDir(path)
+}
+
 // AvatarSpritesheet returns picture with specified name
 // for avatar sprite.
 func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
@@ -190,6 +218,20 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_items_spritesheet_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("item/spritesheet/" + fileName)
+	return loadPictureFromArch(g_arch_path, path)
+}
+
+// ObjectSpritesheet returns picture with specified name
+// for object sprite.
+func ObjectSpritesheet(fileName string) (pixel.Picture, error) {
+	spritesheet := objectsTexs[fileName]
+	if spritesheet != nil {
+		return spritesheet, nil
+	}
+	// Fallback.
+	log.Dbg.Printf("data_objects_spritesheet_fallback_load:%s",
+		fileName)
+	path := filepath.FromSlash("object/spritesheet/" + fileName)
 	return loadPictureFromArch(g_arch_path, path)
 }
 

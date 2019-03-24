@@ -28,6 +28,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for skill graphics base XML node.
@@ -51,14 +55,40 @@ type SkillAnimationsXML struct {
 	Cast       string   `xml:"cast,value"`
 }
 
-// UnmarshalSkillsGraphicsBase parses specified XML data
-// to skills graphics XML nodes.
-func UnmarshalSkillsGraphicsBase(data io.Reader) ([]SkillGraphicXML, error) {
+// UnmarshalSkillsGraphicsBase retrieves all skills graphic data
+// for speicfied XML data.
+func UnmarshalSkillsGraphicsBase(data io.Reader) ([]*res.SkillGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
 	xmlBase := new(SkillsGraphicsBaseXML)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
 	}
-	return xmlBase.Nodes, nil
+	skills := make([]*res.SkillGraphicData, 0)
+	for _, xmlData := range xmlBase.Nodes {
+		sgd, err := buildSkillGraphicData(&xmlData)
+		if err != nil {
+			log.Err.Printf("xml:unmarshal_skill_graphic:%s:fail_to_build_data:%v",
+				xmlData.ID, err)
+			continue
+		}
+		skills = append(skills, sgd)
+	}
+	return skills, nil
+}
+
+// buildSkillGraphicData creates skill graphic data from specified
+// skill XML data.
+func buildSkillGraphicData(xmlSkill *SkillGraphicXML) (*res.SkillGraphicData, error) {
+	skillIcon, err := data.Icon(xmlSkill.Icon)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_skill_icon:%v", err)
+	}
+	activationAnim := UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
+	skillData := res.SkillGraphicData{
+		SkillID:        xmlSkill.ID,
+		IconPic:        skillIcon,
+		ActivationAnim: int(activationAnim),
+	}
+	return &skillData, nil
 }

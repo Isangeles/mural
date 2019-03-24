@@ -42,6 +42,22 @@ var (
 	AVATARS_FILE_EXT = ".avatars"
 )
 
+// ImportAvatarsData imports all avatars data for specified characters
+// from avatar file with specified path.
+func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("xml:%s:fail_to_open_avatars_file:%v",
+			path, err)
+	}
+	avatars, err := parsexml.UnmarshalAvatarsBase(f)
+	if err != nil {
+		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
+			path, err)
+	}
+	return avatars, nil
+}
+
 // ImportAvatarsDataDir imports all avatars data from avatars files
 // in directory with specified path.
 func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
@@ -64,37 +80,6 @@ func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
 		for _, av := range impAvs {
 			avsData = append(avsData, av)
 		}
-	}
-	return avsData, nil
-}
-
-// ImportAvatarsData imports all avatars data for specified characters
-// from avatar file with specified path.
-func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("xml:%s:fail_to_open_avatars_file:%v",
-			path, err)
-	}
-	avsXML, err := parsexml.UnmarshalAvatarsBase(f)
-	if err != nil {
-		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
-			path, err)
-	}
-	avsData := make([]*res.AvatarData, 0)
-	for _, avXML := range avsXML {
-		var avData *res.AvatarData
-		if avXML.Spritesheet.FullBody != "" {
-			avData, err = buildXMLStaticAvatarData(&avXML)
-		} else {
-			avData, err = buildXMLAvatarData(&avXML)
-		}
-		if err != nil {
-			log.Err.Printf("data_avatar_import:%s:parse_fail:%v",
-				avXML.ID, err)
-			continue
-		}
-		avsData = append(avsData, avData)
 	}
 	return avsData, nil
 }
@@ -185,32 +170,6 @@ func buildXMLAvatarData(avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
 		PortraitPic: portraitPic,
 		SSHeadPic: ssHeadPic,
 		SSTorsoPic: ssTorsoPic,
-	}
-	return &avData, nil
-}
-
-// buildXMLStaticAvatar build new static avatar for specified
-// character from specified XML data.
-func buildXMLStaticAvatarData(avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
-	ssFullBodyName := avXML.Spritesheet.FullBody
-	portraitName := avXML.Portrait
-	portraitPic, err := data.AvatarPortrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
-			err)
-	}
-	ssFullBodyPic, err := data.AvatarSpritesheet(ssFullBodyName)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
-			err)
-	}
-	avData := res.AvatarData{
-		CharID: avXML.ID,
-		CharSerial: avXML.Serial,
-		PortraitName: portraitName,
-		SSFullBodyName: ssFullBodyName,
-		PortraitPic: portraitPic,
-		SSFullBodyPic: ssFullBodyPic,
 	}
 	return &avData, nil
 }

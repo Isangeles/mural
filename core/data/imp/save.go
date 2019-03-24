@@ -29,9 +29,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-
-	flamecore "github.com/isangeles/flame/core"
-	flamexml "github.com/isangeles/flame/core/data/parsexml"
 	
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
@@ -44,8 +41,7 @@ var (
 
 // ImportGUISave imports GUI state from file with specified name
 // in directory with specified path.
-func ImportGUISave(game *flamecore.Game, dirPath, saveName string) (*res.GUISave,
-	error) {
+func ImportGUISave(dirPath, saveName string) (*res.GUISave, error) {
 	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
 		saveName = saveName + SAVEGUI_FILE_EXT
 	}
@@ -55,14 +51,9 @@ func ImportGUISave(game *flamecore.Game, dirPath, saveName string) (*res.GUISave
 		return nil, fmt.Errorf("fail_to_open_save_file:%v",
 			err)
 	}
-	xmlSave, err := parsexml.UnmarshalGUISave(f)
+	save, err := parsexml.UnmarshalGUISave(f)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_save_data:%v",
-			err)
-	}
-	save, err := buildXMLGUISave(game, xmlSave)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_build_save:%v",
 			err)
 	}
 	return save, nil
@@ -70,7 +61,7 @@ func ImportGUISave(game *flamecore.Game, dirPath, saveName string) (*res.GUISave
 
 // ImportsGUISavesDir imports all saved GUIs from save files in
 // directory with specified path.
-func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*res.GUISave, error) {
+func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
@@ -80,7 +71,7 @@ func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*res.GUISave, er
 		if !strings.HasSuffix(fInfo.Name(), SAVEGUI_FILE_EXT) {
 			continue
 		}
-		sav, err := ImportGUISave(game, dirPath, fInfo.Name())
+		sav, err := ImportGUISave(dirPath, fInfo.Name())
 		if err != nil {
 			log.Err.Printf("data_saves_import:fail_to_load_save_fail:%v",
 				err)
@@ -89,47 +80,4 @@ func ImportGUISavesDir(game *flamecore.Game, dirPath string) ([]*res.GUISave, er
 		saves = append(saves, sav)
 	}
 	return saves, nil
-}
-
-// buildGUISave builds GUI save from specified XML data.
-func buildXMLGUISave(game *flamecore.Game, xmlSave *parsexml.GUISaveXML) (*res.GUISave, error) {
-	save := new(res.GUISave)
-	// Save name.
-	save.Name = xmlSave.Name
-	// Players.
-	for _, xmlPC := range xmlSave.PlayersNode.Players {
-		for _, pc := range game.Players() {
-			if xmlPC.Avatar.Serial == pc.Serial() {
-				pcData := new(res.PlayerSave)
-				// Character.
-				pcData.Character = pc
-				// Avatar.
-				avData, err := buildXMLAvatarData(&xmlPC.Avatar)
-				if err != nil {
-					return nil, fmt.Errorf("player:%s:fail_to_load_player_avatar:%v",
-						pc.SerialID, err)
-				}
-				pcData.Avatar = avData
-				// Inventory layout.
-				pcData.InvSlots = make(map[string]int)
-				for _, xmlSlot := range xmlPC.Inventory.Slots {
-					pcData.InvSlots[xmlSlot.Content] = xmlSlot.ID
-				}
-				save.PlayersData = append(save.PlayersData, pcData)
-				// Menu bar layout.
-				pcData.BarSlots = make(map[string]int)
-				for _, xmlSlot := range xmlPC.MenuBar.Slots {
-					pcData.BarSlots[xmlSlot.Content] = xmlSlot.ID
-				}
-			}
-		}
-	}
-	// Camera position.
-	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.CameraNode.Position)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
-			err)
-	}
-	save.CameraPosX, save.CameraPosY = camX, camY
-	return save, nil
 }

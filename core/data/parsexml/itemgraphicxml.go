@@ -28,31 +28,65 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for XML items grpahics base.
-type ItemsGraphicsBaseXML struct {
-	XMLName xml.Name             `xml:"base"`
-	Items   []ItemGraphicNodeXML `xml:"item"`
+type ItemsGraphicBaseXML struct {
+	XMLName xml.Name         `xml:"base"`
+	Nodes   []ItemGraphicXML `xml:"item"`
 }
 
 // Struct for XML item graphic node.
-type ItemGraphicNodeXML struct {
-	XMLName      xml.Name `xml:"item"`
-	ID           string   `xml:"id,attr"`
-	Spritesheet  string   `xml:"spritesheet,attr"`
-	Icon         string   `xml:"icon,attr"`
-	MaxStack     int      `xml:"stack,attr"`
+type ItemGraphicXML struct {
+	XMLName     xml.Name `xml:"item"`
+	ID          string   `xml:"id,attr"`
+	Spritesheet string   `xml:"spritesheet,attr"`
+	Icon        string   `xml:"icon,attr"`
+	MaxStack    int      `xml:"stack,attr"`
 }
 
 // UnmarshalItemsGraphicsBase parses specified XML data
 // to item grphics XML nodes.
-func UnmarshalItemsGraphicsBase(data io.Reader) ([]ItemGraphicNodeXML, error) {
+func UnmarshalItemsGraphicBase(data io.Reader) ([]*res.ItemGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
-	itemsGraphicsXML := new(ItemsGraphicsBaseXML)
-	err := xml.Unmarshal(doc, itemsGraphicsXML)
+	xmlBase := new(ItemsGraphicBaseXML)
+	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
 	}
-	return itemsGraphicsXML.Items, nil
+	items := make([]*res.ItemGraphicData, 0)
+	for _, xmlData := range xmlBase.Nodes {
+		igd, err := buildItemGraphicData(&xmlData)
+		if err != nil {
+			log.Err.Printf("xml:unmarshal_item_graphic:%s:fail_to_build_data:%v",
+				xmlData.ID, err)
+			continue
+		}
+		items = append(items, igd)
+	}
+	return items, nil
+}
+
+// buildXMLItemGraphic creates item graphic object from
+// specified item XML data.
+func buildItemGraphicData(xmlItem *ItemGraphicXML) (*res.ItemGraphicData, error) {
+	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v", err)
+	}
+	itIcon, err := data.Icon(xmlItem.Icon)
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
+	}
+	itData := res.ItemGraphicData{
+		ItemID:         xmlItem.ID,
+		IconPic:        itIcon,
+		SpritesheetPic: itSprite,
+		MaxStack:       xmlItem.MaxStack,
+	}
+	return &itData, nil
 }

@@ -235,8 +235,7 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	game = flamecore.LoadGame(gameSav)
 	flame.SetGame(game)
 	// Import saved GUI state.
-	guiSav, err := imp.ImportGUISave(game, flameconf.ModuleSavegamesPath(),
-		gameSav.Name)
+	guiSav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), gameSav.Name)
 	if err != nil {
 		log.Err.Printf("fail_to_load_gui_save:%v", err)
 		return
@@ -244,8 +243,12 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	// Retrieve PCs with saved avatars from imported GUI state.
 	pcs := make([]*character.Character, 0)
 	for _, pcData := range guiSav.PlayersData {
-		res.AddAvatarData(pcData.Avatar)
-		pcs = append(pcs, pcData.Character)
+		for _, pc := range game.Players() {
+			if pc.Serial() == pcData.Avatar.CharSerial {
+				res.AddAvatarData(pcData.Avatar)
+				pcs = append(pcs, pc)
+			}
+		}
 	}
 	// Create HUD.
 	HUD, err := hud.NewHUD(game, pcs...)

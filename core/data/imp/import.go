@@ -34,6 +34,16 @@ import (
 // LoadModuleResources loads all data(like items, skill, etc.) from module
 // resources files.
 func LoadModuleResources(mod *module.Module) error {
+	// Objectsd graphics.
+	objectsData := make(map[string]*res.ObjectGraphicData)
+	obGraphics, err := ImportObjectsGraphicsDir(mod.Conf().ObjectsPath())
+	if err != nil {
+		return fmt.Errorf("fail_to_import_objects_graphics:%v", err)
+	}
+	for _, obGraphic := range obGraphics {
+		objectsData[obGraphic.ID] = obGraphic
+	}
+	res.SetObjectsData(objectsData)
 	// Items graphics.
 	itemsData := make(map[string]*res.ItemGraphicData)
 	itGraphics, err := ImportItemsGraphicsDir(mod.Conf().ItemsPath())

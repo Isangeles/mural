@@ -89,11 +89,7 @@ func buildObjectGraphicData(xmlObject *ObjectGraphicXML) (*res.ObjectGraphicData
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retireve_object_spritesheet:%v", err)
 	}
-	portrait, err := data.Portrait(xmlObject.Portrait.Picture)
-	if err != nil {
-		log.Err.Printf("xml:build_object_graphc_data:%s:fail_to_retrieve_object_portrait:%v",
-			xmlObject.ID, err)
-	}
+	portrait, _ := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
 	data := res.ObjectGraphicData{
 		ID:          xmlObject.ID,
 		PortraitPic: portrait,

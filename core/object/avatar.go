@@ -45,7 +45,6 @@ type Avatar struct {
 	*character.Character
 	data     *res.AvatarData
 	sprite   *internal.AvatarSprite
-	portrait *pixel.Sprite
 	items    map[string]*ItemGraphic
 	eqItems  map[string]*ItemGraphic
 	effects  map[string]*EffectGraphic
@@ -79,8 +78,6 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
-	// Portrait.
-	av.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
@@ -128,9 +125,10 @@ func (av *Avatar) DrawArea() pixel.Rect {
 	return av.sprite.DrawArea()
 }
 
-// Portrait returns avatar portrait.
-func (av *Avatar) Portrait() *pixel.Sprite {
-	return av.portrait
+// Portrait returns avatar portrait
+// picture.
+func (av *Avatar) Portrait() pixel.Picture {
+	return av.data.PortraitPic
 }
 
 // Position return current position of avatar.

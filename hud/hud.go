@@ -399,7 +399,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 		return
 	}
 	hud.camera.SetMap(areaMap)
-	// Objects.
+	// Avatars.
 	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*object.Avatar, 0)
 	for _, c := range area.Characters() {
@@ -416,13 +416,26 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 		}
 		avData := res.Avatar(c.ID())
 		if avData == nil {
-			log.Err.Printf("hud_area_change:avatar_data_not_found:%s", c.ID())
+			log.Err.Printf("hud:area_change:avatar_data_not_found:%s", c.ID())
 			continue
 		}
 		av := object.NewAvatar(c, avData)
 		avatars = append(avatars, av)
 	}
 	hud.camera.SetAvatars(avatars)
+	// Objects.
+	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_objects_info"))
+	objects := make([]*object.ObjectGraphic, 0)
+	for _, o := range area.Objects() {
+		ogData := res.Object(o.ID())
+		if ogData == nil {
+			log.Err.Printf("hud:area_change:object_data_not_found:%s", o.ID())
+			continue
+		}
+		og := object.NewObjectGraphic(o, ogData)
+		objects = append(objects, og)
+	}
+	hud.camera.SetObjects(objects)
 	hud.loading = false
 }
 

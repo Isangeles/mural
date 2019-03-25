@@ -1,5 +1,5 @@
 /*
- * target.go
+ * object.go
  *
  * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -27,15 +27,8 @@ import (
 	"github.com/faiface/pixel"
 )
 
-// Interface for all graphical
-// targets.
-type Target interface {
-	ID() string
-	Serial() string
-	Health() int
-	MaxHealth() int
-	Mana() int
-	MaxMana() int
-	Portrait() *pixel.Sprite
-	Effects() []*EffectGraphic
+// Interface for all objects with
+// XY position.
+type Positioner interface {
+	Position() pixel.Vec
 }

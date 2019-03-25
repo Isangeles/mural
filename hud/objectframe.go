@@ -39,13 +39,24 @@ import (
 // health/mana bars and effects icons.
 type ObjectFrame struct {
 	hud      *HUD
-	object   object.Target
+	object   Target
 	portrait *pixel.Sprite
 	bgSpr    *pixel.Sprite
 	bgDraw   *imdraw.IMDraw
 	drawArea pixel.Rect
 	hpBar    *mtk.ProgressBar
 	manaBar  *mtk.ProgressBar
+}
+
+// Interface for HUD frame object.
+type Target interface {
+	Name() string
+	Health() int
+	MaxHealth() int
+	Mana() int
+	MaxMana() int
+	Portrait() pixel.Picture
+	Effects() []*object.EffectGraphic
 }
 
 // newCharFrame creates new HUD character frame for
@@ -90,7 +101,7 @@ func (of *ObjectFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Portrait.
 	portraitPos := pixel.V(mtk.ConvSize(-70), mtk.ConvSize(0))
 	if of.object != nil {
-		of.object.Portrait().Draw(win, matrix.Scaled(of.DrawArea().Center(),
+		of.portrait.Draw(win, matrix.Scaled(of.DrawArea().Center(),
 			0.6).Moved(portraitPos))
 	}
 	// Background.
@@ -151,8 +162,11 @@ func (of *ObjectFrame) DrawArea() pixel.Rect {
 
 // SetObject sets specified object as object to
 // display in frame.
-func (of *ObjectFrame) SetObject(ob object.Target) {
+func (of *ObjectFrame) SetObject(ob Target) {
 	of.object = ob
+	if ob.Portrait() != nil {
+		of.portrait = pixel.NewSprite(ob.Portrait(), ob.Portrait().Bounds())
+	}
 }
 
 // drawIMBackground draw character frame with pixel

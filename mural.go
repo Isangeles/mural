@@ -96,10 +96,22 @@ func main() {
 	if flame.Mod() == nil {
 		panic(fmt.Sprintf("%s\n", lang.Text("gui", "no_mod_loaded_err")))
 	}
-	// Load UI data.
+	// Load UI graphic.
 	err := data.LoadUIData()
 	if err != nil {
 		panic(fmt.Errorf("data_load_fail:%v", err))
+	}
+	// Load game graphic.
+	data.LoadGameData()
+	// Load module data.
+	err = flamedata.LoadModuleData(flame.Mod())
+	if err != nil {
+		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
+	}
+	// Load module graphic data.
+	err = imp.LoadModuleResources(flame.Mod())
+	if err != nil {
+		panic(fmt.Errorf("main_menu:load_game:fail_to_load_resources:%v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -151,12 +163,6 @@ func run() {
 			err)
 	}
 	mtk.SetButtonClickSound(bClickSound1) // global button click sound
-	// Load game data.
-	err = flamedata.LoadModuleData(flame.Mod())
-	data.LoadGameData()
-	if err != nil {
-		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
-	}
 	// Create main menu.
 	mainMenu, err = mainmenu.New()
 	if err != nil {

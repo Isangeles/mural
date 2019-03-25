@@ -34,7 +34,6 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -119,13 +118,6 @@ func (lgm *LoadGameMenu) Opened() bool {
 // importSave imports saved game from file with
 // specified name.
 func (lgm *LoadGameMenu) importSave(savName string) {
-	// Load module resources.
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_mod_res_info"))
-	err := imp.LoadModuleResources(flame.Mod())
-	if err != nil {
-		log.Err.Printf("main_menu:load_game:fail_to_load_resources:%v", err)
-		return
-	}
 	// Import saved game from file.
 	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
 	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),

@@ -27,8 +27,8 @@ import (
 	"fmt"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
@@ -42,14 +42,15 @@ var (
 
 // Struct for HUD camera.
 type Camera struct {
-	hud        *HUD
-	position   pixel.Vec
-	size       pixel.Vec
-	locked     bool
+	hud      *HUD
+	position pixel.Vec
+	size     pixel.Vec
+	locked   bool
 	// Map & objects.
-	areaMap    *areamap.Map
-	fow        *imdraw.IMDraw
-	avatars    []*object.Avatar
+	areaMap *areamap.Map
+	fow     *imdraw.IMDraw
+	avatars []*object.Avatar
+	objects []*object.ObjectGraphic
 	// Debug mode.
 	cameraInfo *mtk.Text
 	cursorInfo *mtk.Text
@@ -74,14 +75,26 @@ func (c *Camera) Draw(win *mtk.Window) {
 		//c.areaMap.Draw(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
 		c.areaMap.DrawFull(win.Window, mtk.Matrix().Moved(c.Position()))
 	}
-	// Objects.
+	// Avatars.
 	for _, av := range c.avatars {
 		for _, pc := range c.hud.Players() {
 			if mtk.Range(pc.Position(),
-				av.Position()) <= pc.SightRange() {
-					avPos := c.ConvAreaPos(av.Position())
-					av.Draw(win, mtk.Matrix().Moved(avPos))
-				}
+				av.Position()) > pc.SightRange() {
+				continue
+			}
+			avPos := c.ConvAreaPos(av.Position())
+			av.Draw(win, mtk.Matrix().Moved(avPos))
+		}
+	}
+	// Objects.
+	for _, ob := range c.objects {
+		for _, pc := range c.hud.Players() {
+			if mtk.Range(pc.Position(),
+				ob.Position()) > pc.SightRange() {
+				continue
+			}
+			obPos := c.ConvAreaPos(ob.Position())
+			ob.Draw(win, mtk.Matrix().Moved(obPos))
 		}
 	}
 	// FOW effect.
@@ -106,36 +119,47 @@ func (c *Camera) Update(win *mtk.Window) {
 		mSize := c.areaMap.Size()
 		mTileSize := c.areaMap.TileSize()
 		offset := pixel.V(mTileSize.X*16, mTileSize.Y*16)
-		mapSizePlus := pixel.V(mSize.X + offset.X, mSize.Y + offset.Y)
+		mapSizePlus := pixel.V(mSize.X+offset.X, mSize.Y+offset.Y)
 		// Key events.
 		if c.position.Y < mapSizePlus.Y &&
 			(win.JustPressed(pixelgl.KeyW) ||
-			win.JustPressed(pixelgl.KeyUp)) {
+				win.JustPressed(pixelgl.KeyUp)) {
 			c.position.Y += mTileSize.Y
 		}
 		if c.position.X < mapSizePlus.X &&
 			(win.JustPressed(pixelgl.KeyD) ||
-			win.JustPressed(pixelgl.KeyRight)) {
+				win.JustPressed(pixelgl.KeyRight)) {
 			c.position.X += mTileSize.X
 		}
-		if c.position.Y > 0 - offset.Y &&
+		if c.position.Y > 0-offset.Y &&
 			(win.JustPressed(pixelgl.KeyS) ||
-			win.JustPressed(pixelgl.KeyDown)) {
+				win.JustPressed(pixelgl.KeyDown)) {
 			c.position.Y -= mTileSize.Y
 		}
-		if c.position.X > 0 - offset.X &&
+		if c.position.X > 0-offset.X &&
 			win.JustPressed(pixelgl.KeyA) ||
 			win.JustPressed(pixelgl.KeyLeft) {
 			c.position.X -= mTileSize.X
 		}
 	}
-	// Objects.
+	// Avatars.
 	for _, av := range c.avatars {
 		for _, pc := range c.hud.Players() {
 			if mtk.Range(pc.Position(),
-				av.Position()) <= pc.SightRange() {
-					av.Update(win)
-				}
+				av.Position()) > pc.SightRange() {
+				continue
+			}
+			av.Update(win)
+		}
+	}
+	// Objects.
+	for _, ob := range c.objects {
+		for _, pc := range c.hud.Players() {
+			if mtk.Range(pc.Position(),
+				ob.Position()) > pc.SightRange() {
+				continue
+			}
+			ob.Update(win)
 		}
 	}
 	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
@@ -154,6 +178,11 @@ func (c *Camera) SetAvatars(avs []*object.Avatar) {
 	c.avatars = avs
 }
 
+// SetObjects sets area objects to draw.
+func (c *Camera) SetObjects(obs []*object.ObjectGraphic) {
+	c.objects = obs
+}
+
 // SetPosition sets camera position.
 func (c *Camera) SetPosition(pos pixel.Vec) {
 	c.position = pos
@@ -161,8 +190,8 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 
 // CenterAt centers camera at specified position.
 func (c *Camera) CenterAt(pos pixel.Vec) {
-	c.SetPosition(pixel.V(pos.X - c.Size().X/2,
-		pos.Y - c.Size().Y/2))
+	c.SetPosition(pixel.V(pos.X-c.Size().X/2,
+		pos.Y-c.Size().Y/2))
 }
 
 // Map returns current map.
@@ -170,10 +199,22 @@ func (c *Camera) Map() *areamap.Map {
 	return c.areaMap
 }
 
-// Avatars returns all avatars from current
-// area.
+// Avatars returns all avatars from current area.
 func (c *Camera) Avatars() []*object.Avatar {
 	return c.avatars
+}
+
+// Objects returns all objects with XY positions
+// from current area.
+func (c *Camera) Objects() []object.Positioner {
+	objects := make([]object.Positioner, 0)
+	for _, av := range c.avatars {
+		objects = append(objects, av)
+	}
+	for _, ob := range c.objects {
+		objects = append(objects, ob)
+	}
+	return objects
 }
 
 // Position return camera position.
@@ -190,8 +231,8 @@ func (c *Camera) Size() pixel.Vec {
 func (c *Camera) Frame() pixel.Rect {
 	cpos := c.Position()
 	csize := c.Size()
-	return pixel.R(cpos.X, cpos.Y, cpos.X + csize.X,
-		cpos.Y + csize.Y)
+	return pixel.R(cpos.X, cpos.Y, cpos.X+csize.X,
+		cpos.Y+csize.Y)
 }
 
 // Lock toggles camera lock.
@@ -217,7 +258,7 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	posY := pos.Y
 	camX := c.Position().X
 	camY := c.Position().Y
-	return pixel.V(posX + camX, posY + camY)
+	return pixel.V(posX+camX, posY+camY)
 }
 
 // VisibleForPlayers checks whether specified position is
@@ -242,8 +283,8 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 			tileSizeX := mtk.ConvSize(c.areaMap.TileSize().X)
 			tileSizeY := mtk.ConvSize(c.areaMap.TileSize().Y)
 			tileDrawMin := c.ConvAreaPos(pos)
-			tileDrawMax := pixel.V(tileDrawMin.X + tileSizeX,
-				tileDrawMin.Y + tileSizeY)
+			tileDrawMax := pixel.V(tileDrawMin.X+tileSizeX,
+				tileDrawMin.Y+tileSizeY)
 			c.fow.Color = FOW_color
 			c.fow.Push(tileDrawMin)
 			c.fow.Push(tileDrawMax)

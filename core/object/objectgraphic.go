@@ -38,18 +38,66 @@ type ObjectGraphic struct {
 	*area.Object
 	data     *res.ObjectGraphicData
 	sprite   *mtk.Animation
-	portrait *pixel.Sprite
 	effects  map[string]*EffectGraphic
 }
 
 // NewObject creates new graphical wrapper for specified object.
-func NewObject(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraphic {
+func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraphic {
 	og := new(ObjectGraphic)
 	og.Object = ob
 	og.data = data
-	og.portrait = pixel.NewSprite(data.PortraitPic, data.PortraitPic.Bounds())
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
 	return og
+}
+
+// Draw draws object sprite.
+func (og *ObjectGraphic) Draw(t pixel.Target, matrix pixel.Matrix) {
+	og.sprite.Draw(t, matrix)
+}
+
+// Update updates object.
+func (og *ObjectGraphic) Update(win *mtk.Window) {
+	og.sprite.Update(win)
+}
+
+// DrawArea returns current draw area of
+// object sprite.
+func (og *ObjectGraphic) DrawArea() pixel.Rect {
+	return og.sprite.DrawArea()
+}
+
+// Portrait returns portrait picture.
+func (og *ObjectGraphic) Portrait() pixel.Picture {
+	return og.data.PortraitPic
+}
+
+// Position return object position in form of
+// pixel XY vector.
+func (og *ObjectGraphic) Position() pixel.Vec {
+	x, y := og.Object.Position()
+	return pixel.V(x, y)
+}
+
+// Effects returns all object effects in form of
+// graphical wrappers.
+func (og *ObjectGraphic) Effects() []*EffectGraphic {
+	effs := make([]*EffectGraphic, 0)
+	for _, e := range og.effects {
+		effs = append(effs, e)
+	}
+	return effs
+}
+
+// Mana returns 0, objects does not have mana.
+// Function to sadisfy HUD frame object interface.
+func (og *ObjectGraphic) Mana() int {
+	return 0
+}
+
+// MaxMana returns 0, objects does not have mana.
+// Function to sadisfy HUD frame object interface.
+func (og *ObjectGraphic) MaxMana() int {
+	return 0
 }
 
 // buildSpriteFrames creates animation frames from specified

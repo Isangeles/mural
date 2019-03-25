@@ -46,6 +46,7 @@ loadgame_menu_title:Load game;
 load_b_label:Load;
 load_map_info:Loading map...;
 load_avatars_info:Loading characters avatars...;
+load_objects_info:Loading area objects...;
 enter_game_info:Entering game...;
 hud_menu_title:Menu;
 hud_inv_title:Inventory;

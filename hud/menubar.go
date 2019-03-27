@@ -222,12 +222,14 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	if len(s.Values()) < 1 {
 		return
 	}
+	// Skill.
 	val := s.Values()[0]
 	skill, ok := val.(*object.SkillGraphic)
 	if ok {
 		mb.hud.ActivePlayer().UseSkill(skill.Skill)
 		return
 	}
+	// Item.
 	it, ok := val.(*object.ItemGraphic)
 	if ok {
 		eqit, ok := it.Item.(item.Equiper)

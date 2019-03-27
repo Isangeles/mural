@@ -318,12 +318,12 @@ func loadPaths() error {
 		return fmt.Errorf("no module loaded")
 	}
 	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		flame.Mod().Name()))
+		flame.Mod().Conf().ID))
 	a_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		flame.Mod().Name()))
+		flame.Mod().Conf().ID))
 	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
-		flame.Mod().Name()))
+		flame.Mod().Conf().ID))
 	a_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
-		flame.Mod().Name()))
+		flame.Mod().Conf().ID))
 	return nil
 }

@@ -53,7 +53,7 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m.mainmenu = mainmenu
 	// Title.
 	m.title = mtk.NewText(mtk.SIZE_BIG, mtk.ConvSize(900))
-	m.title.SetText(flame.Mod().Name())
+	m.title.SetText(flame.Mod().Conf().ID)
 	// Buttons.
 	m.newgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red, lang.Text("gui", "newgame_b_label"),

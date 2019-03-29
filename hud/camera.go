@@ -204,10 +204,10 @@ func (c *Camera) Avatars() []*object.Avatar {
 	return c.avatars
 }
 
-// Objects returns all objects with XY positions
-// from current area.
-func (c *Camera) Objects() []object.Positioner {
-	objects := make([]object.Positioner, 0)
+// DrawObjects returns all objects with 'drawable'
+// objects from current area.
+func (c *Camera) DrawObjects() []object.Drawer {
+	objects := make([]object.Drawer, 0)
 	for _, av := range c.avatars {
 		objects = append(objects, av)
 	}
@@ -215,6 +215,11 @@ func (c *Camera) Objects() []object.Positioner {
 		objects = append(objects, ob)
 	}
 	return objects
+}
+
+// AreaObjects returns all objects in current area.
+func (c *Camera) AreaObjects() []*object.ObjectGraphic {
+	return c.objects
 }
 
 // Position return camera position.

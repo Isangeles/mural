@@ -81,7 +81,6 @@ type HUD struct {
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
-	destPos    pixel.Vec
 	userFocus  *mtk.Focus
 	msgs       *mtk.MessagesQueue
 	layouts    map[string]*Layout
@@ -240,34 +239,21 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		destPos := hud.camera.ConvCameraPos(win.MousePosition())
-		// Move active PC.
-		if !hud.game.Paused() && hud.camera.Map().Passable(destPos) &&
-			!hud.containsPos(win.MousePosition()) {
-			hud.destPos = destPos
-			hud.ActivePlayer().SetDestPoint(hud.destPos.X, hud.destPos.Y)
-		}
+		hud.onMouseLeftPressed(win.MousePosition())
 	}
 	if win.JustPressed(pixelgl.MouseButtonRight) {
-		pos := win.MousePosition()
-		// Set target.
-		for i := 0; i < len(hud.Camera().Avatars()) && !hud.containsPos(pos); i++ {
-			av := hud.Camera().Avatars()[i]
-			if av.DrawArea().Contains(pos) {
-				log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
-				hud.ActivePlayer().SetTarget(av.Character)
-				break
-			}
-			if i >= len(hud.camera.Avatars())-1 {
-				hud.ActivePlayer().SetTarget(nil)
-			}
-		}
+		hud.onMouseRightPressed(win.MousePosition())
 	}
 	// PC target.
 	if hud.ActivePlayer().Targets()[0] != nil {
 		for _, av := range hud.camera.Avatars() {
 			if flameobject.Equals(hud.ActivePlayer().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
+			}
+		}
+		for _, ob := range hud.camera.AreaObjects() {
+			if flameobject.Equals(hud.ActivePlayer().Targets()[0], ob.Object) {
+				hud.tarFrame.SetObject(ob)
 			}
 		}
 	}
@@ -512,4 +498,38 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		return true
 	}
 	return false
+}
+
+// Triggered after right mouse button was pressed.
+func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
+	// Set target.
+	if hud.containsPos(pos) {
+		return
+	}
+	for _, av := range hud.Camera().Avatars() {
+		if !av.DrawArea().Contains(pos) {
+			continue
+		}
+		log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
+		hud.ActivePlayer().SetTarget(av.Character)
+		return
+	}
+	for _, ob := range hud.Camera().AreaObjects() {
+		if !ob.DrawArea().Contains(pos) {
+			continue
+		}
+		log.Dbg.Printf("hud:set_target:%s", ob.ID()+"_"+ob.Serial())
+		hud.ActivePlayer().SetTarget(ob.Object)
+		return
+	}
+	hud.ActivePlayer().SetTarget(nil)
+}
+
+// Triggered after left mouse button was pressed.
+func (hud *HUD) onMouseLeftPressed(pos pixel.Vec) {
+	// Move active PC.
+	destPos := hud.camera.ConvCameraPos(pos)
+	if !hud.game.Paused() && hud.camera.Map().Passable(destPos) && !hud.containsPos(pos) {
+		hud.ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
+	}
 }

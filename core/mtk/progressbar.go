@@ -85,8 +85,9 @@ func (pb *ProgressBar) Update(win *Window) {
 
 // SetBackground sets specified sprite as bar
 // background, also removes current background color.
-func (pb *ProgressBar) SetBackground(s *pixel.Sprite) {
-	pb.bgSpr = s
+func (pb *ProgressBar) SetBackground(p pixel.Picture) {
+	bounds := pixel.R(0, p.Bounds().Min.Y, 0, p.Bounds().Max.Y)
+	pb.bgSpr = pixel.NewSprite(p, bounds)
 	pb.maxBounds = pb.bgSpr.Picture().Bounds()
 	pb.SetColor(nil)
 }

@@ -79,8 +79,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	if err != nil {
 		log.Err.Printf("hud_char_frame:hp_bar_texture_not_found:%v", err)
 	} else {
-		hpBarSpr := pixel.NewSprite(hpBarPic, hpBarPic.Bounds())
-		of.hpBar.SetBackground(hpBarSpr)
+		of.hpBar.SetBackground(hpBarPic)
 	}
 	of.manaBar = mtk.NewProgressBar(mtk.SIZE_MINI, accent_color)
 	of.manaBar.SetLabel(lang.Text("gui", "char_frame_mana_bar_label"))
@@ -88,8 +87,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	if err != nil {
 		log.Err.Printf("hud_char_frame:mana_bar_texture_not_found:%v", err)
 	} else {
-		manaBarSpr := pixel.NewSprite(manaBarPic, manaBarPic.Bounds())
-		of.manaBar.SetBackground(manaBarSpr)
+		of.manaBar.SetBackground(manaBarPic)
 	}
 	return of
 }
@@ -100,7 +98,7 @@ func (of *ObjectFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	of.drawArea = mtk.MatrixToDrawArea(matrix, of.Bounds())
 	// Portrait.
 	portraitPos := pixel.V(mtk.ConvSize(-70), mtk.ConvSize(0))
-	if of.object != nil {
+	if of.object != nil && of.portrait != nil {
 		of.portrait.Draw(win, matrix.Scaled(of.DrawArea().Center(),
 			0.6).Moved(portraitPos))
 	}
@@ -166,6 +164,8 @@ func (of *ObjectFrame) SetObject(ob Target) {
 	of.object = ob
 	if ob.Portrait() != nil {
 		of.portrait = pixel.NewSprite(ob.Portrait(), ob.Portrait().Bounds())
+	} else {
+		of.portrait = nil
 	}
 }
 

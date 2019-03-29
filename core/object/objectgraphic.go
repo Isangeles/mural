@@ -88,14 +88,8 @@ func (og *ObjectGraphic) Effects() []*EffectGraphic {
 	return effs
 }
 
-// Mana returns 0, objects does not have mana.
-// Function to sadisfy HUD frame object interface.
-func (og *ObjectGraphic) Mana() int {
-	return 0
-}
-
-// MaxMana returns 0, objects does not have mana.
-// Function to sadisfy HUD frame object interface.
+// MaxMana returns 0, object do not have mana.
+// Function to satify frame target interface. 
 func (og *ObjectGraphic) MaxMana() int {
 	return 0
 }

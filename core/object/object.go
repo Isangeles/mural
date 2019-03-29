@@ -28,7 +28,8 @@ import (
 )
 
 // Interface for all objects with
-// XY position.
-type Positioner interface {
+// drawable objects.
+type Drawer interface {
 	Position() pixel.Vec
+	DrawArea() pixel.Rect
 }

@@ -237,6 +237,7 @@ func EnterGame(g *flamecore.Game, pc *object.Avatar) {
 // EnterSavedGame creates game and HUD from saved data.
 func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
+	defer mainMenu.CloseLoadingScreen()
 	// Load game.
 	game = flamecore.LoadGame(gameSav)
 	flame.SetGame(game)
@@ -250,7 +251,7 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	pcs := make([]*character.Character, 0)
 	for _, pcData := range guiSav.PlayersData {
 		for _, pc := range game.Players() {
-			if pc.Serial() == pcData.Avatar.CharSerial {
+			if pc.Serial() == pcData.Avatar.Serial {
 				res.AddAvatarData(pcData.Avatar)
 				pcs = append(pcs, pc)
 			}
@@ -266,7 +267,6 @@ func EnterSavedGame(gameSav *flamesave.SaveGame) {
 	HUD.LoadGUISave(guiSav)
 	// Show HUD.
 	setHUD(HUD)
-	mainMenu.CloseLoadingScreen()
 	inGame = true
 }
 

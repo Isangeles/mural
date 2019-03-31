@@ -94,36 +94,19 @@ type HUD struct {
 func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
-	if len(pcs) < 1 {
-		return nil, fmt.Errorf("no player characters")
-	}
-	// Players.
-	for _, pc := range pcs {
-		avData := res.Avatar(pc.ID())
-		if avData == nil {
-			return nil, fmt.Errorf("player:%sfail find avatar data",
-				pc.ID())
-		}
-		av := object.NewAvatar(pc, avData)
-		hud.pcs = append(hud.pcs, av)
-	}
-	hud.SetActivePlayer(hud.pcs[0])
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
-	hud.camera.CenterAt(hud.ActivePlayer().Position())
 	// Bar.
 	hud.bar = newMenuBar(hud)
 	// Menu.
 	hud.menu = newMenu(hud)
 	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
-	hud.pcFrame.SetObject(hud.ActivePlayer())
 	hud.tarFrame = newObjectFrame(hud)
 	// Cast bar.
 	hud.castBar = newCastBar(hud)
-	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	// Chat window.
 	hud.chat = newChat(hud)
 	// Inventory window.
@@ -135,7 +118,20 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
 	// Layout.
 	hud.layouts = make(map[string]*Layout)
-	hud.layouts[hud.ActivePlayer().SerialID()] = NewLayout()
+	// Players.
+	if len(pcs) < 1 {
+		return nil, fmt.Errorf("no player characters")
+	}
+	for _, pc := range pcs {
+		avData := res.Avatar(pc.ID())
+		if avData == nil {
+			return nil, fmt.Errorf("player:%sfail find avatar data",
+				pc.ID())
+		}
+		av := object.NewAvatar(pc, avData)
+		hud.pcs = append(hud.pcs, av)
+	}
+	hud.SetActivePlayer(hud.pcs[0])
 	// Start game loading.
 	go hud.LoadGame(g)
 	return hud, nil
@@ -285,13 +281,19 @@ func (hud *HUD) Players() []*object.Avatar {
 
 // ActivePlayers retruns currently active PC.
 func (hud *HUD) ActivePlayer() *object.Avatar {
+	if hud.activePC == nil && len(hud.pcs) > 0 {
+		hud.activePC = hud.pcs[0]
+	}
 	return hud.activePC
 }
 
-// AreaAvatars returns all avatars from current
-// HUD area.
-func (hud *HUD) AreaAvatars() []*object.Avatar {
-	return hud.camera.Avatars()
+// AddAvatar adds specified character to HUD
+// player characters list.
+func (hud *HUD) AddPlayer(av *object.Avatar) { 
+	hud.pcs = append(hud.pcs, av)
+	if hud.ActivePlayer() == nil {
+		hud.SetActivePlayer(av)
+	}
 }
 
 // Exit sends exit request to HUD.
@@ -335,15 +337,21 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 // player.
 func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
 	hud.activePC = pc
+	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	hud.pcFrame.SetObject(hud.ActivePlayer())
+	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	hud.Reload()
 }
 
 // Reload reloads HUD layouts for
 // active player.
 func (hud *HUD) Reload() {
+	if hud.ActivePlayer() == nil {
+		return
+	}
 	layout := hud.layouts[hud.ActivePlayer().SerialID()]
 	if layout == nil {
-		return
+		layout = NewLayout()
 	}
 	hud.bar.setLayout(layout)
 }
@@ -357,6 +365,7 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
 		return
 	}
+	hud.loading = false
 	chapter := hud.game.Module().Chapter()
 	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if err != nil {
@@ -476,7 +485,7 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		layout := NewLayout()
 		layout.SetInvSlots(pcData.InvSlots)
 		layout.SetBarSlots(pcData.BarSlots)
-		layoutKey := pcData.Avatar.CharID + "_" + pcData.Avatar.CharSerial
+		layoutKey := pcData.Avatar.ID + "_" + pcData.Avatar.Serial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.

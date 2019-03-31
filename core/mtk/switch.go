@@ -50,12 +50,12 @@ func (s SwitchValue) Label() string {
 }
 
 // Sprite returns graphical representation of switch value.
-func (s SwitchValue) Sprite() (*pixel.Sprite, error) {
-	spr, ok := s.View.(*pixel.Sprite)
+func (s SwitchValue) Picture() (pixel.Picture, error) {
+	pic, ok := s.View.(pixel.Picture)
 	if !ok {
-		return nil, fmt.Errorf("fail_to_retrieve_view_sprite")
+		return nil, fmt.Errorf("fail_to_retrieve_view_picture")
 	}
-	return spr, nil
+	return pic, nil
 }
 
 // IntValue returns value as integer, or error if not
@@ -236,8 +236,7 @@ func (s *Switch) SetIntValues(min, max int) {
 func (s *Switch) SetPictureValues(pics map[string]pixel.Picture) {
 	var picValues []SwitchValue
 	for name, pic := range pics {
-		spr := pixel.NewSprite(pic, pic.Bounds())
-		val := SwitchValue{spr, name}
+		val := SwitchValue{pic, name}
 		picValues = append(picValues, val)
 	}
 	s.SetValues(picValues)
@@ -340,10 +339,10 @@ func (s *Switch) updateValueView() {
 	if s.values == nil || len(s.values) < 1 {
 		return
 	}
-	if spr, err := s.Value().Sprite(); err != nil {
+	if pic, err := s.Value().Picture(); err != nil {
 		s.valueText.SetText(s.Value().Label())
 	} else {
-		s.valueSprite = spr
+		s.valueSprite = pixel.NewSprite(pic, pic.Bounds())
 	}
 }
 

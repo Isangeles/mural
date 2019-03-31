@@ -100,6 +100,6 @@ func AddAvatarData(data ...*AvatarData) {
 		avatarsData = make(map[string]*AvatarData)
 	}
 	for _, d := range data {
-		avatarsData[d.CharID] = d
+		avatarsData[d.ID] = d
 	}
 }

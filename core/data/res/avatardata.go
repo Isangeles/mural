@@ -29,14 +29,14 @@ import (
 
 // Struct for avatar data.
 type AvatarData struct {
-	CharID          string
-	CharSerial      string
-	PortraitName    string
-	SSHeadName      string
-	SSTorsoName     string
-	SSFullBodyName  string
-	PortraitPic     pixel.Picture
-	SSHeadPic       pixel.Picture
-	SSTorsoPic      pixel.Picture
-	SSFullBodyPic   pixel.Picture
+	ID             string
+	Serial         string
+	PortraitName   string
+	SSHeadName     string
+	SSTorsoName    string
+	SSFullBodyName string
+	PortraitPic    pixel.Picture
+	SSHeadPic      pixel.Picture
+	SSTorsoPic     pixel.Picture
+	SSFullBodyPic  pixel.Picture
 }

@@ -147,7 +147,7 @@ func buildGUISave(xmlSave *GUISaveXML) (*res.GUISave, error) {
 		avData, err := buildAvatarData(&xmlPC.Avatar)
 		if err != nil {
 			return nil, fmt.Errorf("player:%s_%s:fail_to_load_player_avatar:%v",
-				pcData.Avatar.CharID, pcData.Avatar.CharSerial, err)
+				pcData.Avatar.ID, pcData.Avatar.Serial, err)
 		}
 		pcData.Avatar = avData
 		// Inventory layout.

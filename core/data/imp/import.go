@@ -87,7 +87,7 @@ func LoadChapterResources(chapter *module.Chapter) error {
 		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
 	}
 	for _, av := range avs {
-		avatarsData[av.CharID] = av
+		avatarsData[av.ID] = av
 	}
 	res.SetAvatarsData(avatarsData)
 	return nil

@@ -39,7 +39,7 @@ import (
 // XML base.
 type AvatarsBaseXML struct {
 	XMLName xml.Name    `xml:"base"`
-	Avatars   []AvatarXML `xml:"avatar"`
+	Avatars []AvatarXML `xml:"avatar"`
 }
 
 // Struct for representation of XML avatar
@@ -120,8 +120,8 @@ func buildAvatarXML(av *object.Avatar) AvatarXML {
 // avatar.
 func buildAvatarDataXML(avData *res.AvatarData) AvatarXML {
 	xmlAvatar := AvatarXML{}
-	xmlAvatar.ID = avData.CharID
-	xmlAvatar.Serial = avData.CharSerial
+	xmlAvatar.ID = avData.ID
+	xmlAvatar.Serial = avData.Serial
 	xmlAvatar.Portrait = avData.PortraitName
 	xmlAvatar.Spritesheet.Head = avData.SSHeadName
 	xmlAvatar.Spritesheet.Torso = avData.SSTorsoName
@@ -147,8 +147,8 @@ func buildAvatarData(avXML *AvatarXML) (*res.AvatarData, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", err)
 	}
 	avData := res.AvatarData{
-		CharID:       avXML.ID,
-		CharSerial:   avXML.Serial,
+		ID:           avXML.ID,
+		Serial:       avXML.Serial,
 		PortraitName: portraitName,
 		SSHeadName:   ssHeadName,
 		SSTorsoName:  ssTorsoName,
@@ -175,12 +175,12 @@ func buildStaticAvatarData(avXML *AvatarXML) (*res.AvatarData, error) {
 			err)
 	}
 	avData := res.AvatarData{
-		CharID: avXML.ID,
-		CharSerial: avXML.Serial,
-		PortraitName: portraitName,
+		ID:             avXML.ID,
+		Serial:         avXML.Serial,
+		PortraitName:   portraitName,
 		SSFullBodyName: ssFullBodyName,
-		PortraitPic: portraitPic,
-		SSFullBodyPic: ssFullBodyPic,
+		PortraitPic:    portraitPic,
+		SSFullBodyPic:  ssFullBodyPic,
 	}
 	return &avData, nil
 }

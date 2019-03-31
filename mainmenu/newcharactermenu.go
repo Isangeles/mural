@@ -41,12 +41,12 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 var (
-	new_char_base_id = "player_"
+	new_char_id_form = `player_%s` // player_[name]
 )
 
 // NewCharacterMenu struct represents new game character
@@ -312,20 +312,20 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
 	// ID.
-	id := new_char_base_id + strings.ToLower(name)
+	id := fmt.Sprintf(new_char_id_form, strings.ToLower(name))
 	charData := flameres.CharacterBasicData{
-		ID: id,
-		Name: name,
-		Level: 1,
-		Sex: int(gender),
-		Race: int(race),
+		ID:        id,
+		Name:      name,
+		Level:     1,
+		Sex:       int(gender),
+		Race:      int(race),
 		Alignment: int(alignment),
-		Attitude: int(character.Friendly),
-		Str: str,
-		Con: con,
-		Dex: dex,
-		Int: inte,
-		Wis: wis,
+		Attitude:  int(character.Friendly),
+		Str:       str,
+		Con:       con,
+		Dex:       dex,
+		Int:       inte,
+		Wis:       wis,
 	}
 	char := character.New(charData)
 	return char, nil
@@ -369,14 +369,14 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	avData := res.AvatarData{
-		CharID: char.ID(),
-		CharSerial: char.Serial(),
+		ID:           char.ID(),
+		Serial:       char.Serial(),
 		PortraitName: portraitName,
-		SSHeadName: ssHeadName,
-		SSTorsoName: ssTorsoName,
-		PortraitPic: portraitPic,
-		SSHeadPic: ssHeadPic,
-		SSTorsoPic: ssTorsoPic,
+		SSHeadName:   ssHeadName,
+		SSTorsoName:  ssTorsoName,
+		PortraitPic:  portraitPic,
+		SSHeadPic:    ssHeadPic,
+		SSTorsoPic:   ssTorsoPic,
 	}
 	av := object.NewAvatar(char, &avData)
 	ncm.mainmenu.AddPlayableChar(av)

@@ -61,7 +61,7 @@ type MainMenu struct {
 	loadscreen     *LoadingScreen
 	userFocus      *mtk.Focus
 	msgs           *mtk.MessagesQueue
-	PlayableChars  []*object.Avatar
+	playableChars  []*object.Avatar
 	onGameCreated  func(g *flamecore.Game, player *object.Avatar)
 	onSaveImported func(gameSav *flamesave.SaveGame)
 	loading        bool
@@ -267,19 +267,15 @@ func (mm *MainMenu) Console() *Console {
 	return mm.console
 }
 
+// PlayableChars returns all playable characters.
+func (mm *MainMenu) PlayableChars() []*object.Avatar {
+	return mm.playableChars
+}
+
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c *object.Avatar) {
-	mm.PlayableChars = append(mm.PlayableChars, c)
-}
-
-// Triggered after new game was created(by new game creation menu).
-func (mm *MainMenu) OnNewGameCreated(g *flamecore.Game,
-	player *object.Avatar) {
-	if mm.onGameCreated == nil {
-		return
-	}
-	mm.onGameCreated(g, player)
+	mm.playableChars = append(mm.playableChars, c)
 }
 
 // ImportPlayableChars import all characters from specified
@@ -295,12 +291,13 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	}
 	for _, avData := range avsData {
 		for _, char := range chars {
-			if avData.CharID != char.ID() {
+			if avData.ID != char.ID() {
 				continue
 			}
 			av := object.NewAvatar(char, avData)
-			mm.PlayableChars = append(mm.PlayableChars, av)
+			mm.playableChars = append(mm.playableChars, av)
 		}
 	}
+	mm.newgamemenu.SetCharacters(mm.playableChars)
 	return nil
 }

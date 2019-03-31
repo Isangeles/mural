@@ -101,7 +101,7 @@ func (m *Menu) Draw(win *mtk.Window) {
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
-	if len(m.mainmenu.PlayableChars) < 1 {
+	if len(m.mainmenu.playableChars) < 1 {
 		m.newgameB.Active(false)
 	} else {
 		m.newgameB.Active(true)

@@ -173,6 +173,8 @@ func (av *Avatar) Skills() (skills []*SkillGraphic) {
 
 // Data returns avatar graphical data.
 func (av *Avatar) Data() *res.AvatarData {
+	av.data.ID = av.ID()
+	av.data.Serial = av.Serial()
 	return av.data
 }
 

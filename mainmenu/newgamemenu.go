@@ -74,7 +74,6 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color, lang.Text("gui", "back_b_label"), "")
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
-	ngm.updateCharSwitchValues()
 	return ngm, nil
 }
 
@@ -112,7 +111,6 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 // Show toggles menu visibility.
 func (ngm *NewGameMenu) Show(show bool) {
 	ngm.opened = show
-	ngm.updateCharSwitchValues()
 	ngm.updateCharInfo()
 }
 
@@ -121,13 +119,14 @@ func (ngm *NewGameMenu) Opened() bool {
 	return ngm.opened
 }
 
-// updateCharSwitchValues updates character switch values.
-func (ngm *NewGameMenu) updateCharSwitchValues() {
-	charSwitchValues := make([]mtk.SwitchValue, len(ngm.mainmenu.PlayableChars))
-	for i, c := range ngm.mainmenu.PlayableChars {
-		charSwitchValues[i] = mtk.SwitchValue{c.Portrait(), c}
+// SetCharacters sets specified avatars as playable characters
+// fo new game start.
+func (ngm *NewGameMenu) SetCharacters(chars []*object.Avatar) {
+	values := make([]mtk.SwitchValue, len(chars))
+	for i, c := range chars {
+		values[i] = mtk.SwitchValue{c.Portrait(), c}
 	}
-	ngm.charSwitch.SetValues(charSwitchValues)
+	ngm.charSwitch.SetValues(values)
 }
 
 // updateCharInfo updates textbox with character informations.
@@ -194,7 +193,11 @@ func (ngm *NewGameMenu) startGame() {
 		return
 	}
 	ngm.mainmenu.CloseLoadingScreen()
-	ngm.mainmenu.OnNewGameCreated(g, c)
+	// Pass new game.
+	if ngm.mainmenu.onGameCreated == nil {
+		return
+	}
+	ngm.mainmenu.onGameCreated(g, c)
 }
 
 // Triggered after start button clicked.

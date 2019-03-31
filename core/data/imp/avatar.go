@@ -25,10 +25,10 @@ package imp
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-	"io/ioutil"
 
 	"github.com/isangeles/flame/core/module/object/character"
 
@@ -111,28 +111,28 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 			err)
 	}
 	avData := res.AvatarData{
-		CharID: char.ID(),
-		CharSerial: char.Serial(),
+		ID:           char.ID(),
+		Serial:       char.Serial(),
 		PortraitName: portraitName,
-		SSHeadName: ssHeadName,
-		SSTorsoName: ssTorsoName,
-		PortraitPic: portraitPic,
-		SSHeadPic: ssHeadPic,
-		SSTorsoPic: ssTorsoPic,
+		SSHeadName:   ssHeadName,
+		SSTorsoName:  ssTorsoName,
+		PortraitPic:  portraitPic,
+		SSHeadPic:    ssHeadPic,
+		SSTorsoPic:   ssTorsoPic,
 	}
-	return &avData, nil	
+	return &avData, nil
 }
 
 // defaultAvatarSpritesheet returns default spritesheet
 // for specified character.
 func defaultAvatarTorsoSpritesheet() string {
-	return  "m-cloth-1222211-80x90.png"
+	return "m-cloth-1222211-80x90.png"
 }
 
 // defaultAvatarHeadSpritesheet retruns default spritesheet
 // for specified character.
 func defaultAvatarHeadSpritesheet() string {
-	return  "m-head-black-1222211-80x90.png"
+	return "m-head-black-1222211-80x90.png"
 }
 
 // buildXMLAvatar builds avatar from specified XML data.
@@ -153,23 +153,23 @@ func buildXMLAvatarData(avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", 
+		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
 			avXML.ID, err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", 
+		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v",
 			avXML.ID, err)
 	}
 	avData := res.AvatarData{
-		CharID: avXML.ID,
-		CharSerial: avXML.Serial,
+		ID:           avXML.ID,
+		Serial:       avXML.Serial,
 		PortraitName: portraitName,
-		SSHeadName: ssHeadName,
-		SSTorsoName: ssTorsoName,
-		PortraitPic: portraitPic,
-		SSHeadPic: ssHeadPic,
-		SSTorsoPic: ssTorsoPic,
+		SSHeadName:   ssHeadName,
+		SSTorsoName:  ssTorsoName,
+		PortraitPic:  portraitPic,
+		SSHeadPic:    ssHeadPic,
+		SSTorsoPic:   ssTorsoPic,
 	}
 	return &avData, nil
 }

@@ -153,7 +153,7 @@ func showGUIOption(cmd burn.Command) (int, string) {
 			return 7, fmt.Sprintf("%s:no gui main menu set", GUI_MAN)
 		}
 		out := ""
-		for _, c := range gui_mmenu.PlayableChars {
+		for _, c := range gui_mmenu.PlayableChars() {
 			out = out + fmt.Sprintf("%s[%s]", c.Name(), c.SerialID()) +
 				","
 		}
@@ -180,7 +180,7 @@ func exportGUIOption(cmd burn.Command) (int, string) {
 		if gui_hud == nil {
 			return 7, fmt.Sprintf("%s:no HUD set", GUI_MAN)
 		}
-		for _, av := range gui_hud.AreaAvatars() {
+		for _, av := range gui_hud.Camera().Avatars() {
 			if av.SerialID() == cmd.TargetArgs()[1] {
 				err := exp.ExportAvatar(av,
 					gui_hud.Game().Module().Conf().CharactersPath())

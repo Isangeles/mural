@@ -42,7 +42,6 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
@@ -50,7 +49,6 @@ import (
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
@@ -220,51 +218,46 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *flamecore.Game, pc *object.Avatar) {
+func EnterGame(g *flamecore.Game) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "enter_game_info"))
+	defer mainMenu.CloseLoadingScreen()
 	game = g
-	res.AddAvatarData(pc.Data())
-	HUD, err := hud.NewHUD(game, pc.Character)
+	HUD, err := hud.NewHUD(game)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return
 	}
 	setHUD(HUD)
-	mainMenu.CloseLoadingScreen()
 	inGame = true
 }
 
 // EnterSavedGame creates game and HUD from saved data.
-func EnterSavedGame(gameSav *flamesave.SaveGame) {
+func EnterSavedGame(save *flamesave.SaveGame) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Load game.
-	game = flamecore.LoadGame(gameSav)
+	game = flamecore.LoadGame(save)
 	flame.SetGame(game)
 	// Import saved GUI state.
-	guiSav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), gameSav.Name)
-	if err != nil {
-		log.Err.Printf("fail_to_load_gui_save:%v", err)
-		return
-	}
-	// Retrieve PCs with saved avatars from imported GUI state.
-	pcs := make([]*character.Character, 0)
-	for _, pcData := range guiSav.PlayersData {
-		for _, pc := range game.Players() {
-			if pc.Serial() == pcData.Avatar.Serial {
-				res.AddAvatarData(pcData.Avatar)
-				pcs = append(pcs, pc)
-			}
+	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
+	if err == nil {
+		// Add avatars from saved GUI to global avatars data resources.
+		for _, pcd := range guisav.PlayersData {
+			res.AddAvatarData(pcd.Avatar)
 		}
+	} else {
+		log.Err.Printf("fail_to_load_gui_save:%v", err)
 	}
 	// Create HUD.
-	HUD, err := hud.NewHUD(game, pcs...)
+	HUD, err := hud.NewHUD(game)
 	if err != nil {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
+		msg := lang.Text("gui", "load_game_err")
+		mainMenu.ShowMessage(msg)
 		return
 	}
 	// Load HUD state.
-	HUD.LoadGUISave(guiSav)
+	HUD.LoadGUISave(guisav)
 	// Show HUD.
 	setHUD(HUD)
 	inGame = true

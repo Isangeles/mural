@@ -25,8 +25,8 @@
 package mtk
 
 import (
-	"time"
 	"image/color"
+	"time"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -34,10 +34,10 @@ import (
 	"github.com/golang/freetype/truetype"
 
 	"github.com/faiface/beep"
-	
+
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/text"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/text"
 )
 
 const (
@@ -67,7 +67,7 @@ var (
 type Shape int
 
 // Type for sizes of UI elements, like buttons, switches, etc.
-// Sizes: small(0), normal(1), big(2).
+// Sizes: mini(0), small(1), medium(2), big(3), huge(4).
 type Size int
 
 // Interface for all 'focusable' UI elements, like buttons,

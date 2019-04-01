@@ -68,7 +68,6 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 		lang.Text("gui", "accept_b_label"), "")
 	acceptB.SetOnClickFunc(mw.onAcceptButtonClicked)
 	mw.acceptButton = acceptB
-
 	return mw
 }
 
@@ -80,7 +79,6 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow) {
 	mw.cancelButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
 		lang.Text("gui", "cancel_b_label"), "")
 	mw.cancelButton.SetOnClickFunc(mw.onCancelButtonClicked)
-	
 	return mw
 }
 

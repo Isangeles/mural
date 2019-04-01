@@ -168,8 +168,7 @@ func (s *Settings) updateValues() {
 // about required game restart if settings was changed.
 func (s *Settings) close() {
 	if s.Changed() {
-		msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_reset_msg"))
+		msg := lang.Text("gui", "settings_reset_msg")
 		s.mainmenu.ShowMessage(msg)
 		s.Apply()
 	}
@@ -184,7 +183,7 @@ func (s *Settings) closeWithDialog() {
 			lang.Text("gui", "settings_save_msg"))
 		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
-		s.mainmenu.ShowMessage(dlg)
+		s.mainmenu.ShowMessageWindow(dlg)
 	} else {
 		s.close()
 	}	

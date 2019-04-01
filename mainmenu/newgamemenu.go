@@ -30,11 +30,12 @@ import (
 
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/flame/core/module/object/character"
+
 	"github.com/isangeles/mural/core/data/exp"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -149,7 +150,7 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 	ngm.charInfo.Clear()
 	ngm.charInfo.Add(fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
 		lang.Text("ui", c.Gender().ID()), lang.Text("ui", c.Race().ID()),
-	        lang.Text("ui", c.Alignment().ID()), c.Attributes().String()))
+		lang.Text("ui", c.Alignment().ID()), c.Attributes().String()))
 	return nil
 }
 
@@ -177,27 +178,31 @@ func (ngm *NewGameMenu) exportChar() error {
 // startGame starts new game.
 func (ngm *NewGameMenu) startGame() {
 	ngm.mainmenu.OpenLoadingScreen(lang.Text("gui", "newgame_start_info"))
+	defer ngm.mainmenu.CloseLoadingScreen()
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
 		log.Err.Printf("main_menu:new_game:no char switch value")
 		return
 	}
+	// Character from avatar switch.
 	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
 		log.Err.Printf("main_menu:new_game:fail to retrieve avatar from switch")
 		return
 	}
+	// Add avatar data to resources base.
+	res.AddAvatarData(c.Data())
+	// Create game.
 	g, err := flame.StartGame([]*character.Character{c.Character})
 	if err != nil {
 		log.Err.Printf("main_menu:new_game:fail_to_start_game:%v", err)
 		return
 	}
-	ngm.mainmenu.CloseLoadingScreen()
 	// Pass new game.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(g, c)
+	ngm.mainmenu.onGameCreated(g)
 }
 
 // Triggered after start button clicked.
@@ -218,14 +223,13 @@ func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 		log.Err.Printf("main_menu:new_game:fail_to_export_character:%v", err)
 		return
 	}
-	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL, lang.Text("gui",
-		"newgame_export_msg"))
+	msg := lang.Text("gui", "newgame_export_msg")
 	ngm.mainmenu.ShowMessage(msg)
 }
 
 // Triggered after character switch change.
 func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
-		old, new *mtk.SwitchValue) {
+	old, new *mtk.SwitchValue) {
 	err := ngm.updateCharInfo()
 	if err != nil {
 		log.Err.Printf("main_menu:new_game:fail_to_update_char_info:%v\n", err)

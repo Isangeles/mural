@@ -39,7 +39,6 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	flameobject "github.com/isangeles/flame/core/module/object"
-	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/mural/config"
@@ -91,7 +90,7 @@ type HUD struct {
 
 // NewHUD creates new HUD instance. HUD loads all game
 // data and setup specified PC area as current HUD area.
-func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
+func NewHUD(g *flamecore.Game) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
 	// Loading screen.
@@ -119,10 +118,10 @@ func NewHUD(g *flamecore.Game, pcs ...*character.Character) (*HUD, error) {
 	// Layout.
 	hud.layouts = make(map[string]*Layout)
 	// Players.
-	if len(pcs) < 1 {
+	if len(g.Players()) < 1 {
 		return nil, fmt.Errorf("no player characters")
 	}
-	for _, pc := range pcs {
+	for _, pc := range g.Players() {
 		avData := res.Avatar(pc.ID())
 		if avData == nil {
 			return nil, fmt.Errorf("player:%sfail find avatar data",
@@ -289,7 +288,7 @@ func (hud *HUD) ActivePlayer() *object.Avatar {
 
 // AddAvatar adds specified character to HUD
 // player characters list.
-func (hud *HUD) AddPlayer(av *object.Avatar) { 
+func (hud *HUD) AddPlayer(av *object.Avatar) {
 	hud.pcs = append(hud.pcs, av)
 	if hud.ActivePlayer() == nil {
 		hud.SetActivePlayer(av)
@@ -333,6 +332,19 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 	hud.msgs.Append(msg)
 }
 
+// OpenLoadingScreen opens loading screen with
+// specified loading information.
+func (hud *HUD) OpenLoadingScreen(info string) {
+	hud.loading = true
+	// TODO: sometimes SetLoadInfo causes panic on text draw.
+	hud.loadScreen.SetLoadInfo(info)
+}
+
+// Close loading screen closes loading screen.
+func (hud *HUD) CloseLoadingScreen() {
+	hud.loading = false
+}
+
 // SetActivePlayer sets specified avatar as active
 // player.
 func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
@@ -358,14 +370,13 @@ func (hud *HUD) Reload() {
 
 // LoadNewGame load all game data.
 func (hud *HUD) LoadGame(game *flamecore.Game) {
-	hud.loading = true
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_game_data_info"))
+	hud.OpenLoadingScreen(lang.Text("gui", "load_game_data_info"))
+	defer hud.CloseLoadingScreen()
 	err := imp.LoadChapterResources(flame.Mod().Chapter())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
 		return
 	}
-	hud.loading = false
 	chapter := hud.game.Module().Chapter()
 	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if err != nil {
@@ -377,10 +388,9 @@ func (hud *HUD) LoadGame(game *flamecore.Game) {
 
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *scenario.Area) {
-	hud.loading = true
 	// Map.
-	// TODO: sometimes SetLoadInfo causes panic on load text draw.
-	//hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_map_info"))
+	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
+	defer hud.CloseLoadingScreen()
 	chapter := hud.game.Module().Chapter()
 	mapsPath := filepath.FromSlash(chapter.Conf().AreasPath() + "/maps")
 	tmxMap, err := data.Map(mapsPath, area.ID())
@@ -395,7 +405,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	}
 	hud.camera.SetMap(areaMap)
 	// Avatars.
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_avatars_info"))
+	hud.OpenLoadingScreen(lang.Text("gui", "load_avatars_info"))
 	avatars := make([]*object.Avatar, 0)
 	for _, c := range area.Characters() {
 		var pcAvatar *object.Avatar
@@ -419,7 +429,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	}
 	hud.camera.SetAvatars(avatars)
 	// Objects.
-	hud.loadScreen.SetLoadInfo(lang.Text("gui", "load_objects_info"))
+	hud.OpenLoadingScreen(lang.Text("gui", "load_objects_info"))
 	objects := make([]*object.ObjectGraphic, 0)
 	for _, o := range area.Objects() {
 		ogData := res.Object(o.ID())
@@ -431,7 +441,6 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 		objects = append(objects, og)
 	}
 	hud.camera.SetObjects(objects)
-	hud.loading = false
 }
 
 // Save saves GUI and game state to

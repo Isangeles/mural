@@ -62,7 +62,7 @@ type MainMenu struct {
 	userFocus      *mtk.Focus
 	msgs           *mtk.MessagesQueue
 	playableChars  []*object.Avatar
-	onGameCreated  func(g *flamecore.Game, player *object.Avatar)
+	onGameCreated  func(g *flamecore.Game)
 	onSaveImported func(gameSav *flamesave.SaveGame)
 	loading        bool
 	exiting        bool
@@ -193,8 +193,7 @@ func (mm *MainMenu) Exit() {
 
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
-func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game,
-	player *object.Avatar)) {
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game)) {
 	mm.onGameCreated = f
 }
 
@@ -255,11 +254,19 @@ func (mm *MainMenu) HideMenus() {
 	mm.settings.Show(false)
 }
 
-// ShowMessage adds specified message to messages queue
+// ShowMessageWindow adds specified message to messages queue
 // and turns message visible(if not visible already).
-func (mm *MainMenu) ShowMessage(m *mtk.MessageWindow) {
+func (mm *MainMenu) ShowMessageWindow(m *mtk.MessageWindow) {
 	m.Show(true)
 	mm.msgs.Append(m)
+}
+
+// ShowMessage creates new message window with specified message
+// and adds it to messages queue.
+func (mm *MainMenu) ShowMessage(msg string) {
+	mw := mtk.NewMessageWindow(mtk.SIZE_BIG, msg)
+	mw.Show(true)
+	mm.msgs.Append(mw)
 }
 
 // Console returns main menu console.

@@ -380,8 +380,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	av := object.NewAvatar(char, &avData)
 	ncm.mainmenu.AddPlayableChar(av)
-	msg := mtk.NewMessageWindow(mtk.SIZE_SMALL,
-		lang.Text("gui", "newchar_create_msg"))
+	msg := lang.Text("gui", "newchar_create_msg")
 	ncm.mainmenu.ShowMessage(msg)
 	ncm.mainmenu.OpenMenu()
 }

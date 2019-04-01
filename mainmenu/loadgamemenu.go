@@ -84,8 +84,8 @@ func (lgm *LoadGameMenu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y - lgm.title.Bounds().Size().Y)
 	lgm.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Saves list.
-	lgm.savesList.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		lgm.title.DrawArea(), lgm.savesList.Bounds(), 10)))
+	savesListPos := win.Bounds().Center()
+	lgm.savesList.Draw(win.Window, mtk.Matrix().Moved(savesListPos))
 	// Buttons.
 	backButtonPos := mtk.DrawPosBL(win.Bounds(), lgm.backButton.Frame())
 	loadButtonPos := mtk.DrawPosBR(win.Bounds(), lgm.loadButton.Frame())
@@ -120,13 +120,13 @@ func (lgm *LoadGameMenu) Opened() bool {
 func (lgm *LoadGameMenu) importSave(savName string) {
 	// Import saved game from file.
 	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
+	defer lgm.mainmenu.CloseLoadingScreen()
 	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
 		savName)
 	if err != nil {
 		log.Err.Printf("main_menu:load_game:fail_to_load_saved_game:%v", err)
 		return
 	}
-	lgm.mainmenu.CloseLoadingScreen()
 	// Pass imported save.
 	if lgm.mainmenu.onSaveImported == nil {
 		return

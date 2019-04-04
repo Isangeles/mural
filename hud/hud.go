@@ -368,7 +368,7 @@ func (hud *HUD) Reload() {
 	hud.bar.setLayout(layout)
 }
 
-// LoadNewGame load all game data.
+// LoadGame load all game data.
 func (hud *HUD) LoadGame(game *flamecore.Game) {
 	hud.OpenLoadingScreen(lang.Text("gui", "load_game_data_info"))
 	defer hud.CloseLoadingScreen()

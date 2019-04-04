@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flamedata "github.com/isangeles/flame/core/data"
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
@@ -245,8 +246,8 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rng.Intn(flame.Mod().NewcharAttrsMax()-
-		flame.Mod().NewcharAttrsMin()) + flame.Mod().NewcharAttrsMin()
+	ncm.attrPointsMax = ncm.rng.Intn(flame.Mod().Conf().NewcharAttrsMax-
+		flame.Mod().Conf().NewcharAttrsMin) + flame.Mod().Conf().NewcharAttrsMin
 	ncm.attrPoints = ncm.attrPointsMax
 	ncm.updatePoints()
 }
@@ -328,6 +329,40 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		Wis:       wis,
 	}
 	char := character.New(charData)
+	// Character skills & items from mod config.
+	for _, sid := range flame.Mod().Conf().CharSkills {
+		s, err := flamedata.Skill(flame.Mod(), sid)
+		if err != nil {
+			log.Err.Printf("newchar_menu:fail_to_retireve_conf_char_skill:%v", err)
+			continue
+		}
+		char.AddSkill(s)
+	}
+	for _, iid := range flame.Mod().Conf().CharItems {
+		i, err := flamedata.Item(flame.Mod(), iid)
+		if err != nil {
+			log.Err.Printf("newchar_menu:fail_to_retireve_conf_char_item:%v", err)
+			continue
+		}
+		char.Inventory().AddItem(i)
+	}
+	// Player skills & items from mod config.
+	for _, sid := range flame.Mod().Conf().PlayerSkills {
+		s, err := flamedata.Skill(flame.Mod(), sid)
+		if err != nil {
+			log.Err.Printf("newchar_menu:fail_to_retrieve_new_player_skill:%v", err)
+			continue
+		}
+		char.AddSkill(s)
+	}
+	for _, iid := range flame.Mod().Conf().PlayerItems {
+		i, err := flamedata.Item(flame.Mod(), iid)
+		if err != nil {
+			log.Err.Printf("newchar_menu:fail_to_retireve_new_player_items:%v", err)
+			continue
+		}
+		char.Inventory().AddItem(i)
+	}
 	return char, nil
 }
 

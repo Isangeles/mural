@@ -177,8 +177,8 @@ func AvatarPortrait(fileName string) (pixel.Picture, error) {
 	if portrait != nil {
 		return portrait, nil
 	}
-	path := filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
-		fileName)
+	path := filepath.FromSlash(flame.Mod().Conf().Path +
+		"/gui/portraits/" + fileName)
 	return loadPictureFromDir(path)
 }
 
@@ -188,8 +188,8 @@ func Portrait(fileName string) (pixel.Picture, error) {
 	if portrait != nil {
 		return portrait, nil
 	}
-	path := filepath.FromSlash(flame.Mod().FullPath() + "/gui/portraits/" +
-		fileName)
+	path := filepath.FromSlash(flame.Mod().Conf().Path +
+		"/gui/portraits/" + fileName)
 	return loadPictureFromDir(path)
 }
 
@@ -251,7 +251,7 @@ func Icon(fileName string) (pixel.Picture, error) {
 // PlayablePortraits returns map with names of portraits as keys
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {
-	path := flame.Mod().FullPath() + "/gui/portraits"
+	path := flame.Mod().Conf().Path + "/gui/portraits"
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, err

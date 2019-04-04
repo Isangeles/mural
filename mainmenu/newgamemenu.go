@@ -113,6 +113,7 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 func (ngm *NewGameMenu) Show(show bool) {
 	ngm.opened = show
 	ngm.updateCharInfo()
+	ngm.updateCharSwitch()
 }
 
 // Opened checks whether menu is open.
@@ -152,6 +153,12 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 		lang.Text("ui", c.Gender().ID()), lang.Text("ui", c.Race().ID()),
 		lang.Text("ui", c.Alignment().ID()), c.Attributes().String()))
 	return nil
+}
+
+// updateCharSwitch updates menu character switch.
+func (ngm *NewGameMenu) updateCharSwitch() {
+	ngm.charSwitch.SetValues(make([]mtk.SwitchValue, 0))
+	ngm.SetCharacters(ngm.mainmenu.PlayableChars())
 }
 
 // exportChar exports currently selected character.

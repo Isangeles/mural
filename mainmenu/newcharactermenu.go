@@ -38,7 +38,8 @@ import (
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
-
+	
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
@@ -246,8 +247,8 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rng.Intn(flame.Mod().Conf().NewcharAttrsMax-
-		flame.Mod().Conf().NewcharAttrsMin) + flame.Mod().Conf().NewcharAttrsMin
+	ncm.attrPointsMax = ncm.rng.Intn(config.NewCharAttrsMax()-
+		config.NewCharAttrsMin()) + config.NewCharAttrsMin()
 	ncm.attrPoints = ncm.attrPointsMax
 	ncm.updatePoints()
 }

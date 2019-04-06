@@ -71,14 +71,14 @@ func (p *AudioPlayer) PlayMusic() error {
 	}
 	m := p.playlist[p.playID]
 	p.ctrlMusic.Streamer = m
-	p.mixer.Play(p.ctrlMusic)
+	p.mixer.Add(p.ctrlMusic)
 	return nil
 }
 
 // Play starts playing specified audio stream.
 func (p *AudioPlayer) Play(ab *beep.Buffer) error {
 	s := ab.Streamer(0, ab.Len())
-	p.mixer.Play(s)
+	p.mixer.Add(s)
 	return nil
 }
 

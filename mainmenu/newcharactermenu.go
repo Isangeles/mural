@@ -348,7 +348,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		char.Inventory().AddItem(i)
 	}
 	// Player skills & items from mod config.
-	for _, sid := range flame.Mod().Conf().PlayerSkills {
+	for _, sid := range config.NewCharSkills() {
 		s, err := flamedata.Skill(flame.Mod(), sid)
 		if err != nil {
 			log.Err.Printf("newchar_menu:fail_to_retrieve_new_player_skill:%v", err)
@@ -356,7 +356,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		}
 		char.AddSkill(s)
 	}
-	for _, iid := range flame.Mod().Conf().PlayerItems {
+	for _, iid := range config.NewCharItems() {
 		i, err := flamedata.Item(flame.Mod(), iid)
 		if err != nil {
 			log.Err.Printf("newchar_menu:fail_to_retireve_new_player_items:%v", err)

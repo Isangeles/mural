@@ -54,12 +54,15 @@ var (
 	bClickSound  = ""
 	attrsPtsMin  = 1
 	attrsPtsMax  = 10
+	charSkills   []string
+	charItems    []string
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
 	confValues, err := text.ReadValue(CONF_FILE_NAME, "fullscreen",
-		"resolution", "map-fow", "main-font", "menu-music", "button-click-sound")
+		"resolution", "map-fow", "main-font", "menu-music", "button-click-sound",
+	        "newchar-skills", "newchar-items")
 	if err != nil {
 		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
 	}
@@ -82,9 +85,12 @@ func LoadConfig() error {
 	// Audio effects.
 	menuMusic = confValues["menu-music"]
 	bClickSound = confValues["button-click-sound"]
-	// New chars attributes points.
+	// New char attributes points.
 	attrsPtsMin = confInts["newchar-attrs-min"]
 	attrsPtsMax = confInts["newchar-attrs-max"]
+	// New char items & skills.
+	charSkills = strings.Split(confValues["newchar-skills"], ";")
+	charItems = strings.Split(confValues["newchar-items"], ";")
 
 	log.Dbg.Print("config file loaded")
 	return nil
@@ -109,6 +115,16 @@ func SaveConfig() error {
 	w.WriteString(fmt.Sprintf("button-click-sound:%s;\n", bClickSound))
 	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d;\n", attrsPtsMin))
 	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d;\n", attrsPtsMax))
+	w.WriteString("newchar-skills:")
+	for _, sid := range charSkills {
+		w.WriteString(sid + ";")
+	}
+	w.WriteString("\n")
+	w.WriteString("newchar-items:")
+	for _, iid := range charItems {
+		w.WriteString(iid + ";")
+	}
+	w.WriteString("\n")
 	w.Flush()
 	log.Dbg.Print("config file saved")
 	return nil
@@ -170,6 +186,30 @@ func NewCharAttrsMin() int {
 // new character.
 func NewCharAttrsMax() int {
 	return attrsPtsMax
+}
+
+// NewCharSkills returns IDs of skills
+// for new character.
+func NewCharSkills() (ids []string) {
+	for _, id := range charSkills {
+		if len(id) < 1 {
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return
+}
+
+// NewCharItems returns IDs of items
+// for new character.
+func NewCharItems() (ids []string) {
+	for _, id := range charItems {
+		if len(id) < 1 {
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return
 }
 
 // SetFullscreen toggles fullscreen mode.

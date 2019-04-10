@@ -77,6 +77,7 @@ type HUD struct {
 	chat       *Chat
 	inv        *InventoryMenu
 	skills     *SkillMenu
+	loot       *LootWindow
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -88,8 +89,8 @@ type HUD struct {
 	loaderr    error
 }
 
-// NewHUD creates new HUD instance. HUD loads all game
-// data and setup specified PC area as current HUD area.
+// NewHUD creates new HUD instance for specified
+// game.
 func NewHUD(g *flamecore.Game) (*HUD, error) {
 	hud := new(HUD)
 	hud.game = g
@@ -97,21 +98,18 @@ func NewHUD(g *flamecore.Game) (*HUD, error) {
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
 	hud.camera = newCamera(hud, config.Resolution())
-	// Bar.
-	hud.bar = newMenuBar(hud)
-	// Menu.
-	hud.menu = newMenu(hud)
 	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
 	hud.tarFrame = newObjectFrame(hud)
 	// Cast bar.
 	hud.castBar = newCastBar(hud)
-	// Chat window.
+	// Windows & menus.
+	hud.bar = newMenuBar(hud)
+	hud.menu = newMenu(hud)
 	hud.chat = newChat(hud)
-	// Inventory window.
 	hud.inv = newInventoryMenu(hud)
-	// Skills window.
 	hud.skills = newSkillMenu(hud)
+	hud.loot = newLootWindow(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -151,6 +149,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	menuPos := win.Bounds().Center()
 	invPos := win.Bounds().Center()
 	skillsPos := win.Bounds().Center()
+	lootPos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
@@ -167,6 +166,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.skills.Opened() {
 		hud.skills.Draw(win, mtk.Matrix().Moved(skillsPos))
+	}
+	if hud.loot.Opened() {
+		hud.loot.Draw(win, mtk.Matrix().Moved(lootPos))
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -268,6 +270,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.skills.Opened() {
 		hud.skills.Update(win)
+	}
+	if hud.loot.Opened() {
+		hud.loot.Update(win)
 	}
 	hud.msgs.Update(win)
 }
@@ -512,7 +517,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		hud.pcFrame.DrawArea().Contains(pos) ||
 		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
 		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) ||
-		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos)) {
+		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos) ||
+	        (hud.loot.Opened() && hud.loot.DrawArea().Contains(pos))) {
 		return true
 	}
 	return false

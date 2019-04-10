@@ -50,6 +50,7 @@ load_objects_info:Loading area objects...;
 enter_game_info:Entering game...;
 hud_menu_title:Menu;
 hud_inv_title:Inventory;
+hud_loot_title:Loot;
 hud_skills_title:Skills;
 hud_bar_menu_open_info:Open menu;
 hud_bar_inv_open_info:Open inventory;

@@ -77,31 +77,31 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	// Buttons.
 	im.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color, "", "")
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err != nil {
-		log.Err.Printf("hud_inventory:fail_to_retrieve_background_tex:%v", err)
-	} else {
+	if err == nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		im.closeButton.SetBackground(closeButtonSpr)
+	} else {
+		log.Err.Printf("hud_inventory:fail_to_retrieve_background_tex:%v", err)
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
 	// Slots list.
 	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)),
 		inv_slot_color, inv_slot_size)
 	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err != nil {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
-			err)
-	} else {
+	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		im.slots.SetUpButtonBackground(upBG)
+	} else {
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
+			err)
 	}
 	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err != nil {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_buttons_texture:%v",
-			err)
-	} else {
+	if err == nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		im.slots.SetDownButtonBackground(downBG)
+	} else {
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_buttons_texture:%v",
+			err)
 	}
 	// Create empty slots.
 	for i := 0; i < inv_slots; i++ {

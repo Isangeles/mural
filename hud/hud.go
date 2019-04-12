@@ -551,6 +551,25 @@ func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
 
 // Triggered after left mouse button was pressed.
 func (hud *HUD) onMouseLeftPressed(pos pixel.Vec) {
+	// Loot.
+	for _, av := range hud.Camera().Avatars() {
+		if !av.DrawArea().Contains(pos) || av.Live() {
+			continue
+		}
+		log.Dbg.Printf("hud:loot:%s", av.ID()+"_"+av.Serial())
+		hud.loot.SetTarget(av)
+		hud.loot.Show(true)
+		return
+	}
+	for _, ob := range hud.Camera().AreaObjects() {
+		if !ob.DrawArea().Contains(pos) || ob.Live() {
+			continue
+		}
+		log.Dbg.Printf("hud:loot:%s", ob.ID()+"_"+ob.Serial())
+		hud.loot.SetTarget(ob)
+		hud.loot.Show(true)
+		return
+	}
 	// Move active PC.
 	destPos := hud.camera.ConvCameraPos(pos)
 	if !hud.game.Paused() && hud.camera.Map().Passable(destPos) && !hud.containsPos(pos) {

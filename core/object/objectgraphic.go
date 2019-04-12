@@ -25,7 +25,8 @@ package object
 
 import (
 	"github.com/faiface/pixel"
-	
+
+	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/area"
 
 	"github.com/isangeles/mural/core/data/res"
@@ -39,6 +40,7 @@ type ObjectGraphic struct {
 	data     *res.ObjectGraphicData
 	sprite   *mtk.Animation
 	effects  map[string]*EffectGraphic
+	items    map[string]*ItemGraphic
 }
 
 // NewObject creates new graphical wrapper for specified object.
@@ -88,10 +90,47 @@ func (og *ObjectGraphic) Effects() []*EffectGraphic {
 	return effs
 }
 
+// Items returns all object items(in form of
+// graphical wrappers).
+func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
+	for _, ig := range og.items {
+		items = append(items, ig)
+	}
+	return
+}
+
 // MaxMana returns 0, object do not have mana.
 // Function to satify frame target interface. 
 func (og *ObjectGraphic) MaxMana() int {
 	return 0
+}
+
+// updateGraphic updates object
+// graphical content.
+func (og *ObjectGraphic) updateGraphic() {
+	// Clear items.
+	for id, ig := range og.items {
+		found := false
+		for _, it := range og.Inventory().Items() {
+			found = flameobject.Equals(it, ig)
+		}
+		if !found {
+			delete(og.items, id)
+		}
+	}
+	
+	// Inventory.
+	for _, it := range og.Inventory().Items() {
+		if og.items[it.ID()+it.Serial()] != nil {
+			continue
+		}
+		data := res.Item(it.ID())
+		if data == nil {
+			continue
+		}
+		itemGraphic := NewItemGraphic(it, data)
+		og.items[it.ID()+it.Serial()] = itemGraphic
+	}
 }
 
 // buildSpriteFrames creates animation frames from specified

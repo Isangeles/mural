@@ -28,9 +28,11 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/object/item"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/core/object"
 )
 
 // Struct for HUD loot window.
@@ -44,6 +46,13 @@ type LootWindow struct {
 	slots       *mtk.SlotList
 	opened      bool
 	focused     bool
+	target      LootTarget
+}
+
+// Interface for 'lootable' objects.
+type LootTarget interface {
+	Inventory() *item.Inventory
+	Items() []*object.ItemGraphic
 }
 
 var (
@@ -89,7 +98,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 		lw.slots.SetDownButtonBackground(spr)
 	}
 	// Create empty slots.
-	for i := 0; i < loot_slots; i ++ {
+	for i := 0; i < loot_slots; i++ {
 		s := lw.createSlot()
 		lw.slots.Add(s)
 	}
@@ -157,6 +166,27 @@ func (lw *LootWindow) Bounds() pixel.Rect {
 // background.
 func (lw *LootWindow) DrawArea() pixel.Rect {
 	return lw.drawArea
+}
+
+// SetTarget sets object with inventory to loot.
+func (lw *LootWindow) SetTarget(t LootTarget) {
+	lw.target = t
+	lw.slots.Clear()
+	for _, it := range lw.target.Items() {
+		lw.insert(it)
+	}
+}
+
+// insert inserts specified items in window slots.
+func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
+	for _, it := range items {
+		slot := lw.slots.EmptySlot()
+		if slot == nil {
+			slot = lw.createSlot()
+			lw.slots.Add(slot)
+		}
+		insertSlotItem(it, slot)
+	}
 }
 
 // createSlot creates empty slot for loot slots list.

@@ -347,7 +347,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		}
 		char.Inventory().AddItem(i)
 	}
-	// Player skills & items from mod config.
+	// Player skills & items from interface config.
 	for _, sid := range config.NewCharSkills() {
 		s, err := flamedata.Skill(flame.Mod(), sid)
 		if err != nil {

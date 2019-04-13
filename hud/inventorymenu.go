@@ -186,7 +186,7 @@ func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
 	for _, it := range items {
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
-		layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
+		layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())
 		slotID := layout.InvSlotID(it)
 		if slotID > -1 { // insert item to slot from layout
 			if slotID < len(im.slots.Slots())-1 {

@@ -181,9 +181,6 @@ func (hud *HUD) Draw(win *mtk.Window) {
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
-	if hud.exiting {
-		//win.SetClosed(true)
-	}
 	if hud.loading {
 		if hud.loaderr != nil { // on loading error
 			log.Err.Printf("hud_loading_fail:%v", hud.loaderr)
@@ -448,6 +445,18 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	hud.camera.SetObjects(objects)
 }
 
+// Layout returns layout for player with specified ID
+// serial value(creates new layout if there is no saved
+// layout for such player).
+func (hud *HUD) Layout(id, serial string) *Layout {
+	l := hud.layouts[id+serial]
+	if l == nil {
+		l = NewLayout()
+		hud.layouts[id+serial] = l
+	}
+	return l
+}
+
 // Save saves GUI and game state to
 // savegames directory.
 func (hud *HUD) Save(saveName string) error {
@@ -553,7 +562,8 @@ func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
 func (hud *HUD) onMouseLeftPressed(pos pixel.Vec) {
 	// Loot.
 	for _, av := range hud.Camera().Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() {
+		if !av.DrawArea().Contains(pos) || av.Live() ||
+			av == hud.ActivePlayer(){
 			continue
 		}
 		log.Dbg.Printf("hud:loot:%s", av.ID()+"_"+av.Serial())

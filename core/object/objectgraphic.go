@@ -49,6 +49,8 @@ func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraph
 	og.Object = ob
 	og.data = data
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
+	og.effects = make(map[string]*EffectGraphic)
+	og.items = make(map[string]*ItemGraphic)
 	return og
 }
 
@@ -60,6 +62,7 @@ func (og *ObjectGraphic) Draw(t pixel.Target, matrix pixel.Matrix) {
 // Update updates object.
 func (og *ObjectGraphic) Update(win *mtk.Window) {
 	og.sprite.Update(win)
+	og.updateGraphic()
 }
 
 // DrawArea returns current draw area of

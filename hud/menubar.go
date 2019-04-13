@@ -249,10 +249,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 // active player.
 func (mb *MenuBar) updateLayout() {
 	// Retrieve layout for current PC.
-	layout := mb.hud.layouts[mb.hud.ActivePlayer().SerialID()]
-	if layout == nil {
-		layout = NewLayout()
-	}
+	layout := mb.hud.Layout(mb.hud.ActivePlayer().ID(), mb.hud.ActivePlayer().Serial())
 	// Clear layout.
 	layout.SetBarSlots(make(map[string]int))
 	// Set layout.

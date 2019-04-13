@@ -36,7 +36,7 @@ import (
 	"github.com/salviati/go-tmx/tmx"
 
 	"github.com/faiface/beep"
-	
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
@@ -46,10 +46,12 @@ import (
 
 var (
 	// Paths.
-	a_dir_path  string
-	g_dir_path  string
-	g_arch_path string
-	a_arch_path string
+	mod_a_dir_path   string
+	mod_g_dir_path   string
+	mod_g_arch_path  string
+	mod_a_arch_path  string
+	main_g_arch_path = "data/gui/gdata.zip"
+	main_a_arch_path = "data/gui/adata.zip"
 	// Textures & fonts.
 	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
@@ -72,14 +74,14 @@ func LoadGameData() error {
 	}
 	// Portraits.
 	portraits = make(map[string]pixel.Picture, 0)
-	avsPortraits, err := loadPicturesFromArch(g_arch_path, "avatar/portrait")
+	avsPortraits, err := loadPicturesFromArch(mod_g_arch_path, "avatar/portrait")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_avatars_portraits:%v", err)
 	}
 	for n, p := range avsPortraits {
 		portraits[n] = p
 	}
-	obPortraits, err := loadPicturesFromArch(g_arch_path, "object/portrait")
+	obPortraits, err := loadPicturesFromArch(mod_g_arch_path, "object/portrait")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_objects_portraits:%v", err)
 	}
@@ -87,40 +89,40 @@ func LoadGameData() error {
 		portraits[n] = p
 	}
 	// Avatars spritesheets.
-	avTexs, err := loadPicturesFromArch(g_arch_path, "avatar/spritesheet")
+	avTexs, err := loadPicturesFromArch(mod_g_arch_path, "avatar/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_avatars_spritesheets:%v", err)
 	}
 	avatarsTexs = avTexs
 	// Objects spritesheets.
-	obTexs, err := loadPicturesFromArch(g_arch_path, "object/spritesheet")
+	obTexs, err := loadPicturesFromArch(mod_g_arch_path, "object/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_objects_spritesheets:%v", err)
 	}
 	objectsTexs = obTexs
 	// Items spritesheets.
-	itTexs, err := loadPicturesFromArch(g_arch_path, "item/spritesheet")
+	itTexs, err := loadPicturesFromArch(mod_g_arch_path, "item/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_items_spritesheets:%v", err)
 	}
 	itemsTexs = itTexs
 	// Icons.
 	icons = make(map[string]pixel.Picture, 0)
-	itemIcons, err := loadPicturesFromArch(g_arch_path, "item/icon")
+	itemIcons, err := loadPicturesFromArch(mod_g_arch_path, "item/icon")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_items_icons:%v", err)
 	}
 	for name, i := range itemIcons {
 		icons[name] = i
 	}
-	effectIcons, err := loadPicturesFromArch(g_arch_path, "effect/icon")
+	effectIcons, err := loadPicturesFromArch(mod_g_arch_path, "effect/icon")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_effects_icons:%v", err)
 	}
 	for name, i := range effectIcons {
 		icons[name] = i
 	}
-	skillIcons, err := loadPicturesFromArch(g_arch_path, "skill/icon")
+	skillIcons, err := loadPicturesFromArch(mod_g_arch_path, "skill/icon")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_skills_icons:%v", err)
 	}
@@ -140,13 +142,13 @@ func LoadUIData() error {
 		return fmt.Errorf("fail_to_load_paths:%v", err)
 	}
 	// GUI elements textures.
-	texs, err := loadPicturesFromArch(g_arch_path, "ui")
+	texs, err := loadPicturesFromArch(mod_g_arch_path, "ui")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_UI_textures:%v", err)
 	}
 	uiTexs = texs
 	// Fonts.
-	ttfs, err := loadFontsFromArch(g_arch_path, "font")
+	ttfs, err := loadFontsFromArch(mod_g_arch_path, "font")
 	if err != nil {
 		return fmt.Errorf("fail_to_load_fonts:%v", err)
 	}
@@ -163,7 +165,7 @@ func PictureUI(fileName string) (pixel.Picture, error) {
 	}
 	// Fallback, load picture 'by hand'.
 	log.Dbg.Printf("data_picture_ui_fallback_load:%s", fileName)
-	return loadPictureFromArch(g_arch_path, "ui/"+fileName)
+	return loadPictureFromArch(mod_g_arch_path, "ui/"+fileName)
 }
 
 // PictureFromDir loads image from specified system path.
@@ -204,7 +206,7 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_avatar_spritesheet_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("avatar/spritesheet/" + fileName)
-	return loadPictureFromArch(g_arch_path, path)
+	return loadPictureFromArch(mod_g_arch_path, path)
 }
 
 // ItemSpritesheet returns picture with specified name
@@ -218,7 +220,7 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_items_spritesheet_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("item/spritesheet/" + fileName)
-	return loadPictureFromArch(g_arch_path, path)
+	return loadPictureFromArch(mod_g_arch_path, path)
 }
 
 // ObjectSpritesheet returns picture with specified name
@@ -232,7 +234,7 @@ func ObjectSpritesheet(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_objects_spritesheet_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("object/spritesheet/" + fileName)
-	return loadPictureFromArch(g_arch_path, path)
+	return loadPictureFromArch(mod_g_arch_path, path)
 }
 
 // Icon returns picture with specified name for icon.
@@ -245,7 +247,7 @@ func Icon(fileName string) (pixel.Picture, error) {
 	log.Dbg.Printf("data_items_icon_fallback_load:%s",
 		fileName)
 	path := filepath.FromSlash("item/icon/" + fileName)
-	return loadPictureFromArch(g_arch_path, path)
+	return loadPictureFromArch(mod_g_arch_path, path)
 }
 
 // PlayablePortraits returns map with names of portraits as keys
@@ -279,7 +281,7 @@ func Font(fileName string) (*truetype.Font, error) {
 	}
 	// Fallback.
 	log.Dbg.Printf("data_font_fallback_load:%s", fileName)
-	fullpath := fmt.Sprintf("%s/%s/%s", g_dir_path, "font", fileName)
+	fullpath := fmt.Sprintf("%s/%s/%s", mod_g_dir_path, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
 }
 
@@ -302,14 +304,14 @@ func Map(mapDir, mapName string) (*tmx.Map, error) {
 // inside audio archive.
 func Music(fileName string) (*beep.Buffer, error) {
 	path := filepath.FromSlash("music/" + fileName)
-	return loadAudioFromArch(a_arch_path, path)
+	return loadAudioFromArch(mod_a_arch_path, path)
 }
 
 // AudioEffect returns audio stream data from file with specified
 // name inside audio archive.
 func AudioEffect(fileName string) (*beep.Buffer, error) {
 	path := filepath.FromSlash("effect/" + fileName)
-	return loadAudioFromArch(a_arch_path, path)
+	return loadAudioFromArch(mod_a_arch_path, path)
 }
 
 // Load loads grpahic directories.
@@ -317,13 +319,13 @@ func loadPaths() error {
 	if flame.Mod() == nil {
 		return fmt.Errorf("no module loaded")
 	}
-	g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
+	mod_g_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
 		flame.Mod().Conf().ID))
-	a_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
+	mod_a_dir_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
 		flame.Mod().Conf().ID))
-	g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
+	mod_g_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
 		flame.Mod().Conf().ID))
-	a_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
+	mod_a_arch_path = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
 		flame.Mod().Conf().ID))
 	return nil
 }

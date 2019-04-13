@@ -173,6 +173,9 @@ func (lw *LootWindow) SetTarget(t LootTarget) {
 	lw.target = t
 	lw.slots.Clear()
 	for _, it := range lw.target.Items() {
+		if !it.Loot() {
+			continue
+		}
 		lw.insert(it)
 	}
 }
@@ -193,10 +196,28 @@ func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
 func (lw *LootWindow) createSlot() *mtk.Slot {
 	s := mtk.NewSlot(loot_slot_size, mtk.SIZE_MINI)
 	s.SetColor(loot_slot_color)
+	s.SetOnLeftClickFunc(lw.onSlotLeftClicked)
 	return s
 }
 
 // Triggered after close button was clicked.
 func (lw *LootWindow) onCloseButtonClicked(b *mtk.Button) {
 	lw.Show(false)
+}
+
+// Triggered after one of items slots was clicked with
+// left mouse button.
+func (lw *LootWindow) onSlotLeftClicked(s *mtk.Slot) {
+	if len(s.Values()) < 1 {
+		return
+	}
+	valuesLen := len(s.Values())
+	for i := 0; i < valuesLen; i++ {
+		v := s.Pop()
+		it, ok := v.(*object.ItemGraphic)
+		if !ok {
+			continue
+		}
+		lw.hud.ActivePlayer().Inventory().AddItem(it)
+	}
 }

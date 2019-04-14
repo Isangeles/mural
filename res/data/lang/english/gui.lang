@@ -1,61 +1,64 @@
-exit_b_label:Exit;
-exit_b_info:Exit game;
-exit_hud_b_info:Exit to menu;
-accept_b_label:Ok;
-cancel_b_label:Cancel;
-done_b_label:Done;
-back_b_label:Back;
-settings_b_label:Settings;
-settings_b_info:Open settings menu;
-newchar_b_label:New character;
-newchar_b_info:Create new character;
-settings_menu_title:Settings;
-settings_fullscr_switch_label:Fullscreen;
-resolution_s_label:Resolution;
-lang_s_label:Language;
-settings_save_msg:Save settings?;
-settings_reset_msg:Some changes need game restart.;
-newgame_b_label:New game;
-newgame_b_info:Start new game;
-newgame_menu_title:Start new game;
-newgame_char_switch_label:Character;
-newgame_start_button_label:Start game;
-newgame_export_button_label:Export character;
-newgame_export_msg:Character exported;
-newgame_start_info:Starting new game...;
-newchar_menu_title:Create new character;
-newchar_name_edit_label:Name:;
-newchar_face_switch_label:Portrait;
-newchar_str_switch_label:Strength;
-newchar_con_switch_label:Constitution;
-newchar_dex_switch_label:Dexterity;
-newchar_int_switch_label:Inteligence;
-newchar_wis_switch_label:Wisdom;
-newchar_roll_b_label:Roll;
-newchar_roll_b_info:Roll attributes points;
-newchar_sex_switch_label:Gender;
-newchar_race_switch_label:Race;
-newchar_ali_switch_label:Alignment;
-newchar_create_msg:New character created.;
-loadgame_b_label:Load game;
-loadgame_b_info:Load saved game;
-loadgame_load_mod_res_info:Loading module resources...;
-loadgame_import_save_info:Importing saved game...;
-loadgame_load_game_info:Loading saved game...;
-loadgame_menu_title:Load game;
-load_b_label:Load;
-load_map_info:Loading map...;
-load_avatars_info:Loading characters avatars...;
-load_objects_info:Loading area objects...;
-enter_game_info:Entering game...;
-hud_menu_title:Menu;
-hud_inv_title:Inventory;
-hud_loot_title:Loot;
-hud_skills_title:Skills;
-hud_bar_menu_open_info:Open menu;
-hud_bar_inv_open_info:Open inventory;
-hud_bar_skills_open_info:Open skills;
-char_frame_hp_bar_label:Health;
-char_frame_mana_bar_label:Mana;
-no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file;
-load_game_err:Fail to load game;
+exit_b_label:Exit
+exit_b_info:Exit game
+exit_hud_b_info:Exit to menu
+accept_b_label:Ok
+cancel_b_label:Cancel
+done_b_label:Done
+back_b_label:Back
+settings_b_label:Settings
+settings_b_info:Open settings menu
+newchar_b_label:New character
+newchar_b_info:Create new character
+settings_menu_title:Settings
+settings_fullscr_switch_label:Fullscreen
+resolution_s_label:Resolution
+lang_s_label:Language
+settings_save_msg:Save settings?
+settings_reset_msg:Some changes need game restart.
+newgame_b_label:New game
+newgame_b_info:Start new game
+newgame_menu_title:Start new game
+newgame_char_switch_label:Character
+newgame_start_button_label:Start game
+newgame_export_button_label:Export character
+newgame_export_msg:Character exported
+newgame_start_info:Starting new game...
+newchar_menu_title:Create new character
+newchar_name_edit_label:Name:
+newchar_face_switch_label:Portrait
+newchar_str_switch_label:Strength
+newchar_con_switch_label:Constitution
+newchar_dex_switch_label:Dexterity
+newchar_int_switch_label:Inteligence
+newchar_wis_switch_label:Wisdom
+newchar_roll_b_label:Roll
+newchar_roll_b_info:Roll attributes points
+newchar_sex_switch_label:Gender
+newchar_race_switch_label:Race
+newchar_ali_switch_label:Alignment
+newchar_create_msg:New character created.
+savegame_b_label:Save game
+savegame_b_info:Save game state
+loadgame_b_label:Load game
+loadgame_b_info:Load saved game
+loadgame_load_mod_res_info:Loading module resources...
+loadgame_import_save_info:Importing saved game...
+loadgame_load_game_info:Loading saved game...
+loadgame_menu_title:Load game
+load_b_label:Load
+load_map_info:Loading map...
+load_avatars_info:Loading characters avatars...
+load_objects_info:Loading area objects...
+enter_game_info:Entering game...
+hud_menu_title:Menu
+hud_save_menu_title:Save game
+hud_inv_title:Inventory
+hud_loot_title:Loot
+hud_skills_title:Skills
+hud_bar_menu_open_info:Open menu
+hud_bar_inv_open_info:Open inventory
+hud_bar_skills_open_info:Open skills
+char_frame_hp_bar_label:Health
+char_frame_mana_bar_label:Mana
+no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file
+load_game_err:Fail to load game

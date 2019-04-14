@@ -71,6 +71,7 @@ type HUD struct {
 	camera     *Camera
 	bar        *MenuBar
 	menu       *Menu
+	savemenu   *SaveMenu
 	pcFrame    *ObjectFrame
 	tarFrame   *ObjectFrame
 	castBar    *CastBar
@@ -106,6 +107,7 @@ func NewHUD(g *flamecore.Game) (*HUD, error) {
 	// Windows & menus.
 	hud.bar = newMenuBar(hud)
 	hud.menu = newMenu(hud)
+	hud.savemenu = newSaveMenu(hud)
 	hud.chat = newChat(hud)
 	hud.inv = newInventoryMenu(hud)
 	hud.skills = newSkillMenu(hud)
@@ -147,6 +149,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
 	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
 	menuPos := win.Bounds().Center()
+	saveMenuPos := win.Bounds().Center()
 	invPos := win.Bounds().Center()
 	skillsPos := win.Bounds().Center()
 	lootPos := win.Bounds().Center()
@@ -160,6 +163,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.menu.Opened() {
 		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
+	}
+	if hud.savemenu.Opened() {
+		hud.savemenu.Draw(win, mtk.Matrix().Moved(saveMenuPos))
 	}
 	if hud.inv.Opened() {
 		hud.inv.Draw(win, mtk.Matrix().Moved(invPos))
@@ -261,6 +267,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.castBar.Update(win)
 	if hud.menu.Opened() {
 		hud.menu.Update(win)
+	}
+	if hud.savemenu.Opened() {
+		hud.savemenu.Update(win)
 	}
 	if hud.inv.Opened() {
 		hud.inv.Update(win)
@@ -526,6 +535,7 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		hud.pcFrame.DrawArea().Contains(pos) ||
 		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
 		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) ||
+		(hud.savemenu.Opened() && hud.savemenu.DrawArea().Contains(pos)) ||		
 		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos) ||
 	        (hud.loot.Opened() && hud.loot.DrawArea().Contains(pos))) {
 		return true

@@ -33,7 +33,7 @@ import (
 // Struct for list with 'selectable' items.
 type List struct {
 	bgSpr       *pixel.Sprite
-	size        Size
+	bgSize      pixel.Vec
 	bgColor     color.Color
 	secColor    color.Color
 	accentColor color.Color
@@ -49,20 +49,20 @@ type List struct {
 
 // NewList creates new list with specified size
 // and colors.
-func NewList(size Size, bgColor, secColor,
-	accentColor color.Color) *List {
+func NewList(bgSize pixel.Vec, buttonsSize Size, bgColor,
+	secColor, accentColor color.Color) *List {
 	l := new(List)
 	// Background.
-	l.size = size
+	l.bgSize = bgSize
 	l.bgColor = bgColor
 	l.secColor = secColor
 	l.accentColor = accentColor
 	// Buttons.
-	l.upButton = NewButton(l.size  , SHAPE_SQUARE, accentColor,
-		"^", "")
+	l.upButton = NewButton(buttonsSize, SHAPE_SQUARE,
+		accentColor, "^", "")
 	l.upButton.SetOnClickFunc(l.onButtonUpClicked)
-	l.downButton = NewButton(l.size  , SHAPE_SQUARE, accentColor,
-		".", "")
+	l.downButton = NewButton(buttonsSize, SHAPE_SQUARE,
+		accentColor, ".", "")
 	l.downButton.SetOnClickFunc(l.onButtonDownClicked)
 	return l
 }
@@ -134,7 +134,7 @@ func (l *List) Disabled() bool {
 // of rectangle.
 func (l *List) Bounds() pixel.Rect {
 	if l.bgSpr == nil {
-		return l.size.ListSize()
+		return pixel.R(0, 0, l.bgSize.X, l.bgSize.Y)
 	}
 	return l.bgSpr.Frame()
 }
@@ -148,7 +148,7 @@ func (l *List) SetStartIndex(index int) {
 	if index > len(l.items)-1 {
 		l.startIndex = 0
 	} else if index < 0 {
-		l.startIndex = len(l.items)-1
+		l.startIndex = len(l.items) - 1
 	} else {
 		l.startIndex = index
 	}
@@ -192,8 +192,8 @@ func (l *List) drawListItems(t pixel.Target) {
 	var contentH float64
 	// Draw first visible item.
 	item := l.items[l.startIndex]
-	drawMin := bgTLPos//PosTL(item.Bounds(), bgTLPos)
-	drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
+	drawMin := bgTLPos //PosTL(item.Bounds(), bgTLPos)
+	drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y+
 		item.Bounds().H())
 	drawArea := pixel.R(drawMin.X, drawMin.Y,
 		drawMax.X, drawMax.Y)
@@ -201,10 +201,10 @@ func (l *List) drawListItems(t pixel.Target) {
 	contentH += item.DrawArea().H() + ConvSize(15)
 	lastItemDA := item.Label().DrawArea()
 	// Draw rest of visible items.
-	for i := l.startIndex+1; i < len(l.items) && contentH + lastItemDA.H() < listH; i ++ {
+	for i := l.startIndex + 1; i < len(l.items) && contentH+lastItemDA.H() < listH; i++ {
 		item := l.items[i]
 		drawMin := BottomOf(lastItemDA, lastItemDA, 15)
-		drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y +
+		drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y+
 			item.Bounds().H())
 		drawArea := pixel.R(drawMin.X, drawMin.Y,
 			drawMax.X, drawMax.Y)

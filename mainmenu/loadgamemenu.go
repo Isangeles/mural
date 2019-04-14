@@ -33,7 +33,6 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -57,10 +56,12 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	lgm.title = mtk.NewText(mtk.SIZE_BIG, 0)
 	lgm.title.SetText(lang.Text("gui", "loadgame_menu_title"))
 	// Saves list.
-	lgm.savesList = mtk.NewList(mtk.SIZE_BIG, main_color, sec_color,
-		accent_color)
+	listSize := mtk.SIZE_BIG.ListSize().Size()
+	lgm.savesList = mtk.NewList(listSize, mtk.SIZE_BIG, main_color,
+		sec_color, accent_color)
 	savePattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
-	gameSaves, err := data.DirFilesNames(flameconf.ModuleSavegamesPath(), savePattern)
+	gameSaves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
+		savePattern)
 	if err != nil {
 		log.Err.Printf("fail_to_read_saved_games_dir:%v", err)
 	}

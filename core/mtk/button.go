@@ -73,10 +73,8 @@ func NewButton(size Size, shape Shape, color color.Color,
 	b.label = NewText(size, b.Frame().W())
 	b.label.SetText(labelText)
 	// Info window.
-	if len(infoText) > 0 {	
-		b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-		b.info.Add(infoText)
-	}
+	b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
+	b.info.Add(infoText)
 	// Global click sound.
 	b.SetClickSound(button_click_sound)
 	

@@ -64,10 +64,9 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.textbox = textbox
 	mw.textbox.InsertText(msg)
 	// Buttons.
-	acceptB := NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "accept_b_label"), "")
-	acceptB.SetOnClickFunc(mw.onAcceptButtonClicked)
-	mw.acceptButton = acceptB
+	mw.acceptButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red)
+	mw.acceptButton.SetLabel(lang.Text("gui", "accept_b_label"))
+	mw.acceptButton.SetOnClickFunc(mw.onAcceptButtonClicked)
 	return mw
 }
 
@@ -76,8 +75,8 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow) {
 	// Basic message window.
 	mw := NewMessageWindow(size, msg)
 	// Buttons.
-	mw.cancelButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "cancel_b_label"), "")
+	mw.cancelButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red)
+	mw.cancelButton.SetLabel(lang.Text("gui", "cancel_b_label"))
 	mw.cancelButton.SetOnClickFunc(mw.onCancelButtonClicked)
 	return mw
 }

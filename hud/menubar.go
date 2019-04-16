@@ -70,8 +70,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Menu Button.
-	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
-		"", lang.Text("gui", "hud_bar_menu_open_info"))
+	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.menuButton.SetInfo(lang.Text("gui", "hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
 	if err != nil {
 		log.Err.Printf("hud_menu_bar:fail_to_retrieve_menu_button_texture:%v", err)
@@ -81,8 +81,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
-	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
-		"", lang.Text("gui", "hud_bar_inv_open_info"))
+	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.invButton.SetInfo(lang.Text("gui", "hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
 	if err != nil {
 		log.Err.Printf("hud_menu_bar:fail_to_retrieve_inv_button_texture:%v", err)
@@ -92,8 +92,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
-	mb.skillsButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color,
-		"", lang.Text("gui", "hud_bar_skills_open_info"))
+	mb.skillsButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.skillsButton.SetInfo(lang.Text("gui", "hud_bar_skills_open_info"))
 	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
 	if err != nil {
 		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)

@@ -58,10 +58,8 @@ type Button struct {
 	clickSound *beep.Buffer
 }
 
-// NewButton creates new instance of button with specified size, color and
-// label text.
-func NewButton(size Size, shape Shape, color color.Color,
-	labelText, infoText string) *Button {
+// NewButton creates new button with specified size, shape and color.
+func NewButton(size Size, shape Shape, color color.Color) *Button {
 	b := new(Button)
 	// Background.
 	b.size = size
@@ -71,13 +69,10 @@ func NewButton(size Size, shape Shape, color color.Color,
 	b.colorHover = button_hover_color
 	// Label.
 	b.label = NewText(size, b.Frame().W())
-	b.label.SetText(labelText)
 	// Info window.
 	b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-	b.info.Add(infoText)
 	// Global click sound.
 	b.SetClickSound(button_click_sound)
-	
 	return b
 }
 

@@ -37,6 +37,7 @@ newchar_sex_switch_label:Gender
 newchar_race_switch_label:Race
 newchar_ali_switch_label:Alignment
 newchar_create_msg:New character created.
+save_b_label:Save
 savegame_b_label:Save game
 savegame_b_info:Save game state
 loadgame_b_label:Load game

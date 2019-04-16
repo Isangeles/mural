@@ -51,9 +51,8 @@ func newConsole() (*Console, error) {
 	// Text box.
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
 	// Text input.
-	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
+	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
-
 	return c, nil
 }
 
@@ -61,9 +60,13 @@ func newConsole() (*Console, error) {
 func (c *Console) Draw(win *mtk.Window) {
 	drawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
 	drawMax := win.Bounds().Max
+	// Text box.
 	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
-	c.textedit.Draw(pixel.R(drawMin.X, drawMin.Y-mtk.ConvSize(20), drawMax.X,
-		drawMin.Y), win)
+	// Text edit.
+	editSize := pixel.V(c.textbox.DrawArea().Size().X, mtk.ConvSize(30))
+	editMove := pixel.V(win.Bounds().Center().X, drawMin.Y-mtk.ConvSize(20))
+	c.textedit.SetSize(editSize)
+	c.textedit.Draw(win.Window, mtk.Matrix().Moved(editMove))
 }
 
 // Update handles key events and updates console.

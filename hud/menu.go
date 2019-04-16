@@ -68,18 +68,16 @@ func newMenu(hud *HUD) *Menu {
 	if err != nil {
 		log.Err.Printf("hud_menu:fail_to_retrieve_green_button_texture:%v", err)
 	}
-	m.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color,
-		"", "")
+	m.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		m.closeButton.SetBackground(closeBG)
-	} else { // fallback	
+	} else {
 		log.Err.Printf("hud_menu:fail_to_retrieve_exit_button_texture:%v", err)
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
-	m.saveButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color,
-		"", "")
+	m.saveButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
 	m.saveButton.SetLabel(lang.Text("gui", "savegame_b_label"))
 	m.saveButton.SetInfo(lang.Text("gui", "savegame_b_info"))
 	if greenButtonBG != nil {
@@ -87,11 +85,12 @@ func newMenu(hud *HUD) *Menu {
 		m.saveButton.SetBackground(bg)
 	}
 	m.saveButton.SetOnClickFunc(m.onSaveButtonClicked)
-	m.exitButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE, accent_color,
-		lang.Text("gui", "exit_b_label"), lang.Text("gui", "exit_hud_b_info"))
+	m.exitButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE, accent_color)
+	m.exitButton.SetLabel(lang.Text("gui", "exit_b_label"))
+	m.exitButton.SetInfo(lang.Text("gui", "exit_hud_b_info"))
 	if greenButtonBG != nil {
-		exitBG := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
-		m.exitButton.SetBackground(exitBG)
+		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
+		m.exitButton.SetBackground(bg)
 	}
 	m.exitButton.SetOnClickFunc(m.onExitButtonClicked)
 	return m

@@ -76,8 +76,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 	lw.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	lw.titleText.SetText(lang.Text("gui", "hud_loot_title"))
 	// Buttons.
-	lw.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color,
-		"", "")
+	lw.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		spr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())

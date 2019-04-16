@@ -67,13 +67,16 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 	ngm.charInfo = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_BIG, main_color)
 	// Buttons.
 	ngm.startButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "newgame_start_button_label"), "")
+		accent_color)
+	ngm.startButton.SetLabel(lang.Text("gui", "newgame_start_button_label"))
 	ngm.startButton.SetOnClickFunc(ngm.onStartButtonClicked)
 	ngm.exportButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "newgame_export_button_label"), "")
+		accent_color)
+	ngm.exportButton.SetLabel(lang.Text("gui", "newgame_export_button_label"))
 	ngm.exportButton.SetOnClickFunc(ngm.onExportButtonClicked)
 	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "back_b_label"), "")
+		accent_color)
+	ngm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
 	return ngm, nil
 }

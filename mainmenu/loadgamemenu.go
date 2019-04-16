@@ -70,10 +70,12 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	}
 	// Buttons.
 	lgm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "back_b_label"), "")
+		accent_color)
+	lgm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	lgm.backButton.SetOnClickFunc(lgm.onBackButtonClicked)
 	lgm.loadButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "load_b_label"), "")
+		accent_color)
+	lgm.loadButton.SetLabel(lang.Text("gui", "load_b_label"))
 	lgm.loadButton.SetOnClickFunc(lgm.onLoadButtonClicked)
 	return lgm, nil
 }

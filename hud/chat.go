@@ -69,7 +69,7 @@ func newChat(hud *HUD) *Chat {
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL,
 		colornames.Grey)
 	// Textedit.
-	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey, "")
+	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }
@@ -80,21 +80,16 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if c.bgSpr != nil {
 		c.bgSpr.Draw(win, matrix)
 	}
-	// Textbox & textedit.
-	textboxSize := pixel.V(mtk.ConvSize(545), mtk.ConvSize(250))
-	texteditSize := pixel.V(mtk.ConvSize(545), mtk.ConvSize(40))
-	textboxDA := pixel.R(
-		win.Bounds().Min.X + mtk.ConvSize(10),
-		win.Bounds().Min.Y + texteditSize.Y + mtk.ConvSize(10),
-		win.Bounds().Min.X + textboxSize.X,
-		win.Bounds().Min.Y + texteditSize.Y + textboxSize.Y)
-	texteditDA := pixel.R(
-		win.Bounds().Min.X + mtk.ConvSize(10),
-		win.Bounds().Min.Y + mtk.ConvSize(10),
-		win.Bounds().Min.X + texteditSize.X,
-		win.Bounds().Min.Y + texteditSize.Y)
+	// Textbox.
+	boxSize := c.Bounds()
+	boxSize.Max.Y -= mtk.ConvSize(30)
+	textboxDA := mtk.MatrixToDrawArea(matrix, boxSize)
 	c.textbox.Draw(textboxDA, win)
-	c.textedit.Draw(texteditDA, win)
+	// Textedit.
+	editSize := pixel.V(c.Bounds().Size().X, mtk.ConvSize(30))
+	c.textedit.SetSize(editSize)
+	editMove := pixel.V(0, -c.Bounds().Size().Y/2 + mtk.ConvSize(30))
+	c.textedit.Draw(win, matrix.Moved(editMove))
 }
 
 // Update updates chat window.

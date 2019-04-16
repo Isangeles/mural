@@ -1,7 +1,7 @@
 /*
  * textedit.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ import (
 
 // Struct for text edit fields.
 type Textedit struct {
+	size       pixel.Vec
 	drawArea   pixel.Rect
 	color      color.Color
 	colorFocus color.Color
@@ -47,9 +48,9 @@ type Textedit struct {
 	onInput    func(t *Textedit)
 }
 
-// NewTextecit creates new instance of textedit with specified
+// NewTextedit creates new instance of textedit with specified
 // font size, background color and optional label(empty string == no label).
-func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
+func NewTextedit(fontSize Size, color color.Color) *Textedit {
 	t := new(Textedit)
 	// Background.
 	t.color = color
@@ -57,33 +58,23 @@ func NewTextedit(fontSize Size, color color.Color, label string) *Textedit {
 	// Label & Text input.
 	font := MainFont(fontSize)
 	atlas := Atlas(&font)
-	if len(label) > 0 {	
-		t.label = text.New(pixel.V(0, 0), atlas)
-		t.label.WriteString(label)
-	}
+	t.label = text.New(pixel.V(0, 0), atlas)
 	t.input = text.New(pixel.V(0, 0), atlas)
-
 	return t
 }
 
 // Draw draws text edit.
-func (te *Textedit) Draw(drawArea pixel.Rect, t pixel.Target) {
-	// Background & label.
-	if te.label != nil {
-		te.label.Draw(t, pixel.IM.Moved(drawArea.Min))
-		te.drawArea = pixel.R(drawArea.Min.X,
-			drawArea.Min.Y - te.label.Bounds().H(),
-			drawArea.Max.X, drawArea.Min.Y)
-	} else {	
-		te.drawArea = drawArea
-	}
+func (te *Textedit) Draw(t pixel.Target, matrix pixel.Matrix) {
+	// Draw area.
+	te.drawArea = MatrixToDrawArea(matrix, te.Bounds())
 	color := te.color
 	if te.Focused() {
 		color = te.colorFocus
 	}
 	DrawRectangle(t, te.DrawArea(), color)
 	// Text input.
-	te.input.Draw(t, pixel.IM.Moved(te.drawArea.Min))
+	inputMove := pixel.V(-te.Bounds().Size().X/2, 0)
+	te.input.Draw(t, matrix.Moved(inputMove))
 }
 
 // Update updates text edit.
@@ -147,10 +138,25 @@ func (te *Textedit) Text() string {
 	return te.text
 }
 
-// SetText sets specified text as current value of
-// text edit field.
+// SetText sets specified text as current
+// value of text edit field.
 func (te *Textedit) SetText(text string) {
 	te.text = text
+}
+
+// SetLabel sets specified text as label.
+func (te *Textedit) SetLabel(text string) {
+	te.label.WriteString(text)
+}
+
+// SetSize sets text edit size.
+func (te *Textedit) SetSize(size pixel.Vec) {
+	te.size = size
+}
+
+// Bounds returns text edit size bounds.
+func (te *Textedit) Bounds() pixel.Rect {
+	return pixel.R(0, 0, te.size.X, te.size.Y)
 }
 
 // DrawArea returns current draw area rectangle.

@@ -38,7 +38,7 @@ import (
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
@@ -48,7 +48,9 @@ import (
 )
 
 var (
-	new_char_id_form = `player_%s` // player_[name]
+	new_char_id_form   = `player_%s` // player_[name]
+	new_char_attrs_min = config.NewCharAttrsMin()
+	new_char_attrs_max = config.NewCharAttrsMax()
 )
 
 // NewCharacterMenu struct represents new game character
@@ -72,8 +74,7 @@ type NewCharacterMenu struct {
 	rollButton *mtk.Button
 	opened     bool
 	rng        *rand.Rand
-	// Character.
-	attrPoints, attrPointsMax int
+	attrPoints int
 }
 
 // newNewCharacterMenu creates new character creation menu.
@@ -86,8 +87,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.title = mtk.NewText(mtk.SIZE_BIG, 0)
 	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
 	// Text fields.
-	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_name_edit_label"))
+	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
+	ncm.nameEdit.SetLabel(lang.Text("gui", "newchar_name_edit_label"))
 	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
 		main_color)
 	// Portrait switch.
@@ -157,14 +158,17 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		lang.Text("gui", "newchar_ali_switch_label"), "", alis)
 	// Buttons.
 	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "done_b_label"), "")
+		colornames.Red)
+	ncm.doneButton.SetLabel(lang.Text("gui", "done_b_label"))
 	ncm.doneButton.SetOnClickFunc(ncm.onDoneButtonClicked)
 	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "back_b_label"), "")
+		colornames.Red)
+	ncm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
 	ncm.rollButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "newchar_roll_b_label"),
-		lang.Text("gui", "newchar_roll_b_info"))
+		colornames.Red)
+	ncm.rollButton.SetLabel(lang.Text("gui", "newchar_roll_b_label"))
+	ncm.rollButton.SetInfo(lang.Text("gui", "newchar_roll_b_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	// Character.
 	ncm.rollPoints()
@@ -179,9 +183,10 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 		win.Bounds().Max.Y-ncm.title.Bounds().Size().Y)
 	ncm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Text fields.
-	ncm.nameEdit.Draw(pixel.R(titlePos.X, titlePos.Y-mtk.ConvSize(30),
-		titlePos.X+mtk.ConvSize(150), titlePos.Y-mtk.ConvSize(50)),
-		win.Window)
+	nameEditSize := ncm.title.DrawArea().Size()
+	ncm.nameEdit.SetSize(nameEditSize)
+	ncm.nameEdit.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.title.DrawArea(),
+		ncm.nameEdit.Bounds(), 10)))
 	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X+mtk.ConvSize(90),
 		win.Bounds().Center().Y-mtk.ConvSize(40),
 		win.Bounds().Min.X+mtk.ConvSize(140),
@@ -247,9 +252,8 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rng.Intn(config.NewCharAttrsMax()-
-		config.NewCharAttrsMin()) + config.NewCharAttrsMin()
-	ncm.attrPoints = ncm.attrPointsMax
+	ncm.attrPoints = ncm.rng.Intn(new_char_attrs_max-
+		new_char_attrs_min) + new_char_attrs_min
 	ncm.updatePoints()
 }
 
@@ -454,9 +458,9 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 		log.Err.Print("new_char_menu:fail_to_retrieve_wis_switch_value")
 		return
 	}
-	pts := ncm.attrPointsMax
+	pts := new_char_attrs_max
 	pts -= str + con + dex + inte + wis
-	if pts >= 0 && pts <= ncm.attrPointsMax {
+	if pts >= 0 && pts <= new_char_attrs_max {
 		ncm.attrPoints = pts
 	} else {
 		s.SetIndex(s.Find(old.Value))

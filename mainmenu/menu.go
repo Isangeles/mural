@@ -56,24 +56,29 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m.title.SetText(flame.Mod().Conf().ID)
 	// Buttons.
 	m.newgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "newgame_b_label"),
-		lang.Text("gui", "newgame_b_info"))
+		colornames.Red)
+	m.newgameB.SetLabel(lang.Text("gui", "newgame_b_label"))
+	m.newgameB.SetInfo(lang.Text("gui", "newgame_b_info"))
 	m.newgameB.SetOnClickFunc(m.onNewGameButtonClicked)
 	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "newchar_b_label"),
-		lang.Text("gui", "newchar_b_info"))
+		colornames.Red)
+	m.newcharB.SetLabel(lang.Text("gui", "newchar_b_label"))
+	m.newcharB.SetInfo(lang.Text("gui", "newchar_b_info"))
 	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
 	m.loadgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color, lang.Text("gui", "loadgame_b_label"),
-		lang.Text("gui", "loadgame_b_info"))
+		accent_color)
+	m.loadgameB.SetLabel(lang.Text("gui", "loadgame_b_label"))
+	m.loadgameB.SetInfo(lang.Text("gui", "loadgame_b_info"))
 	m.loadgameB.SetOnClickFunc(m.onLoadGameButtonClicked)
 	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "settings_b_label"),
-		lang.Text("gui", "settings_b_info"))
+		colornames.Red)
+	m.settingsB.SetLabel(lang.Text("gui", "settings_b_label"))
+	m.settingsB.SetInfo(lang.Text("gui", "settings_b_info"))
 	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
 	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red, lang.Text("gui", "exit_b_label"),
-		lang.Text("gui", "exit_b_info"))
+		colornames.Red)
+	m.exitB.SetLabel(lang.Text("gui", "exit_b_label"))
+	m.exitB.SetInfo(lang.Text("gui", "exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
 
 	return m, nil

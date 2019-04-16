@@ -59,8 +59,9 @@ func run() {
 		panic(fmt.Errorf("fail_to_create_mtk_window:%v", err))
 	}
 	// Create MTK button for exit.
-	exitB := mtk.NewButton(mtk.SIZE_BIG, mtk.SHAPE_RECTANGLE, colornames.Red,
-		"Exit", "Exit menu")
+	exitB := mtk.NewButton(mtk.SIZE_BIG, mtk.SHAPE_RECTANGLE, colornames.Red)
+	exitB.SetLabel("Exit")
+	exitB.SetInfo("Exit menu")
 	// Set function for exit button click event.
 	exitB.SetOnClickFunc(onExitButtonClicked)
 	// Main loop.

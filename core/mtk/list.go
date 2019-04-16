@@ -59,10 +59,12 @@ func NewList(bgSize pixel.Vec, buttonsSize Size, bgColor,
 	l.accentColor = accentColor
 	// Buttons.
 	l.upButton = NewButton(buttonsSize, SHAPE_SQUARE,
-		accentColor, "^", "")
+		accentColor)
+	l.upButton.SetLabel("^")
 	l.upButton.SetOnClickFunc(l.onButtonUpClicked)
 	l.downButton = NewButton(buttonsSize, SHAPE_SQUARE,
-		accentColor, ".", "")
+		accentColor)
+	l.downButton.SetLabel(".")
 	l.downButton.SetOnClickFunc(l.onButtonDownClicked)
 	return l
 }

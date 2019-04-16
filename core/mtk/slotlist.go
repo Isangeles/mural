@@ -50,9 +50,11 @@ func NewSlotList(bgSize pixel.Vec, bgColor color.Color, slotSize Size) *SlotList
 	sl := new(SlotList)
 	sl.bgSize = bgSize
 	sl.bgColor = bgColor
-	sl.upButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red, "+", "")
+	sl.upButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red)
+	sl.upButton.SetLabel("+")
 	sl.upButton.SetOnClickFunc(sl.onUpButtonClicked)
-	sl.downButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red, "-", "")
+	sl.downButton = NewButton(SIZE_MINI, SHAPE_SQUARE, colornames.Red)
+	sl.downButton.SetLabel("-")
 	sl.downButton.SetOnClickFunc(sl.onDownButtonClicked)
 	// Calculating amount of slots based on background and
 	// buttons sizes.

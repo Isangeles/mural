@@ -28,22 +28,24 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
 )
 
 // Struct for HUD save game menu.
 type SaveMenu struct {
-	hud         *HUD
-	bgSpr       *pixel.Sprite
-	bgDraw      *imdraw.IMDraw
-	drawArea    pixel.Rect
-	titleText   *mtk.Text
-	savesList   *mtk.List
-	closeButton *mtk.Button
-	opened      bool
-	focused     bool
+	hud          *HUD
+	bgSpr        *pixel.Sprite
+	bgDraw       *imdraw.IMDraw
+	drawArea     pixel.Rect
+	titleText    *mtk.Text
+	savesList    *mtk.List
+	saveNameEdit *mtk.Textedit
+	closeButton  *mtk.Button
+	saveButton   *mtk.Button
+	opened       bool
+	focused      bool
 }
 
 // newSaveMenu creates new save menu for HUD.
@@ -60,17 +62,30 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	sm.titleText.SetText(lang.Text("gui", "hud_save_menu_title"))
 	// Saves list.
-	sm.savesList = mtk.NewList(sm.Bounds().Size(), mtk.SIZE_MINI, main_color,
+	bgSize := sm.Bounds().Size()
+	savesListSize := pixel.V(bgSize.X-mtk.ConvSize(50),
+		bgSize.Y-mtk.ConvSize(200))
+	sm.savesList = mtk.NewList(savesListSize, mtk.SIZE_MINI, main_color,
 		sec_color, accent_color)
+	// Text field.
+	sm.saveNameEdit = mtk.NewTextedit(mtk.SIZE_SMALL, main_color)
 	// Buttons.
 	sm.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE,
-		accent_color, "", "")
+		accent_color)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeBG)
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
+	sm.saveButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE,
+		accent_color)
+	sm.saveButton.SetLabel(lang.Text("gui", "save_b_label"))
+	saveButtonBG, err := data.PictureUI("button_green.png")
+	if err == nil {
+		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())
+		sm.saveButton.SetBackground(bg)
+	}
 	return sm
 }
 
@@ -85,18 +100,25 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, sm.Bounds(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Bounds().Max.Y/2 - 25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Bounds().Max.Y/2-25))
 	sm.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
+	// Saves.
+	savesListPos := mtk.ConvVec(pixel.V(0, 0))
+	sm.savesList.Draw(win, matrix.Moved(savesListPos))
+	// TODO: Save name filed.
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2 - 20,
-		sm.Bounds().Max.Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
+		sm.Bounds().Max.Y/2-15))
 	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
+	saveButtonPos := mtk.ConvVec(pixel.V(0, -sm.Bounds().Size().Y/2+30))
+	sm.saveButton.Draw(win, matrix.Moved(saveButtonPos))
 }
 
 // Update updates menu.
 func (sm *SaveMenu) Update(win *mtk.Window) {
 	// Elements.
 	sm.closeButton.Update(win)
+	sm.saveButton.Update(win)
 }
 
 // Bounds returns menu background size.

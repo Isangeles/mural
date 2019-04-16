@@ -75,7 +75,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
 	// Buttons.
-	im.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color, "", "")
+	im.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())

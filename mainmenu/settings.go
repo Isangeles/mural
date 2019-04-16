@@ -59,9 +59,9 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s.title = mtk.NewText(mtk.SIZE_BIG, 900)
 	s.title.SetText(lang.Text("gui", "settings_menu_title"))
 	// Buttons.
-	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM,
-		mtk.SHAPE_RECTANGLE, colornames.Red,
-		lang.Text("gui", "back_b_label"), "")
+	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
+		colornames.Red)
+	s.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}

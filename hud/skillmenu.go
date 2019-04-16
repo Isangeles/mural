@@ -72,7 +72,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	sm.titleText.SetText(lang.Text("gui", "hud_skills_title"))
 	// Buttons.
-	sm.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color, "", "")
+	sm.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err != nil {
 		log.Err.Printf("hud_skills:fail_to_retrieve_background_tex:%v", err)

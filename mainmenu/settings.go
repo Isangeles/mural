@@ -50,8 +50,7 @@ type Settings struct {
 	changed       bool
 }
 
-// newSettings returns new settings screen
-// instance.
+// newSettings returns new settings screen instance.
 func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s := new(Settings)
 	s.mainmenu = mainmenu
@@ -67,19 +66,21 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
 	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
 	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
-	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "settings_fullscr_switch_label"), "", fullscrValues)
+	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.fullscrSwitch.SetLabel(lang.Text("gui", "settings_fullscr_switch_label"))
+	s.fullscrSwitch.SetValues(fullscrValues)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	var resSwitchValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		resSwitchValues = append(resSwitchValues,
 			mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res})
 	}
-	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "resolution_s_label"), "", resSwitchValues)
+	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.resSwitch.SetLabel(lang.Text("gui", "resolution_s_label"))
+	s.resSwitch.SetValues(resSwitchValues)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
-	s.langSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "lang_s_label"), "", nil)
+	s.langSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.langSwitch.SetLabel(lang.Text("gui", "lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
 	
@@ -143,7 +144,6 @@ func (s *Settings) Apply() {
 		log.Err.Printf("settings_menu:fail_to_retrive_lang_switch_value")
 		return
 	}
-
 	config.SetFullscreen(fscr)
 	config.SetResolution(res)
 	config.SetLang(lang)

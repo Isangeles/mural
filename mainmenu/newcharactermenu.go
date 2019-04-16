@@ -96,28 +96,28 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
 	}
-	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color,
-		lang.Text("gui", "newchar_face_switch_label"), "", nil)
+	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
+	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
 	ncm.faceSwitch.SetPictureValues(faces)
 	// Attributes switches.
-	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_str_switch_label"), "", nil)
+	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.strSwitch.SetLabel(lang.Text("gui", "newchar_str_switch_label"))
 	ncm.strSwitch.SetIntValues(0, 90)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.conSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_con_switch_label"), "", nil)
+	ncm.conSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.conSwitch.SetLabel(lang.Text("gui", "newchar_con_switch_label"))
 	ncm.conSwitch.SetIntValues(0, 90)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.dexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_dex_switch_label"), "", nil)
+	ncm.dexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.dexSwitch.SetLabel(lang.Text("gui", "newchar_dex_switch_label"))
 	ncm.dexSwitch.SetIntValues(0, 90)
 	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.intSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_int_switch_label"), "", nil)
+	ncm.intSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.intSwitch.SetLabel(lang.Text("gui", "newchar_int_switch_label"))
 	ncm.intSwitch.SetIntValues(0, 90)
 	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.wisSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_wis_switch_label"), "", nil)
+	ncm.wisSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.wisSwitch.SetLabel(lang.Text("gui", "newchar_wis_switch_label"))
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
@@ -126,8 +126,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	femaleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_female"),
 		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
-	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_sex_switch_label"), "", gens)
+	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.sexSwitch.SetLabel(lang.Text("gui", "newchar_sex_switch_label"))
+	ncm.sexSwitch.SetValues(gens)
 	// Race switch.
 	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
 		"race_gnome")
@@ -137,8 +138,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		mtk.SwitchValue{raceNames["race_dwarf"], character.Dwarf},
 		mtk.SwitchValue{raceNames["race_gnome"], character.Gnome},
 	}
-	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_race_switch_label"), "", races)
+	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.raceSwitch.SetLabel(lang.Text("gui", "newchar_race_switch_label"))
+	ncm.raceSwitch.SetValues(races)
 	// Alignment switch.
 	aliNames := lang.Texts("ui", "ali_law_good", "ali_neu_good", "ali_cha_good",
 		"ali_law_neutral", "ali_tru_neutral", "ali_cha_neutral",
@@ -154,8 +156,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 		mtk.SwitchValue{aliNames["ali_neu_evil"], character.Neutral_evil},
 		mtk.SwitchValue{aliNames["ali_cha_evil"], character.Chaotic_evil},
 	}
-	ncm.aliSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color,
-		lang.Text("gui", "newchar_ali_switch_label"), "", alis)
+	ncm.aliSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.aliSwitch.SetLabel(lang.Text("gui", "newchar_ali_switch_label"))
+	ncm.aliSwitch.SetValues(alis)
 	// Buttons.
 	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		colornames.Red)

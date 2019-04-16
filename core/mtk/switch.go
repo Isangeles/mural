@@ -97,10 +97,8 @@ type Switch struct {
 	onChange               func(s *Switch, old, new *SwitchValue)
 }
 
-// NewSwitch creates new instance of switch with IMDraw
-// background with specified values to switch.
-func NewSwitch(size Size, color color.Color, label, info string,
-	values []SwitchValue) *Switch {
+// NewSwitch creates new switch with specified size and color.
+func NewSwitch(size Size, color color.Color) *Switch {
 	s := new(Switch)
 	// Background.
 	s.size = size
@@ -115,17 +113,11 @@ func NewSwitch(size Size, color color.Color, label, info string,
 	// Label & info.
 	s.label = NewText(s.size-1, s.Bounds().W())
 	s.label.JustCenter()
-	s.label.SetText(label)
-	if len(info) > 0 {
-		s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
-		s.info.Add(info)
-	}
+	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 	// Values.
-	s.values = values
 	s.index = 0
 	s.valueText = NewText(s.size, 100)
 	s.updateValueView()
-
 	return s
 }
 
@@ -190,6 +182,16 @@ func (s *Switch) SetBackground(spr *pixel.Sprite) {
 // color.
 func (s *Switch) SetColor(c color.Color) {
 	s.color = c
+}
+
+// SetLabel sets specified text as label.
+func (s *Switch) SetLabel(t string) {
+	s.label.SetText(t)
+}
+
+// SetInfo sets specified text as info.
+func (s *Switch) SetInfo(t string) {
+	s.info.InsertText(t)
 }
 
 // SetNextButtonBackground sets specified sprite as next

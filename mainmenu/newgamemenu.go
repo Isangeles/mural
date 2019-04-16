@@ -61,8 +61,8 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 	ngm.title = mtk.NewText(mtk.SIZE_BIG, 0)
 	ngm.title.SetText(lang.Text("gui", "newgame_menu_title"))
 	// Swtches & text.
-	ngm.charSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color,
-		lang.Text("gui", "newgame_char_switch_label"), "", nil)
+	ngm.charSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
+	ngm.charSwitch.SetLabel(lang.Text("gui", "newgame_char_switch_label"))
 	ngm.charSwitch.SetOnChangeFunc(ngm.onCharSwitchChanged)
 	ngm.charInfo = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_BIG, main_color)
 	// Buttons.

@@ -59,15 +59,6 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 	listSize := mtk.SIZE_BIG.ListSize().Size()
 	lgm.savesList = mtk.NewList(listSize, mtk.SIZE_BIG, main_color,
 		sec_color, accent_color)
-	savePattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
-	gameSaves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
-		savePattern)
-	if err != nil {
-		log.Err.Printf("fail_to_read_saved_games_dir:%v", err)
-	}
-	for _, sav := range gameSaves {
-		lgm.savesList.AddItem(sav, sav)
-	}
 	// Buttons.
 	lgm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
 		accent_color)
@@ -106,8 +97,12 @@ func (lgm *LoadGameMenu) Update(win *mtk.Window) {
 // Show toggles menu visibility.
 func (lgm *LoadGameMenu) Show(show bool) {
 	lgm.opened = show
-	if show {
+	if lgm.Opened() {
 		lgm.mainmenu.userFocus.Focus(lgm.savesList)
+		err := lgm.loadSaves()
+		if err != nil {
+			log.Err.Printf("load_game_menu:fail_to_load_saves:%v", err)
+		}
 	} else {
 		lgm.mainmenu.userFocus.Focus(nil)
 	}
@@ -116,6 +111,21 @@ func (lgm *LoadGameMenu) Show(show bool) {
 // Opened checks whether menu is open.
 func (lgm *LoadGameMenu) Opened() bool {
 	return lgm.opened
+}
+
+// loadSaves updates saves list with currrent
+// saves from saves dir.
+func (lgm *LoadGameMenu) loadSaves() error {
+	pattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
+	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
+		pattern)
+	if err != nil {
+		return fmt.Errorf("fail_to_read_saved_games_dir:%v", err)
+	}
+	for _, s := range saves {
+		lgm.savesList.AddItem(s, s)
+	}
+	return nil
 }
 
 // importSave imports saved game from file with

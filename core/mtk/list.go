@@ -32,19 +32,20 @@ import (
 
 // Struct for list with 'selectable' items.
 type List struct {
-	bgSpr       *pixel.Sprite
-	bgSize      pixel.Vec
-	bgColor     color.Color
-	secColor    color.Color
-	accentColor color.Color
-	drawArea    pixel.Rect
-	upButton    *Button
-	downButton  *Button
-	items       []*CheckSlot
-	startIndex  int
-	selectedVal interface{}
-	focused     bool
-	disabled    bool
+	bgSpr            *pixel.Sprite
+	bgSize           pixel.Vec
+	bgColor          color.Color
+	secColor         color.Color
+	accentColor      color.Color
+	drawArea         pixel.Rect
+	upButton         *Button
+	downButton       *Button
+	items            []*CheckSlot
+	startIndex       int
+	selectedVal      interface{}
+	focused          bool
+	disabled         bool
+	onItemSelectFunc func(it *CheckSlot)
 }
 
 // NewList creates new list with specified size
@@ -141,6 +142,12 @@ func (l *List) Bounds() pixel.Rect {
 	return l.bgSpr.Frame()
 }
 
+// SetOnItemSelectFunc sets specified function as function
+// triggered after one of list items was selected.
+func (l *List) SetOnItemSelectFunc(f func(i *CheckSlot)) {
+	l.onItemSelectFunc = f
+}
+
 // SetStartIndex sets specified integer as index
 // of first item to display. If specified value is
 // bigger than last item index then first index(0)
@@ -167,7 +174,8 @@ func (l *List) InsertItems(content map[string]interface{}) {
 // AddItem adds specified value with label to current
 // list content.
 func (l *List) AddItem(label string, value interface{}) {
-	itemSlot := NewCheckSlot(label, value, l.secColor, l.accentColor)
+	itemSize := pixel.V(l.Bounds().W() - l.upButton.Frame().W(), ConvSize(20))
+	itemSlot := NewCheckSlot(label, value, itemSize, l.secColor, l.accentColor)
 	itemSlot.SetOnCheckFunc(l.onItemSelected)
 	l.items = append(l.items, itemSlot)
 }
@@ -189,30 +197,21 @@ func (l *List) drawListItems(t pixel.Target) {
 	if len(l.items) < 1 { // if list empty
 		return
 	}
-	bgTLPos := pixel.V(l.DrawArea().Min.X, l.DrawArea().Max.Y)
 	listH := l.DrawArea().H()
 	var contentH float64
 	// Draw first visible item.
 	item := l.items[l.startIndex]
-	drawMin := bgTLPos //PosTL(item.Bounds(), bgTLPos)
-	drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y+
-		item.Bounds().H())
-	drawArea := pixel.R(drawMin.X, drawMin.Y,
-		drawMax.X, drawMax.Y)
-	item.Draw(t, drawArea)
+	drawPos := DrawPosTC(l.DrawArea(), item.Bounds())
+	item.Draw(t, Matrix().Moved(drawPos))
 	contentH += item.DrawArea().H() + ConvSize(15)
-	lastItemDA := item.Label().DrawArea()
+	lastItemDA := item.DrawArea()
 	// Draw rest of visible items.
 	for i := l.startIndex + 1; i < len(l.items) && contentH+lastItemDA.H() < listH; i++ {
 		item := l.items[i]
-		drawMin := BottomOf(lastItemDA, lastItemDA, 15)
-		drawMax := pixel.V(l.DrawArea().Max.X, drawMin.Y+
-			item.Bounds().H())
-		drawArea := pixel.R(drawMin.X, drawMin.Y,
-			drawMax.X, drawMax.Y)
-		item.Draw(t, drawArea)
+		drawPos = BottomOf(lastItemDA, item.Bounds(), ConvSize(5))
+		item.Draw(t, Matrix().Moved(drawPos))
 		contentH += item.DrawArea().H() + ConvSize(15)
-		lastItemDA = item.Label().DrawArea()
+		lastItemDA = item.DrawArea()
 	}
 }
 
@@ -238,4 +237,7 @@ func (l *List) onItemSelected(s *CheckSlot) {
 	l.unselectAll()
 	s.Check(true)
 	l.selectedVal = s.Value()
+	if l.onItemSelectFunc != nil {
+		l.onItemSelectFunc(s)
+	}
 }

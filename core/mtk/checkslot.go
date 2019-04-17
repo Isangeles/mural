@@ -33,6 +33,7 @@ import (
 // Struct for 'chackable' slots.
 type CheckSlot struct {
 	checked    bool
+	bgSize     pixel.Vec
 	bgColor    color.Color
 	checkColor color.Color
 	drawArea   pixel.Rect
@@ -42,9 +43,10 @@ type CheckSlot struct {
 }
 
 // NewCheckSlot creates new item for list.
-func NewCheckSlot(label string, value interface{},
+func NewCheckSlot(label string, value interface{}, bgSize pixel.Vec,
 	color, checkColor color.Color) *CheckSlot {
 	cs := new(CheckSlot)
+	cs.bgSize = bgSize
 	cs.bgColor = color
 	cs.checkColor = checkColor
 	cs.label = NewText(SIZE_MEDIUM, 0);
@@ -55,14 +57,14 @@ func NewCheckSlot(label string, value interface{},
 }
 
 // Draw draws slot.
-func (cs *CheckSlot) Draw(t pixel.Target, drawArea pixel.Rect) {
-	cs.drawArea = drawArea
+func (cs *CheckSlot) Draw(t pixel.Target, matrix pixel.Matrix) {
+	cs.drawArea = MatrixToDrawArea(matrix, cs.Bounds())
 	color := cs.bgColor
 	if cs.Checked() {
 		color = cs.checkColor
 	}
 	DrawRectangle(t, cs.DrawArea(), color)
-	cs.label.Draw(t, Matrix().Moved(drawArea.Min))
+	cs.label.Draw(t, matrix)
 }
 
 // Update updates slot.
@@ -82,6 +84,12 @@ func (cs *CheckSlot) Update(win *Window) {
 	}
 }
 
+// SetSize sets specified vector as
+// background size.
+func (cs *CheckSlot) SetSize(s pixel.Vec) {
+	cs.bgSize = s
+}
+
 // Label returns slot label.
 func (cs *CheckSlot) Label() *Text {
 	return cs.label
@@ -94,8 +102,7 @@ func (cs *CheckSlot) Value() interface{} {
 
 // Bounds returns slot size bounds.
 func (cs *CheckSlot) Bounds() pixel.Rect {
-	//return SIZE_SMALL.ButtonSize(SHAPE_RECTANGLE)
-	return cs.label.Bounds()
+	return pixel.R(0, 0, cs.bgSize.X, cs.bgSize.Y)
 }
 
 // DrawArea returns current slot draw area.

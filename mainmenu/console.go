@@ -71,6 +71,7 @@ func (c *Console) Draw(win *mtk.Window) {
 
 // Update handles key events and updates console.
 func (c *Console) Update(win *mtk.Window) {
+	// Key events.
 	if win.JustPressed(pixelgl.KeyGraveAccent) {
 		if !c.opened {
 			c.Show(true)
@@ -82,19 +83,20 @@ func (c *Console) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.KeyDown) {
 		c.textedit.SetText(c.lastInput)
 	}
+	// Messages.
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
 	/* 
-		for i := len(engineMsgs)-1; i >= 0; i-- {
-			msgs = append(msgs, engineMsgs[i])
-		}
+        for i := len(engineMsgs)-1; i >= 0; i-- {
+		msgs = append(msgs, engineMsgs[i])
+	}
 	*/
 	for _, msg := range engineMsgs {
 		msgs = append(msgs, msg)
 	}
 	c.textbox.SetMaxTextWidth(win.Bounds().Max.X)
 	c.textbox.Insert(msgs)
-	
+	// Elements.
 	c.textbox.Update(win)
 	c.textedit.Update(win)
 }

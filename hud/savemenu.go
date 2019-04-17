@@ -24,13 +24,18 @@
 package hud
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
+	flameconf "github.com/isangeles/flame/config"
+	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for HUD save game menu.
@@ -67,8 +72,11 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		bgSize.Y-mtk.ConvSize(200))
 	sm.savesList = mtk.NewList(savesListSize, mtk.SIZE_MINI, main_color,
 		sec_color, accent_color)
+	sm.savesList.SetOnItemSelectFunc(sm.onSaveSelected)
 	// Text field.
 	sm.saveNameEdit = mtk.NewTextedit(mtk.SIZE_SMALL, main_color)
+	saveNameSize := pixel.V(savesListSize.X, mtk.ConvSize(20))
+	sm.saveNameEdit.SetSize(saveNameSize)
 	// Buttons.
 	sm.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE,
 		accent_color)
@@ -100,12 +108,14 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, sm.Bounds(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Bounds().Max.Y/2-25))
+	titleTextPos := pixel.V(0, sm.Bounds().Max.Y/2-mtk.ConvSize(20))
 	sm.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Saves.
-	savesListPos := mtk.ConvVec(pixel.V(0, 0))
+	savesListPos := pixel.V(0, 0)
 	sm.savesList.Draw(win, matrix.Moved(savesListPos))
-	// TODO: Save name filed.
+	// Save name filed.
+	saveNamePos := pixel.V(0, -mtk.ConvSize(150))
+	sm.saveNameEdit.Draw(win, matrix.Moved(saveNamePos))
 	// Buttons.
 	closeButtonPos := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
 		sm.Bounds().Max.Y/2-15))
@@ -119,6 +129,8 @@ func (sm *SaveMenu) Update(win *mtk.Window) {
 	// Elements.
 	sm.closeButton.Update(win)
 	sm.saveButton.Update(win)
+	sm.saveNameEdit.Update(win)
+	sm.savesList.Update(win)
 }
 
 // Bounds returns menu background size.
@@ -144,6 +156,10 @@ func (sm *SaveMenu) Opened() bool {
 func (sm *SaveMenu) Show(show bool) {
 	sm.opened = show
 	sm.hud.Camera().Lock(sm.Opened())
+	err := sm.loadSaves()
+	if err != nil {
+		log.Err.Printf("hud_save_menu:fail_to_load_saves:%e", err)
+	}
 }
 
 // Focused checks if menu us focused.
@@ -156,7 +172,27 @@ func (sm *SaveMenu) Focus(focus bool) {
 	sm.focused = focus
 }
 
+// loadSaves updates saves list with
+// current saves from saves dir.
+func (sm *SaveMenu) loadSaves() error {
+	pattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
+	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
+		pattern)
+	if err != nil {
+		return fmt.Errorf("fail_to_read_saved_games_dir:%v", err)
+	}
+	for _, s := range saves {
+		sm.savesList.AddItem(s, s)
+	}
+	return nil
+}
+
 // Triggered after close button clicked.
 func (sm *SaveMenu) onCloseButtonClicked(b *mtk.Button) {
 	sm.Show(false)
+}
+
+// Triggered after selecting one of save list items.
+func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
+	//sm.saveNameEdit.SetText(cs.Label())
 }

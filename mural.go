@@ -222,15 +222,23 @@ func EnterGame(g *flamecore.Game) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	game = g
-	HUD, err := hud.NewHUD(game)
+	// Create HUD.
+	hud := hud.NewHUD()
+	// Set game for HUD.
+	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
-		log.Err.Printf("fail_to_create_player_HUD:%v", err)
+		log.Err.Printf("enter_game:fail_to_load_chapter_resources:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
-	// Start game loading.
-	HUD.LoadGame(game)
+	err = hud.SetGame(game)
+	if err != nil {
+		log.Err.Printf("enter_game:fail_to_set_hud_game:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
 	// Set HUD.
-	setHUD(HUD)
+	setHUD(hud)
 	inGame = true
 }
 
@@ -244,26 +252,37 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
 	if err != nil  {
-		log.Err.Printf("fail_to_load_gui_save:%v", err)
-	} else {
-		for _, pcd := range guisav.PlayersData {
-			res.AddAvatarData(pcd.Avatar)
-		}
-	}
-	// Create HUD.
-	HUD, err := hud.NewHUD(game)
-	if err != nil {
-		log.Err.Printf("fail_to_create_player_HUD:%v", err)
-		msg := lang.Text("gui", "load_game_err")
-		mainMenu.ShowMessage(msg)
+		log.Err.Printf("enter_saved_game:fail_to_load_gui_save:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
-	// Start game loading.
-	HUD.LoadGame(game)
+	for _, pcd := range guisav.PlayersData {
+		res.AddAvatarData(pcd.Avatar)
+	}
+	// Create HUD.
+	hud := hud.NewHUD()
+	// Set game for HUD.
+	err = imp.LoadChapterResources(game.Module().Chapter())
+	if err != nil {
+		log.Err.Printf("enter_saved_game:fail_to_load_chapter_resources:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
+	err = hud.SetGame(game)
+	if err != nil {
+		log.Err.Printf("enter_saved_game:fail_to_set_hud_game:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
 	// Load HUD state.
-	HUD.LoadGUISave(guisav)
+	err = hud.LoadGUISave(guisav)
+	if err != nil {
+		log.Err.Printf("enter_saved_game:fail_to_set_hud_layout:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
 	// Set HUD.
-	setHUD(HUD)
+	setHUD(hud)
 	inGame = true
 }
 

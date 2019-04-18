@@ -35,45 +35,29 @@ import (
 // resources files.
 func LoadModuleResources(mod *module.Module) error {
 	// Objectsd graphics.
-	objectsData := make(map[string]*res.ObjectGraphicData)
 	obGraphics, err := ImportObjectsGraphicsDir(mod.Conf().ObjectsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_objects_graphics:%v", err)
 	}
-	for _, obGraphic := range obGraphics {
-		objectsData[obGraphic.ID] = obGraphic
-	}
-	res.SetObjectsData(objectsData)
+	res.AddObjectsData(obGraphics...)
 	// Items graphics.
-	itemsData := make(map[string]*res.ItemGraphicData)
 	itGraphics, err := ImportItemsGraphicsDir(mod.Conf().ItemsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}
-	for _, itGraphic := range itGraphics {
-		itemsData[itGraphic.ItemID] = itGraphic
-	}
-	res.SetItemsData(itemsData)
+	res.AddItemsData(itGraphics...)
 	// Effects graphic.
-	effectsData := make(map[string]*res.EffectGraphicData)
 	effGraphics, err := ImportEffectsGraphicsDir(mod.Conf().EffectsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_effects_graphics:%v", err)
 	}
-	for _, effGraphic := range effGraphics {
-		effectsData[effGraphic.EffectID] = effGraphic
-	}
-	res.SetEffectsData(effectsData)
+	res.AddEffectsData(effGraphics...)
 	// Skills graphic.
-	skillsData := make(map[string]*res.SkillGraphicData)
 	skillGraphics, err := ImportSkillsGraphicsDir(mod.Conf().SkillsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_skills_graphics:%v", err)
 	}
-	for _, skillGraphic := range skillGraphics {
-		skillsData[skillGraphic.SkillID] = skillGraphic
-	}
-	res.SetSkillsData(skillsData)
+	res.AddSkillsData(skillGraphics...)
 	return nil
 }
 
@@ -81,14 +65,10 @@ func LoadModuleResources(mod *module.Module) error {
 // resources files.
 func LoadChapterResources(chapter *module.Chapter) error {
 	// Avatars.
-	avatarsData := make(map[string]*res.AvatarData)
 	avs, err := ImportAvatarsDataDir(chapter.Conf().NPCPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
 	}
-	for _, av := range avs {
-		avatarsData[av.ID] = av
-	}
-	res.SetAvatarsData(avatarsData)
+	res.AddAvatarData(avs...)
 	return nil
 }

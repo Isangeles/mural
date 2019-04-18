@@ -33,7 +33,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/text/lang"
 	flameobject "github.com/isangeles/flame/core/module/object"
@@ -43,7 +42,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
@@ -88,11 +86,9 @@ type HUD struct {
 	loaderr    error
 }
 
-// NewHUD creates new HUD instance for specified
-// game.
-func NewHUD(g *flamecore.Game) (*HUD, error) {
+// NewHUD creates new HUD instance.
+func NewHUD() *HUD {
 	hud := new(HUD)
-	hud.game = g
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
@@ -115,26 +111,16 @@ func NewHUD(g *flamecore.Game) (*HUD, error) {
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
 	// Layouts.
 	hud.layouts = make(map[string]*Layout)
-	// Players.
-	if len(g.Players()) < 1 {
-		return nil, fmt.Errorf("no player characters")
-	}
-	for _, pc := range g.Players() {
-		avData := res.Avatar(pc.ID())
-		if avData == nil {
-			return nil, fmt.Errorf("fail_to_find_avatar_data:%s", pc.ID())
-		}
-		av := object.NewAvatar(pc, avData)
-		hud.pcs = append(hud.pcs, av)
-	}
-	hud.SetActivePlayer(hud.pcs[0])
-	return hud, nil
+	return hud
 }
 
 // Draw draws HUD elements.
 func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.loading {
 		hud.loadScreen.Draw(win)
+		return
+	}
+	if hud.ActivePlayer() == nil { // no active pc, don't draw
 		return
 	}
 	// Elements positions.
@@ -187,6 +173,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 			log.Err.Printf("hud_loading_fail:%v", hud.loaderr)
 			hud.Exit()
 		}
+	}
+	if hud.ActivePlayer() == nil { // no active pc, don't update
+		return
 	}
 	// Key events.
 	if win.JustPressed(chat_key) {
@@ -286,9 +275,6 @@ func (hud *HUD) Players() []*object.Avatar {
 
 // ActivePlayers retruns currently active PC.
 func (hud *HUD) ActivePlayer() *object.Avatar {
-	if hud.activePC == nil && len(hud.pcs) > 0 {
-		hud.activePC = hud.pcs[0]
-	}
 	return hud.activePC
 }
 
@@ -305,6 +291,16 @@ func (hud *HUD) AddPlayer(char *character.Character) error {
 		hud.SetActivePlayer(av)
 	}
 	return nil
+}
+
+// SetActivePlayer sets specified avatar as active
+// player.
+func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
+	hud.activePC = pc
+	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	hud.pcFrame.SetObject(hud.ActivePlayer())
+	hud.castBar.SetOwner(hud.ActivePlayer().Character)
+	hud.Reload()
 }
 
 // Exit sends exit request to HUD.
@@ -357,14 +353,16 @@ func (hud *HUD) CloseLoadingScreen() {
 	hud.loading = false
 }
 
-// SetActivePlayer sets specified avatar as active
-// player.
-func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
-	hud.activePC = pc
-	hud.camera.CenterAt(hud.ActivePlayer().Position())
-	hud.pcFrame.SetObject(hud.ActivePlayer())
-	hud.castBar.SetOwner(hud.ActivePlayer().Character)
-	hud.Reload()
+// Layout returns layout for player with specified ID
+// serial value(creates new layout if there is no saved
+// layout for such player).
+func (hud *HUD) Layout(id, serial string) *Layout {
+	l := hud.layouts[id+serial]
+	if l == nil {
+		l = NewLayout()
+		hud.layouts[id+serial] = l
+	}
+	return l
 }
 
 // Reload reloads HUD layouts for
@@ -373,33 +371,40 @@ func (hud *HUD) Reload() {
 	if hud.ActivePlayer() == nil {
 		return
 	}
-	layout := hud.layouts[hud.ActivePlayer().SerialID()]
-	if layout == nil {
-		layout = NewLayout()
-	}
+	layout := hud.Layout(hud.ActivePlayer().ID(), hud.ActivePlayer().Serial())
 	hud.bar.setLayout(layout)
 }
 
-// LoadGame load all game data.
-func (hud *HUD) LoadGame(game *flamecore.Game) error {
-	// Load game.
-	hud.OpenLoadingScreen(lang.Text("gui", "load_game_data_info"))
-	defer hud.CloseLoadingScreen()
-	err := imp.LoadChapterResources(flame.Mod().Chapter())
-	if err != nil {
-		return fmt.Errorf("fail_to_load_resources:%v", err)
+// SetGame sets HUD game.
+func (hud *HUD) SetGame(g *flamecore.Game) error {
+	hud.game = g
+	// Players.
+	if len(hud.game.Players()) < 1 {
+		return fmt.Errorf("no player characters")
 	}
+	for _, pc := range hud.game.Players() {
+		err := hud.AddPlayer(pc)
+		if err != nil {
+			return fmt.Errorf("fail_to_add_player:%v", err)
+		}
+	}
+	// Setup active player area.
 	chapter := hud.game.Module().Chapter()
 	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if err != nil {
-		return fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
+		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
+		return hud.loaderr
 	}
-	hud.ChangeArea(pcArea)
+	err = hud.ChangeArea(pcArea)
+	if err != nil {
+		hud.loaderr = fmt.Errorf("fail_to_change_area:%v", err)
+		return hud.loaderr
+	}
 	return nil
 }
 
 // ChangeArea changes current HUD area.
-func (hud *HUD) ChangeArea(area *scenario.Area) {
+func (hud *HUD) ChangeArea(area *scenario.Area) error {
 	// Map.
 	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
 	defer hud.CloseLoadingScreen()
@@ -408,12 +413,12 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 	tmxMap, err := data.Map(mapsPath, area.ID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)
-		return
+		return hud.loaderr
 	}
 	areaMap, err := areamap.NewMap(tmxMap, mapsPath)
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
-		return
+		return hud.loaderr
 	}
 	hud.camera.SetMap(areaMap)
 	// Avatars.
@@ -453,18 +458,7 @@ func (hud *HUD) ChangeArea(area *scenario.Area) {
 		objects = append(objects, og)
 	}
 	hud.camera.SetObjects(objects)
-}
-
-// Layout returns layout for player with specified ID
-// serial value(creates new layout if there is no saved
-// layout for such player).
-func (hud *HUD) Layout(id, serial string) *Layout {
-	l := hud.layouts[id+serial]
-	if l == nil {
-		l = NewLayout()
-		hud.layouts[id+serial] = l
-	}
-	return l
+	return nil
 }
 
 // Saves GUI to save struct.
@@ -495,7 +489,7 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		layout := NewLayout()
 		layout.SetInvSlots(pcd.InvSlots)
 		layout.SetBarSlots(pcd.BarSlots)
-		layoutKey := pcd.Avatar.ID + "_" + pcd.Avatar.Serial
+		layoutKey := pcd.Avatar.ID + pcd.Avatar.Serial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.

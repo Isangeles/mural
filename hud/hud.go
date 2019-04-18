@@ -34,17 +34,15 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
-	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
-	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	flameobject "github.com/isangeles/flame/core/module/object"
+	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
@@ -115,7 +113,7 @@ func NewHUD(g *flamecore.Game) (*HUD, error) {
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
-	// Layout.
+	// Layouts.
 	hud.layouts = make(map[string]*Layout)
 	// Players.
 	if len(g.Players()) < 1 {
@@ -124,15 +122,12 @@ func NewHUD(g *flamecore.Game) (*HUD, error) {
 	for _, pc := range g.Players() {
 		avData := res.Avatar(pc.ID())
 		if avData == nil {
-			return nil, fmt.Errorf("player:%sfail find avatar data",
-				pc.ID())
+			return nil, fmt.Errorf("fail_to_find_avatar_data:%s", pc.ID())
 		}
 		av := object.NewAvatar(pc, avData)
 		hud.pcs = append(hud.pcs, av)
 	}
 	hud.SetActivePlayer(hud.pcs[0])
-	// Start game loading.
-	go hud.LoadGame(g)
 	return hud, nil
 }
 
@@ -299,11 +294,17 @@ func (hud *HUD) ActivePlayer() *object.Avatar {
 
 // AddAvatar adds specified character to HUD
 // player characters list.
-func (hud *HUD) AddPlayer(av *object.Avatar) {
+func (hud *HUD) AddPlayer(char *character.Character) error {
+	avData := res.Avatar(char.ID())
+	if avData == nil {
+		return fmt.Errorf("fail_to_find_avatar_data:%s", char.ID())
+	}
+	av := object.NewAvatar(char, avData)
 	hud.pcs = append(hud.pcs, av)
 	if hud.ActivePlayer() == nil {
 		hud.SetActivePlayer(av)
 	}
+	return nil
 }
 
 // Exit sends exit request to HUD.
@@ -380,21 +381,21 @@ func (hud *HUD) Reload() {
 }
 
 // LoadGame load all game data.
-func (hud *HUD) LoadGame(game *flamecore.Game) {
+func (hud *HUD) LoadGame(game *flamecore.Game) error {
+	// Load game.
 	hud.OpenLoadingScreen(lang.Text("gui", "load_game_data_info"))
 	defer hud.CloseLoadingScreen()
 	err := imp.LoadChapterResources(flame.Mod().Chapter())
 	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_load_resources:%v", err)
-		return
+		return fmt.Errorf("fail_to_load_resources:%v", err)
 	}
 	chapter := hud.game.Module().Chapter()
 	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
-		return
+		return fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
 	}
 	hud.ChangeArea(pcArea)
+	return nil
 }
 
 // ChangeArea changes current HUD area.
@@ -466,27 +467,6 @@ func (hud *HUD) Layout(id, serial string) *Layout {
 	return l
 }
 
-// Save saves GUI and game state to
-// savegames directory.
-func (hud *HUD) Save(saveName string) error {
-	// Retrieve saves path.
-	savesPath := flameconf.ModuleSavegamesPath()
-	// Save current game.
-	err := flamedata.SaveGame(hud.Game(), savesPath, saveName)
-	if err != nil {
-		return fmt.Errorf("fail_to_save_game:%v",
-			err)
-	}
-	// Save GUI state.
-	guisav := hud.NewGUISave()
-	err = exp.ExportGUISave(guisav, savesPath, saveName)
-	if err != nil {
-		return fmt.Errorf("fail_to_save_gui:%v",
-			err)
-	}
-	return nil
-}
-
 // Saves GUI to save struct.
 func (hud *HUD) NewGUISave() *res.GUISave {
 	sav := new(res.GUISave)
@@ -511,13 +491,11 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 // LoadGUISave load specified saved GUI state.
 func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Players.
-	for _, pcData := range save.PlayersData {
-		//pc := object.NewAvatar(pcData.Avatar)
-		//hud.pcs = append(hud.pcs, pc)
+	for _, pcd := range save.PlayersData {
 		layout := NewLayout()
-		layout.SetInvSlots(pcData.InvSlots)
-		layout.SetBarSlots(pcData.BarSlots)
-		layoutKey := pcData.Avatar.ID + "_" + pcData.Avatar.Serial
+		layout.SetInvSlots(pcd.InvSlots)
+		layout.SetBarSlots(pcd.BarSlots)
+		layoutKey := pcd.Avatar.ID + "_" + pcd.Avatar.Serial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.

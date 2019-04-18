@@ -25,6 +25,7 @@ package hud
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -34,6 +35,7 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
@@ -94,6 +96,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())
 		sm.saveButton.SetBackground(bg)
 	}
+	sm.saveButton.SetOnClickFunc(sm.onSaveButtonClicked)
 	return sm
 }
 
@@ -108,20 +111,20 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, sm.Bounds(), nil)
 	}
 	// Title.
-	titleTextPos := pixel.V(0, sm.Bounds().Max.Y/2-mtk.ConvSize(20))
-	sm.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
+	titleTextMove := pixel.V(0, sm.Bounds().Max.Y/2-mtk.ConvSize(20))
+	sm.titleText.Draw(win.Window, matrix.Moved(titleTextMove))
 	// Saves.
-	savesListPos := pixel.V(0, 0)
-	sm.savesList.Draw(win, matrix.Moved(savesListPos))
+	savesListMove := pixel.V(0, 0)
+	sm.savesList.Draw(win, matrix.Moved(savesListMove))
 	// Save name filed.
-	saveNamePos := pixel.V(0, -mtk.ConvSize(150))
-	sm.saveNameEdit.Draw(win, matrix.Moved(saveNamePos))
+	saveNameMove := pixel.V(0, -mtk.ConvSize(150))
+	sm.saveNameEdit.Draw(win, matrix.Moved(saveNameMove))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
+	closeButtonMove := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
 		sm.Bounds().Max.Y/2-15))
-	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
-	saveButtonPos := mtk.ConvVec(pixel.V(0, -sm.Bounds().Size().Y/2+30))
-	sm.saveButton.Draw(win, matrix.Moved(saveButtonPos))
+	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonMove))
+	saveButtonMove := mtk.ConvVec(pixel.V(0, -sm.Bounds().Size().Y/2+30))
+	sm.saveButton.Draw(win, matrix.Moved(saveButtonMove))
 }
 
 // Update updates menu.
@@ -175,6 +178,9 @@ func (sm *SaveMenu) Focus(focus bool) {
 // loadSaves updates saves list with
 // current saves from saves dir.
 func (sm *SaveMenu) loadSaves() error {
+	// Clear list.
+	sm.savesList.Clear()
+	// Insert save names.
 	pattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
 	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
 		pattern)
@@ -187,12 +193,47 @@ func (sm *SaveMenu) loadSaves() error {
 	return nil
 }
 
+// Triggered after selecting one of save list items.
+func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
+	saveName, ok := cs.Value().(string)
+	if !ok {
+		log.Err.Printf("hud_savegame:fail to retireve save name")
+		return
+	}
+	sm.saveNameEdit.SetText(saveName)
+}
+
 // Triggered after close button clicked.
 func (sm *SaveMenu) onCloseButtonClicked(b *mtk.Button) {
 	sm.Show(false)
 }
 
-// Triggered after selecting one of save list items.
-func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
-	//sm.saveNameEdit.SetText(cs.Label())
+// Triggered after save button clicked.
+func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
+	saveFileName := sm.saveNameEdit.Text()
+	saveName := strings.Split(saveFileName, ".")[0]
+	err := sm.save(saveName)
+	if err != nil {
+		log.Err.Printf("hud_savegame:fail_to_save:%v")
+	}
+}
+
+// Save saves GUI and game state to
+// savegames directory.
+func (sm *SaveMenu) save(saveName string) error {
+	// Retrieve saves path.
+	savesPath := flameconf.ModuleSavegamesPath()
+	// Save current game.
+	err := flamedata.SaveGame(sm.hud.Game(), savesPath, saveName)
+	if err != nil {
+		return fmt.Errorf("fail_to_save_game:%v",
+			err)
+	}
+	// Save GUI state.
+	guisav := sm.hud.NewGUISave()
+	err = exp.ExportGUISave(guisav, savesPath, saveName)
+	if err != nil {
+		return fmt.Errorf("fail_to_save_gui:%v", err)
+	}
+	return nil
 }

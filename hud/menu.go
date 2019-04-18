@@ -176,6 +176,7 @@ func (m *Menu) onCloseButtonClicked(b *mtk.Button) {
 
 // Triggered after save button clicked.
 func (m *Menu) onSaveButtonClicked(b *mtk.Button) {
+	m.Show(false)
 	m.hud.savemenu.Show(true)
 }
 

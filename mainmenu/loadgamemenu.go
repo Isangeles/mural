@@ -116,6 +116,9 @@ func (lgm *LoadGameMenu) Opened() bool {
 // loadSaves updates saves list with currrent
 // saves from saves dir.
 func (lgm *LoadGameMenu) loadSaves() error {
+	// Clear list.
+	lgm.savesList.Clear()
+	// Insert save names.
 	pattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
 	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
 		pattern)

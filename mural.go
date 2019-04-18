@@ -227,6 +227,9 @@ func EnterGame(g *flamecore.Game) {
 		log.Err.Printf("fail_to_create_player_HUD:%v", err)
 		return
 	}
+	// Start game loading.
+	HUD.LoadGame(game)
+	// Set HUD.
 	setHUD(HUD)
 	inGame = true
 }
@@ -240,13 +243,12 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 	flame.SetGame(game)
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
-	if err == nil {
-		// Add avatars from saved GUI to global avatars data resources.
+	if err != nil  {
+		log.Err.Printf("fail_to_load_gui_save:%v", err)
+	} else {
 		for _, pcd := range guisav.PlayersData {
 			res.AddAvatarData(pcd.Avatar)
 		}
-	} else {
-		log.Err.Printf("fail_to_load_gui_save:%v", err)
 	}
 	// Create HUD.
 	HUD, err := hud.NewHUD(game)
@@ -256,9 +258,11 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 		mainMenu.ShowMessage(msg)
 		return
 	}
+	// Start game loading.
+	HUD.LoadGame(game)
 	// Load HUD state.
 	HUD.LoadGUISave(guisav)
-	// Show HUD.
+	// Set HUD.
 	setHUD(HUD)
 	inGame = true
 }

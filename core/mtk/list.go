@@ -180,6 +180,11 @@ func (l *List) AddItem(label string, value interface{}) {
 	l.items = append(l.items, itemSlot)
 }
 
+// Clear clears list.
+func (l *List) Clear() {
+	l.items = nil
+}
+
 // SelectedValue returns value of currently selected
 // list item.
 func (l *List) SelectedValue() interface{} {
@@ -194,21 +199,26 @@ func (l *List) DrawArea() pixel.Rect {
 
 // drawListItems draws visible list content.
 func (l *List) drawListItems(t pixel.Target) {
-	if len(l.items) < 1 { // if list empty
+	if len(l.items) < 1 { // list empty
 		return
 	}
 	listH := l.DrawArea().H()
-	var contentH float64
-	// Draw first visible item.
-	item := l.items[l.startIndex]
-	drawPos := DrawPosTC(l.DrawArea(), item.Bounds())
-	item.Draw(t, Matrix().Moved(drawPos))
-	contentH += item.DrawArea().H() + ConvSize(15)
-	lastItemDA := item.DrawArea()
-	// Draw rest of visible items.
-	for i := l.startIndex + 1; i < len(l.items) && contentH+lastItemDA.H() < listH; i++ {
+	var (
+		contentH   float64
+		lastItemDA pixel.Rect
+	)
+	for i := l.startIndex; i < len(l.items) && contentH+lastItemDA.H() < listH; i++ {
+		if i == 0 { // Draw first visible item.
+			item := l.items[l.startIndex]
+			drawPos := DrawPosTC(l.DrawArea(), item.Bounds())
+			item.Draw(t, Matrix().Moved(drawPos))
+			contentH += item.DrawArea().H() + ConvSize(15)
+			lastItemDA = item.DrawArea()
+			continue
+		}
+		// Draw rest of visible items.
 		item := l.items[i]
-		drawPos = BottomOf(lastItemDA, item.Bounds(), ConvSize(5))
+		drawPos := BottomOf(lastItemDA, item.Bounds(), ConvSize(5))
 		item.Draw(t, Matrix().Moved(drawPos))
 		contentH += item.DrawArea().H() + ConvSize(15)
 		lastItemDA = item.DrawArea()

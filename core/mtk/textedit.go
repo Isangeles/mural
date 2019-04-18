@@ -24,7 +24,6 @@
 package mtk
 
 import (
-	//"fmt"
 	"image/color"
 
 	"golang.org/x/image/colornames"
@@ -40,7 +39,6 @@ type Textedit struct {
 	drawArea   pixel.Rect
 	color      color.Color
 	colorFocus color.Color
-	label      *text.Text
 	input      *text.Text
 	text       string
 	focused    bool
@@ -55,10 +53,9 @@ func NewTextedit(fontSize Size, color color.Color) *Textedit {
 	// Background.
 	t.color = color
 	t.colorFocus = colornames.Crimson
-	// Label & Text input.
+	// Text input.
 	font := MainFont(fontSize)
 	atlas := Atlas(&font)
-	t.label = text.New(pixel.V(0, 0), atlas)
 	t.input = text.New(pixel.V(0, 0), atlas)
 	return t
 }
@@ -97,14 +94,13 @@ func (te *Textedit) Update(win *Window) {
 		}
 		if win.JustPressed(pixelgl.KeyBackspace) {
 			if len(te.text) > 0 {
-		 		te.text = te.text[:len(te.text)-1]
-				te.input.Clear()
-				te.input.WriteString(te.text)
+		 		te.SetText(te.text[:len(te.text)-1])
 			}
 		}
-		te.text += win.Typed()
-		te.input.WriteString(win.Typed())
+		te.SetText(te.text + win.Typed())
 	}
+	te.input.Clear()
+	te.input.WriteString(te.text)
 }
 
 // Focus sets or removes focus from text edit.
@@ -129,7 +125,6 @@ func (te *Textedit) Disabled() bool {
 
 // Clear clears text edit input.
 func (te *Textedit) Clear() {
-	te.input.Clear()
 	te.text = ""
 }
 
@@ -142,11 +137,6 @@ func (te *Textedit) Text() string {
 // value of text edit field.
 func (te *Textedit) SetText(text string) {
 	te.text = text
-}
-
-// SetLabel sets specified text as label.
-func (te *Textedit) SetLabel(text string) {
-	te.label.WriteString(text)
 }
 
 // SetSize sets text edit size.

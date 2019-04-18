@@ -88,9 +88,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
 	// Text fields.
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
-	ncm.nameEdit.SetLabel(lang.Text("gui", "newchar_name_edit_label"))
-	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM,
-		main_color)
+	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, main_color)
 	// Portrait switch.
 	faces, err := data.PlayablePortraits()
 	if err != nil {
@@ -175,7 +173,6 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	// Character.
 	ncm.rollPoints()
-
 	return ncm, nil
 }
 

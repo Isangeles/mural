@@ -63,8 +63,6 @@ var (
 	pcHUD    *hud.HUD
 	game     *flamecore.Game
 	inGame   bool
-
-	focus = new(mtk.Focus)
 )
 
 // On init.
@@ -90,17 +88,20 @@ func init() {
 
 // Main function.
 func main() {
-	// Check whether Flame module is loaded.
+	// Check if Flame module is loaded.
 	if flame.Mod() == nil {
 		panic(fmt.Sprintf("%s\n", lang.Text("gui", "no_mod_loaded_err")))
 	}
 	// Load UI graphic.
 	err := data.LoadUIData()
 	if err != nil {
-		panic(fmt.Errorf("data_load_fail:%v", err))
+		panic(fmt.Errorf("fail_to_load_gui_data:%v", err))
 	}
 	// Load game graphic.
-	data.LoadGameData()
+	err = data.LoadGameData()
+	if err != nil {
+		panic(fmt.Errorf("fail_to_load_game_graphic_data:%v", err))
+	}
 	// Load module data.
 	err = flamedata.LoadModuleData(flame.Mod())
 	if err != nil {
@@ -109,7 +110,7 @@ func main() {
 	// Load module graphic data.
 	err = imp.LoadModuleResources(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("main_menu:load_game:fail_to_load_resources:%v", err))
+		panic(fmt.Errorf("fail_to_load_module_resources:%v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -130,15 +131,15 @@ func main() {
 // All window code fired from there.
 func run() {
 	// Configure window.
-	resolution := config.Resolution()
-	if resolution.X == 0 || resolution.Y == 0 {
-		monitor := pixelgl.PrimaryMonitor()
-		resolution.X, resolution.Y = monitor.Size()
-		//mPosX, mPosY := monitor.Position()
+	monitor := pixelgl.PrimaryMonitor()
+	winPosX, winPosY := 0.0, 0.0
+	winRes := config.Resolution()
+	if winRes.X == 0 || winRes.Y == 0 {
+		winRes.X, winRes.Y = monitor.Size()
 	}
 	cfg := pixelgl.WindowConfig{
 		Title:  NAME + " " + VERSION,
-		Bounds: pixel.R(0, 0, resolution.X, resolution.Y),
+		Bounds: pixel.R(winPosX, winPosY, winRes.X, winRes.Y),
 		VSync:  true,
 	}
 	if config.Fullscreen() {
@@ -147,7 +148,7 @@ func run() {
 	}
 	win, err := mtk.NewWindow(cfg)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("fail_to_create_mtk_window:%v", err))
 	}
 	// UI Font.
 	uiFont, err := data.Font(config.MainFontName())
@@ -155,17 +156,14 @@ func run() {
 		mtk.SetMainFont(uiFont)
 	}
 	// Audio effects.
-	bClickSound1, err := data.AudioEffect(config.ButtonClickSoundFile())
+	bClickSound, err := data.AudioEffect(config.ButtonClickSoundFile())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_retrieve_button_click_audio_data:%v",
 			err)
 	}
-	mtk.SetButtonClickSound(bClickSound1) // global button click sound
+	mtk.SetButtonClickSound(bClickSound) // global button click sound
 	// Create main menu.
-	mainMenu, err = mainmenu.New()
-	if err != nil {
-		panic(err)
-	}
+	mainMenu = mainmenu.New()
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveImportedFunc(EnterSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
@@ -178,10 +176,10 @@ func run() {
 	// Debug mode.
 	fpsInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
 	fpsInfo.JustRight()
-	versionInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
-	versionInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
+	verInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
+	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
 		flame.NAME, flame.VERSION))
-	versionInfo.JustRight()
+	verInfo.JustRight()
 	// Main loop.
 	for !win.Closed() {
 		// Draw.
@@ -192,10 +190,11 @@ func run() {
 			mainMenu.Draw(win)
 		}
 		if config.Debug() {
-			fpsInfo.Draw(win, mtk.Matrix().Moved(mtk.PosTR(
-				fpsInfo.Bounds(), win.Bounds().Max)))
-			versionInfo.Draw(win, mtk.Matrix().Moved(mtk.LeftOf(
-				fpsInfo.DrawArea(), versionInfo.Bounds(), 5)))
+			fpsPos := mtk.DrawPosTR(win.Bounds(), fpsInfo.Size())
+			fpsPos.Y -= mtk.ConvSize(10)
+			fpsInfo.Draw(win, mtk.Matrix().Moved(fpsPos))
+			verPos := mtk.LeftOf(fpsInfo.DrawArea(), verInfo.Size(), 5)
+			verInfo.Draw(win, mtk.Matrix().Moved(verPos))
 		}
 		// Update.
 		win.Update()
@@ -223,7 +222,7 @@ func EnterGame(g *flamecore.Game) {
 	defer mainMenu.CloseLoadingScreen()
 	game = g
 	// Create HUD.
-	hud := hud.NewHUD()
+	hud := hud.New()
 	// Set game for HUD.
 	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
@@ -251,7 +250,7 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 	flame.SetGame(game)
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
-	if err != nil  {
+	if err != nil {
 		log.Err.Printf("enter_saved_game:fail_to_load_gui_save:%v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
@@ -260,7 +259,7 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 		res.AddAvatarData(pcd.Avatar)
 	}
 	// Create HUD.
-	hud := hud.NewHUD()
+	hud := hud.New()
 	// Set game for HUD.
 	err = imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {

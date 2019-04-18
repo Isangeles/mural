@@ -103,10 +103,10 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Debug mode.
 	if config.Debug() {
-		c.cameraInfo.Draw(win, mtk.Matrix().Moved(mtk.PosBR(
-			c.cameraInfo.Bounds(), win.PointBR())))
-		c.cursorInfo.Draw(win, mtk.Matrix().Moved(mtk.TopOf(
-			c.cameraInfo.DrawArea(), c.cursorInfo.Bounds(), 10)))
+		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
+		c.cameraInfo.Draw(win, mtk.Matrix().Moved(camInfoPos))
+		curInfoPos := mtk.TopOf(c.cameraInfo.DrawArea(), c.cursorInfo.Size(), 10)
+		c.cursorInfo.Draw(win, mtk.Matrix().Moved(curInfoPos))
 	}
 }
 
@@ -185,13 +185,15 @@ func (c *Camera) SetObjects(obs []*object.ObjectGraphic) {
 
 // SetPosition sets camera position.
 func (c *Camera) SetPosition(pos pixel.Vec) {
+	fmt.Printf("set_pos:%v\n", pos)
 	c.position = pos
 }
 
 // CenterAt centers camera at specified position.
 func (c *Camera) CenterAt(pos pixel.Vec) {
-	c.SetPosition(pixel.V(pos.X-c.Size().X/2,
-		pos.Y-c.Size().Y/2))
+	center := pixel.V(pos.X-c.Size().X/2, pos.Y-c.Size().Y/2)
+	fmt.Printf("center_at:%v\n", center)
+	c.SetPosition(center)
 }
 
 // Map returns current map.

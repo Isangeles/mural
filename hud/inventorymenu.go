@@ -114,7 +114,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 // Draw draws menu.
 func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	im.drawArea = mtk.MatrixToDrawArea(matrix, im.Bounds())
+	im.drawArea = mtk.MatrixToDrawArea(matrix, im.Size())
 	// Background.
 	if im.bgSpr != nil {
 		im.bgSpr.Draw(win.Window, matrix)
@@ -122,11 +122,11 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, im.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, im.Bounds().Max.Y/2-25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, im.Size().Y/2-25))
 	im.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(im.Bounds().Max.X/2-20,
-		im.Bounds().Max.Y/2-15))
+	closeButtonPos := mtk.ConvVec(pixel.V(im.Size().X/2-20,
+		im.Size().Y/2-15))
 	im.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	im.slots.Draw(win, matrix)
@@ -172,13 +172,13 @@ func (im *InventoryMenu) DrawArea() pixel.Rect {
 	return im.drawArea
 }
 
-// Bounds returns size bounds of menu background.
-func (im *InventoryMenu) Bounds() pixel.Rect {
+// Size returns size of menu background.
+func (im *InventoryMenu) Size() pixel.Vec {
 	if im.bgSpr == nil {
-		// TODO: bounds for draw background.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		// TODO: size for draw background.
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return im.bgSpr.Frame()
+	return im.bgSpr.Frame().Size()
 }
 
 // insert inserts specified items in inventory slots.

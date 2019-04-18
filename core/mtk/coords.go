@@ -80,8 +80,8 @@ func DisTL(rect pixel.Rect, scale float64) pixel.Vec {
 
 // PosTR returns top right point for specified position
 // of specified rectangle.
-func PosTR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
-	return pixel.V(pos.X-(size.Size().X/2), pos.Y-(size.Size().Y))
+func PosTR(size, pos pixel.Vec) pixel.Vec {
+	return pixel.V(pos.X-(size.X/2), pos.Y-(size.Y))
 }
 
 // PosTL returns top left point for specified position
@@ -104,96 +104,97 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 
 // DrawPosTR returns top left position for draw specifed
 // object with specified size.
-func DrawPosTL(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Min.X+ConvSize(ob.Max.X)/2, bg.Max.Y-ConvSize(ob.Max.Y)/2)
+func DrawPosTL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Min.X+ConvSize(size.X)/2, bg.Max.Y-ConvSize(size.Y)/2)
 }
 
 // DrawPosTR returns top right draw position(center) on specified
-// background for specified object.
-func DrawPosTR(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Max.X-ConvSize(ob.Max.X)/2, bg.Max.Y-ConvSize(ob.Max.Y)/2)
+// background for object with specified size.
+func DrawPosTR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Max.X-ConvSize(size.X)/2, bg.Max.Y-ConvSize(size.Y)/2)
 }
 
 // DrawPosTC returns top center draw position(center) on specified
-// background for specified object.
-func DrawPosTC(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Max.Y-ConvSize(ob.Max.Y)/2)
+// background for object with specified size.
+func DrawPosTC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Max.Y-ConvSize(size.Y)/2)
 }
 
 // DrawPosBL returns bottom left draw position(center) on specified
-// background for specified object.
-func DrawPosBL(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Min.X+ConvSize(ob.W()/2), bg.Min.Y+ConvSize(ob.H())/2)
+// background for object with specified size.
+func DrawPosBL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Min.X+ConvSize(size.X/2), bg.Min.Y+ConvSize(size.Y)/2)
 }
 
 // DrawPosBR returns bottom right draw position(center) on specified
-// background for specified object.
-func DrawPosBR(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Max.X-ConvSize(ob.W()/2), bg.Min.Y+ConvSize(ob.H())/2)
+// background for object with specified size.
+func DrawPosBR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Max.X-ConvSize(size.X/2), bg.Min.Y+ConvSize(size.Y)/2)
 }
 
 // DrawPosBC returns bottom center draw position(center) on specified
-// background for specified object.
-func DrawPosBC(bg, ob pixel.Rect) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Min.Y+ConvSize(ob.Max.Y)/2)
+// background for object with specified size.
+func DrawPosBC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Center().X, bg.Min.Y+ConvSize(size.Y)/2)
 }
 
-// MoveTR returns move vector from center of specified background
-// to top right point draw position(center) for specified size.
-func MoveTR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.W()/2-size.X/2, bg.H()/2-size.Y/2)
+// MoveTR returns move vector from center of background with
+// specified size to top right point draw position(center) for
+// specified size.
+func MoveTR(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(bgSize.X/2-obSize.X/2, bgSize.Y/2-obSize.Y/2)
 }
 
-// MoveTL returns move vector from center of specified background
-// to top left point draw position(center) for specified size.
-func MoveTL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(-bg.W()/2-size.X/2, bg.H()/2-size.Y/2)
+// MoveTL returns move vector from center of background with specified
+// size to top left point draw position(center) for specified size.
+func MoveTL(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(-bgSize.X/2-obSize.X/2, bgSize.Y/2-obSize.Y/2)
 }
 
-// MoveBR returns move vector from center of specified background
-// to bottom right point draw position(center) for specified size.
-func MoveBR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.W()/2-size.X/2, -bg.H()/2+size.Y/2)
+// MoveBR returns move vector from center of background with specified
+// size to bottom right point draw position(center) for specified size.
+func MoveBR(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(bgSize.X/2-obSize.X/2, -bgSize.Y/2+obSize.Y/2)
 }
 
-// MoveBL returns move vector from center of specified background
-// to bottom left point draw position(center) for specified size.
-func MoveBL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(-bg.W()/2+size.X/2, -bg.H()/2+size.Y/2)
+// MoveBL returns move vector from center of background with specified
+// size to bottom left point draw position(center) for specified size.
+func MoveBL(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(-bgSize.X/2+obSize.X/2, -bgSize.Y/2+obSize.Y/2)
 }
 
-// MoveBC returns move vector from center of specified background
-// to bottom center point draw position(center) for specified size.
-func MoveBC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(0, -bg.H()/2+size.Y/2)
+// MoveBC returns move vector from center of background witg specified
+// size to bottom center point draw position(center) for specified size.
+func MoveBC(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(0, -bgSize.Y/2+obSize.Y/2)
 }
 
-// TopOf returns position for specified rect at the top of specified
-// draw area, with specified offset value.
-func TopOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X+(rect.W()/2), drawArea.Max.Y+
-		(rect.H()/2)+ConvSize(offset))
+// TopOf returns position for rect with specified size at the top of
+// specified draw area, with specified offset value.
+func TopOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Min.X+(size.X/2), drawArea.Max.Y+
+		(size.Y/2)+ConvSize(offset))
 }
 
-// ReightOf returns position for specified rect at the right side of specified
-// draw area, with specified offset value.
-func RightOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Max.X+(rect.Max.X/2)+ConvSize(offset),
-		drawArea.Min.Y+(rect.H()/2))
+// ReightOf returns position for rect with specified size at the right side
+// of specified draw area, with specified offset value.
+func RightOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Max.X+(size.X/2)+ConvSize(offset),
+		drawArea.Min.Y+(size.Y/2))
 }
 
-// BottomOf returns position of specified rect at the bottom side of speicified
-// draw area, width specified offset value.
-func BottomOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X+(rect.W()/2), drawArea.Min.Y-
-		(rect.H()/2)-ConvSize(offset))
+// BottomOf returns position of rect with specified size at the bottom of
+// speicified draw area, width specified offset value.
+func BottomOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Min.X+(size.X/2), drawArea.Min.Y-
+		(size.Y/2)-ConvSize(offset))
 }
 
-// LeftOf returns position for specified rect at the left side of specified
-// draw area, with specified offset value.
-func LeftOf(drawArea, rect pixel.Rect, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X-(rect.Max.X/2)-ConvSize(offset),
-		drawArea.Min.Y+(rect.H()/2))
+// LeftOf returns position for rect with specified size at the left side of
+// specified draw area, with specified offset value.
+func LeftOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
+	return pixel.V(drawArea.Min.X-(size.X/2)-ConvSize(offset),
+		drawArea.Min.Y+(size.Y/2))
 }
 
 // Range returns range between two specified positions.
@@ -215,11 +216,11 @@ func ConvVec(vec1080p pixel.Vec) pixel.Vec {
 
 // MatrixToDrawArea calculates draw area based on specified
 // matrix and rectangle.
-func MatrixToDrawArea(matrix pixel.Matrix, rect pixel.Rect) (drawArea pixel.Rect) {
-	bgBottomX := matrix[4] - (rect.Size().X / 2)
-	bgBottomY := matrix[5] - (rect.Size().Y / 2)
+func MatrixToDrawArea(matrix pixel.Matrix, rectSize pixel.Vec) (drawArea pixel.Rect) {
+	bgBottomX := matrix[4] - (rectSize.X / 2)
+	bgBottomY := matrix[5] - (rectSize.Y / 2)
 	drawArea.Min = pixel.V(bgBottomX, bgBottomY)
-	drawArea.Max = drawArea.Min.Add(rect.Size())
+	drawArea.Max = drawArea.Min.Add(rectSize)
 	return
 }
 

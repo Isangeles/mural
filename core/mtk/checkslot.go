@@ -57,13 +57,13 @@ func NewCheckSlot(label string, value interface{}, bgSize pixel.Vec,
 
 // Draw draws slot.
 func (cs *CheckSlot) Draw(t pixel.Target, matrix pixel.Matrix) {
-	cs.drawArea = MatrixToDrawArea(matrix, cs.Bounds())
+	cs.drawArea = MatrixToDrawArea(matrix, cs.Size())
 	color := cs.bgColor
 	if cs.Checked() {
 		color = cs.checkColor
 	}
 	DrawRectangle(t, cs.DrawArea(), color)
-	labelMove := MoveBL(cs.Bounds(), cs.label.Bounds().Size())
+	labelMove := MoveBL(cs.Size(), cs.label.Size())
 	cs.label.Draw(t, matrix.Moved(labelMove))
 }
 
@@ -100,9 +100,9 @@ func (cs *CheckSlot) Value() interface{} {
 	return cs.value
 }
 
-// Bounds returns slot size bounds.
-func (cs *CheckSlot) Bounds() pixel.Rect {
-	return pixel.R(0, 0, cs.bgSize.X, cs.bgSize.Y)
+// Size returns slot background size.
+func (cs *CheckSlot) Size() pixel.Vec {
+	return cs.bgSize
 }
 
 // DrawArea returns current slot draw area.

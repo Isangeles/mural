@@ -60,7 +60,7 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.color = colornames.Grey
 	mw.colorDisable = colornames.Darkgrey
 	// Textbox.
-	textbox := NewTextbox(mw.Bounds().Max, SIZE_MEDIUM, colornames.Grey)
+	textbox := NewTextbox(mw.Size(), SIZE_MEDIUM, colornames.Grey)
 	mw.textbox = textbox
 	mw.textbox.InsertText(msg)
 	// Buttons.
@@ -84,7 +84,7 @@ func NewDialogWindow(size Size, msg string) (*MessageWindow) {
 // Draw draws window.
 func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	mw.drawArea = MatrixToDrawArea(matrix, mw.Bounds())
+	mw.drawArea = MatrixToDrawArea(matrix, mw.Size())
 	// Background.
 	color := mw.color
 	if mw.Disabled() {
@@ -92,10 +92,10 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 	DrawRectangle(t, mw.DrawArea(), color)
 	// Buttons.
-	acceptButtonPos := MoveBR(mw.Bounds(), mw.acceptButton.Frame().Max)
+	acceptButtonPos := MoveBR(mw.Size(), mw.acceptButton.Size())
 	mw.acceptButton.Draw(t, matrix.Moved(acceptButtonPos))
 	if mw.cancelButton != nil {
-		cancelButtonPos := MoveBL(mw.Bounds(), mw.cancelButton.Frame().Max)
+		cancelButtonPos := MoveBL(mw.Size(), mw.cancelButton.Size())
 		mw.cancelButton.Draw(t, matrix.Moved(cancelButtonPos))
 	}
 	// Textbox.
@@ -170,9 +170,9 @@ func (mw *MessageWindow) Disabled() bool {
 	return mw.disabled
 }
 
-// Bounds resturns message window size bounds.
-func (mw *MessageWindow) Bounds() pixel.Rect {
-	return mw.size.MessageWindowSize()
+// Size resturns message window size.
+func (mw *MessageWindow) Size() pixel.Vec {
+	return mw.size.MessageWindowSize().Size()
 }
 
 // DrawArea returns size of current draw area.

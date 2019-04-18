@@ -78,7 +78,7 @@ type NewCharacterMenu struct {
 }
 
 // newNewCharacterMenu creates new character creation menu.
-func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
+func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm := new(NewCharacterMenu)
 	ncm.mainmenu = mainmenu
 	rngSrc := rand.NewSource(time.Now().UnixNano())
@@ -90,13 +90,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
 	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, main_color)
 	// Portrait switch.
-	faces, err := data.PlayablePortraits()
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_player_portraits:%v", err)
-	}
 	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
-	ncm.faceSwitch.SetPictureValues(faces)
+	faces, err := data.PlayablePortraits()
+	if err != nil {
+		log.Err.Printf("new_char_menu:fail_to_retrieve_player_portraits:%v", err)
+	}
+	if faces != nil {
+		ncm.faceSwitch.SetPictureValues(faces)
+	}
 	// Attributes switches.
 	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
 	ncm.strSwitch.SetLabel(lang.Text("gui", "newchar_str_switch_label"))
@@ -173,51 +175,50 @@ func newNewCharacterMenu(mainmenu *MainMenu) (*NewCharacterMenu, error) {
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	// Character.
 	ncm.rollPoints()
-	return ncm, nil
+	return ncm
 }
 
 // Draw draws all menu elements in specified window.
 func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y-ncm.title.Bounds().Size().Y)
+		win.Bounds().H()-ncm.title.Size().Y)
 	ncm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Text fields.
 	nameEditSize := ncm.title.DrawArea().Size()
 	ncm.nameEdit.SetSize(nameEditSize)
 	ncm.nameEdit.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.title.DrawArea(),
-		ncm.nameEdit.Bounds(), 10)))
+		ncm.nameEdit.Size(), 10)))
 	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X+mtk.ConvSize(90),
 		win.Bounds().Center().Y-mtk.ConvSize(40),
 		win.Bounds().Min.X+mtk.ConvSize(140),
 		win.Bounds().Center().Y+mtk.ConvSize(40)), win.Window)
 	// Switches.
 	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(
-		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Bounds(), 100)))
+		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Size(), 100)))
 	ncm.strSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.pointsBox.DrawArea(), ncm.strSwitch.Bounds(), 5)))
+		ncm.pointsBox.DrawArea(), ncm.strSwitch.Size(), 5)))
 	ncm.conSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.strSwitch.DrawArea(), ncm.conSwitch.Bounds(), 15)))
+		ncm.strSwitch.DrawArea(), ncm.conSwitch.Size(), 15)))
 	ncm.dexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.conSwitch.DrawArea(), ncm.dexSwitch.Bounds(), 15)))
+		ncm.conSwitch.DrawArea(), ncm.dexSwitch.Size(), 15)))
 	ncm.intSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.dexSwitch.DrawArea(), ncm.intSwitch.Bounds(), 15)))
+		ncm.dexSwitch.DrawArea(), ncm.intSwitch.Size(), 15)))
 	ncm.wisSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.intSwitch.DrawArea(), ncm.wisSwitch.Bounds(), 15)))
+		ncm.intSwitch.DrawArea(), ncm.wisSwitch.Size(), 15)))
 	ncm.sexSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.RightOf(
-		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Bounds(), 30)))
+		ncm.wisSwitch.DrawArea(), ncm.sexSwitch.Size(), 30)))
 	ncm.raceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Bounds(), 10)))
+		ncm.sexSwitch.DrawArea(), ncm.raceSwitch.Size(), 10)))
 	ncm.aliSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		ncm.raceSwitch.DrawArea(), ncm.aliSwitch.Bounds(), 10)))
+		ncm.raceSwitch.DrawArea(), ncm.aliSwitch.Size(), 10)))
 	// Buttons.
-	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
-		ncm.doneButton.Frame(), pixel.V(win.Bounds().Max.X,
-			win.Bounds().Min.Y))))
-	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
-		ncm.backButton.Frame(), win.Bounds().Min)))
+	doneButtonPos := mtk.DrawPosBR(win.Bounds(), ncm.doneButton.Size())
+	ncm.doneButton.Draw(win.Window, mtk.Matrix().Moved(doneButtonPos))
+	backButtonPos := mtk.DrawPosBL(win.Bounds(), ncm.backButton.Size())
+	ncm.backButton.Draw(win.Window, mtk.Matrix().Moved(backButtonPos))
 	ncm.rollButton.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		ncm.pointsBox.DrawArea(), ncm.rollButton.Frame(), 5)))
+		ncm.pointsBox.DrawArea(), ncm.rollButton.Size(), 5)))
 }
 
 // Update updates all menu elements.

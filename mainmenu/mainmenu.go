@@ -68,60 +68,24 @@ type MainMenu struct {
 	exiting        bool
 }
 
-// New returns new main menu
-func New() (*MainMenu, error) {
+// New creates new main menu
+func New() *MainMenu {
 	mm := new(MainMenu)
-	// Menu.
-	m, err := newMenu(mm)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_main_menu:%v",
-			err)
-	}
-	mm.menu = m
-	// New game menu.
-	ngm, err := newNewGameMenu(mm)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_new_game_menu:%v",
-			err)
-	}
-	mm.newgamemenu = ngm
-	// New character menu.
-	ncm, err := newNewCharacterMenu(mm)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_new_character_menu:%v",
-			err)
-	}
-	mm.newcharmenu = ncm
-	// Load game menu.
-	lgm, err := newLoadGameMenu(mm)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_load_game_menu:%v",
-			err)
-	}
-	mm.loadgamemenu = lgm
-	// Settings.
-	s, err := newSettings(mm)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_settings_menu:%v",
-			err)
-	}
-	mm.settings = s
+	// Menus.
+	mm.menu = newMenu(mm)
+	mm.newgamemenu = newNewGameMenu(mm)
+	mm.newcharmenu = newNewCharacterMenu(mm)
+	mm.loadgamemenu = newLoadGameMenu(mm)
+	mm.settings = newSettings(mm)
 	// Console.
-	c, err := newConsole()
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_create_console:%v",
-			err)
-	}
-	mm.console = c
+	mm.console = newConsole()
 	// Loading screen.
-	ls := newLoadingScreen(mm)
-	mm.loadscreen = ls
+	mm.loadscreen = newLoadingScreen(mm)
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
-
 	mm.menu.Show(true)
-	return mm, nil
+	return mm
 }
 
 // Draw draws current menu screen.

@@ -107,7 +107,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 // Draw draws window.
 func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	lw.drawArea = mtk.MatrixToDrawArea(matrix, lw.Bounds())
+	lw.drawArea = mtk.MatrixToDrawArea(matrix, lw.Size())
 	// Background.
 	if lw.bgSpr != nil {
 		lw.bgSpr.Draw(win.Window, matrix)
@@ -115,11 +115,11 @@ func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, lw.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, lw.Bounds().Max.Y/2-25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, lw.Size().Y/2-25))
 	lw.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(lw.Bounds().Max.X/2-20,
-		lw.Bounds().Max.Y/2-15))
+	closeButtonPos := mtk.ConvVec(pixel.V(lw.Size().X/2-20,
+		lw.Size().Y/2-15))
 	lw.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	lw.slots.Draw(win, matrix)
@@ -152,13 +152,13 @@ func (lw *LootWindow) Focused() bool {
 	return lw.focused
 }
 
-// Bounds returns size bounds of loot window background.
-func (lw *LootWindow) Bounds() pixel.Rect {
+// Size returns size of loot window background.
+func (lw *LootWindow) Size() pixel.Vec {
 	if lw.bgSpr == nil {
-		// TODO: bounds for draw background.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		// TODO: size for draw background.
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return lw.bgSpr.Frame()
+	return lw.bgSpr.Frame().Size()
 }
 
 // DrawArea returns current draw area of window

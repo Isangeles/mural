@@ -54,7 +54,7 @@ type NewGameMenu struct {
 }
 
 // newNewGameMenu creates new game creation menu.
-func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
+func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 	ngm := new(NewGameMenu)
 	ngm.mainmenu = mainmenu
 	// Title.
@@ -78,26 +78,26 @@ func newNewGameMenu(mainmenu *MainMenu) (*NewGameMenu, error) {
 		accent_color)
 	ngm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
-	return ngm, nil
+	return ngm
 }
 
 // Draw draws all menu elements in specified window.
 func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y-ngm.title.Bounds().Size().Y)
+		win.Bounds().Max.Y-ngm.title.Size().Y)
 	ngm.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons.
-	winBRPos := pixel.V(win.Bounds().Max.X, win.Bounds().Min.Y)
-	ngm.startButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBR(
-		ngm.startButton.Frame(), winBRPos)))
-	ngm.exportButton.Draw(win, mtk.Matrix().Moved(mtk.LeftOf(
-		ngm.startButton.DrawArea(), ngm.exportButton.Frame(), 10)))
-	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(mtk.PosBL(
-		ngm.backButton.Frame(), win.Bounds().Min)))
+	startButtonPos := mtk.DrawPosBR(win.Bounds(), ngm.startButton.Size())
+	ngm.startButton.Draw(win.Window, mtk.Matrix().Moved(startButtonPos))
+	exportButtonPos := mtk.LeftOf(ngm.startButton.DrawArea(),
+		ngm.exportButton.Size(), 10)
+	ngm.exportButton.Draw(win, mtk.Matrix().Moved(exportButtonPos))
+	backButtonPos := mtk.DrawPosBL(win.Bounds(), ngm.backButton.Size())
+	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(backButtonPos))
 	// Switches & text.
-	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		ngm.title.DrawArea(), ngm.charSwitch.Bounds(), 10)))
+	charSwitchPos := mtk.BottomOf(ngm.title.DrawArea(), ngm.charSwitch.Size(), 10)
+	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(charSwitchPos))
 	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X,
 		ngm.backButton.DrawArea().Max.Y, win.Bounds().Max.X,
 		ngm.charSwitch.DrawArea().Min.Y), win.Window)

@@ -25,8 +25,6 @@ package mainmenu
 
 import (
 	"golang.org/x/image/colornames"
-	
-	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -48,7 +46,7 @@ type Menu struct {
 }
 
 // newMenu creates new menu.
-func newMenu(mainmenu *MainMenu) (*Menu, error) {
+func newMenu(mainmenu *MainMenu) *Menu {
 	m := new(Menu)
 	m.mainmenu = mainmenu
 	// Title.
@@ -80,28 +78,26 @@ func newMenu(mainmenu *MainMenu) (*Menu, error) {
 	m.exitB.SetLabel(lang.Text("gui", "exit_b_label"))
 	m.exitB.SetInfo(lang.Text("gui", "exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
-
-	return m, nil
+	return m
 }
 
 // Draw draws all menu elements in specified
 // window.
 func (m *Menu) Draw(win *mtk.Window) {
 	// Title.
-	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y - m.title.Bounds().Size().Y)
+	titlePos := mtk.DrawPosTC(win.Bounds(), m.title.Size())
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
-	m.newgameB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.title.DrawArea(), m.newgameB.Frame(), 10)))
-	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.newgameB.DrawArea(), m.newcharB.Frame(), 5)))
-	m.loadgameB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.newcharB.DrawArea(), m.loadgameB.Frame(), 5)))
-	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.loadgameB.DrawArea(), m.settingsB.Frame(), 5)))
-	m.exitB.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(
-		m.settingsB.DrawArea(), m.exitB.Frame(), 5)))
+	newgamePos := mtk.BottomOf(m.title.DrawArea(), m.newgameB.Size(), 10)
+	m.newgameB.Draw(win.Window, mtk.Matrix().Moved(newgamePos))
+	newcharPos := mtk.BottomOf(m.newgameB.DrawArea(), m.newcharB.Size(), 5)
+	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(newcharPos))
+	loadgamePos := mtk.BottomOf(m.newcharB.DrawArea(), m.loadgameB.Size(), 5)
+	m.loadgameB.Draw(win.Window, mtk.Matrix().Moved(loadgamePos))
+	settingsPos := mtk.BottomOf(m.loadgameB.DrawArea(), m.settingsB.Size(), 5)
+	m.settingsB.Draw(win.Window, mtk.Matrix().Moved(settingsPos))
+	exitPos := mtk.BottomOf(m.settingsB.DrawArea(), m.exitB.Size(), 5)
+	m.exitB.Draw(win.Window, mtk.Matrix().Moved(exitPos))
 }
 
 // Update updates all menu elements.

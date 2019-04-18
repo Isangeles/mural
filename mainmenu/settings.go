@@ -25,15 +25,15 @@ package mainmenu
 
 import (
 	"fmt"
-	
+
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
 
@@ -51,7 +51,7 @@ type Settings struct {
 }
 
 // newSettings returns new settings screen instance.
-func newSettings(mainmenu *MainMenu) (*Settings, error) {
+func newSettings(mainmenu *MainMenu) *Settings {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
@@ -83,25 +83,25 @@ func newSettings(mainmenu *MainMenu) (*Settings, error) {
 	s.langSwitch.SetLabel(lang.Text("gui", "lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
-	
-	return s, nil
+
+	return s
 }
 
 // Draw draws all menu elements.
 func (s *Settings) Draw(win *pixelgl.Window) {
+	// Positions.
+	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y-s.title.Size().Y)
+	fullscrSwitchPos := mtk.BottomOf(s.title.DrawArea(), s.fullscrSwitch.Size(), 50)
+	resSwitchPos := mtk.BottomOf(s.fullscrSwitch.DrawArea(), s.resSwitch.Size(), 30)
+	langSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.langSwitch.Size(), 30)
+	backButtonPos := mtk.BottomOf(s.langSwitch.DrawArea(), s.backButton.Size(), 30)
 	// Title.
-	titlePos :=pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y - s.title.Bounds().Size().Y)
 	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
 	// Buttons & switches.
-	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.title.DrawArea(), s.fullscrSwitch.Bounds(), 50)))
-	s.resSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.fullscrSwitch.DrawArea(), s.resSwitch.Bounds(), 30)))
-	s.langSwitch.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.resSwitch.DrawArea(), s.langSwitch.Bounds(), 30)))
-	s.backButton.Draw(win, mtk.Matrix().Moved(mtk.BottomOf(
-		s.langSwitch.DrawArea(), s.backButton.Frame(), 30)))
+	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(fullscrSwitchPos))
+	s.resSwitch.Draw(win, mtk.Matrix().Moved(resSwitchPos))
+	s.langSwitch.Draw(win, mtk.Matrix().Moved(langSwitchPos))
+	s.backButton.Draw(win, mtk.Matrix().Moved(backButtonPos))
 }
 
 // Update updates all menu elements.
@@ -186,7 +186,7 @@ func (s *Settings) closeWithDialog() {
 		s.mainmenu.ShowMessageWindow(dlg)
 	} else {
 		s.close()
-	}	
+	}
 }
 
 // Triggered after settings change.

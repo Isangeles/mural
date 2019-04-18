@@ -81,14 +81,14 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		c.bgSpr.Draw(win, matrix)
 	}
 	// Textbox.
-	boxSize := c.Bounds()
-	boxSize.Max.Y -= mtk.ConvSize(30)
+	boxSize := c.Size()
+	boxSize.Y -= mtk.ConvSize(30)
 	textboxDA := mtk.MatrixToDrawArea(matrix, boxSize)
 	c.textbox.Draw(textboxDA, win)
 	// Textedit.
-	editSize := pixel.V(c.Bounds().Size().X, mtk.ConvSize(30))
+	editSize := pixel.V(c.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
-	editMove := pixel.V(0, -c.Bounds().Size().Y/2 + mtk.ConvSize(30))
+	editMove := pixel.V(0, -c.Size().Y/2 + mtk.ConvSize(30))
 	c.textedit.Draw(win, matrix.Moved(editMove))
 }
 
@@ -119,13 +119,13 @@ func (c *Chat) DrawArea() pixel.Rect {
 	return c.drawArea
 }
 
-// Bounds returns bounds of chat background.
-func (c *Chat) Bounds() pixel.Rect {
+// Size returns chat background size.
+func (c *Chat) Size() pixel.Vec {
 	if c.bgSpr == nil {
 		// TODO: return draw background bounds.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		return mtk.ConvVec(pixel.V(0, 0))
 	}
-	return c.bgSpr.Frame()
+	return c.bgSpr.Frame().Size()
 }
 
 // Activated checks whether chat input is

@@ -120,13 +120,14 @@ func (tx *Text) JustLeft() {
 
 // Draw draws text.
 func (tx *Text) Draw(t pixel.Target, matrix pixel.Matrix) {
-	tx.drawArea = MatrixToDrawArea(matrix, tx.Bounds())
+	tx.drawArea = MatrixToDrawArea(matrix, tx.Size())
 	tx.text.DrawColorMask(t, matrix, tx.color)
 }
 
-// Bounds return size of text.
-func (tx *Text) Bounds() pixel.Rect {
-	return tx.text.Bounds()
+// Size returns size of current text.
+func (tx *Text) Size() pixel.Vec {
+	size := tx.text.Bounds().Size()
+	return size
 }
 
 // BoundsOf returns bounds of specified text

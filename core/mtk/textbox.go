@@ -84,9 +84,9 @@ func (t *Textbox) Update(win *Window) {
 	}
 }
 
-// Bounds returns size parameters of textbox textarea.
-func (t *Textbox) Bounds() pixel.Rect {
-	return t.textarea.Bounds()
+// Size returns size parameters of textbox textarea.
+func (t *Textbox) Size() pixel.Vec {
+	return t.textarea.Size()
 }
 
 // DrawArea returns current draw area of text box

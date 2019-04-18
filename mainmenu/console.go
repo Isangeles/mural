@@ -46,14 +46,14 @@ type Console struct {
 }
 
 // newConsole creates game console.
-func newConsole() (*Console, error) {
+func newConsole() *Console {
 	c := new(Console)
 	// Text box.
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
 	// Text input.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
-	return c, nil
+	return c
 }
 
 // Draw draws console.
@@ -94,7 +94,7 @@ func (c *Console) Update(win *mtk.Window) {
 	for _, msg := range engineMsgs {
 		msgs = append(msgs, msg)
 	}
-	c.textbox.SetMaxTextWidth(win.Bounds().Max.X)
+	c.textbox.SetMaxTextWidth(win.Bounds().W())
 	c.textbox.Insert(msgs)
 	// Elements.
 	c.textbox.Update(win)

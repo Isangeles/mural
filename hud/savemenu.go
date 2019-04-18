@@ -69,7 +69,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	sm.titleText.SetText(lang.Text("gui", "hud_save_menu_title"))
 	// Saves list.
-	bgSize := sm.Bounds().Size()
+	bgSize := sm.Size()
 	savesListSize := pixel.V(bgSize.X-mtk.ConvSize(50),
 		bgSize.Y-mtk.ConvSize(200))
 	sm.savesList = mtk.NewList(savesListSize, mtk.SIZE_MINI, main_color,
@@ -103,15 +103,15 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 // Draw draws menu.
 func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	sm.drawArea = mtk.MatrixToDrawArea(matrix, sm.Bounds())
+	sm.drawArea = mtk.MatrixToDrawArea(matrix, sm.Size())
 	// Background.
 	if sm.bgSpr != nil {
 		sm.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, sm.Bounds(), nil)
+		mtk.DrawRectangle(win.Window, sm.DrawArea(), nil)
 	}
 	// Title.
-	titleTextMove := pixel.V(0, sm.Bounds().Max.Y/2-mtk.ConvSize(20))
+	titleTextMove := pixel.V(0, sm.Size().Y/2-mtk.ConvSize(20))
 	sm.titleText.Draw(win.Window, matrix.Moved(titleTextMove))
 	// Saves.
 	savesListMove := pixel.V(0, 0)
@@ -120,10 +120,10 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	saveNameMove := pixel.V(0, -mtk.ConvSize(150))
 	sm.saveNameEdit.Draw(win, matrix.Moved(saveNameMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
-		sm.Bounds().Max.Y/2-15))
+	closeButtonMove := mtk.ConvVec(pixel.V(sm.Size().X/2-20,
+		sm.Size().Y/2-15))
 	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonMove))
-	saveButtonMove := mtk.ConvVec(pixel.V(0, -sm.Bounds().Size().Y/2+30))
+	saveButtonMove := mtk.ConvVec(pixel.V(0, -sm.Size().Y/2+30))
 	sm.saveButton.Draw(win, matrix.Moved(saveButtonMove))
 }
 
@@ -136,13 +136,13 @@ func (sm *SaveMenu) Update(win *mtk.Window) {
 	sm.savesList.Update(win)
 }
 
-// Bounds returns menu background size.
-func (sm *SaveMenu) Bounds() pixel.Rect {
+// Size returns menu background size.
+func (sm *SaveMenu) Size() pixel.Vec {
 	if sm.bgSpr == nil {
 		// TODO: menu draw background size.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return sm.bgSpr.Frame()
+	return sm.bgSpr.Frame().Size()
 }
 
 // DrawArea return menu background draw area.

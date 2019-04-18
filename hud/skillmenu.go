@@ -111,7 +111,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 // Draw draws menu.
 func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	sm.drawArea = mtk.MatrixToDrawArea(matrix, sm.Bounds())
+	sm.drawArea = mtk.MatrixToDrawArea(matrix, sm.Size())
 	// Background.
 	if sm.bgSpr != nil {
 		sm.bgSpr.Draw(win.Window, matrix)
@@ -119,11 +119,11 @@ func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, sm.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Bounds().Max.Y/2-25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Size().Y/2-25))
 	sm.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(sm.Bounds().Max.X/2-20,
-		sm.Bounds().Max.Y/2-15))
+	closeButtonPos := mtk.ConvVec(pixel.V(sm.Size().X/2-20,
+		sm.Size().Y/2-15))
 	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	slotsPos := pixel.V(mtk.ConvSize(0), mtk.ConvSize(-10))
@@ -169,13 +169,13 @@ func (sm *SkillMenu) DrawArea() pixel.Rect {
 	return sm.drawArea
 }
 
-// Bounds returns size bounds of menu background.
-func (sm *SkillMenu) Bounds() pixel.Rect {
+// Size returns size of menu background.
+func (sm *SkillMenu) Size() pixel.Vec {
 	if sm.bgSpr == nil {
-		// TODO: bounds for draw background.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		// TODO: size for draw background.
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return sm.bgSpr.Frame()
+	return sm.bgSpr.Frame().Size()
 }
 
 // insert inserts specified skills in menu slots.

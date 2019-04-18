@@ -86,8 +86,8 @@ type HUD struct {
 	loaderr    error
 }
 
-// NewHUD creates new HUD instance.
-func NewHUD() *HUD {
+// New creates new HUD instance.
+func New() *HUD {
 	hud := new(HUD)
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
@@ -124,11 +124,11 @@ func (hud *HUD) Draw(win *mtk.Window) {
 		return
 	}
 	// Elements positions.
-	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Bounds())
-	tarFramePos := mtk.RightOf(hud.pcFrame.DrawArea(), hud.tarFrame.Bounds(), 0)
+	pcFramePos := mtk.DrawPosTL(win.Bounds(), hud.pcFrame.Size())
+	tarFramePos := mtk.RightOf(hud.pcFrame.DrawArea(), hud.tarFrame.Size(), 0)
 	castBarPos := win.Bounds().Center()
-	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Bounds())
-	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Bounds())
+	barPos := mtk.DrawPosBC(win.Bounds(), hud.bar.Size())
+	chatPos := mtk.DrawPosBL(win.Bounds(), hud.chat.Size())
 	menuPos := win.Bounds().Center()
 	saveMenuPos := win.Bounds().Center()
 	invPos := win.Bounds().Center()
@@ -297,7 +297,8 @@ func (hud *HUD) AddPlayer(char *character.Character) error {
 // player.
 func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
 	hud.activePC = pc
-	hud.camera.CenterAt(hud.ActivePlayer().Position())
+	hud.camera.CenterAt(pixel.V(0, 0))
+	//hud.camera.CenterAt(hud.ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.ActivePlayer())
 	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	hud.Reload()
@@ -458,6 +459,8 @@ func (hud *HUD) ChangeArea(area *scenario.Area) error {
 		objects = append(objects, og)
 	}
 	hud.camera.SetObjects(objects)
+	// Reload HUD.
+	hud.Reload()
 	return nil
 }
 

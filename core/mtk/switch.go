@@ -111,7 +111,7 @@ func NewSwitch(size Size, color color.Color) *Switch {
 	s.nextButton.SetLabel("+")
 	s.nextButton.SetOnClickFunc(s.onNextButtonClicked)
 	// Label & info.
-	s.label = NewText(s.size-1, s.Bounds().W())
+	s.label = NewText(s.size-1, s.Size().X)
 	s.label.JustCenter()
 	s.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 	// Values.
@@ -124,7 +124,7 @@ func NewSwitch(size Size, color color.Color) *Switch {
 // Draw draws switch.
 func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	s.drawArea = MatrixToDrawArea(matrix, s.Bounds())
+	s.drawArea = MatrixToDrawArea(matrix, s.Size())
 	// Background.
 	if s.bgSpr != nil {
 		s.bgSpr.Draw(t, matrix)
@@ -137,17 +137,17 @@ func (s *Switch) Draw(t pixel.Target, matrix pixel.Matrix) {
 		s.valueText.Draw(t, matrix)
 	} else {
 		s.valueSprite.Draw(t, matrix)
-		valueDA = MatrixToDrawArea(matrix, s.valueSprite.Frame())
+		valueDA = MatrixToDrawArea(matrix, s.valueSprite.Frame().Size())
 	}
 	// Label & info window.
-	labelPos := MoveBC(s.Bounds(), s.label.Bounds().Max)
+	labelPos := MoveBC(s.Size(), s.label.Size())
 	s.label.Draw(t, matrix.Moved(labelPos))
 	if s.info != nil && s.hovered {
 		s.info.Draw(t)
 	}
 	// Buttons.
-	prevButtonPos := LeftOf(valueDA, s.prevButton.Frame(), 10)
-	nextButtonPos := RightOf(valueDA, s.nextButton.Frame(), 10)
+	prevButtonPos := LeftOf(valueDA, s.prevButton.Size(), 10)
+	nextButtonPos := RightOf(valueDA, s.nextButton.Size(), 10)
 	s.prevButton.Draw(t, Matrix().Moved(prevButtonPos))
 	s.nextButton.Draw(t, Matrix().Moved(nextButtonPos))
 }
@@ -268,13 +268,12 @@ func (s *Switch) Disabled() bool {
 	return s.disabled
 }
 
-// Bounds returns switch background size, in form
-// of rectangle.
-func (s *Switch) Bounds() pixel.Rect {
+// Size returns switch background size.
+func (s *Switch) Size() pixel.Vec {
 	if s.bgSpr == nil {
-		return s.size.SwitchSize()
+		return s.size.SwitchSize().Size()
 	}
-	return s.bgSpr.Frame()
+	return s.bgSpr.Frame().Size()
 }
 
 // DrawArea returns current switch background position and size.

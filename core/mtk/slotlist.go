@@ -59,17 +59,16 @@ func NewSlotList(bgSize pixel.Vec, bgColor color.Color, slotSize Size) *SlotList
 	// Calculating amount of slots based on background and
 	// buttons sizes.
 	slotBounds := slotSize.SlotSize()
-	bgWidth := sl.Bounds().W() - sl.upButton.Frame().W()
+	bgWidth := sl.Size().X - sl.upButton.Size().X
 	sl.spl = int(bgWidth/(slotBounds.W() + ConvSize(2)))
-	sl.lines = int(sl.Bounds().H() / (slotBounds.H() + ConvSize(2))) - 1
+	sl.lines = int(sl.Size().Y / (slotBounds.H() + ConvSize(2))) - 1
 	return sl
 }
 
 // Draw draws list.
 func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Draw area.
-	sl.drawArea = MatrixToDrawArea(matrix,
-		pixel.R(0, 0, sl.bgSize.X, sl.bgSize.Y))
+	sl.drawArea = MatrixToDrawArea(matrix, sl.bgSize)
 	// Background.
 	if sl.bgSpr != nil {
 		sl.bgSpr.Draw(t, matrix)
@@ -77,8 +76,8 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 		DrawRectangle(t, sl.drawArea, sl.bgColor)
 	}
 	// Buttons.
-	upButtonPos := MoveTR(sl.Bounds(), sl.upButton.Frame().Max)
-	downButtonPos := MoveBR(sl.Bounds(), sl.downButton.Frame().Max)
+	upButtonPos := MoveTR(sl.Size(), sl.upButton.Size())
+	downButtonPos := MoveBR(sl.Size(), sl.downButton.Size())
 	sl.upButton.Draw(t, matrix.Moved(upButtonPos))
 	sl.downButton.Draw(t, matrix.Moved(downButtonPos))
 	// Slots.
@@ -86,8 +85,8 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 	if len(sl.slots) < 1 {
 		return
 	}
-	slotStart := pixel.V(-sl.Bounds().W()/2+sl.slots[0].Bounds().W()/2,
-		sl.Bounds().H()/2-sl.slots[0].Bounds().H()/2)
+	slotStart := pixel.V(-sl.Size().X/2+sl.slots[0].Size().X/2,
+		sl.Size().Y/2-sl.slots[0].Size().Y/2)
 	slotMove := slotStart
 	splCount := 0
 	lineCount := 0
@@ -98,11 +97,11 @@ func (sl *SlotList) Draw(t pixel.Target, matrix pixel.Matrix) {
 			continue
 		}
 		s.Draw(t, matrix.Moved(slotMove))
-		slotMove.X += s.Bounds().W() + ConvSize(2)
+		slotMove.X += s.Size().X + ConvSize(2)
 		splCount += 1
 		if splCount >= sl.spl {
 			slotMove.X = slotStart.X
-			slotMove.Y -= s.Bounds().H() + ConvSize(2)
+			slotMove.Y -= s.Size().Y + ConvSize(2)
 			splCount = 0
 			lineCount += 1
 		}
@@ -164,12 +163,12 @@ func (sl *SlotList) Clear() {
 	}
 }
 
-// Bounds retruns background size bounds.
-func (sl *SlotList) Bounds() pixel.Rect {
+// Bounds retruns background size.
+func (sl *SlotList) Size() pixel.Vec {
 	if sl.bgSpr == nil {
-		return pixel.R(0, 0, sl.bgSize.X, sl.bgSize.Y)
+		return sl.bgSize
 	}
-	return sl.bgSpr.Frame()
+	return sl.bgSpr.Frame().Size()
 }
 
 // setStartLine sets specified line ID as current

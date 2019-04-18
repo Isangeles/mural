@@ -114,7 +114,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 // Draw draws menu bar.
 func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	mb.drawArea = mtk.MatrixToDrawArea(matrix, mb.Bounds())
+	mb.drawArea = mtk.MatrixToDrawArea(matrix, mb.Size())
 	// Background.
 	if mb.bgSpr != nil {
 		mb.bgSpr.Draw(win.Window, matrix)
@@ -122,17 +122,17 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mb.drawIMBackground(win.Window)
 	}
 	// Buttons.
-	menuButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-30, 0))
+	menuButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-30, 0))
 	mb.menuButton.Draw(win.Window, matrix.Moved(menuButtonPos))
-	invButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-65, 0))
+	invButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-65, 0))
 	mb.invButton.Draw(win.Window, matrix.Moved(invButtonPos))
-	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Bounds().Max.X/2-100, 0))
+	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-100, 0))
 	mb.skillsButton.Draw(win.Window, matrix.Moved(skillsButtonPos))
 	// Slots.
 	slotsStartPos := mtk.ConvVec(pixel.V(-163, 0))
 	for _, s := range mb.slots {
 		s.Draw(win.Window, matrix.Moved(slotsStartPos))
-		slotsStartPos.X += s.Bounds().W() + mtk.ConvSize(6)
+		slotsStartPos.X += s.Size().X + mtk.ConvSize(6)
 	}
 }
 
@@ -190,12 +190,12 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	}
 }
 
-// Bounds returns bounds of bar background.
-func (mb *MenuBar) Bounds() pixel.Rect {
+// Size returns size of bar background.
+func (mb *MenuBar) Size() pixel.Vec {
 	if mb.bgSpr == nil {
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return mb.bgSpr.Frame()
+	return mb.bgSpr.Frame().Size()
 }
 
 // DrawArea return current draw area of bar background.

@@ -49,7 +49,7 @@ type LoadGameMenu struct {
 }
 
 // newLoadGameMenu creates load game menu.
-func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
+func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 	lgm := new(LoadGameMenu)
 	lgm.mainmenu = mainmenu
 	// Title.
@@ -68,21 +68,21 @@ func newLoadGameMenu(mainmenu *MainMenu) (*LoadGameMenu, error) {
 		accent_color)
 	lgm.loadButton.SetLabel(lang.Text("gui", "load_b_label"))
 	lgm.loadButton.SetOnClickFunc(lgm.onLoadButtonClicked)
-	return lgm, nil
+	return lgm
 }
 
 // Draw draws all menu elements in specified window.
 func (lgm *LoadGameMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().Max.Y - lgm.title.Bounds().Size().Y)
+		win.Bounds().H() - lgm.title.Size().Y)
 	lgm.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Saves list.
 	savesListPos := win.Bounds().Center()
 	lgm.savesList.Draw(win.Window, mtk.Matrix().Moved(savesListPos))
 	// Buttons.
-	backButtonPos := mtk.DrawPosBL(win.Bounds(), lgm.backButton.Frame())
-	loadButtonPos := mtk.DrawPosBR(win.Bounds(), lgm.loadButton.Frame())
+	backButtonPos := mtk.DrawPosBL(win.Bounds(), lgm.backButton.Size())
+	loadButtonPos := mtk.DrawPosBR(win.Bounds(), lgm.loadButton.Size())
 	lgm.backButton.Draw(win.Window, mtk.Matrix().Moved(backButtonPos))
 	lgm.loadButton.Draw(win.Window, mtk.Matrix().Moved(loadButtonPos))
 }

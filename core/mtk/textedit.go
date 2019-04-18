@@ -63,14 +63,14 @@ func NewTextedit(fontSize Size, color color.Color) *Textedit {
 // Draw draws text edit.
 func (te *Textedit) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Draw area.
-	te.drawArea = MatrixToDrawArea(matrix, te.Bounds())
+	te.drawArea = MatrixToDrawArea(matrix, te.Size())
 	color := te.color
 	if te.Focused() {
 		color = te.colorFocus
 	}
 	DrawRectangle(t, te.DrawArea(), color)
 	// Text input.
-	inputMove := pixel.V(-te.Bounds().Size().X/2, 0)
+	inputMove := pixel.V(-te.Size().X/2, 0)
 	te.input.Draw(t, matrix.Moved(inputMove))
 }
 
@@ -144,9 +144,9 @@ func (te *Textedit) SetSize(size pixel.Vec) {
 	te.size = size
 }
 
-// Bounds returns text edit size bounds.
-func (te *Textedit) Bounds() pixel.Rect {
-	return pixel.R(0, 0, te.size.X, te.size.Y)
+// Size returns text edit size.
+func (te *Textedit) Size() pixel.Vec {
+	return te.size
 }
 
 // DrawArea returns current draw area rectangle.

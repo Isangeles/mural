@@ -57,10 +57,10 @@ func NewProgressBar(size Size, color color.Color) *ProgressBar {
 
 // Draw draws progress bar.
 func (pb *ProgressBar) Draw(t pixel.Target, matrix pixel.Matrix) {
-	widthDiff := ConvSize(pb.maxBounds.W() - pb.Bounds().W())
+	widthDiff := ConvSize(pb.maxBounds.W() - pb.Size().X)
 	barPos := pixel.V(-widthDiff/2, 0)
 	mx := matrix.Moved(barPos)
-	pb.drawArea = MatrixToDrawArea(mx, pb.Bounds())
+	pb.drawArea = MatrixToDrawArea(mx, pb.Size())
 	// Background.
 	if pb.bgSpr != nil {
 		pb.bgSpr.Draw(t, mx)
@@ -102,9 +102,9 @@ func (pb *ProgressBar) SetLabel(t string) {
 	pb.labelText = t
 }
 
-// Bounds returns bar size bounds.
-func (pb *ProgressBar) Bounds() pixel.Rect {
-	return pb.bounds
+// Size returns bar size.
+func (pb *ProgressBar) Size() pixel.Vec {
+	return pb.bounds.Size()
 }
 
 // Value retruns current progress value.

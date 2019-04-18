@@ -68,7 +68,7 @@ func NewButton(size Size, shape Shape, color color.Color) *Button {
 	b.colorPush = button_push_color
 	b.colorHover = button_hover_color
 	// Label.
-	b.label = NewText(size, b.Frame().W())
+	b.label = NewText(size, b.Size().X)
 	// Info window.
 	b.info = NewInfoWindow(SIZE_SMALL, colornames.Grey)
 	// Global click sound.
@@ -79,7 +79,7 @@ func NewButton(size Size, shape Shape, color color.Color) *Button {
 // Draw draws button.
 func (b *Button) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	b.drawArea = MatrixToDrawArea(matrix, b.Frame())
+	b.drawArea = MatrixToDrawArea(matrix, b.Size())
 	// Drawing background.
 	bgColor := b.color
 	if b.pressed || b.Disabled() {
@@ -204,11 +204,10 @@ func (b *Button) DrawArea() pixel.Rect {
 	return b.drawArea
 }
 
-// Frame returns button background size, in form
-// of rectangle.
-func (b *Button) Frame() pixel.Rect {
+// Size returns button background size.
+func (b *Button) Size() pixel.Vec {
 	if b.bgSpr == nil {
-		return b.size.ButtonSize(b.shape)
+		return b.size.ButtonSize(b.shape).Size()
 	}
-	return b.bgSpr.Frame()
+	return b.bgSpr.Frame().Size()
 }

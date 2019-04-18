@@ -95,7 +95,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 // Draw draws character frame.
 func (of *ObjectFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	of.drawArea = mtk.MatrixToDrawArea(matrix, of.Bounds())
+	of.drawArea = mtk.MatrixToDrawArea(matrix, of.Size())
 	// Portrait.
 	portraitPos := pixel.V(mtk.ConvSize(-70), mtk.ConvSize(0))
 	if of.object != nil && of.portrait != nil {
@@ -144,13 +144,12 @@ func (of *ObjectFrame) Update(win *mtk.Window) {
 	of.manaBar.Update(win)
 }
 
-// Bounds returns size bounds of character frame
-// background.
-func (of *ObjectFrame) Bounds() pixel.Rect {
+// Size returns size of character frame background.
+func (of *ObjectFrame) Size() pixel.Vec {
 	if of.bgSpr == nil {
-		return pixel.R(0, 0, mtk.ConvSize(200), mtk.ConvSize(50))
+		return pixel.V(mtk.ConvSize(200), mtk.ConvSize(50))
 	}
-	return of.bgSpr.Frame()
+	return of.bgSpr.Frame().Size()
 }
 
 // DrawArea retruns current frame draw area.
@@ -163,7 +162,8 @@ func (of *ObjectFrame) DrawArea() pixel.Rect {
 func (of *ObjectFrame) SetObject(ob Target) {
 	of.object = ob
 	if ob.Portrait() != nil {
-		of.portrait = pixel.NewSprite(ob.Portrait(), ob.Portrait().Bounds())
+		of.portrait = pixel.NewSprite(ob.Portrait(),
+			ob.Portrait().Bounds())
 	} else {
 		of.portrait = nil
 	}

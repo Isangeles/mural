@@ -4,7 +4,6 @@ MAJOR:
 * HUD: map window
 * HUD: crafting window
 * Graphical effects
-* Objects
 * Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
 * Spawning avatars
@@ -13,7 +12,9 @@ MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * MTK: fix for textbox visible content height
 * MTK: titles for messages windows
-DONE: 
+* MTK: auto scroll to last line for text box
+DONE:
+* Drawing tiled maps
 * Avatar: handling character equipment
 * Avatar: animations for idle, move, melee, range shoot and spell cast
 * HUD: display items in inventory
@@ -21,3 +22,4 @@ DONE:
 * HUD: inventory window
 * HUD: menu bar
 * HUD: object frames
+* Objects

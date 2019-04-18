@@ -103,7 +103,7 @@ func SlotCopy(slotA, slotB *Slot) {
 // Draw draws slot.
 func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Draw area.
-	s.drawArea = MatrixToDrawArea(matrix, s.Bounds())
+	s.drawArea = MatrixToDrawArea(matrix, s.Size())
 	// Icon.
 	if s.icon != nil && s.icon.Picture() != nil {
 		if s.dragged {
@@ -120,7 +120,7 @@ func (s *Slot) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 	// Labels.
 	if len(s.values) > 0 {
-		countPos := MoveTL(s.DrawArea(), s.countLabel.Bounds().Size())
+		countPos := MoveTL(s.Size(), s.countLabel.Size())
 		s.countLabel.Draw(t, matrix.Moved(countPos))
 	}
 	s.label.Draw(t, matrix)
@@ -216,7 +216,8 @@ func (s *Slot) SetColor(c color.Color) {
 // SetIcon sets specified sprite as current
 // slot icon.
 func (s *Slot) SetIcon(pic pixel.Picture) {
-	s.icon = pixel.NewSprite(pic, s.Bounds())
+	iconBounds := pixel.R(0, 0, s.Size().X, s.Size().Y)
+	s.icon = pixel.NewSprite(pic, iconBounds)
 }
 
 // AddValue adds specified interface to slot
@@ -258,12 +259,12 @@ func (s *Slot) DrawArea() pixel.Rect {
 	return s.drawArea
 }
 
-// Bounds returns slot size bounds.
-func (s *Slot) Bounds() pixel.Rect {
+// Size returns slot size.
+func (s *Slot) Size() pixel.Vec {
 	if s.bgSpr == nil {
-		return s.size.SlotSize()
+		return s.size.SlotSize().Size()
 	}
-	return s.bgSpr.Frame()
+	return s.bgSpr.Frame().Size()
 }
 
 // SetSpecialKey sets special key for slot click

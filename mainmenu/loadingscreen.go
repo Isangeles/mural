@@ -49,7 +49,7 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
 	infoBounds := mtk.SIZE_MEDIUM.MessageWindowSize()
 	dw := mtk.MatrixToDrawArea(mtk.Matrix().Moved(win.Bounds().Center()),
-		infoBounds)
+		infoBounds.Size())
 	ls.info.Draw(dw, win)
 }
 

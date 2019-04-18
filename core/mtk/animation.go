@@ -53,7 +53,7 @@ func NewAnimation(frames []*pixel.Sprite, fps int) *Animation {
 // Draw draws current animation frame.
 func (anim *Animation) Draw(t pixel.Target, matrix pixel.Matrix) {
 	frame := anim.frames[anim.drawFrameID]
-	anim.drawArea = MatrixToDrawArea(matrix, frame.Frame())
+	anim.drawArea = MatrixToDrawArea(matrix, frame.Frame().Size())
 	frame.Draw(t, matrix)
 }
 

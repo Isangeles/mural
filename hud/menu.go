@@ -99,23 +99,23 @@ func newMenu(hud *HUD) *Menu {
 // Draw draws menu.
 func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Draw area.
-	m.drawArea = mtk.MatrixToDrawArea(matrix, m.Bounds())
+	m.drawArea = mtk.MatrixToDrawArea(matrix, m.Size())
 	// Background.
 	if m.bgSpr != nil {
 		m.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, m.Bounds(), nil)
+		mtk.DrawRectangle(win.Window, m.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, m.Bounds().Max.Y/2 - 25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, m.Size().Y/2 - 25))
 	m.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(m.Bounds().Max.X/2 - 20,
-		m.Bounds().Max.Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(m.Size().X/2 - 20,
+		m.Size().Y/2 - 15))
 	m.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
-	saveButtonPos := mtk.ConvVec(pixel.V(0, -m.Bounds().Max.X/2 + 20))
+	saveButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2 + 20))
 	m.saveButton.Draw(win.Window, matrix.Moved(saveButtonPos))
-	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Bounds().Max.X/2 - 20))
+	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2 - 20))
 	m.exitButton.Draw(win.Window, matrix.Moved(exitButtonPos))
 }
 
@@ -133,13 +133,13 @@ func (m *Menu) DrawArea() pixel.Rect {
 	return m.drawArea
 }
 
-// Bounds return size parameter of menu background.
-func (m *Menu) Bounds() pixel.Rect {
+// Size return size of menu background.
+func (m *Menu) Size() pixel.Vec {
 	if m.bgSpr == nil {
 		// TODO: menu draw background size.
-		return pixel.R(0, 0, mtk.ConvSize(0), mtk.ConvSize(0))
+		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return m.bgSpr.Frame()
+	return m.bgSpr.Frame().Size()
 }
 
 // Opened checks wheter menu is open.

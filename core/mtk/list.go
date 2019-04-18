@@ -73,7 +73,7 @@ func NewList(bgSize pixel.Vec, buttonsSize Size, bgColor,
 // Draw draws list.
 func (l *List) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Calculating draw area.
-	l.drawArea = MatrixToDrawArea(matrix, l.Bounds())
+	l.drawArea = MatrixToDrawArea(matrix, l.Size())
 	// Background.
 	if l.bgSpr != nil {
 		l.bgSpr.Draw(t, matrix)
@@ -83,8 +83,8 @@ func (l *List) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// List.
 	l.drawListItems(t)
 	// Buttons.
-	upButtonPos := MoveTR(l.Bounds(), l.upButton.Frame().Max)
-	downButtonPos := MoveBR(l.Bounds(), l.downButton.Frame().Max)
+	upButtonPos := MoveTR(l.Size(), l.upButton.Size())
+	downButtonPos := MoveBR(l.Size(), l.downButton.Size())
 	l.upButton.Draw(t, matrix.Moved(upButtonPos))
 	l.downButton.Draw(t, matrix.Moved(downButtonPos))
 }
@@ -133,13 +133,12 @@ func (l *List) Disabled() bool {
 	return l.disabled
 }
 
-// Bounds returns list background size, in from
-// of rectangle.
-func (l *List) Bounds() pixel.Rect {
+// Size returns list background size
+func (l *List) Size() pixel.Vec {
 	if l.bgSpr == nil {
-		return pixel.R(0, 0, l.bgSize.X, l.bgSize.Y)
+		return l.bgSize
 	}
-	return l.bgSpr.Frame()
+	return l.bgSpr.Frame().Size()
 }
 
 // SetOnItemSelectFunc sets specified function as function
@@ -174,7 +173,7 @@ func (l *List) InsertItems(content map[string]interface{}) {
 // AddItem adds specified value with label to current
 // list content.
 func (l *List) AddItem(label string, value interface{}) {
-	itemSize := pixel.V(l.Bounds().W() - l.upButton.Frame().W(), ConvSize(20))
+	itemSize := pixel.V(l.Size().X - l.upButton.Size().X, ConvSize(20))
 	itemSlot := NewCheckSlot(label, value, itemSize, l.secColor, l.accentColor)
 	itemSlot.SetOnCheckFunc(l.onItemSelected)
 	l.items = append(l.items, itemSlot)
@@ -210,7 +209,7 @@ func (l *List) drawListItems(t pixel.Target) {
 	for i := l.startIndex; i < len(l.items) && contentH+lastItemDA.H() < listH; i++ {
 		if i == 0 { // Draw first visible item.
 			item := l.items[l.startIndex]
-			drawPos := DrawPosTC(l.DrawArea(), item.Bounds())
+			drawPos := DrawPosTC(l.DrawArea(), item.Size())
 			item.Draw(t, Matrix().Moved(drawPos))
 			contentH += item.DrawArea().H() + ConvSize(15)
 			lastItemDA = item.DrawArea()
@@ -218,7 +217,7 @@ func (l *List) drawListItems(t pixel.Target) {
 		}
 		// Draw rest of visible items.
 		item := l.items[i]
-		drawPos := BottomOf(lastItemDA, item.Bounds(), ConvSize(5))
+		drawPos := BottomOf(lastItemDA, item.Size(), ConvSize(5))
 		item.Draw(t, Matrix().Moved(drawPos))
 		contentH += item.DrawArea().H() + ConvSize(15)
 		lastItemDA = item.DrawArea()

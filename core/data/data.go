@@ -303,14 +303,14 @@ func Map(mapDir, mapName string) (*tmx.Map, error) {
 // Music returns audio stream data from file with specified name
 // inside audio archive.
 func Music(fileName string) (*beep.Buffer, error) {
-	path := filepath.FromSlash("music/" + fileName)
+	path := "music/" + fileName
 	return loadAudioFromArch(mod_a_arch_path, path)
 }
 
 // AudioEffect returns audio stream data from file with specified
 // name inside audio archive.
 func AudioEffect(fileName string) (*beep.Buffer, error) {
-	path := filepath.FromSlash("effect/" + fileName)
+	path := "effect/" + fileName
 	return loadAudioFromArch(mod_a_arch_path, path)
 }
 

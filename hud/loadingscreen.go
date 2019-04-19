@@ -48,9 +48,9 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
 	infoSize := mtk.SIZE_MEDIUM.MessageWindowSize().Size()
-	dw := mtk.MatrixToDrawArea(mtk.Matrix().Moved(win.Bounds().Center()),
-		infoSize)
-	ls.info.Draw(dw, win)
+	infoPos := win.Bounds().Center()
+	ls.info.SetSize(infoSize)
+	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))
 }
 
 // Update updates loading screen.

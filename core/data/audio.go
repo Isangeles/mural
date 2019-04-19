@@ -26,13 +26,13 @@ package data
 import (
 	"archive/zip"
 	"fmt"
-	"strings"
 	"os"
+	"strings"
 
 	"github.com/faiface/beep"
+	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/vorbis"
 	"github.com/faiface/beep/wav"
-	"github.com/faiface/beep/mp3"
 )
 
 // loadAudiosFromArch loads all audio files data from specified
@@ -111,7 +111,7 @@ func loadAudioFromArch(archPath, filePath string) (*beep.Buffer, error) {
 func loadAudioFromDir(path string) (*beep.Buffer, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("fail_to_open_file:%v", err)
 	}
 	defer file.Close()
 	switch {

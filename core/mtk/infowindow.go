@@ -45,12 +45,13 @@ func NewInfoWindow(size Size, color color.Color) *InfoWindow {
 
 // Draw draws info window.
 func (iw *InfoWindow) Draw(t pixel.Target) {
-	iw.Textbox.Draw(iw.drawArea, t)
+	iw.Textbox.Draw(t, Matrix().Moved(iw.drawArea.Center()))
 }
 
 // Update updates info window.
 func (iw *InfoWindow) Update(win *Window) {
 	iw.drawArea = pixel.R(win.MousePosition().X, win.MousePosition().Y,
-		win.MousePosition().X + iw.Size().X,
-		win.MousePosition().Y + iw.Size().Y * 1.5)
+		win.MousePosition().X + iw.TextSize().X,
+		win.MousePosition().Y + iw.TextSize().Y * 1.5)
+	iw.SetSize(iw.drawArea.Size())
 }

@@ -59,14 +59,15 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.size = size
 	mw.color = colornames.Grey
 	mw.colorDisable = colornames.Darkgrey
-	// Textbox.
-	textbox := NewTextbox(mw.Size(), SIZE_MEDIUM, colornames.Grey)
-	mw.textbox = textbox
-	mw.textbox.InsertText(msg)
 	// Buttons.
 	mw.acceptButton = NewButton(SIZE_SMALL, SHAPE_RECTANGLE, colornames.Red)
 	mw.acceptButton.SetLabel(lang.Text("gui", "accept_b_label"))
 	mw.acceptButton.SetOnClickFunc(mw.onAcceptButtonClicked)
+	// Textbox.
+	boxSize := pixel.V(mw.Size().X, mw.Size().Y - mw.acceptButton.Size().Y)
+	textbox := NewTextbox(boxSize, SIZE_MEDIUM, colornames.Grey)
+	mw.textbox = textbox
+	mw.textbox.InsertText(msg)
 	return mw
 }
 
@@ -99,9 +100,8 @@ func (mw *MessageWindow) Draw(t pixel.Target, matrix pixel.Matrix) {
 		mw.cancelButton.Draw(t, matrix.Moved(cancelButtonPos))
 	}
 	// Textbox.
-	textboxDrawArea := pixel.R(mw.drawArea.Min.X,
-		mw.acceptButton.DrawArea().Max.Y, mw.drawArea.Max.X, mw.drawArea.Max.Y)
-	mw.textbox.Draw(textboxDrawArea, t)
+	boxMove := MoveTC(mw.Size(), mw.textbox.Size())
+	mw.textbox.Draw(t, matrix.Moved(boxMove))
 }
 
 // Update handles key press events.

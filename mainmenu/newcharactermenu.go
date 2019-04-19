@@ -88,7 +88,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
 	// Text fields.
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
-	ncm.pointsBox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, main_color)
+	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE).Size()
+	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize,  mtk.SIZE_MEDIUM, main_color)
 	// Portrait switch.
 	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
@@ -189,10 +190,9 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	ncm.nameEdit.SetSize(nameEditSize)
 	ncm.nameEdit.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.title.DrawArea(),
 		ncm.nameEdit.Size(), 10)))
-	ncm.pointsBox.Draw(pixel.R(win.Bounds().Min.X+mtk.ConvSize(90),
-		win.Bounds().Center().Y-mtk.ConvSize(40),
-		win.Bounds().Min.X+mtk.ConvSize(140),
-		win.Bounds().Center().Y+mtk.ConvSize(40)), win.Window)
+	pointsBoxPos := mtk.DrawPosCL(win.Bounds(), ncm.pointsBox.Size())
+	pointsBoxPos.X += mtk.ConvSize(100)
+	ncm.pointsBox.Draw(win.Window, mtk.Matrix().Moved(pointsBoxPos))
 	// Switches.
 	ncm.faceSwitch.Draw(win.Window, mtk.Matrix().Moved(mtk.TopOf(
 		ncm.pointsBox.DrawArea(), ncm.faceSwitch.Size(), 100)))

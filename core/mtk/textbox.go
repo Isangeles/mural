@@ -35,9 +35,9 @@ import (
 
 // Struct for textboxes.
 type Textbox struct {
+	bgSize      pixel.Vec
 	color       color.Color
 	textarea    *Text
-	textSize    pixel.Vec
 	drawArea    pixel.Rect // updated at every draw
 	textContent []string
 	visibleText []string
@@ -47,21 +47,21 @@ type Textbox struct {
 // NewTextbox creates new textbox with specified font size,
 // background color and maximal size of text content (0 for
 // no maximal values).
-func NewTextbox(textSize pixel.Vec, fontSize Size, color color.Color) *Textbox {
+func NewTextbox(size pixel.Vec, fontSize Size, color color.Color) *Textbox {
 	t := new(Textbox)
-	t.textSize = textSize
+	t.bgSize = size
 	// Background.
 	t.color = color
 	// Text.
-	t.textarea = NewText(fontSize, t.textSize.X)
+	t.textarea = NewText(fontSize, t.bgSize.X)
 	t.textarea.JustLeft()
 	return t
 }
 
 // Draw draws textbox.
-func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
+func (tb *Textbox) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Background.
-	tb.drawArea = drawArea
+	tb.drawArea = MatrixToDrawArea(matrix, tb.Size())
 	DrawRectangle(t, tb.DrawArea(), pixel.RGBA{0.1, 0.1, 0.1, 0.5})
 	// Text content.
 	tb.textarea.Draw(t, Matrix().Moved(pixel.V(tb.DrawArea().Min.X,
@@ -69,24 +69,34 @@ func (tb *Textbox) Draw(drawArea pixel.Rect, t pixel.Target) {
 }
 
 // Update handles key events.
-func (t *Textbox) Update(win *Window) {
+func (tb *Textbox) Update(win *Window) {
 	if win.JustPressed(pixelgl.KeyDown) {
-		if t.startID < len(t.textContent)-1 {
-			t.startID++
-			t.updateTextVisibility()
+		if tb.startID < len(tb.textContent)-1 {
+			tb.startID++
+			tb.updateTextVisibility()
 		}
 	}
 	if win.JustPressed(pixelgl.KeyUp) {
-		if t.startID > 0 {
-			t.startID--
-			t.updateTextVisibility()
+		if tb.startID > 0 {
+			tb.startID--
+			tb.updateTextVisibility()
 		}
 	}
 }
 
-// Size returns size parameters of textbox textarea.
-func (t *Textbox) Size() pixel.Vec {
-	return t.textarea.Size()
+// SetSize sets background size.
+func (tb *Textbox) SetSize(s pixel.Vec) {
+	tb.bgSize = s
+}
+
+// Size returns size of textbox background.
+func (tb *Textbox) Size() pixel.Vec {
+	return tb.bgSize
+}
+
+// TextSize returns size of text content.
+func (tb *Textbox) TextSize() pixel.Vec {
+	return tb.textarea.Size()
 }
 
 // DrawArea returns current draw area of text box

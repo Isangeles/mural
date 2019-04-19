@@ -95,12 +95,14 @@ func (ngm *NewGameMenu) Draw(win *mtk.Window) {
 	ngm.exportButton.Draw(win, mtk.Matrix().Moved(exportButtonPos))
 	backButtonPos := mtk.DrawPosBL(win.Bounds(), ngm.backButton.Size())
 	ngm.backButton.Draw(win.Window, mtk.Matrix().Moved(backButtonPos))
-	// Switches & text.
+	// Portrait switch.
 	charSwitchPos := mtk.BottomOf(ngm.title.DrawArea(), ngm.charSwitch.Size(), 10)
 	ngm.charSwitch.Draw(win, mtk.Matrix().Moved(charSwitchPos))
-	ngm.charInfo.Draw(pixel.R(win.Bounds().Min.X,
-		ngm.backButton.DrawArea().Max.Y, win.Bounds().Max.X,
-		ngm.charSwitch.DrawArea().Min.Y), win.Window)
+	// Character info.
+	charInfoSize := pixel.V(win.Bounds().W(), win.Bounds().H()/2)
+	ngm.charInfo.SetSize(charInfoSize)
+	charInfoPos := mtk.BottomOf(ngm.charSwitch.DrawArea(), ngm.charInfo.Size(), mtk.ConvSize(10))
+	ngm.charInfo.Draw(win, mtk.Matrix().Moved(charInfoPos))
 }
 
 // Update updates all menu elements.

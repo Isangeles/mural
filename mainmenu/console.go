@@ -58,14 +58,15 @@ func newConsole() *Console {
 
 // Draw draws console.
 func (c *Console) Draw(win *mtk.Window) {
-	drawMin := pixel.V(win.Bounds().Min.X, win.Bounds().Center().Y)
-	drawMax := win.Bounds().Max
 	// Text box.
-	c.textbox.Draw(pixel.R(drawMin.X, drawMin.Y, drawMax.X, drawMax.Y), win)
+	boxSize := pixel.V(win.Bounds().W(), win.Bounds().H()/2)
+	c.textbox.SetSize(boxSize)
+	boxMove := mtk.DrawPosTC(win.Bounds(), c.textbox.Size())
+	c.textbox.Draw(win, mtk.Matrix().Moved(boxMove))
 	// Text edit.
-	editSize := pixel.V(c.textbox.DrawArea().Size().X, mtk.ConvSize(30))
-	editMove := pixel.V(win.Bounds().Center().X, drawMin.Y-mtk.ConvSize(20))
+	editSize := pixel.V(c.textbox.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
+	editMove := mtk.BottomOf(c.textbox.DrawArea(), c.textedit.Size(), 0)
 	c.textedit.Draw(win.Window, mtk.Matrix().Moved(editMove))
 }
 

@@ -68,6 +68,9 @@ func newChat(hud *HUD) *Chat {
 	// Textbox.
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL,
 		colornames.Grey)
+	boxSize := c.Size()
+	boxSize.Y -= mtk.ConvSize(30)
+	c.textbox.SetSize(boxSize)
 	// Textedit.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
@@ -81,10 +84,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		c.bgSpr.Draw(win, matrix)
 	}
 	// Textbox.
-	boxSize := c.Size()
-	boxSize.Y -= mtk.ConvSize(30)
-	textboxDA := mtk.MatrixToDrawArea(matrix, boxSize)
-	c.textbox.Draw(textboxDA, win)
+	c.textbox.Draw(win, matrix)
 	// Textedit.
 	editSize := pixel.V(c.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
@@ -98,9 +98,9 @@ func (c *Chat) Update(win *mtk.Window) {
 	var msgs []fmt.Stringer
 	engineMsgs := enginelog.Messages()
 	/* 
-		for i := len(engineMsgs)-1; i >= 0; i-- {
-			msgs = append(msgs, engineMsgs[i])
-		}
+	for i := len(engineMsgs)-1; i >= 0; i-- {
+		msgs = append(msgs, engineMsgs[i])
+	}
 	*/
 	for _, msg := range engineMsgs {
 		msgs = append(msgs, msg)

@@ -185,14 +185,12 @@ func (c *Camera) SetObjects(obs []*object.ObjectGraphic) {
 
 // SetPosition sets camera position.
 func (c *Camera) SetPosition(pos pixel.Vec) {
-	fmt.Printf("set_pos:%v\n", pos)
 	c.position = pos
 }
 
 // CenterAt centers camera at specified position.
 func (c *Camera) CenterAt(pos pixel.Vec) {
 	center := pixel.V(pos.X-c.Size().X/2, pos.Y-c.Size().Y/2)
-	fmt.Printf("center_at:%v\n", center)
 	c.SetPosition(center)
 }
 

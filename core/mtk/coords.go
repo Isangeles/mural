@@ -138,6 +138,18 @@ func DrawPosBC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
 	return pixel.V(bg.Center().X, bg.Min.Y+ConvSize(size.Y)/2)
 }
 
+// DrawPosCR returns center right draw position(center) on specified
+// background for object with specified size.
+func DrawPosCR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Max.X-ConvSize(size.X)/2, bg.Center().Y)
+}
+
+// DrawPosCL returns center left draw position(center) on specified
+// background for object with specified size.
+func DrawPosCL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
+	return pixel.V(bg.Min.X+ConvSize(size.X)/2, bg.Center().Y)
+}
+
 // MoveTR returns move vector from center of background with
 // specified size to top right point draw position(center) for
 // specified size.
@@ -163,16 +175,22 @@ func MoveBL(bgSize, obSize pixel.Vec) pixel.Vec {
 	return pixel.V(-bgSize.X/2+obSize.X/2, -bgSize.Y/2+obSize.Y/2)
 }
 
-// MoveBC returns move vector from center of background witg specified
+// MoveBC returns move vector from center of background with specified
 // size to bottom center point draw position(center) for specified size.
 func MoveBC(bgSize, obSize pixel.Vec) pixel.Vec {
 	return pixel.V(0, -bgSize.Y/2+obSize.Y/2)
 }
 
+// MoveTC returns move vector from center of background with specified
+// size to top center point draw position(center) for specified size.
+func MoveTC(bgSize, obSize pixel.Vec) pixel.Vec {
+	return pixel.V(0, bgSize.Y/2-obSize.Y/2)
+}
+
 // TopOf returns position for rect with specified size at the top of
 // specified draw area, with specified offset value.
 func TopOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X+(size.X/2), drawArea.Max.Y+
+	return pixel.V(drawArea.Center().X, drawArea.Max.Y+
 		(size.Y/2)+ConvSize(offset))
 }
 
@@ -186,7 +204,7 @@ func RightOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
 // BottomOf returns position of rect with specified size at the bottom of
 // speicified draw area, width specified offset value.
 func BottomOf(drawArea pixel.Rect, size pixel.Vec, offset float64) pixel.Vec {
-	return pixel.V(drawArea.Min.X+(size.X/2), drawArea.Min.Y-
+	return pixel.V(drawArea.Center().X, drawArea.Min.Y-
 		(size.Y/2)-ConvSize(offset))
 }
 

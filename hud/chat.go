@@ -125,7 +125,7 @@ func (c *Chat) Size() pixel.Vec {
 		// TODO: return draw background bounds.
 		return mtk.ConvVec(pixel.V(0, 0))
 	}
-	return c.bgSpr.Frame().Size()
+	return mtk.ConvVec(c.bgSpr.Frame().Size())
 }
 
 // Activated checks whether chat input is

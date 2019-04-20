@@ -56,25 +56,26 @@ var (
 // NewCharacterMenu struct represents new game character
 // creation screen.
 type NewCharacterMenu struct {
-	mainmenu   *MainMenu
-	title      *mtk.Text
-	nameEdit   *mtk.Textedit
-	faceSwitch *mtk.Switch
-	pointsBox  *mtk.Textbox
-	strSwitch  *mtk.Switch
-	conSwitch  *mtk.Switch
-	dexSwitch  *mtk.Switch
-	intSwitch  *mtk.Switch
-	wisSwitch  *mtk.Switch
-	sexSwitch  *mtk.Switch
-	raceSwitch *mtk.Switch
-	aliSwitch  *mtk.Switch
-	doneButton *mtk.Button
-	backButton *mtk.Button
-	rollButton *mtk.Button
-	opened     bool
-	rng        *rand.Rand
-	attrPoints int
+	mainmenu      *MainMenu
+	title         *mtk.Text
+	nameEdit      *mtk.Textedit
+	faceSwitch    *mtk.Switch
+	pointsBox     *mtk.Textbox
+	strSwitch     *mtk.Switch
+	conSwitch     *mtk.Switch
+	dexSwitch     *mtk.Switch
+	intSwitch     *mtk.Switch
+	wisSwitch     *mtk.Switch
+	sexSwitch     *mtk.Switch
+	raceSwitch    *mtk.Switch
+	aliSwitch     *mtk.Switch
+	doneButton    *mtk.Button
+	backButton    *mtk.Button
+	rollButton    *mtk.Button
+	opened        bool
+	rng           *rand.Rand
+	attrPoints    int
+	attrPointsMax int
 }
 
 // newNewCharacterMenu creates new character creation menu.
@@ -89,7 +90,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	// Text fields.
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
 	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE).Size()
-	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize,  mtk.SIZE_MEDIUM, main_color)
+	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize, mtk.SIZE_MEDIUM, main_color)
 	// Portrait switch.
 	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
@@ -174,8 +175,6 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.rollButton.SetLabel(lang.Text("gui", "newchar_roll_b_label"))
 	ncm.rollButton.SetInfo(lang.Text("gui", "newchar_roll_b_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
-	// Character.
-	ncm.rollPoints()
 	return ncm
 }
 
@@ -253,14 +252,18 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPoints = ncm.rng.Intn(new_char_attrs_max-
+	ncm.attrPointsMax = ncm.rng.Intn(new_char_attrs_max-
 		new_char_attrs_min) + new_char_attrs_min
+	ncm.attrPoints = ncm.attrPointsMax
 	ncm.updatePoints()
 }
 
 // Show toggles menu visibility.
 func (ncm *NewCharacterMenu) Show(show bool) {
 	ncm.opened = show
+	if ncm.opened {
+		ncm.rollPoints()
+	}
 }
 
 // Opened checks whether menu is open.
@@ -459,9 +462,9 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 		log.Err.Print("new_char_menu:fail_to_retrieve_wis_switch_value")
 		return
 	}
-	pts := new_char_attrs_max
+	pts := ncm.attrPointsMax
 	pts -= str + con + dex + inte + wis
-	if pts >= 0 && pts <= new_char_attrs_max {
+	if pts > -1 && pts <= ncm.attrPointsMax {
 		ncm.attrPoints = pts
 	} else {
 		s.SetIndex(s.Find(old.Value))

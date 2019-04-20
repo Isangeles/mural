@@ -86,6 +86,7 @@ func newMenu(mainmenu *MainMenu) *Menu {
 func (m *Menu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := mtk.DrawPosTC(win.Bounds(), m.title.Size())
+	titlePos.Y -= mtk.ConvSize(20)
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
 	newgamePos := mtk.BottomOf(m.title.DrawArea(), m.newgameB.Size(), 10)

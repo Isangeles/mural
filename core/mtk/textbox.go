@@ -96,7 +96,7 @@ func (tb *Textbox) Size() pixel.Vec {
 
 // TextSize returns size of text content.
 func (tb *Textbox) TextSize() pixel.Vec {
-	return tb.textarea.Size()
+	return ConvVec(tb.textarea.Size())
 }
 
 // DrawArea returns current draw area of text box

@@ -520,54 +520,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 
 // Triggered after right mouse button was pressed.
 func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
-	// Set target.
-	if hud.containsPos(pos) {
-		return
-	}
-	for _, av := range hud.Camera().Avatars() {
-		if !av.DrawArea().Contains(pos) {
-			continue
-		}
-		log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
-		hud.ActivePlayer().SetTarget(av.Character)
-		return
-	}
-	for _, ob := range hud.Camera().AreaObjects() {
-		if !ob.DrawArea().Contains(pos) {
-			continue
-		}
-		log.Dbg.Printf("hud:set_target:%s", ob.ID()+"_"+ob.Serial())
-		hud.ActivePlayer().SetTarget(ob.Object)
-		return
-	}
-	hud.ActivePlayer().SetTarget(nil)
 }
 
 // Triggered after left mouse button was pressed.
 func (hud *HUD) onMouseLeftPressed(pos pixel.Vec) {
-	// Loot.
-	for _, av := range hud.Camera().Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() ||
-			av == hud.ActivePlayer(){
-			continue
-		}
-		log.Dbg.Printf("hud:loot:%s", av.ID()+"_"+av.Serial())
-		hud.loot.SetTarget(av)
-		hud.loot.Show(true)
-		return
-	}
-	for _, ob := range hud.Camera().AreaObjects() {
-		if !ob.DrawArea().Contains(pos) || ob.Live() {
-			continue
-		}
-		log.Dbg.Printf("hud:loot:%s", ob.ID()+"_"+ob.Serial())
-		hud.loot.SetTarget(ob)
-		hud.loot.Show(true)
-		return
-	}
-	// Move active PC.
-	destPos := hud.camera.ConvCameraPos(pos)
-	if !hud.game.Paused() && hud.camera.Map().Passable(destPos) && !hud.containsPos(pos) {
-		hud.ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
-	}
 }

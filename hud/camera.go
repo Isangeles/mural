@@ -34,6 +34,7 @@ import (
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 var (
@@ -141,6 +142,13 @@ func (c *Camera) Update(win *mtk.Window) {
 			win.JustPressed(pixelgl.KeyLeft) {
 			c.position.X -= mTileSize.X
 		}
+	}
+	// Mouse events.	
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		c.onMouseLeftPressed(win.MousePosition())
+	}
+	if win.JustPressed(pixelgl.MouseButtonRight) {
+		c.onMouseRightPressed(win.MousePosition())
 	}
 	// Avatars.
 	for _, av := range c.avatars {
@@ -307,4 +315,57 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 	//c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
 	//c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
 	c.fow.Draw(t)
+}
+
+// Triggered after right mouse button was pressed.
+func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
+	// Set target.
+	if c.hud.containsPos(pos) {
+		return
+	}
+	for _, av := range c.Avatars() {
+		if !av.DrawArea().Contains(pos) {
+			continue
+		}
+		log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
+		c.hud.ActivePlayer().SetTarget(av.Character)
+		return
+	}
+	for _, ob := range c.AreaObjects() {
+		if !ob.DrawArea().Contains(pos) {
+			continue
+		}
+		log.Dbg.Printf("hud:set_target:%s", ob.ID()+"_"+ob.Serial())
+		c.hud.ActivePlayer().SetTarget(ob.Object)
+		return
+	}
+	c.hud.ActivePlayer().SetTarget(nil)
+}
+
+// Triggered after left mouse button was pressed.
+func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
+	// Loot.
+	for _, av := range c.Avatars() {
+		if !av.DrawArea().Contains(pos) || av.Live() || av == c.hud.ActivePlayer() {
+			continue
+		}
+		log.Dbg.Printf("hud:loot:%s", av.ID()+"_"+av.Serial())
+		c.hud.loot.SetTarget(av)
+		c.hud.loot.Show(true)
+		return
+	}
+	for _, ob := range c.AreaObjects() {
+		if !ob.DrawArea().Contains(pos) || ob.Live() {
+			continue
+		}
+		log.Dbg.Printf("hud:loot:%s", ob.ID()+"_"+ob.Serial())
+		c.hud.loot.SetTarget(ob)
+		c.hud.loot.Show(true)
+		return
+	}
+	// Move active PC.
+	destPos := c.ConvCameraPos(pos)
+	if !c.hud.game.Paused() && c.Map().Passable(destPos) && !c.hud.containsPos(pos) {
+		c.hud.ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
+	}
 }

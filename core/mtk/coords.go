@@ -105,49 +105,49 @@ func PosBR(size pixel.Rect, pos pixel.Vec) pixel.Vec {
 // DrawPosTR returns top left position for draw specifed
 // object with specified size.
 func DrawPosTL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Min.X+ConvSize(size.X)/2, bg.Max.Y-ConvSize(size.Y)/2)
+	return pixel.V(bg.Min.X+(size.X)/2, bg.Max.Y-(size.Y)/2)
 }
 
 // DrawPosTR returns top right draw position(center) on specified
 // background for object with specified size.
 func DrawPosTR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Max.X-ConvSize(size.X)/2, bg.Max.Y-ConvSize(size.Y)/2)
+	return pixel.V(bg.Max.X-(size.X)/2, bg.Max.Y-(size.Y)/2)
 }
 
 // DrawPosTC returns top center draw position(center) on specified
 // background for object with specified size.
 func DrawPosTC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Max.Y-ConvSize(size.Y)/2)
+	return pixel.V(bg.Center().X, bg.Max.Y-(size.Y)/2)
 }
 
 // DrawPosBL returns bottom left draw position(center) on specified
 // background for object with specified size.
 func DrawPosBL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Min.X+ConvSize(size.X/2), bg.Min.Y+ConvSize(size.Y)/2)
+	return pixel.V(bg.Min.X+(size.X/2), bg.Min.Y+(size.Y/2))
 }
 
 // DrawPosBR returns bottom right draw position(center) on specified
 // background for object with specified size.
 func DrawPosBR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Max.X-ConvSize(size.X/2), bg.Min.Y+ConvSize(size.Y)/2)
+	return pixel.V(bg.Max.X-(size.X/2), bg.Min.Y+(size.Y)/2)
 }
 
 // DrawPosBC returns bottom center draw position(center) on specified
 // background for object with specified size.
 func DrawPosBC(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Center().X, bg.Min.Y+ConvSize(size.Y)/2)
+	return pixel.V(bg.Center().X, bg.Min.Y+(size.Y)/2)
 }
 
 // DrawPosCR returns center right draw position(center) on specified
 // background for object with specified size.
 func DrawPosCR(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Max.X-ConvSize(size.X)/2, bg.Center().Y)
+	return pixel.V(bg.Max.X-(size.X)/2, bg.Center().Y)
 }
 
 // DrawPosCL returns center left draw position(center) on specified
 // background for object with specified size.
 func DrawPosCL(bg pixel.Rect, size pixel.Vec) pixel.Vec {
-	return pixel.V(bg.Min.X+ConvSize(size.X)/2, bg.Center().Y)
+	return pixel.V(bg.Min.X+(size.X)/2, bg.Center().Y)
 }
 
 // MoveTR returns move vector from center of background with

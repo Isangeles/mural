@@ -29,8 +29,8 @@ import (
 	"github.com/faiface/pixel"
 )
 
-// InfoWindow struct for small text boxes with information about UI
-// elements.
+// InfoWindow struct for small text boxes that
+// follows mouse cursor.
 type InfoWindow struct {
 	*Textbox
 	drawArea pixel.Rect

@@ -164,7 +164,7 @@ func (b *Button) SetLabel(t string) {
 // SetInfo sets specified text as content of
 // button info window.
 func (b *Button) SetInfo(t string) {
-	b.info.InsertText(t)
+	b.info.SetText(t)
 }
 
 // Focus sets/removes focus from button

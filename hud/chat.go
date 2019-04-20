@@ -24,7 +24,6 @@
 package hud
 
 import (
-	"fmt"
 	"strings"
 	
 	"golang.org/x/image/colornames"
@@ -95,17 +94,10 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
 	// Content update.
-	var msgs []fmt.Stringer
-	engineMsgs := enginelog.Messages()
-	/* 
-	for i := len(engineMsgs)-1; i >= 0; i-- {
-		msgs = append(msgs, engineMsgs[i])
+	c.textbox.Clear()
+	for _, msg := range enginelog.Messages() {
+		c.textbox.AddLine(msg.String())
 	}
-	*/
-	for _, msg := range engineMsgs {
-		msgs = append(msgs, msg)
-	}
-	c.textbox.Insert(msgs)
 	// Elements update.
 	c.textbox.Update(win)
 	c.Active(c.textedit.Focused())

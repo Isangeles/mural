@@ -191,7 +191,7 @@ func (s *Switch) SetLabel(t string) {
 
 // SetInfo sets specified text as info.
 func (s *Switch) SetInfo(t string) {
-	s.info.InsertText(t)
+	s.info.SetText(t)
 }
 
 // SetNextButtonBackground sets specified sprite as next

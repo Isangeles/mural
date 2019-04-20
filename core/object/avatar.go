@@ -26,6 +26,8 @@ package object
 import (
 	"fmt"
 
+	"golang.org/x/image/colornames"
+	
 	"github.com/faiface/pixel"
 
 	flameobject "github.com/isangeles/flame/core/module/object"
@@ -33,6 +35,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/object/skill"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object/internal"
@@ -45,6 +48,8 @@ type Avatar struct {
 	*character.Character
 	data     *res.AvatarData
 	sprite   *internal.AvatarSprite
+	info     *mtk.InfoWindow
+	hovered  bool
 	items    map[string]*ItemGraphic
 	eqItems  map[string]*ItemGraphic
 	effects  map[string]*EffectGraphic
@@ -78,6 +83,9 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
+	// Info window.
+	av.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
+	av.info.SetText(av.infoText())
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
@@ -92,11 +100,17 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 
 // Draw draws avatar.
 func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
+	// Sprite.
 	av.sprite.Draw(win, matrix)
+	// Info window.
+	if av.hovered {
+		av.info.Draw(win)
+	}
 }
 
 // Update updates avatar.
 func (av *Avatar) Update(win *mtk.Window) {
+	// Animations
 	if av.Casting() {
 		av.sprite.Cast()
 	} else if av.Moving() {
@@ -116,8 +130,12 @@ func (av *Avatar) Update(win *mtk.Window) {
 	} else {
 		av.sprite.Idle()
 	}
+	// Sprite
 	av.updateGraphic()
 	av.sprite.Update(win)
+	// Info window.
+	av.info.Update(win)
+	av.hovered = av.sprite.DrawArea().Contains(win.MousePosition())
 }
 
 // DrawArea returns current draw area.
@@ -312,4 +330,15 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	case AvatarMelee:
 		av.sprite.MeleeOnce()
 	}
+}
+
+// infoText returns info text about
+// specified avatar. 
+func (av *Avatar) infoText() string {
+	form := "%s"
+	info := fmt.Sprintf(form, av.Name())
+	if config.Debug() {
+		info = fmt.Sprintf("%s\n[%s_%s]", info, av.ID(), av.Serial())
+	}
+	return info
 }

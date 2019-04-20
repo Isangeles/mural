@@ -60,6 +60,5 @@ func (ls *LoadingScreen) Update(win *mtk.Window) {
 
 // SetLoadInfo sets specified text as current load info text.
 func (ls *LoadingScreen) SetLoadInfo(text string) {
-	ls.info.Clear()
-	ls.info.Add(text)
+	ls.info.SetText(text)
 }

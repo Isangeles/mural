@@ -39,7 +39,7 @@ type Textbox struct {
 	color       color.Color
 	textarea    *Text
 	drawArea    pixel.Rect // updated at every draw
-	textContent []string
+	textContent []string   // every line of text content
 	visibleText []string
 	startID     int
 }
@@ -111,25 +111,16 @@ func (tb *Textbox) SetMaxTextWidth(width float64) {
 	tb.textarea.SetMaxWidth(width)
 }
 
-// Insert clears textbox and inserts text from
-// String() function of specified stringers.
-func (t *Textbox) Insert(text []fmt.Stringer) {
-	t.Clear()
-	for _, txt := range text {
-		t.Add(txt.String())
-	}
-	t.updateTextVisibility()
-}
-
-// InsertText clears textbox and inserts specified text.
-func (t *Textbox) InsertText(text ...string) {
+// SetText clears textbox and inserts specified
+// lines of text.
+func (t *Textbox) SetText(text ...string) {
 	t.Clear()
 	t.textContent = text
 	t.updateTextVisibility()
 }
 
-// Add adds specified text to box.
-func (t *Textbox) Add(line string) {
+// AddLine adds specified text to box(in new line).
+func (t *Textbox) AddLine(line string) {
 	t.textContent = append(t.textContent, line)
 	t.updateTextVisibility()
 }
@@ -170,7 +161,7 @@ func (t *Textbox) updateTextVisibility() {
 		}
 		breakLines := t.Break(line, boxWidth)
 		visibleText = append(visibleText, breakLines...)
-		visibleTextHeight += t.textarea.BoundsOf(line).H()*float64(len(breakLines))
+		visibleTextHeight += t.textarea.BoundsOf(line).H() * float64(len(breakLines))
 	}
 	t.textarea.Clear()
 	for _, txt := range visibleText {
@@ -188,11 +179,11 @@ func (t *Textbox) Break(line string, width float64) []string {
 		if len(breakLines) < 2 {
 			return breakLines
 		}
-		lines = append(lines, breakLines[0] + "\n")
+		lines = append(lines, breakLines[0]+"\n")
 		breakLineWidth := t.textarea.BoundsOf(breakLines[1]).W()
 		if breakLineWidth > width {
 			for _, l := range t.Break(breakLines[1], width) {
-				lines = append(lines, l + "\n")
+				lines = append(lines, l+"\n")
 			}
 		} else {
 			lines = append(lines, breakLines[1])

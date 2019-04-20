@@ -24,11 +24,16 @@
 package object
 
 import (
+	"fmt"
+
+	"golang.org/x/image/colornames"
+	
 	"github.com/faiface/pixel"
 
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/area"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/mtk"
 )
@@ -39,6 +44,8 @@ type ObjectGraphic struct {
 	*area.Object
 	data     *res.ObjectGraphicData
 	sprite   *mtk.Animation
+	info     *mtk.InfoWindow
+	hovered  bool
 	effects  map[string]*EffectGraphic
 	items    map[string]*ItemGraphic
 }
@@ -48,7 +55,12 @@ func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraph
 	og := new(ObjectGraphic)
 	og.Object = ob
 	og.data = data
+	// Sprite.
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
+	// Info window.
+	og.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
+	og.info.SetText(og.infoText())
+	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
 	return og
@@ -56,12 +68,22 @@ func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraph
 
 // Draw draws object sprite.
 func (og *ObjectGraphic) Draw(t pixel.Target, matrix pixel.Matrix) {
+	// Sprite.
 	og.sprite.Draw(t, matrix)
+	// Info window.
+	if og.hovered {
+		og.info.Draw(t)
+	}
 }
 
 // Update updates object.
 func (og *ObjectGraphic) Update(win *mtk.Window) {
+	// Sprite.
 	og.sprite.Update(win)
+	// Info window.
+	og.info.Update(win)
+	og.hovered = og.sprite.DrawArea().Contains(win.MousePosition())
+	// Graphic.
 	og.updateGraphic()
 }
 
@@ -134,6 +156,17 @@ func (og *ObjectGraphic) updateGraphic() {
 		itemGraphic := NewItemGraphic(it, data)
 		og.items[it.ID()+it.Serial()] = itemGraphic
 	}
+}
+
+// infoText returns text for object info
+// window.
+func (og *ObjectGraphic) infoText() string {
+	form := "%s"
+	info := fmt.Sprintf(form, og.Name())
+	if config.Debug() {
+		info = fmt.Sprintf("%s\n[%s_%s]", info, og.ID(), og.Serial())
+	}
+	return info
 }
 
 // buildSpriteFrames creates animation frames from specified

@@ -24,8 +24,6 @@
 package mainmenu
 
 import (
-	"fmt"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
@@ -85,18 +83,11 @@ func (c *Console) Update(win *mtk.Window) {
 		c.textedit.SetText(c.lastInput)
 	}
 	// Messages.
-	var msgs []fmt.Stringer
-	engineMsgs := enginelog.Messages()
-	/* 
-        for i := len(engineMsgs)-1; i >= 0; i-- {
-		msgs = append(msgs, engineMsgs[i])
-	}
-	*/
-	for _, msg := range engineMsgs {
-		msgs = append(msgs, msg)
+	c.textbox.Clear()
+	for _, msg := range enginelog.Messages() {
+		c.textbox.AddLine(msg.String())
 	}
 	c.textbox.SetMaxTextWidth(win.Bounds().W())
-	c.textbox.Insert(msgs)
 	// Elements.
 	c.textbox.Update(win)
 	c.textedit.Update(win)

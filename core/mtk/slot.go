@@ -237,10 +237,10 @@ func (s *Slot) SetLabel(text string) {
 	s.label.SetText(text)
 }
 
-// SetInfo sets specified text as content of
-// slot info window.
+// SetInfo sets specified text as content
+// of slot info window.
 func (s *Slot) SetInfo(text string) {
-	s.info.InsertText(text)
+	s.info.SetText(text)
 }
 
 // Clear removes slot value, icon,

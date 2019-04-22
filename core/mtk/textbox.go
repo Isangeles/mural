@@ -49,8 +49,8 @@ type Textbox struct {
 // no maximal values).
 func NewTextbox(size pixel.Vec, fontSize Size, color color.Color) *Textbox {
 	t := new(Textbox)
-	t.bgSize = size
 	// Background.
+	t.bgSize = size
 	t.color = color
 	// Text.
 	t.textarea = NewText(fontSize, t.bgSize.X)
@@ -159,7 +159,7 @@ func (t *Textbox) updateTextVisibility() {
 		if len(line) < 1 {
 			continue
 		}
-		breakLines := t.Break(line, boxWidth)
+		breakLines := t.breakLine(line, boxWidth)
 		visibleText = append(visibleText, breakLines...)
 		visibleTextHeight += t.textarea.BoundsOf(line).H() * float64(len(breakLines))
 	}
@@ -169,9 +169,9 @@ func (t *Textbox) updateTextVisibility() {
 	}
 }
 
-// Break breaks specified line into few lines with specified
+// breakLine breaks specified line into few lines with specified
 // maximal width.
-func (t *Textbox) Break(line string, width float64) []string {
+func (t *Textbox) breakLine(line string, width float64) []string {
 	lines := make([]string, 0)
 	lineWidth := t.textarea.BoundsOf(line).W()
 	if width > 0 && lineWidth > width {
@@ -182,7 +182,7 @@ func (t *Textbox) Break(line string, width float64) []string {
 		lines = append(lines, breakLines[0]+"\n")
 		breakLineWidth := t.textarea.BoundsOf(breakLines[1]).W()
 		if breakLineWidth > width {
-			for _, l := range t.Break(breakLines[1], width) {
+			for _, l := range t.breakLine(breakLines[1], width) {
 				lines = append(lines, l+"\n")
 			}
 		} else {
@@ -192,6 +192,12 @@ func (t *Textbox) Break(line string, width float64) []string {
 		lines = append(lines, line)
 	}
 	return lines
+}
+
+// ScrollBottom scrolls textbox to last lines
+// of text content.
+func (t *Textbox) ScrollBottom() {
+	t.startID = len(t.textContent)-1
 }
 
 // Splits string at specified index.

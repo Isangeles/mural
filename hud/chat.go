@@ -150,8 +150,8 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	c.Echo(input)
 	defer t.Clear()
 	// Execute command.
-	if !strings.HasPrefix(input, chat_command_prefix) ||
-		c.onCommand == nil {
+	if !strings.HasPrefix(input, chat_command_prefix) || c.onCommand == nil {
+		c.hud.ActivePlayer().SendChat(input)
 		return
 	}
 	cmdInput := strings.TrimPrefix(input, chat_command_prefix)

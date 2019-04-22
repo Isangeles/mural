@@ -27,7 +27,7 @@ import (
 	"fmt"
 
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 
 	flameobject "github.com/isangeles/flame/core/module/object"
@@ -46,14 +46,17 @@ import (
 // game character.
 type Avatar struct {
 	*character.Character
-	data     *res.AvatarData
-	sprite   *internal.AvatarSprite
-	info     *mtk.InfoWindow
-	hovered  bool
-	items    map[string]*ItemGraphic
-	eqItems  map[string]*ItemGraphic
-	effects  map[string]*EffectGraphic
-	skills   map[string]*SkillGraphic
+	data      *res.AvatarData
+	sprite    *internal.AvatarSprite
+	info      *mtk.InfoWindow
+	chat      *mtk.Textbox
+	hovered   bool
+	speaking  bool
+	chatTimer int64
+	items     map[string]*ItemGraphic
+	eqItems   map[string]*ItemGraphic
+	effects   map[string]*EffectGraphic
+	skills    map[string]*SkillGraphic
 }
 
 // Type for avatar animations
@@ -83,9 +86,10 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
-	// Info window.
+	// Info windows.
 	av.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
 	av.info.SetText(av.infoText())
+	av.chat = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL, colornames.Grey)
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
@@ -93,8 +97,7 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
-	// Update graphic.
-	av.updateGraphic()
+	av.SetOnChatSentFunc(av.onChatSent)
 	return av
 }
 
@@ -105,6 +108,10 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Info window.
 	if av.hovered {
 		av.info.Draw(win)
+	}
+	chatPos := mtk.MoveTC(av.sprite.DrawArea().Size(), av.chat.Size())
+	if av.speaking {
+		av.chat.Draw(win, matrix.Moved(chatPos))
 	}
 }
 
@@ -135,6 +142,13 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.sprite.Update(win)
 	// Info window.
 	av.info.Update(win)
+	av.chat.Update(win)
+	if av.speaking {
+		av.chatTimer += win.Delta()
+		if av.chatTimer >= 2000 {
+			av.speaking = false
+		}
+	}
 	av.hovered = av.sprite.DrawArea().Contains(win.MousePosition())
 }
 
@@ -318,6 +332,17 @@ func (av *Avatar) updateGraphic() {
 	}
 }
 
+// infoText returns info text about
+// specified avatar.
+func (av *Avatar) infoText() string {
+	form := "%s"
+	info := fmt.Sprintf(form, av.Name())
+	if config.Debug() {
+		info = fmt.Sprintf("%s\n[%s_%s]", info, av.ID(), av.Serial())
+	}
+	return info
+}
+
 // Triggered after one of character skills was activated.
 func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	sg := av.skills[s.ID()+s.Serial()]
@@ -332,13 +357,10 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	}
 }
 
-// infoText returns info text about
-// specified avatar. 
-func (av *Avatar) infoText() string {
-	form := "%s"
-	info := fmt.Sprintf(form, av.Name())
-	if config.Debug() {
-		info = fmt.Sprintf("%s\n[%s_%s]", info, av.ID(), av.Serial())
-	}
-	return info
+// Triggered after sending text to character
+// chat channel.
+func (av *Avatar) onChatSent(t string) {
+	av.chat.SetText(t)
+	av.chat.SetSize(av.chat.TextSize())
+	av.speaking = true
 }

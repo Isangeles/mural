@@ -246,8 +246,13 @@ func EnterSavedGame(save *flamesave.SaveGame) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Load game.
-	game = flamecore.LoadGame(save)
-	flame.SetGame(game)
+	g, err := flame.LoadGame(save.Name)
+	if err != nil {
+		log.Err.Printf("enter_saved_game:fail_to_load_game_save:%v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
+	game = g
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
 	if err != nil {

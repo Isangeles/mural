@@ -98,6 +98,7 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
 	av.SetOnChatSentFunc(av.onChatSent)
+	av.updateGraphic()
 	return av
 }
 

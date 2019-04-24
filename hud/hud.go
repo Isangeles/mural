@@ -391,12 +391,12 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 	}
 	// Setup active player area.
 	chapter := hud.game.Module().Chapter()
-	pcArea, err := chapter.CharacterArea(hud.ActivePlayer().Character)
-	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_retrieve_pc_area:%v", err)
+	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
+	if pcArea == nil {
+		hud.loaderr = fmt.Errorf("no pc area")
 		return hud.loaderr
 	}
-	err = hud.ChangeArea(pcArea)
+	err := hud.ChangeArea(pcArea)
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_change_area:%v", err)
 		return hud.loaderr

@@ -5,6 +5,13 @@
   GUI uses [MTK](https://github.com/Isangeles/mural/tree/master/core/mtk), simple toolkit built with Pixel library.
 
   Currently in a very early development stage.
+
+  ### Flame games with Mural support:
+  #### Arena ####
+  
+  Description: simple demo game that presents [Flame engine](https://github.com/isangeles/flame) and Mural GUI features.
+  
+  Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
   
 ## Build
 

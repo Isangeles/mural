@@ -148,6 +148,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 		av.chatTimer += win.Delta()
 		if av.chatTimer >= 2000 {
 			av.speaking = false
+			av.chatTimer = 0
 		}
 	}
 	av.hovered = av.sprite.DrawArea().Contains(win.MousePosition())

@@ -34,7 +34,6 @@ import (
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	flamesave "github.com/isangeles/flame/core/data/save"
 
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/mtk"
@@ -63,7 +62,7 @@ type MainMenu struct {
 	msgs           *mtk.MessagesQueue
 	playableChars  []*object.Avatar
 	onGameCreated  func(g *flamecore.Game)
-	onSaveImported func(gameSav *flamesave.SaveGame)
+	onSaveLoaded   func(g *flamecore.Game, savename string)
 	loading        bool
 	exiting        bool
 }
@@ -163,8 +162,8 @@ func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game)) {
 
 // SetOnSaveImportedFunc sets specified function as function
 // triggered after save game imported.
-func (mm *MainMenu) SetOnSaveImportedFunc(f func(gameSav *flamesave.SaveGame)) {
-	mm.onSaveImported = f
+func (mm *MainMenu) SetOnSaveLoadedFunc(f func(g *flamecore.Game, savename string)) {
+	mm.onSaveLoaded = f
 }
 
 // OpenMenu opens menu.

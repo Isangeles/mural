@@ -40,7 +40,6 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	flamesave "github.com/isangeles/flame/core/data/save"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mural/config"
@@ -165,7 +164,7 @@ func run() {
 	// Create main menu.
 	mainMenu = mainmenu.New()
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
-	mainMenu.SetOnSaveImportedFunc(EnterSavedGame)
+	mainMenu.SetOnSaveLoadedFunc(EnterSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
@@ -242,19 +241,12 @@ func EnterGame(g *flamecore.Game) {
 }
 
 // EnterSavedGame creates game and HUD from saved data.
-func EnterSavedGame(save *flamesave.SaveGame) {
+func EnterSavedGame(g *flamecore.Game, savename string) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
-	// Load game.
-	g, err := flame.LoadGame(save.Name)
-	if err != nil {
-		log.Err.Printf("enter_saved_game:fail_to_load_game_save:%v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
-		return
-	}
 	game = g
 	// Import saved GUI state.
-	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), save.Name)
+	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), savename)
 	if err != nil {
 		log.Err.Printf("enter_saved_game:fail_to_load_gui_save:%v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))

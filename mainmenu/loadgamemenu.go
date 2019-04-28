@@ -25,6 +25,7 @@ package mainmenu
 
 import (
 	"fmt"
+	"strings"
 	
 	"github.com/faiface/pixel"
 	
@@ -133,21 +134,22 @@ func (lgm *LoadGameMenu) loadSaves() error {
 
 // importSave imports saved game from file with
 // specified name.
-func (lgm *LoadGameMenu) importSave(savName string) {
+func (lgm *LoadGameMenu) loadSave(savName string) {
 	// Import saved game from file.
 	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
 	defer lgm.mainmenu.CloseLoadingScreen()
-	sav, err := flamedata.ImportSavedGame(flame.Mod(), flameconf.ModuleSavegamesPath(),
-		savName)
+	// Load game.
+	g, err := flame.LoadGame(savName)
 	if err != nil {
-		log.Err.Printf("main_menu:load_game:fail_to_load_saved_game:%v", err)
+		log.Err.Printf("load_game_menu:fail_to_load_game_save:%v", err)
+		lgm.mainmenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
 	// Pass imported save.
-	if lgm.mainmenu.onSaveImported == nil {
+	if lgm.mainmenu.onSaveLoaded == nil {
 		return
 	}
-	lgm.mainmenu.onSaveImported(sav)
+	lgm.mainmenu.onSaveLoaded(g, savName)
 }
 
 // Triggered after back button clicked.
@@ -161,11 +163,12 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		return
 	}
 	selection := lgm.savesList.SelectedValue()
-	savName, ok := selection.(string)
+	filename, ok := selection.(string)
 	if !ok {
 		log.Err.Printf("main_menu:load_game:fail to retrieve save name from list value")
 		return
 	}
-	go lgm.importSave(savName)
+	savename := strings.Replace(filename, ".savegame", "", 1)
+	go lgm.loadSave(savename)
 	lgm.mainmenu.OpenMenu()
 }

@@ -55,6 +55,7 @@ hud_menu_title:Menu
 hud_save_menu_title:Save game
 hud_inv_title:Inventory
 hud_loot_title:Loot
+hud_dialog_title:Dialog
 hud_skills_title:Skills
 hud_bar_menu_open_info:Open menu
 hud_bar_inv_open_info:Open inventory

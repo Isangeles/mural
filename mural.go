@@ -257,13 +257,7 @@ func EnterSavedGame(g *flamecore.Game, savename string) {
 	}
 	// Create HUD.
 	hud := hud.New()
-	// Set game for HUD.
 	err = imp.LoadChapterResources(game.Module().Chapter())
-	if err != nil {
-		log.Err.Printf("enter_saved_game:fail_to_load_chapter_resources:%v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
-		return
-	}
 	err = hud.SetGame(game)
 	if err != nil {
 		log.Err.Printf("enter_saved_game:fail_to_set_hud_game:%v", err)

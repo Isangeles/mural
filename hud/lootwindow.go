@@ -137,7 +137,7 @@ func (lw *LootWindow) Show(show bool) {
 	lw.opened = show
 }
 
-// Opened check whether window is open.
+// Opened checks whether window is open.
 func (lw *LootWindow) Opened() bool {
 	return lw.opened
 }

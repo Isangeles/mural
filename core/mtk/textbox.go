@@ -119,8 +119,8 @@ func (t *Textbox) SetText(text ...string) {
 	t.updateTextVisibility()
 }
 
-// AddLine adds specified text to box(in new line).
-func (t *Textbox) AddLine(line string) {
+// AddText adds specified text to box.
+func (t *Textbox) AddText(line string) {
 	t.textContent = append(t.textContent, line)
 	t.updateTextVisibility()
 }

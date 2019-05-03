@@ -65,11 +65,10 @@ func newChat(hud *HUD) *Chat {
 		c.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Textbox.
-	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL,
-		colornames.Grey)
 	boxSize := c.Size()
 	boxSize.Y -= mtk.ConvSize(30)
-	c.textbox.SetSize(boxSize)
+	c.textbox = mtk.NewTextbox(boxSize, mtk.SIZE_SMALL,
+		colornames.Grey)
 	// Textedit.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
@@ -96,7 +95,7 @@ func (c *Chat) Update(win *mtk.Window) {
 	// Content update.
 	c.textbox.Clear()
 	for _, msg := range enginelog.Messages() {
-		c.textbox.AddLine(msg.String())
+		c.textbox.AddText(msg.String())
 	}
 	// Elements update.
 	c.textbox.Update(win)

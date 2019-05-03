@@ -85,7 +85,7 @@ func (c *Console) Update(win *mtk.Window) {
 	// Messages.
 	c.textbox.Clear()
 	for _, msg := range enginelog.Messages() {
-		c.textbox.AddLine(msg.String())
+		c.textbox.AddText(msg.String())
 	}
 	c.textbox.SetMaxTextWidth(win.Bounds().W())
 	// Elements.

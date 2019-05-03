@@ -349,7 +349,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		if !av.DrawArea().Contains(pos) || av.Live() || av == c.hud.ActivePlayer() {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s", av.ID()+"_"+av.Serial())
+		log.Dbg.Printf("hud:loot:%s_%s", av.ID(), av.Serial())
 		c.hud.loot.SetTarget(av)
 		c.hud.loot.Show(true)
 		return
@@ -358,10 +358,21 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		if !ob.DrawArea().Contains(pos) || ob.Live() {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s", ob.ID()+"_"+ob.Serial())
+		log.Dbg.Printf("hud:loot:%s_%s", ob.ID(), ob.Serial())
 		c.hud.loot.SetTarget(ob)
 		c.hud.loot.Show(true)
 		return
+	}
+	// Dialog.
+	for _, av := range c.Avatars() {
+		if !av.DrawArea().Contains(pos) || !av.Live() || av == c.hud.ActivePlayer() ||
+			len(av.Dialogs()) < 1 {
+			continue
+		}
+		log.Dbg.Printf("hud:dialog:%s_%s", av.ID(), av.Serial())
+		dialog := av.Dialogs()[0]
+		c.hud.dialog.SetDialog(dialog)
+		c.hud.dialog.Show(true)
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)

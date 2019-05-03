@@ -53,11 +53,11 @@ func newMenu(hud *HUD) *Menu {
 	m := new(Menu)
 	m.hud = hud
 	// Background.
+	m.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("menubg.png")
 	if err == nil {
 		m.bgSpr = pixel.NewSprite(bg, bg.Bounds())
-	} else { // fallback
-		m.bgDraw = imdraw.New(nil)
+	} else {
 		log.Err.Printf("hud_menu:bg_texture_not_found:%v", err)
 	}
 	// Title.

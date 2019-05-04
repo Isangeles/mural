@@ -45,6 +45,14 @@ Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 $ ./mural
 ```
 
+## Controls
+### HUD:
+WSAD - move HUD camera
+
+Right mouse button - target object
+
+Left mouse button - move player/interact with object(loot/dialog/attack)
+
 ## Configuration
 Configuration values are loaded from '.mural' file in Mural executable directory.
 

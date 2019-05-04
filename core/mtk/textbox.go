@@ -140,14 +140,14 @@ func (t *Textbox) String() string {
 	return strings.TrimSpace(content)
 }
 
-// updateTextVisibility updates content of visible
+// updateTextVisibility updates conte nt of visible
 // text area.
 func (t *Textbox) updateTextVisibility() {
 	var (
 		visibleText       []string
 		visibleTextHeight float64
 	)
-	boxWidth := t.DrawArea().W()
+	boxWidth := t.Size().X
 	for i := 0; i < len(t.textContent); i++ {
 		if i < t.startID {
 			continue
@@ -175,23 +175,30 @@ func (t *Textbox) breakLine(line string, width float64) []string {
 	lines := make([]string, 0)
 	lineWidth := t.textarea.BoundsOf(line).W()
 	if width > 0 && lineWidth > width {
-		breakLines := SplitSubN(line, len(line)/2)
-		if len(breakLines) < 2 {
-			return breakLines
+		breakPoint := t.breakPoint(line, width)
+		breakLines := SplitSubN(line, breakPoint)
+		for i, l := range breakLines {
+			if !strings.HasSuffix(l, "\n") {
+				breakLines[i] += "\n"
+			}	
 		}
-		lines = append(lines, breakLines[0]+"\n")
-		breakLineWidth := t.textarea.BoundsOf(breakLines[1]).W()
-		if breakLineWidth > width {
-			for _, l := range t.breakLine(breakLines[1], width) {
-				lines = append(lines, l+"\n")
-			}
-		} else {
-			lines = append(lines, breakLines[1])
-		}
+		lines = append(lines, breakLines...)
 	} else {
 		lines = append(lines, line)
 	}
 	return lines
+}
+
+// breakPoint return break position for specified line and width.
+func (t *Textbox) breakPoint(line string, width float64) int {
+	checkLine := ""
+	for i, c := range line {
+		checkLine += string(c)
+		if t.textarea.BoundsOf(checkLine).W() >= width {
+			return i
+		}
+	}
+	return len(line)-1
 }
 
 // ScrollBottom scrolls textbox to last lines
@@ -200,7 +207,7 @@ func (t *Textbox) ScrollBottom() {
 	t.startID = len(t.textContent)-1
 }
 
-// Splits string at specified index.
+// Splits string to chunks with n as max chunk width.
 // Author: mozey(@stackoverflow).
 func SplitSubN(s string, n int) []string {
 	if n == 0 {

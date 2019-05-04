@@ -2,7 +2,17 @@
 <base>
   <dialog id="testDialog1">
     <text id="testDialog1_1" start="true">
-      <answer id="bye1" to="end" />
+      <answer id="bye1" to="end"/>
+    </text>
+  </dialog>
+  <dialog id="dTutorial1">
+    <text id="dTutorial1_1" start="true">
+      <answer id="dTutorial1_1_1" to="dTutorial1_2"/>
+      <answer id="bye1" to="end"/>
+    </text>
+    <text id="dTutorial1_2">
+      <answer id="bye1" to="end"/>
     </text>
   </dialog>
 </base>
+4

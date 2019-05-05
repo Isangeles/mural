@@ -171,7 +171,16 @@ func (dw *DialogWindow) dialogProgress() {
 		return
 	}
 	chapter := dw.hud.game.Module().Chapter()
-	phase := dw.dialog.Text()
+	var phase *dialog.Text
+	for _, t := range dw.dialog.Texts() {
+		if dw.hud.ActivePlayer().MeetReqs(t.Requirements()) {
+			phase = t
+		}
+	}
+	if phase == nil {
+		log.Err.Printf("hud_dialog:no suitable dialog text found")
+		return
+	}
 	dialogLine := lang.AllText(chapter.Conf().LangPath(), "dialogs", phase.ID())
 	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine[0])
 	dw.chatBox.AddText(text)

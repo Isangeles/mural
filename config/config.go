@@ -60,38 +60,37 @@ var (
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	confValues, err := text.ReadValue(CONF_FILE_NAME, "fullscreen",
-		"resolution", "map-fow", "main-font", "menu-music", "button-click-sound",
+	values, err := text.ReadValue(CONF_FILE_NAME, "fullscreen", "resolution",
+		"map-fow", "main-font", "menu-music", "button-click-sound",
 	        "newchar-skills", "newchar-items")
 	if err != nil {
 		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
 	}
-	confInts, err := text.ReadInt(CONF_FILE_NAME, "newchar-attrs-min", "newchar-attrs-max")
+	intValues, err := text.ReadInt(CONF_FILE_NAME, "newchar-attrs-min", "newchar-attrs-max")
 	if err != nil {
 		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
 	}
 	// Fullscreen.
-	fullscreen = confValues["fullscreen"] == "true"
+	fullscreen = values["fullscreen"] == "true"
 	// Resolution.
-	resValue := confValues["resolution"]
+	resValue := values["resolution"]
 	resolution.X, err = strconv.ParseFloat(strings.Split(resValue, "x")[0], 64)
 	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue, "x")[1], 64)
 	if err != nil {
 		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
 	}
 	// Graphic effects.
-	mapfow = confValues["map-fow"] == "true"
-	mainFontName = confValues["main-font"]
+	mapfow = values["map-fow"] == "true"
+	mainFontName = values["main-font"]
 	// Audio effects.
-	menuMusic = confValues["menu-music"]
-	bClickSound = confValues["button-click-sound"]
+	menuMusic = values["menu-music"]
+	bClickSound = values["button-click-sound"]
 	// New char attributes points.
-	attrsPtsMin = confInts["newchar-attrs-min"]
-	attrsPtsMax = confInts["newchar-attrs-max"]
+	attrsPtsMin = intValues["newchar-attrs-min"]
+	attrsPtsMax = intValues["newchar-attrs-max"]
 	// New char items & skills.
-	charSkills = strings.Split(confValues["newchar-skills"], ";")
-	charItems = strings.Split(confValues["newchar-items"], ";")
-
+	charSkills = strings.Split(values["newchar-skills"], ";")
+	charItems = strings.Split(values["newchar-items"], ";")
 	log.Dbg.Print("config file loaded")
 	return nil
 }
@@ -107,14 +106,14 @@ func SaveConfig() error {
 	// Write config values.
 	w := bufio.NewWriter(f)
 	w.WriteString(fmt.Sprintf("%s\n", "# Mural GUI configuration file.")) // default header
-	w.WriteString(fmt.Sprintf("fullscreen:%v;\n", fullscreen))
-	w.WriteString(fmt.Sprintf("resolution:%fx%f;\n", resolution.X, resolution.Y))
-	w.WriteString(fmt.Sprintf("map-fow:%v;\n", mapfow))
-	w.WriteString(fmt.Sprintf("main-font:%s;\n", mainFontName))
-	w.WriteString(fmt.Sprintf("menu-music:%s;\n", menuMusic))
-	w.WriteString(fmt.Sprintf("button-click-sound:%s;\n", bClickSound))
-	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d;\n", attrsPtsMin))
-	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d;\n", attrsPtsMax))
+	w.WriteString(fmt.Sprintf("fullscreen:%v\n", fullscreen))
+	w.WriteString(fmt.Sprintf("resolution:%fx%f\n", resolution.X, resolution.Y))
+	w.WriteString(fmt.Sprintf("map-fow:%v\n", mapfow))
+	w.WriteString(fmt.Sprintf("main-font:%s\n", mainFontName))
+	w.WriteString(fmt.Sprintf("menu-music:%s\n", menuMusic))
+	w.WriteString(fmt.Sprintf("button-click-sound:%s\n", bClickSound))
+	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d\n", attrsPtsMin))
+	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d\n", attrsPtsMax))
 	w.WriteString("newchar-skills:")
 	for _, sid := range charSkills {
 		w.WriteString(sid + ";")

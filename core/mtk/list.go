@@ -111,6 +111,20 @@ func (l *List) Update(win *Window) {
 	}
 }
 
+// SetUpButtonBackground sets specified sprite as scroll up
+// button background.
+func (l *List) SetUpButtonBackground(s *pixel.Sprite) {
+	l.upButton.SetBackground(s)
+	l.upButton.SetColor(nil)
+}
+
+// SetDownButtonBackground sets specified sprite as scroll
+// down button background.
+func (l *List) SetDownButtonBackground(s *pixel.Sprite) {
+	l.downButton.SetBackground(s)
+	l.downButton.SetColor(nil)
+}
+
 // Focus toggles focus on element.
 func (l *List) Focus(focus bool) {
 	l.focused = focus
@@ -150,8 +164,7 @@ func (l *List) SetOnItemSelectFunc(f func(i *CheckSlot)) {
 // SetStartIndex sets specified integer as index
 // of first item to display. If specified value is
 // bigger than last item index then first index(0)
-// is set, if is smaller than 0 then last index is
-// set.
+// is set, if is smaller than 0 then last index is set.
 func (l *List) SetStartIndex(index int) {
 	if index > len(l.items)-1 {
 		l.startIndex = 0

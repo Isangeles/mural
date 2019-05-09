@@ -47,7 +47,9 @@ type Console struct {
 func newConsole() *Console {
 	c := new(Console)
 	// Text box.
-	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
+	//c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, mtk.SIZE_MEDIUM,
+		accent_color, colornames.Grey)
 	// Text input.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)

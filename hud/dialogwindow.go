@@ -26,8 +26,6 @@ package hud
 import (
 	"fmt"
 	
-	"golang.org/x/image/colornames"
-	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -77,15 +75,26 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		dw.closeButton.SetBackground(closeBG)
 	}
 	dw.closeButton.SetOnClickFunc(dw.onCloseButtonClicked)
-	// Chat & answers list.
+	// Chat.
 	chatSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2)
-	dw.chatBox = mtk.NewTextbox(chatSize, mtk.SIZE_SMALL,
-		colornames.Grey)
+	dw.chatBox = mtk.NewTextbox(chatSize, mtk.SIZE_MINI, mtk.SIZE_SMALL,
+		accent_color, main_color)
+	// Answers list.
 	answersSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2-mtk.ConvSize(100))
 	dw.answersList = mtk.NewList(answersSize, mtk.SIZE_SMALL, main_color, sec_color,
 		accent_color)
+	upButtonBG, err := data.PictureUI("scrollup.png")
+	if err == nil {
+		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
+		dw.answersList.SetUpButtonBackground(upBG)
+	}
+	downButtonBG, err := data.PictureUI("scrolldown.png")
+	if err == nil {
+		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
+		dw.answersList.SetDownButtonBackground(downBG)
+	}
 	dw.answersList.SetOnItemSelectFunc(dw.onAnswerSelected)
 	return dw
 }

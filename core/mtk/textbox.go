@@ -39,15 +39,18 @@ type Textbox struct {
 	color       color.Color
 	textarea    *Text
 	drawArea    pixel.Rect // updated at every draw
+	upButton    *Button
+	downButton  *Button
 	textContent []string   // every line of text content
 	visibleText []string
 	startID     int
+	buttons     bool
 }
 
 // NewTextbox creates new textbox with specified font size,
-// background color and maximal size of text content (0 for
-// no maximal values).
-func NewTextbox(size pixel.Vec, fontSize Size, color color.Color) *Textbox {
+// and background color.
+func NewTextbox(size pixel.Vec, buttonSize, fontSize Size,
+	color, accentColor color.Color) *Textbox {
 	t := new(Textbox)
 	// Background.
 	t.bgSize = size
@@ -55,6 +58,7 @@ func NewTextbox(size pixel.Vec, fontSize Size, color color.Color) *Textbox {
 	// Text.
 	t.textarea = NewText(fontSize, t.bgSize.X)
 	t.textarea.JustLeft()
+	// TODO: Buttons.
 	return t
 }
 
@@ -70,6 +74,7 @@ func (tb *Textbox) Draw(t pixel.Target, matrix pixel.Matrix) {
 
 // Update handles key events.
 func (tb *Textbox) Update(win *Window) {
+	// Key events.
 	if win.JustPressed(pixelgl.KeyDown) {
 		if tb.startID < len(tb.textContent)-1 {
 			tb.startID++
@@ -113,16 +118,16 @@ func (tb *Textbox) SetMaxTextWidth(width float64) {
 
 // SetText clears textbox and inserts specified
 // lines of text.
-func (t *Textbox) SetText(text ...string) {
-	t.Clear()
-	t.textContent = text
-	t.updateTextVisibility()
+func (tb *Textbox) SetText(text ...string) {
+	tb.Clear()
+	tb.textContent = text
+	tb.updateTextVisibility()
 }
 
 // AddText adds specified text to box.
-func (t *Textbox) AddText(line string) {
-	t.textContent = append(t.textContent, line)
-	t.updateTextVisibility()
+func (tb *Textbox) AddText(line string) {
+	tb.textContent = append(tb.textContent, line)
+	tb.updateTextVisibility()
 }
 
 // Clear clears textbox.
@@ -205,6 +210,14 @@ func (t *Textbox) breakPoint(line string, width float64) int {
 // of text content.
 func (t *Textbox) ScrollBottom() {
 	t.startID = len(t.textContent)-1
+}
+
+// Triggered after button up clicked.
+func (t *Textbox) onButtonUpClicked(b *Button) {	
+}
+
+// Triggered after button down clicked.
+func (t *Textbox) onButtonDownClicked(b *Button) {
 }
 
 // Splits string to chunks with n as max chunk width.

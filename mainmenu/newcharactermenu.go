@@ -34,6 +34,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -58,6 +59,7 @@ var (
 type NewCharacterMenu struct {
 	mainmenu      *MainMenu
 	title         *mtk.Text
+	nameLabel     *mtk.Text
 	nameEdit      *mtk.Textedit
 	faceSwitch    *mtk.Switch
 	pointsBox     *mtk.Textbox
@@ -87,10 +89,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	// Title.
 	ncm.title = mtk.NewText(mtk.SIZE_BIG, 0)
 	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
-	// Text fields.
+	// Name Edit.
+	ncm.nameLabel = mtk.NewText(mtk.SIZE_MEDIUM, 0)
+	nameLabelText := lang.TextDir(flameconf.LangPath(), "newchar_name_edit_label")
+	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
+	// Points box.
 	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE).Size()
-	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize, mtk.SIZE_MEDIUM, main_color)
+	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize, mtk.SIZE_MINI, mtk.SIZE_MEDIUM,
+		accent_color, main_color)
 	// Portrait switch.
 	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
@@ -184,11 +191,14 @@ func (ncm *NewCharacterMenu) Draw(win *mtk.Window) {
 	titlePos := pixel.V(win.Bounds().Center().X,
 		win.Bounds().H()-ncm.title.Size().Y)
 	ncm.title.Draw(win, mtk.Matrix().Moved(titlePos))
-	// Text fields.
+	// Name edit.
+	nameLabelPos := mtk.BottomOf(ncm.title.DrawArea(), ncm.nameEdit.Size(), 10)
+	ncm.nameLabel.Draw(win, mtk.Matrix().Moved(nameLabelPos))
+	nameEditPos := mtk.BottomOf(ncm.nameLabel.DrawArea(), ncm.nameEdit.Size(), 10)
 	nameEditSize := ncm.title.DrawArea().Size()
 	ncm.nameEdit.SetSize(nameEditSize)
-	ncm.nameEdit.Draw(win.Window, mtk.Matrix().Moved(mtk.BottomOf(ncm.title.DrawArea(),
-		ncm.nameEdit.Size(), 10)))
+	ncm.nameEdit.Draw(win.Window, mtk.Matrix().Moved(nameEditPos))
+	// Points box.
 	pointsBoxPos := mtk.DrawPosCL(win.Bounds(), ncm.pointsBox.Size())
 	pointsBoxPos.X += mtk.ConvSize(100)
 	ncm.pointsBox.Draw(win.Window, mtk.Matrix().Moved(pointsBoxPos))

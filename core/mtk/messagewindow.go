@@ -65,7 +65,8 @@ func NewMessageWindow(size Size, msg string) (*MessageWindow) {
 	mw.acceptButton.SetOnClickFunc(mw.onAcceptButtonClicked)
 	// Textbox.
 	boxSize := pixel.V(mw.Size().X, mw.Size().Y - mw.acceptButton.Size().Y)
-	textbox := NewTextbox(boxSize, SIZE_MEDIUM, colornames.Grey)
+	textbox := NewTextbox(boxSize, SIZE_MINI, SIZE_MEDIUM, colornames.Red,
+		colornames.Grey)
 	mw.textbox = textbox
 	mw.textbox.SetText(msg)
 	return mw

@@ -89,7 +89,8 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	// Info windows.
 	av.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
 	av.info.SetText(av.infoText())
-	av.chat = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_SMALL, colornames.Grey)
+	av.chat = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI, mtk.SIZE_SMALL,
+		colornames.Red, colornames.Grey)
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)

@@ -40,8 +40,8 @@ type LoadingScreen struct {
 func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.hud = hud
-	ls.info = mtk.NewTextbox(pixel.V(0, 0),
-		mtk.SIZE_MEDIUM, main_color)
+	ls.info = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI,
+		mtk.SIZE_MEDIUM, accent_color, main_color)
 	return ls
 }
 

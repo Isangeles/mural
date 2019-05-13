@@ -31,6 +31,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/module/object/dialog"
+	"github.com/isangeles/flame/core/module/object/effect"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
 	"github.com/isangeles/mural/core/data"
@@ -170,16 +171,16 @@ func (dw *DialogWindow) DrawArea() pixel.Rect {
 func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 	dw.dialog = d
 	dw.dialog.Restart()
-	dw.dialogProgress()
+	dw.dialogUpdate()
 }
 
-// dialogProgress updates window components to
+// dialogUpdate updates window components to
 // current dialog phase.
-func (dw *DialogWindow) dialogProgress() {
-	if dw.dialog == nil {
+func (dw *DialogWindow) dialogUpdate() {
+	if dw.dialog == nil || dw.dialog.Finished() {
 		return
 	}
-	chapter := dw.hud.game.Module().Chapter()
+	// Search for proper dialog phase.
 	var phase *dialog.Text
 	for _, t := range dw.dialog.Texts() {
 		if dw.hud.ActivePlayer().MeetReqs(t.Requirements()) {
@@ -190,9 +191,25 @@ func (dw *DialogWindow) dialogProgress() {
 		log.Err.Printf("hud_dialog:no suitable dialog text found")
 		return
 	}
+	// Print phase text to chat box.
+	chapter := dw.hud.game.Module().Chapter()
 	dialogLine := lang.AllText(chapter.Conf().LangPath(), "dialogs", phase.ID())
 	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine[0])
 	dw.chatBox.AddText(text)
+	// Apply phase modifiers.
+	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
+		for _, mod := range phase.OwnerModifiers() {
+			mod.Affect(dw.hud.ActivePlayer().Character, tar)
+		}
+		for _, mod := range phase.TalkerModifiers() {
+			mod.Affect(tar, dw.hud.ActivePlayer().Character)
+		}
+	} else {
+		for _, mod := range phase.TalkerModifiers() {
+			mod.Affect(nil, dw.hud.ActivePlayer().Character)
+		}
+	}
+	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range phase.Answers() {
 		answerText := lang.AllText(chapter.Conf().LangPath(), "dialogs", a.ID())[0]
@@ -208,16 +225,33 @@ func (dw *DialogWindow) onCloseButtonClicked(b *mtk.Button) {
 
 // Triggered after selecting answer from answers list.
 func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
+	if dw.dialog == nil {
+		return
+	}
+	// Retrieve answer from slot.
 	answer, ok := cs.Value().(*dialog.Answer)
 	if !ok {
 		log.Err.Printf("hud_dialog:fail to retrieve answer from list")
 	}
-	if dw.dialog == nil {
-		return
-	}
+	// Print answer to chat box.
 	chapter := dw.hud.game.Module().Chapter()
 	answerText := lang.AllText(chapter.Conf().LangPath(), "dialogs", answer.ID())[0]
 	dw.chatBox.AddText(fmt.Sprintf("[%s]:%s\n", dw.hud.ActivePlayer().Name(), answerText))
+	// Move dialog forward.
 	dw.dialog.Next(answer)
-	dw.dialogProgress()
+	// Apply answer modifiers.
+	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
+		for _, mod := range answer.OwnerModifiers() {
+			mod.Affect(dw.hud.ActivePlayer().Character, tar)
+		}
+		for _, mod := range answer.TalkerModifiers() {
+			mod.Affect(tar, dw.hud.ActivePlayer().Character)
+		}
+	} else {
+		for _, mod := range answer.TalkerModifiers() {
+			mod.Affect(nil, dw.hud.ActivePlayer().Character)
+		}
+	}
+	// Update dialog view.
+	dw.dialogUpdate()
 }

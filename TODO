@@ -10,7 +10,6 @@ MAJOR:
 * Audio effects
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
-* MTK: fix for textbox visible content height
 * MTK: titles for messages windows
 * MTK: auto scroll to last line for text box
 DONE:
@@ -22,4 +21,6 @@ DONE:
 * HUD: inventory window
 * HUD: menu bar
 * HUD: object frames
+* HUD: dialog window
+* HUD: chat
 * Objects

@@ -29,7 +29,7 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mtk"
 )
 
 // Menu struct represents main menu screen

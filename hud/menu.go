@@ -28,9 +28,10 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
 

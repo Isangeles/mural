@@ -39,11 +39,12 @@ import (
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
+	
+	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )

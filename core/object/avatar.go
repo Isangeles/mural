@@ -35,9 +35,10 @@ import (
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/object/skill"
 
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object/internal"
 	"github.com/isangeles/mural/log"
 )

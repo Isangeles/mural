@@ -33,9 +33,10 @@ import (
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/area"
 
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/mtk"
 )
 
 // Struct for graphical representation

@@ -32,11 +32,12 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/cmd/burn"
+	
+	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/imp"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/mainmenu"
 	"github.com/isangeles/mural/hud"
 )

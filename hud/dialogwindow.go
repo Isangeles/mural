@@ -34,8 +34,9 @@ import (
 	"github.com/isangeles/flame/core/module/object/effect"
 	"github.com/isangeles/flame/core/data/text/lang"
 	
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/log"
 )
 
@@ -196,6 +197,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	dialogLine := lang.AllText(chapter.Conf().LangPath(), "dialogs", phase.ID())
 	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine[0])
 	dw.chatBox.AddText(text)
+	dw.chatBox.ScrollBottom()
 	// Apply phase modifiers.
 	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
 		for _, mod := range phase.OwnerModifiers() {
@@ -237,6 +239,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	chapter := dw.hud.game.Module().Chapter()
 	answerText := lang.AllText(chapter.Conf().LangPath(), "dialogs", answer.ID())[0]
 	dw.chatBox.AddText(fmt.Sprintf("[%s]:%s\n", dw.hud.ActivePlayer().Name(), answerText))
+	dw.chatBox.ScrollBottom()
 	// Move dialog forward.
 	dw.dialog.Next(answer)
 	// Apply answer modifiers.

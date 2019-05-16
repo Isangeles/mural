@@ -33,8 +33,9 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-
-	"github.com/isangeles/mural/core/mtk"
+	
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/log"
 )
 

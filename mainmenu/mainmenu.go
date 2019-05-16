@@ -34,9 +34,10 @@ import (
 	"github.com/isangeles/flame"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
+	
+	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/imp"
-	"github.com/isangeles/mural/core/mtk"
 	"github.com/isangeles/mural/core/object"
 )
 

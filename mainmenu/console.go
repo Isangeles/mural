@@ -29,7 +29,9 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame/core/enginelog"
-	"github.com/isangeles/mural/core/mtk"
+	
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/log"
 )
 

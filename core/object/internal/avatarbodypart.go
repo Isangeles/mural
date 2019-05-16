@@ -26,7 +26,7 @@ package internal
 import (
 	"github.com/faiface/pixel"
 	
-	"github.com/isangeles/mural/core/mtk"
+	"github.com/isangeles/mtk"
 )
 
 // Struct for avatar sprite body part

@@ -32,8 +32,9 @@ import (
 
 	"github.com/isangeles/flame/core/module/object/effect"
 
+	"github.com/isangeles/mtk"
+	
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/mtk"
 )
 
 var (

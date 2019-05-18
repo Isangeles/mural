@@ -283,20 +283,22 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	eit, ok := it.Item.(item.Equiper)
 	if !ok {
-		log.Err.Printf("hud_inv_menu:%s:is not equipable item", it.SerialID())
+		log.Err.Printf("hud_inv_menu:%s:is not equipable item", it.ID())
 		return
 	}
 	if im.hud.ActivePlayer().Equipment().Equiped(eit) {
 		err := im.hud.ActivePlayer().Equipment().Unequip(eit)
 		if err != nil {
-			log.Err.Printf("hud_inv_menu:%s:fail_to_unequip:%v", eit.SerialID(), err)
+			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_unequip:%v", eit.ID(),
+				eit.Serial(), err)
 			return
 		}
 		s.SetColor(inv_slot_color)
 	} else {
 		err := im.hud.ActivePlayer().Equipment().Equip(eit)
 		if err != nil {
-			log.Err.Printf("hud_inv_menu:%s:fail_to_equip:%v", eit.SerialID(), err)
+			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_equip:%v", eit.ID(),
+				eit.Serial(), err)
 			return
 		}
 		s.SetColor(inv_slot_eq_color)

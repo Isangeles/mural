@@ -8,9 +8,7 @@
 
   ### Flame games with Mural support:
   
-| Arena |
-| --- | --- |
-| ![Lights](res/readme/img/arena_mural_1.png)|
+### Arena 
   
   Description: simple demo game that presents [Flame engine](https://github.com/isangeles/flame) and Mural GUI features.
   

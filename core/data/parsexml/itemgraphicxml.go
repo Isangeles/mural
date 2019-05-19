@@ -74,19 +74,24 @@ func UnmarshalItemsGraphicBase(data io.Reader) ([]*res.ItemGraphicData, error) {
 // buildXMLItemGraphic creates item graphic object from
 // specified item XML data.
 func buildItemGraphicData(xmlItem *ItemGraphicXML) (*res.ItemGraphicData, error) {
-	itSprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
-	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v", err)
+	// Basic data.
+	d := res.ItemGraphicData{
+		ItemID:         xmlItem.ID,
+		MaxStack:       xmlItem.MaxStack,
 	}
-	itIcon, err := data.Icon(xmlItem.Icon)
+	// Icon.
+	icon, err := data.Icon(xmlItem.Icon)
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_retrieve_item_icon:%v", err)
 	}
-	itData := res.ItemGraphicData{
-		ItemID:         xmlItem.ID,
-		IconPic:        itIcon,
-		SpritesheetPic: itSprite,
-		MaxStack:       xmlItem.MaxStack,
+	d.IconPic = icon
+	// Spritesheet.
+	if len(xmlItem.Spritesheet) > 0 {
+		sprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
+		if err != nil {
+			return nil, fmt.Errorf("fail_to_retrieve_item_spritesheet:%v", err)
+		}
+		d.SpritesheetPic = sprite
 	}
-	return &itData, nil
+	return &d, nil
 }

@@ -117,3 +117,58 @@ func AddAvatarData(data ...*AvatarData) {
 		avatarsData[d.ID] = d
 	}
 }
+
+// SetObjectsData sets specified data as objects graphic
+// recources data.
+func SetObjectsData(data []*ObjectGraphicData) {
+	if objectsData == nil {
+		objectsData = make(map[string]*ObjectGraphicData)
+	}
+	for _, d := range data {
+		objectsData[d.ID] = d
+	}
+}
+
+// SetItemsData sets specified data as items
+// resources data.
+func SetItemsData(data []*ItemGraphicData) {
+	if itemsData == nil {
+		itemsData = make(map[string]*ItemGraphicData)
+	}
+	for _, d := range data {
+		itemsData[d.ItemID] = d
+	}
+}
+
+// SetEffectsData sets specified data as effects
+// resources data.
+func SetEffectsData(data []*EffectGraphicData) {
+	if effectsData == nil {
+		effectsData = make(map[string]*EffectGraphicData)
+	}
+	for _, d := range data {
+		effectsData[d.EffectID] = d
+	}
+}
+
+// SetSkillsData sets specified data as skills
+// resources data.
+func SetSkillsData(data []*SkillGraphicData) {
+	if skillsData == nil {
+		skillsData = make(map[string]*SkillGraphicData)
+	}
+	for _, d := range data {
+		skillsData[d.SkillID] = d
+	}
+}
+
+// SetAvatarData sets specified data as
+// avatars resources.
+func SetAvatarData(data []*AvatarData) {
+	if avatarsData == nil {
+		avatarsData = make(map[string]*AvatarData)
+	}
+	for _, d := range data {
+		avatarsData[d.ID] = d
+	}
+}

@@ -39,25 +39,25 @@ func LoadModuleResources(mod *module.Module) error {
 	if err != nil {
 		return fmt.Errorf("fail_to_import_objects_graphics:%v", err)
 	}
-	res.AddObjectsData(obGraphics...)
+	res.SetObjectsData(obGraphics)
 	// Items graphics.
 	itGraphics, err := ImportItemsGraphicsDir(mod.Conf().ItemsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}
-	res.AddItemsData(itGraphics...)
+	res.SetItemsData(itGraphics)
 	// Effects graphic.
 	effGraphics, err := ImportEffectsGraphicsDir(mod.Conf().EffectsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_effects_graphics:%v", err)
 	}
-	res.AddEffectsData(effGraphics...)
+	res.SetEffectsData(effGraphics)
 	// Skills graphic.
 	skillGraphics, err := ImportSkillsGraphicsDir(mod.Conf().SkillsPath())
 	if err != nil {
 		return fmt.Errorf("fail_to_import_skills_graphics:%v", err)
 	}
-	res.AddSkillsData(skillGraphics...)
+	res.SetSkillsData(skillGraphics)
 	return nil
 }
 
@@ -69,6 +69,6 @@ func LoadChapterResources(chapter *module.Chapter) error {
 	if err != nil {
 		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
 	}
-	res.AddAvatarData(avs...)
+	res.SetAvatarData(avs)
 	return nil
 }

@@ -37,6 +37,7 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -150,8 +151,8 @@ func (im *InventoryMenu) Show(show bool) {
 	im.opened = show
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
-		im.slots.Clear()
-		im.insert(im.hud.ActivePlayer().Items()...)
+		//im.insert(im.hud.ActivePlayer().Items()...)
+		im.insertItems(im.hud.ActivePlayer().Inventory().Items()...)
 		im.updateLayout()
 	} else {
 		im.hud.UserFocus().Focus(nil)
@@ -182,9 +183,17 @@ func (im *InventoryMenu) Size() pixel.Vec {
 	return im.bgSpr.Frame().Size()
 }
 
-// insert inserts specified items in inventory slots.
-func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
+// insertItems inserts specified items in inventory slots.
+func (im *InventoryMenu) insertItems(items ...item.Item) {
+	im.slots.Clear()
 	for _, it := range items {
+		// Retrieve item graphic.
+		data := res.Item(it.ID())
+		if data == nil {
+			log.Err.Printf("hud_inv:item_graphic_not_found:%s\n", it.ID())
+			continue
+		}
+		ig := object.NewItemGraphic(it, data)
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
 		layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())
@@ -195,7 +204,7 @@ func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
 			}
 		} else { // try to find slot with same content and available space
 			for _, s := range im.slots.Slots() {
-				if len(s.Values()) < 1 || len(s.Values()) >= it.MaxStack() {
+				if len(s.Values()) < 1 || len(s.Values()) >= ig.MaxStack() {
 					continue
 				}
 				slotIt, ok := s.Values()[0].(item.Item)
@@ -213,7 +222,7 @@ func (im *InventoryMenu) insert(items ...*object.ItemGraphic) {
 			return
 		}
 		// Insert item to slot.
-		insertSlotItem(it, slot)
+		insertSlotItem(ig, slot)
 	}
 }
 
@@ -384,18 +393,20 @@ func insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 // itemInfo returns formated string with
 // informations about specified item.
 func itemInfo(it item.Item) string {
+	info := ""
 	switch i := it.(type) {
 	case *item.Weapon:
 		infoForm := "%s\n%d-%d"
 		dmgMin, dmgMax := i.Damage()
-		info := fmt.Sprintf(infoForm, i.Name(),
+		info = fmt.Sprintf(infoForm, i.Name(),
 			dmgMin, dmgMax)
-		if config.Debug() { // add serial ID info
-			info = fmt.Sprintf("%s\n[%s_%s]", info,
-				i.ID(), i.Serial())
-		}
-		return info
-	default:
-		return ""
+	case *item.Misc:
+		infoForm := "%s"
+		info = fmt.Sprintf(infoForm, i.Name())
 	}
+	if config.Debug() { // add serial ID info
+		info = fmt.Sprintf("%s\n[%s_%s]", info,
+			it.ID(), it.Serial())
+	}
+	return info
 }

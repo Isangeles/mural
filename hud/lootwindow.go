@@ -33,7 +33,9 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for HUD loot window.
@@ -172,11 +174,11 @@ func (lw *LootWindow) DrawArea() pixel.Rect {
 func (lw *LootWindow) SetTarget(t LootTarget) {
 	lw.target = t
 	lw.slots.Clear()
-	for _, it := range lw.target.Items() {
+	for _, it := range lw.target.Inventory().Items() {
 		if !it.Loot() {
 			continue
 		}
-		lw.insert(it)
+		lw.insertItems(it)
 	}
 }
 
@@ -189,6 +191,26 @@ func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
 			lw.slots.Add(slot)
 		}
 		insertSlotItem(it, slot)
+	}
+}
+
+// insertItems inserts specified items in window slots.
+func (lw *LootWindow) insertItems(items ...item.Item) {
+	for _, it := range items {
+		// Retrieve item graphic.
+		data := res.Item(it.ID())
+		if data == nil {
+			log.Err.Printf("hud_loot:item_graphic_not_found:%s\n", it.ID())
+			continue
+		}
+		ig := object.NewItemGraphic(it, data)
+		// Find empty slot.
+		slot := lw.slots.EmptySlot()
+		if slot == nil {
+			slot = lw.createSlot()
+			lw.slots.Add(slot)
+		}
+		insertSlotItem(ig, slot)
 	}
 }
 
@@ -214,10 +236,15 @@ func (lw *LootWindow) onSlotLeftClicked(s *mtk.Slot) {
 	valuesLen := len(s.Values())
 	for i := 0; i < valuesLen; i++ {
 		v := s.Pop()
-		it, ok := v.(*object.ItemGraphic)
+		ig, ok := v.(*object.ItemGraphic)
 		if !ok {
 			continue
 		}
-		lw.hud.ActivePlayer().Inventory().AddItem(it)
+		err := lw.hud.ActivePlayer().Inventory().AddItem(ig.Item)
+		if err != nil {
+			log.Err.Printf("hud_loot:fail_to_transfer_item:%v", err)
+			continue
+		}
+		lw.target.Inventory().RemoveItem(ig.Item)
 	}
 }

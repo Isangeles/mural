@@ -194,7 +194,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	}
 	// Print phase text to chat box.
 	chapter := dw.hud.game.Module().Chapter()
-	dialogLine := lang.AllText(chapter.Conf().LangPath(), "dialogs", phase.ID())
+	dialogLine := lang.AllText(chapter.Conf().DialogsLangPath(), phase.ID())
 	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine[0])
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
@@ -214,7 +214,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range phase.Answers() {
-		answerText := lang.AllText(chapter.Conf().LangPath(), "dialogs", a.ID())[0]
+		answerText := lang.AllText(chapter.Conf().DialogsLangPath(), a.ID())[0]
 		answerText = fmt.Sprintf("%d)%s", i, answerText)
 		dw.answersList.AddItem(answerText, a)
 	}	
@@ -237,7 +237,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	}
 	// Print answer to chat box.
 	chapter := dw.hud.game.Module().Chapter()
-	answerText := lang.AllText(chapter.Conf().LangPath(), "dialogs", answer.ID())[0]
+	answerText := lang.AllText(chapter.Conf().DialogsLangPath(), answer.ID())[0]
 	dw.chatBox.AddText(fmt.Sprintf("[%s]:%s\n", dw.hud.ActivePlayer().Name(), answerText))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.

@@ -211,9 +211,16 @@ func (dw *DialogWindow) dialogUpdate() {
 			mod.Affect(nil, dw.hud.ActivePlayer().Character)
 		}
 	}
+	// Select answers.
+	answers := make([]*dialog.Answer, 0)
+	for _, a := range phase.Answers() {
+		if dw.hud.ActivePlayer().MeetReqs(a.Requirements()) {
+			answers = append(answers, a)
+		}
+	}
 	// Insert answers to answers list.
 	dw.answersList.Clear()
-	for i, a := range phase.Answers() {
+	for i, a := range answers {
 		answerText := lang.AllText(chapter.Conf().DialogsLangPath(), a.ID())[0]
 		answerText = fmt.Sprintf("%d)%s", i, answerText)
 		dw.answersList.AddItem(answerText, a)

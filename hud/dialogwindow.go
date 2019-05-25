@@ -184,7 +184,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Search for proper dialog phase.
 	var phase *dialog.Text
 	for _, t := range dw.dialog.Texts() {
-		if dw.hud.ActivePlayer().MeetReqs(t.Requirements()) {
+		if dw.hud.ActivePlayer().MeetReqs(t.Requirements()...) {
 			phase = t
 		}
 	}
@@ -214,7 +214,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Select answers.
 	answers := make([]*dialog.Answer, 0)
 	for _, a := range phase.Answers() {
-		if dw.hud.ActivePlayer().MeetReqs(a.Requirements()) {
+		if dw.hud.ActivePlayer().MeetReqs(a.Requirements()...) {
 			answers = append(answers, a)
 		}
 	}

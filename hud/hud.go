@@ -38,7 +38,7 @@ import (
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/scenario"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -55,11 +55,12 @@ var (
 	sec_color    = colornames.Blue
 	accent_color = colornames.Red
 	// Keys.
-	pause_key  = pixelgl.KeySpace
-	menu_key   = pixelgl.KeyEscape
-	chat_key   = pixelgl.KeyGraveAccent
-	inv_key    = pixelgl.KeyB
-	skills_key = pixelgl.KeyK
+	pause_key   = pixelgl.KeySpace
+	menu_key    = pixelgl.KeyEscape
+	chat_key    = pixelgl.KeyGraveAccent
+	inv_key     = pixelgl.KeyB
+	skills_key  = pixelgl.KeyK
+	journal_key = pixelgl.KeyL
 )
 
 // Struct for 'head-up display'.
@@ -77,6 +78,7 @@ type HUD struct {
 	skills     *SkillMenu
 	loot       *LootWindow
 	dialog     *DialogWindow
+	journal    *JournalWindow
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -109,6 +111,7 @@ func New() *HUD {
 	hud.skills = newSkillMenu(hud)
 	hud.loot = newLootWindow(hud)
 	hud.dialog = newDialogWindow(hud)
+	hud.journal = newJournalWindow(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -138,6 +141,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	skillsPos := win.Bounds().Center()
 	lootPos := win.Bounds().Center()
 	dialogPos := win.Bounds().Center()
+	journalPos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
@@ -163,6 +167,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.dialog.Opened() {
 		hud.dialog.Draw(win, mtk.Matrix().Moved(dialogPos))
+	}
+	if hud.journal.Opened() {
+		hud.journal.Draw(win, mtk.Matrix().Moved(journalPos))
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -228,6 +235,14 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.skills.Show(false)
 			}
 		}
+		if win.JustPressed(journal_key) {
+			// Show journal.
+			if !hud.journal.Opened() {
+				hud.journal.Show(true)
+			} else {
+				hud.journal.Show(false)
+			}
+		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.onMouseLeftPressed(win.MousePosition())
@@ -274,6 +289,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if hud.dialog.Opened() {
 		hud.dialog.Update(win)
 	}
+	if hud.journal.Opened() {
+		hud.journal.Update(win)
+	}
 	hud.msgs.Update(win)
 }
 
@@ -307,8 +325,7 @@ func (hud *HUD) AddPlayer(char *character.Character) error {
 // player.
 func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
 	hud.activePC = pc
-	hud.camera.CenterAt(pixel.V(0, 0))
-	//hud.camera.CenterAt(hud.ActivePlayer().Position())
+	hud.camera.CenterAt(hud.ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.ActivePlayer())
 	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	hud.Reload()
@@ -520,10 +537,11 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		hud.pcFrame.DrawArea().Contains(pos) ||
 		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
 		(hud.menu.Opened() && hud.menu.DrawArea().Contains(pos)) ||
-		(hud.savemenu.Opened() && hud.savemenu.DrawArea().Contains(pos)) ||		
+		(hud.savemenu.Opened() && hud.savemenu.DrawArea().Contains(pos)) ||
 		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos)) ||
-	        (hud.loot.Opened() && hud.loot.DrawArea().Contains(pos)) ||
-		(hud.dialog.Opened() && hud.dialog.DrawArea().Contains(pos)) {
+		(hud.loot.Opened() && hud.loot.DrawArea().Contains(pos)) ||
+		(hud.dialog.Opened() && hud.dialog.DrawArea().Contains(pos)) ||
+		(hud.journal.Opened() && hud.journal.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

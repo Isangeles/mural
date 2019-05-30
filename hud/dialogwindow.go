@@ -158,7 +158,7 @@ func (dw *DialogWindow) Opened() bool {
 // Size returns window size.
 func (dw *DialogWindow) Size() pixel.Vec {
 	if dw.bgSpr == nil {
-		return mtk.ConvVec(pixel.V(0, 0))
+		return mtk.ConvVec(pixel.V(0, 0)) // TODO: draw bg size
 	}
 	return dw.bgSpr.Frame().Size()
 }

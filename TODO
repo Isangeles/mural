@@ -10,8 +10,6 @@ MAJOR:
 * Audio effects
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
-* MTK: titles for messages windows
-* MTK: auto scroll to last line for text box
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

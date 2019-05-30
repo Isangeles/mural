@@ -57,6 +57,7 @@ hud_inv_title:Inventory
 hud_loot_title:Loot
 hud_dialog_title:Dialog
 hud_skills_title:Skills
+hud_journal_title:Journal
 hud_bar_menu_open_info:Open menu
 hud_bar_inv_open_info:Open inventory
 hud_bar_skills_open_info:Open skills

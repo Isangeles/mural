@@ -61,6 +61,7 @@ hud_journal_title:Journal
 hud_bar_menu_open_info:Open menu
 hud_bar_inv_open_info:Open inventory
 hud_bar_skills_open_info:Open skills
+hud_bar_journal_open_info:Open journal
 char_frame_hp_bar_label:Health
 char_frame_mana_bar_label:Mana
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file

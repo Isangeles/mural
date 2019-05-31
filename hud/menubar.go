@@ -25,15 +25,17 @@ package hud
 
 import (
 	"fmt"
-	
+	"path/filepath"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/serial"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -43,14 +45,15 @@ import (
 
 // Struct for HUD menu bar.
 type MenuBar struct {
-	hud          *HUD
-	bgSpr        *pixel.Sprite
-	bgDraw       *imdraw.IMDraw
-	drawArea     pixel.Rect
-	menuButton   *mtk.Button
-	invButton    *mtk.Button
-	skillsButton *mtk.Button
-	slots        []*mtk.Slot
+	hud           *HUD
+	bgSpr         *pixel.Sprite
+	bgDraw        *imdraw.IMDraw
+	drawArea      pixel.Rect
+	menuButton    *mtk.Button
+	invButton     *mtk.Button
+	skillsButton  *mtk.Button
+	journalButton *mtk.Button
+	slots         []*mtk.Slot
 }
 
 var (
@@ -59,50 +62,62 @@ var (
 	bar_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
-// neMenuBar creates new menu bar for HUD.
+// newMenuBar creates new menu bar for HUD.
 func newMenuBar(hud *HUD) *MenuBar {
 	mb := new(MenuBar)
 	mb.hud = hud
+	guiLang := filepath.FromSlash(flameconf.LangPath() + "/gui")
 	// Background.
+	mb.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("menubar.png")
-	if err != nil { // fallback
-		mb.bgDraw = imdraw.New(nil)
-	} else {
+	if err == nil {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Menu Button.
 	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
 	mb.menuButton.SetInfo(lang.Text("gui", "hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
-	if err != nil {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_menu_button_texture:%v", err)
-	} else {
+	if err == nil {
 		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
 		mb.menuButton.SetBackground(menuButtonSpr)
+	} else {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_menu_button_texture:%v", err)
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
 	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
 	mb.invButton.SetInfo(lang.Text("gui", "hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
-	if err != nil {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_inv_button_texture:%v", err)
-	} else {
+	if err == nil {
 		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
 		mb.invButton.SetBackground(invButtonSpr)
+	} else {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_inv_button_texture:%v", err)
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
 	mb.skillsButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
 	mb.skillsButton.SetInfo(lang.Text("gui", "hud_bar_skills_open_info"))
 	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
-	if err != nil {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
-	} else {
+	if err == nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
 		mb.skillsButton.SetBackground(skillsButtonSpr)
+	} else {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
+	// Journal button.
+	mb.journalButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	journalInfo := lang.AllText(guiLang, "hud_bar_journal_open_info")[0]
+	mb.journalButton.SetInfo(journalInfo)
+	journalButtonBG, err := data.PictureUI("questsbutton.png")
+	if err == nil {
+		journalButtonSpr := pixel.NewSprite(journalButtonBG, journalButtonBG.Bounds())
+		mb.journalButton.SetBackground(journalButtonSpr)
+	} else {
+		log.Err.Printf("hud_menu_bar:fail_to_retrieve_quests_button_texture:%v", err)
+	}
+	mb.journalButton.SetOnClickFunc(mb.onJournalButtonClicked)
 	// Slots.
 	for i := 0; i < bar_slots; i++ {
 		s := mb.createSlot()
@@ -118,21 +133,23 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	mb.drawArea = mtk.MatrixToDrawArea(matrix, mb.Size())
 	// Background.
 	if mb.bgSpr != nil {
-		mb.bgSpr.Draw(win.Window, matrix)
+		mb.bgSpr.Draw(win, matrix)
 	} else {
-		mb.drawIMBackground(win.Window)
+		mb.drawIMBackground(win)
 	}
 	// Buttons.
 	menuButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-30, 0))
-	mb.menuButton.Draw(win.Window, matrix.Moved(menuButtonPos))
 	invButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-65, 0))
-	mb.invButton.Draw(win.Window, matrix.Moved(invButtonPos))
 	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-100, 0))
-	mb.skillsButton.Draw(win.Window, matrix.Moved(skillsButtonPos))
+	questsButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+100, 0))
+	mb.menuButton.Draw(win, matrix.Moved(menuButtonPos))
+	mb.invButton.Draw(win, matrix.Moved(invButtonPos))
+	mb.skillsButton.Draw(win, matrix.Moved(skillsButtonPos))
+	mb.journalButton.Draw(win, matrix.Moved(questsButtonPos))
 	// Slots.
 	slotsStartPos := mtk.ConvVec(pixel.V(-163, 0))
 	for _, s := range mb.slots {
-		s.Draw(win.Window, matrix.Moved(slotsStartPos))
+		s.Draw(win, matrix.Moved(slotsStartPos))
 		slotsStartPos.X += s.Size().X + mtk.ConvSize(6)
 	}
 }
@@ -185,6 +202,7 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	mb.menuButton.Update(win)
 	mb.invButton.Update(win)
 	mb.skillsButton.Update(win)
+	mb.journalButton.Update(win)
 	// Slots.
 	for _, s := range mb.slots {
 		s.Update(win)
@@ -239,7 +257,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 			if pc.Equipment().Equiped(eqit) {
 				pc.Equipment().Unequip(eqit)
 				return
-			} 
+			}
 			pc.Equipment().Equip(eqit)
 			return
 		}
@@ -327,6 +345,15 @@ func (mb *MenuBar) onSkillsButtonClicked(b *mtk.Button) {
 		mb.hud.skills.Show(false)
 	} else {
 		mb.hud.skills.Show(true)
+	}
+}
+
+// Triggered after journal button clicked.
+func (mb *MenuBar) onJournalButtonClicked(b *mtk.Button) {
+	if mb.hud.journal.Opened() {
+		mb.hud.journal.Show(false)
+	} else {
+		mb.hud.journal.Show(true)
 	}
 }
 

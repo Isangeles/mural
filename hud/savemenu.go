@@ -81,16 +81,24 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	saveNameSize := pixel.V(savesListSize.X, mtk.ConvSize(20))
 	sm.saveNameEdit.SetSize(saveNameSize)
 	// Buttons.
-	sm.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE,
-		accent_color)
+	closeButtonParams := mtk.Params{
+		Size: mtk.SIZE_MEDIUM,
+		Shape: mtk.SHAPE_SQUARE,
+		MainColor: accent_color,
+	}
+	saveButtonParams := mtk.Params{
+		Size: mtk.SIZE_MEDIUM,
+		Shape: mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
+	sm.closeButton = mtk.NewButton(closeButtonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeBG)
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
-	sm.saveButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE,
-		accent_color)
+	sm.saveButton = mtk.NewButton(saveButtonParams)
 	sm.saveButton.SetLabel(lang.Text("gui", "save_b_label"))
 	saveButtonBG, err := data.PictureUI("button_green.png")
 	if err == nil {

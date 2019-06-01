@@ -29,8 +29,6 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/image/colornames"
-
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
@@ -39,7 +37,7 @@ import (
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -170,16 +168,19 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.aliSwitch.SetLabel(lang.Text("gui", "newchar_ali_switch_label"))
 	ncm.aliSwitch.SetValues(alis)
 	// Buttons.
-	ncm.doneButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	buttonParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		FontSize:  mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
+	ncm.doneButton = mtk.NewButton(buttonParams)
 	ncm.doneButton.SetLabel(lang.Text("gui", "done_b_label"))
 	ncm.doneButton.SetOnClickFunc(ncm.onDoneButtonClicked)
-	ncm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	ncm.backButton = mtk.NewButton(buttonParams)
 	ncm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
-	ncm.rollButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	ncm.rollButton = mtk.NewButton(buttonParams)
 	ncm.rollButton.SetLabel(lang.Text("gui", "newchar_roll_b_label"))
 	ncm.rollButton.SetInfo(lang.Text("gui", "newchar_roll_b_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)

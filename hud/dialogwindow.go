@@ -70,7 +70,12 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	dw.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	dw.titleText.SetText(lang.TextDir(flameconf.LangPath(), "hud_dialog_title"))
 	// Buttons.
-	dw.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
+	buttonParams := mtk.Params{
+		Size: mtk.SIZE_MEDIUM,
+		Shape: mtk.SHAPE_SQUARE,
+		MainColor: accent_color,
+	}
+	dw.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())

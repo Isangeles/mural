@@ -24,25 +24,23 @@
 package mainmenu
 
 import (
-	"golang.org/x/image/colornames"
-
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
 )
 
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
-	mainmenu   *MainMenu
-	title      *mtk.Text
-	newgameB   *mtk.Button
-	newcharB   *mtk.Button
-	loadgameB  *mtk.Button
-	settingsB  *mtk.Button
-	exitB      *mtk.Button
-	opened     bool
+	mainmenu  *MainMenu
+	title     *mtk.Text
+	newgameB  *mtk.Button
+	newcharB  *mtk.Button
+	loadgameB *mtk.Button
+	settingsB *mtk.Button
+	exitB     *mtk.Button
+	opened    bool
 }
 
 // newMenu creates new menu.
@@ -53,28 +51,29 @@ func newMenu(mainmenu *MainMenu) *Menu {
 	m.title = mtk.NewText(mtk.SIZE_BIG, mtk.ConvSize(900))
 	m.title.SetText(flame.Mod().Conf().ID)
 	// Buttons.
-	m.newgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	buttonParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		FontSize:  mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
+	m.newgameB = mtk.NewButton(buttonParams)
 	m.newgameB.SetLabel(lang.Text("gui", "newgame_b_label"))
 	m.newgameB.SetInfo(lang.Text("gui", "newgame_b_info"))
 	m.newgameB.SetOnClickFunc(m.onNewGameButtonClicked)
-	m.newcharB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	m.newcharB = mtk.NewButton(buttonParams)
 	m.newcharB.SetLabel(lang.Text("gui", "newchar_b_label"))
 	m.newcharB.SetInfo(lang.Text("gui", "newchar_b_info"))
 	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
-	m.loadgameB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color)
+	m.loadgameB = mtk.NewButton(buttonParams)
 	m.loadgameB.SetLabel(lang.Text("gui", "loadgame_b_label"))
 	m.loadgameB.SetInfo(lang.Text("gui", "loadgame_b_info"))
 	m.loadgameB.SetOnClickFunc(m.onLoadGameButtonClicked)
-	m.settingsB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	m.settingsB = mtk.NewButton(buttonParams)
 	m.settingsB.SetLabel(lang.Text("gui", "settings_b_label"))
 	m.settingsB.SetInfo(lang.Text("gui", "settings_b_info"))
 	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
-	m.exitB = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	m.exitB = mtk.NewButton(buttonParams)
 	m.exitB.SetLabel(lang.Text("gui", "exit_b_label"))
 	m.exitB.SetInfo(lang.Text("gui", "exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)

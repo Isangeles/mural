@@ -32,7 +32,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/character"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/exp"
@@ -68,16 +68,19 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 	ngm.charInfo = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI, mtk.SIZE_BIG,
 		accent_color, main_color)
 	// Buttons.
-	ngm.startButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color)
+	buttonParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		FontSize:  mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
+	ngm.startButton = mtk.NewButton(buttonParams)
 	ngm.startButton.SetLabel(lang.Text("gui", "newgame_start_button_label"))
 	ngm.startButton.SetOnClickFunc(ngm.onStartButtonClicked)
-	ngm.exportButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color)
+	ngm.exportButton = mtk.NewButton(buttonParams)
 	ngm.exportButton.SetLabel(lang.Text("gui", "newgame_export_button_label"))
 	ngm.exportButton.SetOnClickFunc(ngm.onExportButtonClicked)
-	ngm.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		accent_color)
+	ngm.backButton = mtk.NewButton(buttonParams)
 	ngm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
 	return ngm

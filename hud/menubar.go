@@ -26,16 +26,16 @@ package hud
 import (
 	"fmt"
 	"path/filepath"
-
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/serial"
-
+	flameconf "github.com/isangeles/flame/config"
+	
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -45,15 +45,15 @@ import (
 
 // Struct for HUD menu bar.
 type MenuBar struct {
-	hud           *HUD
-	bgSpr         *pixel.Sprite
-	bgDraw        *imdraw.IMDraw
-	drawArea      pixel.Rect
-	menuButton    *mtk.Button
-	invButton     *mtk.Button
-	skillsButton  *mtk.Button
+	hud          *HUD
+	bgSpr        *pixel.Sprite
+	bgDraw       *imdraw.IMDraw
+	drawArea     pixel.Rect
+	menuButton   *mtk.Button
+	invButton    *mtk.Button
+	skillsButton *mtk.Button
 	journalButton *mtk.Button
-	slots         []*mtk.Slot
+	slots        []*mtk.Slot
 }
 
 var (
@@ -73,8 +73,14 @@ func newMenuBar(hud *HUD) *MenuBar {
 	if err == nil {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
+	// Buttons.
+	buttonParams := mtk.Params{
+		Size: mtk.SIZE_MEDIUM,
+		Shape: mtk.SHAPE_SQUARE,
+		MainColor: accent_color,
+	}
 	// Menu Button.
-	mb.menuButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.menuButton = mtk.NewButton(buttonParams)
 	mb.menuButton.SetInfo(lang.Text("gui", "hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
 	if err == nil {
@@ -85,7 +91,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
-	mb.invButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.invButton = mtk.NewButton(buttonParams)
 	mb.invButton.SetInfo(lang.Text("gui", "hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
 	if err == nil {
@@ -96,18 +102,18 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
-	mb.skillsButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.skillsButton = mtk.NewButton(buttonParams)
 	mb.skillsButton.SetInfo(lang.Text("gui", "hud_bar_skills_open_info"))
 	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
 	if err == nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
-		mb.skillsButton.SetBackground(skillsButtonSpr)
+		mb.skillsButton.SetBackground(skillsButtonSpr)	
 	} else {
 		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
 	// Journal button.
-	mb.journalButton = mtk.NewButton(mtk.SIZE_MINI, mtk.SHAPE_SQUARE, accent_color)
+	mb.journalButton = mtk.NewButton(buttonParams)
 	journalInfo := lang.AllText(guiLang, "hud_bar_journal_open_info")[0]
 	mb.journalButton.SetInfo(journalInfo)
 	journalButtonBG, err := data.PictureUI("questsbutton.png")
@@ -257,7 +263,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 			if pc.Equipment().Equiped(eqit) {
 				pc.Equipment().Unequip(eqit)
 				return
-			}
+			} 
 			pc.Equipment().Equip(eqit)
 			return
 		}

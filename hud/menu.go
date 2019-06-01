@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl> 
+ * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -65,11 +65,22 @@ func newMenu(hud *HUD) *Menu {
 	m.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
 	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
 	// Buttons.
+	closeButtonParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_SQUARE,
+		MainColor: accent_color,
+	}
+	menuButtonParams := mtk.Params{
+		Size:      mtk.SIZE_MINI,
+		FontSize:  mtk.SIZE_MINI,
+		Shape:     mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
 	greenButtonBG, err := data.PictureUI("button_green.png")
 	if err != nil {
 		log.Err.Printf("hud_menu:fail_to_retrieve_green_button_texture:%v", err)
 	}
-	m.closeButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
+	m.closeButton = mtk.NewButton(closeButtonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err == nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
@@ -78,7 +89,7 @@ func newMenu(hud *HUD) *Menu {
 		log.Err.Printf("hud_menu:fail_to_retrieve_exit_button_texture:%v", err)
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
-	m.saveButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_SQUARE, accent_color)
+	m.saveButton = mtk.NewButton(menuButtonParams)
 	m.saveButton.SetLabel(lang.Text("gui", "savegame_b_label"))
 	m.saveButton.SetInfo(lang.Text("gui", "savegame_b_info"))
 	if greenButtonBG != nil {
@@ -86,7 +97,7 @@ func newMenu(hud *HUD) *Menu {
 		m.saveButton.SetBackground(bg)
 	}
 	m.saveButton.SetOnClickFunc(m.onSaveButtonClicked)
-	m.exitButton = mtk.NewButton(mtk.SIZE_SMALL, mtk.SHAPE_RECTANGLE, accent_color)
+	m.exitButton = mtk.NewButton(menuButtonParams)
 	m.exitButton.SetLabel(lang.Text("gui", "exit_b_label"))
 	m.exitButton.SetInfo(lang.Text("gui", "exit_hud_b_info"))
 	if greenButtonBG != nil {
@@ -108,15 +119,15 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, m.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, m.Size().Y/2 - 25))
+	titleTextPos := mtk.ConvVec(pixel.V(0, m.Size().Y/2-25))
 	m.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(m.Size().X/2 - 20,
-		m.Size().Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(m.Size().X/2-20,
+		m.Size().Y/2-15))
 	m.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
-	saveButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2 + 20))
+	saveButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2+20))
 	m.saveButton.Draw(win.Window, matrix.Moved(saveButtonPos))
-	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2 - 20))
+	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2-20))
 	m.exitButton.Draw(win.Window, matrix.Moved(exitButtonPos))
 }
 

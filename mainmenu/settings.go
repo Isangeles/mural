@@ -26,15 +26,13 @@ package mainmenu
 import (
 	"fmt"
 
-	"golang.org/x/image/colornames"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
 )
@@ -60,8 +58,13 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.title = mtk.NewText(mtk.SIZE_BIG, 900)
 	s.title.SetText(lang.Text("gui", "settings_menu_title"))
 	// Buttons.
-	s.backButton = mtk.NewButton(mtk.SIZE_MEDIUM, mtk.SHAPE_RECTANGLE,
-		colornames.Red)
+	buttonParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		FontSize:  mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_RECTANGLE,
+		MainColor: accent_color,
+	}
+	s.backButton = mtk.NewButton(buttonParams)
 	s.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.

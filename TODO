@@ -1,6 +1,5 @@
 MAJOR:
 * HUD: character window
-* HUD: journal window
 * HUD: map window
 * HUD: crafting window
 * Graphical effects
@@ -10,6 +9,7 @@ MAJOR:
 * Audio effects
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
+* Optimize tiled map drawing(now draws whole map instead of only visible fragment)
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment
@@ -21,4 +21,5 @@ DONE:
 * HUD: object frames
 * HUD: dialog window
 * HUD: chat
+* HUD: journal window
 * Objects

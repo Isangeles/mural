@@ -30,9 +30,10 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
+//	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -78,8 +79,8 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size:      mtk.SIZE_MEDIUM,
+		Shape:     mtk.SHAPE_SQUARE,
 		MainColor: accent_color,
 	}
 	im.closeButton = mtk.NewButton(buttonParams)
@@ -124,23 +125,36 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	im.drawArea = mtk.MatrixToDrawArea(matrix, im.Size())
 	// Background.
 	if im.bgSpr != nil {
-		im.bgSpr.Draw(win.Window, matrix)
+		im.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, im.DrawArea(), nil)
+		mtk.DrawRectangle(win, im.DrawArea(), nil)
 	}
 	// Title.
 	titleTextPos := mtk.ConvVec(pixel.V(0, im.Size().Y/2-25))
-	im.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
+	im.titleText.Draw(win, matrix.Moved(titleTextPos))
 	// Buttons.
 	closeButtonPos := mtk.ConvVec(pixel.V(im.Size().X/2-20,
 		im.Size().Y/2-15))
-	im.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
+	im.closeButton.Draw(win, matrix.Moved(closeButtonPos))
 	// Slots.
 	im.slots.Draw(win, matrix)
 }
 
 // Update updates menu.
 func (im *InventoryMenu) Update(win *mtk.Window) {
+	// Ket events.
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		dragSlot := im.draggedSlot()
+		if dragSlot != nil {
+			/* TODO: fix warning message
+			warn := lang.TextDir(flameconf.LangPath(), "hud_inv_remove_item_warn")
+			msg := mtk.NewDialogWindow(mtk.SIZE_MEDIUM, warn)
+			msg.SetOnAcceptFunc(im.onRemoveItemAccepted)
+			im.hud.ShowMessage(msg)
+                        */
+			im.removeSlotItem(dragSlot)
+		}
+	}
 	// Elements update.
 	im.slots.Update(win)
 	im.closeButton.Update(win)
@@ -268,15 +282,28 @@ func (im *InventoryMenu) createSlot() *mtk.Slot {
 	return s
 }
 
-// draggedItems returns currently dragged slot
-// with items.
-func (im *InventoryMenu) draggedItems() *mtk.Slot {
+// draggedSlot returns currently dragged inventory
+// slot or nil.
+func (im *InventoryMenu) draggedSlot() *mtk.Slot {
 	for _, s := range im.slots.Slots() {
 		if s.Dragged() {
 			return s
 		}
 	}
 	return nil
+}
+
+// removeSlotItem removes item from specified slot and
+// from PC inventory.
+func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
+	for _, v := range s.Values() {
+		it, ok := v.(item.Item)
+		if !ok {
+			continue
+		}
+		im.hud.ActivePlayer().Inventory().RemoveItem(it)
+	}
+	s.Clear()
 }
 
 // Triggered after close button clicked.
@@ -386,6 +413,16 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 		return
 	}
 	s.Drag(true)
+}
+
+// Triggered after accepting remove item message.
+func (im *InventoryMenu) onRemoveItemAccepted(mw *mtk.MessageWindow) {
+	dragSlot := im.draggedSlot()
+	if dragSlot == nil {
+		return
+	}
+	im.removeSlotItem(dragSlot)
+	mw.Show(false)
 }
 
 // insertSlotItem inserts specified item to specified slot.

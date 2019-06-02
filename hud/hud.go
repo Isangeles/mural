@@ -176,7 +176,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	// Messages.
 	msgPos := win.Bounds().Center()
-	hud.msgs.Draw(win.Window, mtk.Matrix().Moved(msgPos))
+	hud.msgs.Draw(win, mtk.Matrix().Moved(msgPos))
 }
 
 // Update updated HUD elements.

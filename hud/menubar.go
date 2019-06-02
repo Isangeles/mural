@@ -387,7 +387,7 @@ func (mb *MenuBar) onSlotLeftClicked(s *mtk.Slot) {
 		return
 	}
 	// Insert dragged item from inventory menu.
-	dragSlot = mb.hud.inv.draggedItems()
+	dragSlot = mb.hud.inv.draggedSlot()
 	if dragSlot != nil {
 		copyMenuSlot(dragSlot, s)
 		dragSlot.Drag(false)

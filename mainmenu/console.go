@@ -39,6 +39,7 @@ import (
 type Console struct {
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
+	msgs      map[string]*enginelog.Message
 	drawArea  pixel.Rect
 	opened    bool
 	lastInput string
@@ -48,8 +49,8 @@ type Console struct {
 // newConsole creates game console.
 func newConsole() *Console {
 	c := new(Console)
+	c.msgs = make(map[string]*enginelog.Message)
 	// Text box.
-	//c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, mtk.SIZE_MEDIUM,
 		accent_color, colornames.Grey)
 	// Text input.
@@ -61,15 +62,13 @@ func newConsole() *Console {
 // Draw draws console.
 func (c *Console) Draw(win *mtk.Window) {
 	// Text box.
-	boxSize := pixel.V(win.Bounds().W(), win.Bounds().H()/2)
-	c.textbox.SetSize(boxSize)
 	boxMove := mtk.DrawPosTC(win.Bounds(), c.textbox.Size())
 	c.textbox.Draw(win, mtk.Matrix().Moved(boxMove))
 	// Text edit.
 	editSize := pixel.V(c.textbox.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
 	editMove := mtk.BottomOf(c.textbox.DrawArea(), c.textedit.Size(), 0)
-	c.textedit.Draw(win.Window, mtk.Matrix().Moved(editMove))
+	c.textedit.Draw(win, mtk.Matrix().Moved(editMove))
 }
 
 // Update handles key events and updates console.
@@ -86,12 +85,19 @@ func (c *Console) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.KeyUp) {
 		c.textedit.SetText(c.lastInput)
 	}
-	// Messages.
-	c.textbox.Clear()
-	for _, msg := range enginelog.Messages() {
-		c.textbox.AddText(msg.String())
-	}
+	// Textbox size & width.
+	boxSize := pixel.V(win.Bounds().W(), win.Bounds().H()/2)
+	c.textbox.SetSize(boxSize)
 	c.textbox.SetMaxTextWidth(win.Bounds().W())
+	// Messages.
+	for _, msg := range enginelog.Messages() {
+		if c.msgs[msg.ID()] != nil {
+			continue
+		}
+		c.msgs[msg.ID()] = &msg
+		c.textbox.AddText(msg.String())
+		//c.textbox.ScrollBottom()
+	}
 	// Elements.
 	c.textbox.Update(win)
 	c.textedit.Update(win)

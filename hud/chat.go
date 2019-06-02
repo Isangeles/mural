@@ -51,7 +51,9 @@ type Chat struct {
 	drawArea  pixel.Rect
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
+	msgs      map[string]*enginelog.Message
 	activated bool
+	lastInput string
 	onCommand func(line string) (int, string, error)
 }
 
@@ -59,6 +61,7 @@ type Chat struct {
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
+	c.msgs = make(map[string]*enginelog.Message)
 	// Background.
 	c.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("chatbg.png")
@@ -94,8 +97,11 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
 	// Content update.
-	c.textbox.Clear()
 	for _, msg := range enginelog.Messages() {
+		if c.msgs[msg.ID()] != nil {
+			continue
+		}
+		c.msgs[msg.ID()] = &msg
 		c.textbox.AddText(msg.String())
 	}
 	// Elements update.
@@ -145,9 +151,9 @@ func (c *Chat) Echo(text string) {
 
 // Triggered after accepting input in text edit.
 func (c *Chat) onTexteditInput(t *mtk.Textedit) {
-	// Echo input to log.
+	// Save last input.
 	input := t.Text()
-	c.Echo(input)
+	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
 	if !strings.HasPrefix(input, chat_command_prefix) || c.onCommand == nil {

@@ -209,8 +209,13 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 	}
 	stage := quest.ActiveStage()
 	if stage != nil {
-		stageInfo := lang.AllText(questsLang, stage.ID())
-		info = fmt.Sprintf("%s\n%s", info, stageInfo[0])
+		if stage.Completed() {
+			completeInfo := lang.TextDir(flameconf.LangPath(), "hud_journal_quest_complete")
+			info = fmt.Sprintf("%s\n%s", info, completeInfo)
+		} else {
+			stageInfo := lang.AllText(questsLang, stage.ID())
+			info = fmt.Sprintf("%s\n%s", info, stageInfo[0])
+		}
 	}
 	jw.questInfo.SetText(info)
 }

@@ -187,10 +187,10 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Search for proper dialog phase.
-	var phase *dialog.Text
-	for _, t := range dw.dialog.Texts() {
-		if dw.hud.ActivePlayer().MeetReqs(t.Requirements()...) {
-			phase = t
+	var phase *dialog.Phase
+	for _, p := range dw.dialog.Phases() {
+		if dw.hud.ActivePlayer().MeetReqs(p.Requirements()...) {
+			phase = p
 		}
 	}
 	if phase == nil {

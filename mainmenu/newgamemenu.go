@@ -31,7 +31,6 @@ import (
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mtk"
 
@@ -210,7 +209,7 @@ func (ngm *NewGameMenu) startGame() {
 	// Add avatar data to resources base.
 	res.AddAvatarData(c.Data())
 	// Create game.
-	g, err := flame.StartGame([]*character.Character{c.Character})
+	g, err := flame.StartGame(c.Character)
 	if err != nil {
 		log.Err.Printf("main_menu:new_game:fail_to_start_game:%v", err)
 		return

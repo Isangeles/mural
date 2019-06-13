@@ -328,12 +328,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 		return
 	}
 	if im.hud.ActivePlayer().Equipment().Equiped(eit) {
-		err := im.hud.ActivePlayer().Equipment().Unequip(eit)
-		if err != nil {
-			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_unequip:%v", eit.ID(),
-				eit.Serial(), err)
-			return
-		}
+		im.hud.ActivePlayer().Equipment().Unequip(eit)
 		s.SetColor(inv_slot_color)
 	} else {
 		err := im.hud.ActivePlayer().Equipment().Equip(eit)

@@ -26,6 +26,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -43,7 +44,7 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
@@ -290,10 +291,19 @@ func ExecuteCommand(line string) (int, string, error) {
 	return res, out, nil
 }
 
+// ExecuteScriptFile executes Ash script file
+// with specified name.
+func ExecuteScriptFile(name string, args ...string) error {
+	modpath := game.Module().Conf().Path
+	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
+	return ci.RunScript(path, args...)
+}
+
 // setHUD sets specified HUD instance as current GUI player
 // HUD.
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)
 	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
+	pcHUD.Chat().SetOnScriptNameFunc(ExecuteScriptFile)
 }

@@ -25,36 +25,38 @@ package hud
 
 import (
 	"strings"
-	
+
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/enginelog"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 )
 
 var (
 	chat_command_prefix = "$"
+	chat_script_prefix  = "%"
 )
 
 // Chat represents HUD chat window.
 type Chat struct {
-	hud       *HUD
-	bgSpr     *pixel.Sprite
-	bgDraw    *imdraw.IMDraw
-	drawArea  pixel.Rect
-	textbox   *mtk.Textbox
-	textedit  *mtk.Textedit
-	msgs      map[string]*enginelog.Message
-	activated bool
-	lastInput string
-	onCommand func(line string) (int, string, error)
+	hud          *HUD
+	bgSpr        *pixel.Sprite
+	bgDraw       *imdraw.IMDraw
+	drawArea     pixel.Rect
+	textbox      *mtk.Textbox
+	textedit     *mtk.Textedit
+	msgs         map[string]*enginelog.Message
+	activated    bool
+	lastInput    string
+	onCommand    func(line string) (int, string, error)
+	onScriptName func(name string, args ...string) error
 }
 
 // newChat creates new chat window for HUD.
@@ -90,7 +92,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Textedit.
 	editSize := pixel.V(c.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
-	editMove := pixel.V(0, -c.Size().Y/2 + mtk.ConvSize(30))
+	editMove := pixel.V(0, -c.Size().Y/2+mtk.ConvSize(30))
 	c.textedit.Draw(win, matrix.Moved(editMove))
 }
 
@@ -144,6 +146,12 @@ func (c *Chat) SetOnCommandFunc(f func(line string) (int, string, error)) {
 	c.onCommand = f
 }
 
+// SetOnScriptNameFunc sets specified function as
+// function triggered after script name input.
+func (c *Chat) SetOnScriptNameFunc(f func(name string, args ...string) error) {
+	c.onScriptName = f
+}
+
 // Echo displays specified text in chat log.
 func (c *Chat) Echo(text string) {
 	log.Inf.Printf("%s", text)
@@ -156,15 +164,26 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
-	if !strings.HasPrefix(input, chat_command_prefix) || c.onCommand == nil {
-		c.hud.ActivePlayer().SendChat(input)
+	if strings.HasPrefix(input, chat_command_prefix) && c.onCommand != nil {
+		cmdInput := strings.TrimPrefix(input, chat_command_prefix)
+		res, out, err := c.onCommand(cmdInput)
+		if err != nil {
+			log.Err.Printf("fail_to_execute_command:%v", err)
+		}
+		// Echo command result to log.
+		log.Cli.Printf("[%d]:%s", res, out)
 		return
 	}
-	cmdInput := strings.TrimPrefix(input, chat_command_prefix)
-	res, out, err := c.onCommand(cmdInput)
-	if err != nil {
-		log.Err.Printf("fail_to_execute_command:%v", err)
+	// Execute script file.
+	if strings.HasPrefix(input, chat_script_prefix) && c.onScriptName != nil {
+		input = strings.TrimPrefix(input, chat_script_prefix)
+		args := strings.Split(input, " ")
+		err := c.onScriptName(args[0], args...)
+		if err != nil {
+			log.Err.Printf("fail_to_execute_script:%v", err)
+		}
+		return
 	}
-	// Echo command result to log.
-	log.Cli.Printf("[%d]:%s", res, out)
+	// Echo chat.
+	c.hud.ActivePlayer().SendChat(input)
 }

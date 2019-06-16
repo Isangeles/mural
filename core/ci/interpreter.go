@@ -1,7 +1,7 @@
 /*
  * interpreter.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,16 @@
 package ci
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/isangeles/flame/cmd/burn"
+	"github.com/isangeles/flame/cmd/burn/ash"
+
+	"github.com/isangeles/mural/log"
 )
 
 const (
@@ -36,4 +45,54 @@ const (
 // On init.
 func init() {
 	burn.AddToolHandler(GUI_MAN, handleGUICommand)
+}
+
+// RunScriptsDir runs in background all Ash scripts
+// in directory with specified path.
+func RunScriptsDir(path string) error {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return fmt.Errorf("fail_to_read_dir:%v", err)
+	}
+	for _, finfo := range files {
+		if !strings.HasSuffix(finfo.Name(), ash.SCRIPT_FILE_EXT) {
+			continue
+		}
+		filepath := filepath.FromSlash(path + "/" + finfo.Name())
+		err := RunScript(filepath)
+		if err != nil {
+			log.Err.Printf("ci:script:%s:%v", err)
+		}
+	}
+	return nil
+}
+
+// RunScript runs in background Asg script
+// from specified path.
+func RunScript(path string, args ...string) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return fmt.Errorf("fail_to_open_file:%v", err)
+	}
+	text, err := ioutil.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("fail_to_read_file:%v", err)
+	}
+	script, err := ash.NewScript(fmt.Sprintf("%s", text), args...)
+	if err != nil {
+		return fmt.Errorf("fail_to_create_ash_script:%v", err)
+	}
+	go runScript(script)
+	return nil
+}
+
+// runScript executes specified script,
+// in case of error sends err message to
+// Mural log.
+func runScript(s *ash.Script) {
+	err := ash.Run(s)
+	if err != nil {
+		log.Err.Printf("ci:fail_to_run_script:%v", err)
+		return
+	}
 }

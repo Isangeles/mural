@@ -89,7 +89,7 @@ Description: specifies name of audio file(located in audio archive) for main men
 Description: specifies name of audio file(located in audio archive) for button click sound.
 
 ## Commands
-[Burn](https://github.com/Isangeles/flame/tree/master/cmd/burn) CI handles commands execution.
+[Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 
 Additionally to Burn tools, Mural implements guiman tool to manage game GUI.
 You can access CI by the dropdown console in the main menu or chat window in HUD,

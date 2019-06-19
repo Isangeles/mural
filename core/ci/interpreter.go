@@ -32,8 +32,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/flame/cmd/burn"
-	"github.com/isangeles/flame/cmd/burn/ash"
+	"github.com/isangeles/burn"
+	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/log"
 )

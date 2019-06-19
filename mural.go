@@ -36,12 +36,13 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/cmd/burn"
-	"github.com/isangeles/flame/cmd/burn/syntax"
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
+	
+	"github.com/isangeles/burn"
+	"github.com/isangeles/burn/syntax"
 
 	"github.com/isangeles/mtk"
 

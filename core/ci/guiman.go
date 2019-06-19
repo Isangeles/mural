@@ -31,7 +31,8 @@ import (
 	"github.com/faiface/pixel"
 
 	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/cmd/burn"
+	
+	"github.com/isangeles/burn"
 	
 	"github.com/isangeles/mtk"
 

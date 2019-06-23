@@ -94,11 +94,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
 	// Points box.
-	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE).Size()
+	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE)
 	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize, mtk.SIZE_MINI, mtk.SIZE_MEDIUM,
 		accent_color, main_color)
 	// Portrait switch.
-	ncm.faceSwitch = mtk.NewSwitch(mtk.SIZE_BIG, main_color)
+	faceSwitchParams := mtk.Params{
+		Size:      mtk.SIZE_BIG,
+		MainColor: main_color,
+	}
+	ncm.faceSwitch = mtk.NewSwitch(faceSwitchParams)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
 	faces, err := data.PlayablePortraits()
 	if err != nil {
@@ -108,23 +112,27 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		ncm.faceSwitch.SetPictureValues(faces)
 	}
 	// Attributes switches.
-	ncm.strSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	attrSwitchParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		MainColor: main_color,
+	}
+	ncm.strSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.strSwitch.SetLabel(lang.Text("gui", "newchar_str_switch_label"))
 	ncm.strSwitch.SetIntValues(0, 90)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.conSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.conSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.conSwitch.SetLabel(lang.Text("gui", "newchar_con_switch_label"))
 	ncm.conSwitch.SetIntValues(0, 90)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.dexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.dexSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.dexSwitch.SetLabel(lang.Text("gui", "newchar_dex_switch_label"))
 	ncm.dexSwitch.SetIntValues(0, 90)
 	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.intSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.intSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.intSwitch.SetLabel(lang.Text("gui", "newchar_int_switch_label"))
 	ncm.intSwitch.SetIntValues(0, 90)
 	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
-	ncm.wisSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.wisSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.wisSwitch.SetLabel(lang.Text("gui", "newchar_wis_switch_label"))
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
@@ -134,7 +142,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	femaleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_female"),
 		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
-	ncm.sexSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.sexSwitch.SetLabel(lang.Text("gui", "newchar_sex_switch_label"))
 	ncm.sexSwitch.SetValues(gens)
 	// Race switch.
@@ -146,7 +154,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		mtk.SwitchValue{raceNames["race_dwarf"], character.Dwarf},
 		mtk.SwitchValue{raceNames["race_gnome"], character.Gnome},
 	}
-	ncm.raceSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.raceSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.raceSwitch.SetLabel(lang.Text("gui", "newchar_race_switch_label"))
 	ncm.raceSwitch.SetValues(races)
 	// Alignment switch.
@@ -164,7 +172,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		mtk.SwitchValue{aliNames["ali_neu_evil"], character.Neutral_evil},
 		mtk.SwitchValue{aliNames["ali_cha_evil"], character.Chaotic_evil},
 	}
-	ncm.aliSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.aliSwitch.SetLabel(lang.Text("gui", "newchar_ali_switch_label"))
 	ncm.aliSwitch.SetValues(alis)
 	// Buttons.

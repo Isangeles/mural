@@ -25,7 +25,7 @@ package hud
 
 import (
 	"github.com/faiface/pixel"
-	
+
 	"github.com/isangeles/mtk"
 )
 
@@ -47,7 +47,7 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
-	infoSize := mtk.SIZE_MEDIUM.MessageWindowSize().Size()
+	infoSize := mtk.SIZE_MEDIUM.MessageWindowSize()
 	infoPos := win.Bounds().Center()
 	ls.info.SetSize(infoSize)
 	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))

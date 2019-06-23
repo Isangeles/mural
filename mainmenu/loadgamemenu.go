@@ -26,16 +26,16 @@ package mainmenu
 import (
 	"fmt"
 	"strings"
-	
+
 	"github.com/faiface/pixel"
-	
+
 	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/log"
 )
 
@@ -58,7 +58,7 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 	lgm.title = mtk.NewText(mtk.SIZE_BIG, 0)
 	lgm.title.SetText(lang.Text("gui", "loadgame_menu_title"))
 	// Saves list.
-	listSize := mtk.SIZE_BIG.ListSize().Size()
+	listSize := mtk.SIZE_BIG.ListSize()
 	lgm.savesList = mtk.NewList(listSize, mtk.SIZE_BIG, main_color,
 		sec_color, accent_color)
 	// Buttons.

@@ -68,10 +68,14 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.backButton.SetLabel(lang.Text("gui", "back_b_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
+	switchParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		MainColor: main_color,
+	}
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
 	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
 	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
-	s.fullscrSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.fullscrSwitch = mtk.NewSwitch(switchParams)
 	s.fullscrSwitch.SetLabel(lang.Text("gui", "settings_fullscr_switch_label"))
 	s.fullscrSwitch.SetValues(fullscrValues)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
@@ -80,11 +84,11 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		resSwitchValues = append(resSwitchValues,
 			mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res})
 	}
-	s.resSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.resSwitch = mtk.NewSwitch(switchParams)
 	s.resSwitch.SetLabel(lang.Text("gui", "resolution_s_label"))
 	s.resSwitch.SetValues(resSwitchValues)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
-	s.langSwitch = mtk.NewSwitch(mtk.SIZE_MEDIUM, main_color)
+	s.langSwitch = mtk.NewSwitch(switchParams)
 	s.langSwitch.SetLabel(lang.Text("gui", "lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)

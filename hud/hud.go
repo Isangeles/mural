@@ -437,7 +437,8 @@ func (hud *HUD) ChangeArea(area *scenario.Area) error {
 	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
 	defer hud.CloseLoadingScreen()
 	chapter := hud.game.Module().Chapter()
-	mapsPath := filepath.FromSlash(chapter.Conf().AreasPath() + "/maps")
+	mapsPath := filepath.FromSlash(chapter.Conf().ModulePath +
+		"/gui/chapters/" + chapter.Conf().ID + "/areas/maps")
 	tmxMap, err := data.Map(mapsPath, area.ID())
 	if err != nil {
 		hud.loaderr = fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)

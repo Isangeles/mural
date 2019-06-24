@@ -25,6 +25,7 @@ package imp
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/isangeles/flame/core/module"
 
@@ -34,26 +35,31 @@ import (
 // LoadModuleResources loads all data(like items, skill, etc.) from module
 // resources files.
 func LoadModuleResources(mod *module.Module) error {
-	// Objectsd graphics.
-	obGraphics, err := ImportObjectsGraphicsDir(mod.Conf().ObjectsPath())
+	// Paths.
+	obPath := filepath.FromSlash(mod.Conf().Path + "/gui/objects")
+	itPath := filepath.FromSlash(mod.Conf().Path + "/gui/items")
+	effPath := filepath.FromSlash(mod.Conf().Path + "/gui/effects")
+	skillPath := filepath.FromSlash(mod.Conf().Path + "/gui/skills")
+	// Objects graphics.
+	obGraphics, err := ImportObjectsGraphicsDir(obPath)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_objects_graphics:%v", err)
 	}
 	res.SetObjectsData(obGraphics)
 	// Items graphics.
-	itGraphics, err := ImportItemsGraphicsDir(mod.Conf().ItemsPath())
+	itGraphics, err := ImportItemsGraphicsDir(itPath)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
 	}
 	res.SetItemsData(itGraphics)
 	// Effects graphic.
-	effGraphics, err := ImportEffectsGraphicsDir(mod.Conf().EffectsPath())
+	effGraphics, err := ImportEffectsGraphicsDir(effPath)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_effects_graphics:%v", err)
 	}
 	res.SetEffectsData(effGraphics)
 	// Skills graphic.
-	skillGraphics, err := ImportSkillsGraphicsDir(mod.Conf().SkillsPath())
+	skillGraphics, err := ImportSkillsGraphicsDir(skillPath)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_skills_graphics:%v", err)
 	}
@@ -64,8 +70,11 @@ func LoadModuleResources(mod *module.Module) error {
 // LoadChapterResources loads all data from chapter
 // resources files.
 func LoadChapterResources(chapter *module.Chapter) error {
+	// Paths.
+	avsPath := filepath.FromSlash(chapter.Conf().ModulePath + "/gui/chapters/" +
+		chapter.Conf().ID + "/npc")
 	// Avatars.
-	avs, err := ImportAvatarsDataDir(chapter.Conf().NPCPath())
+	avs, err := ImportAvatarsDataDir(avsPath)
 	if err != nil {
 		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
 	}

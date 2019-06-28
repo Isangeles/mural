@@ -7,13 +7,26 @@ target_near_targets:Near targets
 target_select_target:Select target
 quests_list:Quests
 quests_q_completed:Completed
-use_skill_skills:Skills
-use_skill_select:Select skill
+useskill_skills:Skills
+useskill_select:Select skill
+crafting_recipes:Recipes
+crafting_select_recipe:Select recipe
+crafting_recipe:Recipe
+crafting_category:Category
+crafting_result:Result
+crafting_amount:Amount
+crafting_reqs:Requirements
+crafting_make:Make
+reqs_not_meet:Requirements not meet
 talk_no_answer_id_err:Enter valid answer ID
+dialog_back:Back
+dialog_cancel:Cancel
 talk_no_phase_err:No suitable dialog phase found
-use_skill_no_skill_id_err:Enter valid skill ID
+crafting_no_recipes_err:No recipes known
+crafting_no_recipe_select_err:No recipe selected
 target_no_targets_err:No targets nearby
 invalid_input_err:Invalid input value
+nan_err:NaN
 no_game_err:No game loaded
 no_pc_err:No active player
 no_tar_err:No target

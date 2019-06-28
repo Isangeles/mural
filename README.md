@@ -115,12 +115,14 @@ guiman -o load -t gui-state -a [save name]
 ```
 Description: load HUD state from file in current /savegames directory(/savegames/[module]).
 
+## Contributing
+If you want to help in project development, pull sources do something interesting and open pull request.
+If you looking for things to do, then check TODO file.
 
 ## Contact
 * Isangeles <<dev@isangeles.pl>>
 
 ## License
-
 Copyright 2018-2019 Dariusz Sikora <<dev@isangeles.pl>>
  
 This program is free software; you can redistribute it and/or modify

@@ -10,6 +10,7 @@ MAJOR:
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)
+* Confirmation dialog message on attempt to remove item from inventory(dragging icon outside inv menu)
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

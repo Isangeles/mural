@@ -41,6 +41,7 @@ import (
 
 	"github.com/isangeles/flame"
 
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -312,6 +313,19 @@ func Music(fileName string) (*beep.Buffer, error) {
 func AudioEffect(fileName string) (*beep.Buffer, error) {
 	path := "effect/" + fileName
 	return loadAudioFromArch(mod_a_arch_path, path)
+}
+
+// ErrorItemGraphic returns error graphic for item.
+func ErrorItemGraphic() (*res.ItemGraphicData, error) {
+	icon, err := Icon("unknown.png")
+	if err != nil {
+		return nil, fmt.Errorf("fail_to_retrieve_error_icon:%v", err)
+	}
+	igd := res.ItemGraphicData{
+		IconPic:  icon,
+		MaxStack: 100,
+	}
+	return &igd, nil
 }
 
 // Load loads grpahic directories.

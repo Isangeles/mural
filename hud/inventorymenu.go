@@ -29,8 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-
-//	flameconf "github.com/isangeles/flame/config"
+	
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
 
@@ -207,12 +206,19 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 	im.slots.Clear()
 	for _, it := range items {
 		// Retrieve item graphic.
-		data := res.Item(it.ID())
-		if data == nil {
-			log.Err.Printf("hud_inv:item_graphic_not_found:%s\n", it.ID())
-			continue
+		igd := res.Item(it.ID())
+		if igd == nil { // if icon was found
+			log.Err.Printf("hud_inv:item_graphic_not_found:%s", it.ID())
+			// Get error icon.
+			errData, err := data.ErrorItemGraphic()
+			if err != nil {
+				log.Err.Printf("hud_inv:fail_to_retrieve_error_graphic:%v", err)
+				continue
+			}
+			errData.ItemID = it.ID()
+			igd = errData
 		}
-		ig := object.NewItemGraphic(it, data)
+		ig := object.NewItemGraphic(it, igd)
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
 		layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())

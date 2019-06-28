@@ -4,4 +4,8 @@
 	value="5"
 	level="1"
 	loot="true"/>
+  <item id="imWater1"
+	value="1"
+	level="1"
+	loot="true"/>
 </base>

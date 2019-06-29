@@ -54,6 +54,7 @@ enter_game_info:Entering game...
 hud_menu_title:Menu
 hud_save_menu_title:Save game
 hud_inv_title:Inventory
+hud_inv_remove_item_warn:Do you want to remove this item from inventory?
 hud_loot_title:Loot
 hud_dialog_title:Dialog
 hud_skills_title:Skills

@@ -32,6 +32,7 @@ import (
 	
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
+	flameconf "github.com/isangeles/flame/config"
 
 	"github.com/isangeles/mtk"
 
@@ -144,14 +145,8 @@ func (im *InventoryMenu) Update(win *mtk.Window) {
 	// Ket events.
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		dragSlot := im.draggedSlot()
-		if dragSlot != nil {
-			/* TODO: fix warning message
-			warn := lang.TextDir(flameconf.LangPath(), "hud_inv_remove_item_warn")
-			msg := mtk.NewDialogWindow(mtk.SIZE_MEDIUM, warn)
-			msg.SetOnAcceptFunc(im.onRemoveItemAccepted)
-			im.hud.ShowMessage(msg)
-                        */
-			im.removeSlotItem(dragSlot)
+		if dragSlot != nil && !im.DrawArea().Contains(win.MousePosition()) {
+			im.confirmRemove(dragSlot)
 		}
 	}
 	// Elements update.
@@ -169,7 +164,6 @@ func (im *InventoryMenu) Show(show bool) {
 	im.opened = show
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
-		//im.insert(im.hud.ActivePlayer().Items()...)
 		im.insertItems(im.hud.ActivePlayer().Inventory().Items()...)
 		im.updateLayout()
 	} else {
@@ -312,6 +306,19 @@ func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
 	s.Clear()
 }
 
+// confirmRemove shows warning message and removes content
+// from inventory slot after warning dialog accepted.
+func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
+	s.Drag(false)
+	msg := lang.TextDir(flameconf.LangPath(), "hud_inv_remove_item_warn")
+	dlg := mtk.NewDialogWindow(mtk.SIZE_MEDIUM, msg)
+	rmFunc := func(mw *mtk.MessageWindow) {
+		im.removeSlotItem(s)
+	}
+	dlg.SetOnAcceptFunc(rmFunc)
+	im.hud.ShowMessage(dlg)
+}
+
 // Triggered after close button clicked.
 func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 	im.Show(false)
@@ -414,16 +421,6 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 		return
 	}
 	s.Drag(true)
-}
-
-// Triggered after accepting remove item message.
-func (im *InventoryMenu) onRemoveItemAccepted(mw *mtk.MessageWindow) {
-	dragSlot := im.draggedSlot()
-	if dragSlot == nil {
-		return
-	}
-	im.removeSlotItem(dragSlot)
-	mw.Show(false)
 }
 
 // insertSlotItem inserts specified item to specified slot.

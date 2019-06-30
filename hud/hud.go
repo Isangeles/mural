@@ -55,12 +55,13 @@ var (
 	sec_color    = colornames.Blue
 	accent_color = colornames.Red
 	// Keys.
-	pause_key   = pixelgl.KeySpace
-	menu_key    = pixelgl.KeyEscape
-	chat_key    = pixelgl.KeyGraveAccent
-	inv_key     = pixelgl.KeyB
-	skills_key  = pixelgl.KeyK
-	journal_key = pixelgl.KeyL
+	pause_key    = pixelgl.KeySpace
+	menu_key     = pixelgl.KeyEscape
+	chat_key     = pixelgl.KeyGraveAccent
+	inv_key      = pixelgl.KeyB
+	skills_key   = pixelgl.KeyK
+	journal_key  = pixelgl.KeyL
+	crafting_key = pixelgl.KeyV
 )
 
 // Struct for 'head-up display'.
@@ -79,6 +80,7 @@ type HUD struct {
 	loot       *LootWindow
 	dialog     *DialogWindow
 	journal    *JournalWindow
+	crafting   *CraftingMenu
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -112,6 +114,7 @@ func New() *HUD {
 	hud.loot = newLootWindow(hud)
 	hud.dialog = newDialogWindow(hud)
 	hud.journal = newJournalWindow(hud)
+	hud.crafting = newCraftingMenu(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -142,6 +145,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	lootPos := win.Bounds().Center()
 	dialogPos := win.Bounds().Center()
 	journalPos := win.Bounds().Center()
+	craftingPos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
@@ -170,6 +174,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.journal.Opened() {
 		hud.journal.Draw(win, mtk.Matrix().Moved(journalPos))
+	}
+	if hud.crafting.Opened() {
+		hud.crafting.Draw(win, mtk.Matrix().Moved(craftingPos))
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -243,6 +250,14 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.journal.Show(false)
 			}
 		}
+		if win.JustPressed(crafting_key) {
+			// Show crafting menu.
+			if !hud.crafting.Opened() {
+				hud.crafting.Show(true)
+			} else {
+				hud.crafting.Show(false)
+			}
+		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.onMouseLeftPressed(win.MousePosition())
@@ -291,6 +306,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.journal.Opened() {
 		hud.journal.Update(win)
+	}
+	if hud.crafting.Opened() {
+		hud.crafting.Update(win)
 	}
 	hud.msgs.Update(win)
 }
@@ -542,7 +560,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		(hud.skills.Opened() && hud.skills.DrawArea().Contains(pos)) ||
 		(hud.loot.Opened() && hud.loot.DrawArea().Contains(pos)) ||
 		(hud.dialog.Opened() && hud.dialog.DrawArea().Contains(pos)) ||
-		(hud.journal.Opened() && hud.journal.DrawArea().Contains(pos)) {
+		(hud.journal.Opened() && hud.journal.DrawArea().Contains(pos)) ||
+		(hud.crafting.Opened() && hud.crafting.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

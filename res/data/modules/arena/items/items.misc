@@ -8,4 +8,8 @@
 	value="1"
 	level="1"
 	loot="true"/>
+  <item id="imAloeTea1"
+	value="10"
+	level="1"
+	loot="true"/>
 </base>

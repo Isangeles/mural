@@ -1,5 +1,4 @@
 ## Introduction
-
   Mural is a 2D graphical frontend for Flame RPG engine written in Go with Pixel library.
 
   GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with Pixel library.
@@ -8,14 +7,13 @@
 
   ### Flame games with Mural support:
   
-### Arena 
-  
+### Arena
+
   Description: simple demo game that presents [Flame engine](https://github.com/isangeles/flame) and Mural GUI features.
   
   Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
   
 ## Build
-
   Get [Pixel](https://github.com/faiface/pixel), [Beep](https://github.com/faiface/beep), [go-tmx](https://github.com/salviati/go-tmx/tree/master/tmx) and [Flame](https://github.com/Isangeles/flame).
 
   Get sources from git:
@@ -116,6 +114,8 @@ guiman -o load -t gui-state -a [save name]
 Description: load HUD state from file in current /savegames directory(/savegames/[module]).
 
 ## Contributing
+You are welcome to contribute to project development.
+
 If you looking for things to do, then check TODO file.
 
 When you finish, open pull request to merge your changes with main branch.

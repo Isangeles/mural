@@ -51,7 +51,6 @@ type JournalWindow struct {
 	focused     bool
 	questInfo   *mtk.Textbox
 	questsList  *mtk.List
-	selectQuest *quest.Quest
 }
 
 // newJournalWindow creates new journal window
@@ -158,7 +157,7 @@ func (jw *JournalWindow) Show(show bool) {
 	}
 }
 
-// Opened check if window should be open.
+// Opened checks if window is open.
 func (jw *JournalWindow) Opened() bool {
 	return jw.opened
 }
@@ -198,6 +197,7 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 	quest, ok := cs.Value().(*quest.Quest)
 	if !ok {
 		log.Err.Printf("hud_journal:fail to retrive quest from list")
+		return
 	}
 	// Show quest info.
 	mod := jw.hud.game.Module()

@@ -29,9 +29,9 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame/core/enginelog"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/log"
 )
 
@@ -51,8 +51,12 @@ func newConsole() *Console {
 	c := new(Console)
 	c.msgs = make(map[string]*enginelog.Message)
 	// Text box.
-	c.textbox = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MEDIUM, mtk.SIZE_MEDIUM,
-		accent_color, colornames.Grey)
+	textboxParams := mtk.Params{
+		FontSize:    mtk.SIZE_MEDIUM,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	c.textbox = mtk.NewTextbox(textboxParams)
 	// Text input.
 	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)

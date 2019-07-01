@@ -26,8 +26,6 @@ package hud
 import (
 	"strings"
 
-	"golang.org/x/image/colornames"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -73,10 +71,15 @@ func newChat(hud *HUD) *Chat {
 	// Textbox.
 	boxSize := c.Size()
 	boxSize.Y -= mtk.ConvSize(30)
-	c.textbox = mtk.NewTextbox(boxSize, mtk.SIZE_MINI, mtk.SIZE_SMALL,
-		accent_color, main_color)
+	textboxParams := mtk.Params{
+		SizeRaw:     boxSize,
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	c.textbox = mtk.NewTextbox(textboxParams)
 	// Textedit.
-	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }

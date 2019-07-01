@@ -95,8 +95,13 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.nameEdit = mtk.NewTextedit(mtk.SIZE_MEDIUM, main_color)
 	// Points box.
 	pointsBoxSize := mtk.SIZE_MEDIUM.ButtonSize(mtk.SHAPE_RECTANGLE)
-	ncm.pointsBox = mtk.NewTextbox(pointsBoxSize, mtk.SIZE_MINI, mtk.SIZE_MEDIUM,
-		accent_color, main_color)
+	pointsBoxParams := mtk.Params{
+		SizeRaw:     pointsBoxSize,
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	ncm.pointsBox = mtk.NewTextbox(pointsBoxParams)
 	// Portrait switch.
 	faceSwitchParams := mtk.Params{
 		Size:      mtk.SIZE_BIG,

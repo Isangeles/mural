@@ -36,7 +36,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/skill"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object/internal"
@@ -90,8 +90,12 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	// Info windows.
 	av.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
 	av.info.SetText(av.infoText())
-	av.chat = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI, mtk.SIZE_SMALL,
-		colornames.Red, colornames.Grey)
+	chatParams := mtk.Params{
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   colornames.Grey,
+		AccentColor: colornames.Red,
+	}
+	av.chat = mtk.NewTextbox(chatParams)
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)

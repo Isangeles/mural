@@ -25,7 +25,7 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -86,10 +86,15 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	}
 	jw.closeButton.SetOnClickFunc(jw.onCloseButtonClicked)
 	// Quest info.
-	qinfoSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
+	questInfoSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
 		jw.Size().Y/2)
-	jw.questInfo = mtk.NewTextbox(qinfoSize, mtk.SIZE_MINI,
-		mtk.SIZE_SMALL, accent_color, main_color)
+	questInfoParams := mtk.Params{
+		SizeRaw:     questInfoSize,
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	jw.questInfo = mtk.NewTextbox(questInfoParams)
 	// Quests list.
 	questsSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
 		jw.Size().Y/2-mtk.ConvSize(100))

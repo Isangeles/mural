@@ -25,7 +25,7 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -33,9 +33,9 @@ import (
 	"github.com/isangeles/flame/core/module/object/dialog"
 	"github.com/isangeles/flame/core/module/object/effect"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 )
@@ -85,8 +85,13 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	// Chat.
 	chatSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2)
-	dw.chatBox = mtk.NewTextbox(chatSize, mtk.SIZE_MINI, mtk.SIZE_SMALL,
-		accent_color, main_color)
+	chatParams := mtk.Params{
+		SizeRaw:     chatSize,
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	dw.chatBox = mtk.NewTextbox(chatParams)
 	// Answers list.
 	answersSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2-mtk.ConvSize(100))
@@ -229,7 +234,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		answerText := lang.AllText(chapter.Conf().DialogsLangPath(), a.ID())[0]
 		answerText = fmt.Sprintf("%d)%s", i, answerText)
 		dw.answersList.AddItem(answerText, a)
-	}	
+	}
 }
 
 // Triggered after clicking close button.

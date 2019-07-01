@@ -1,7 +1,7 @@
 /*
  * loadingscreen.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 package hud
 
 import (
-	"github.com/faiface/pixel"
-
 	"github.com/isangeles/mtk"
 )
 
@@ -40,8 +38,12 @@ type LoadingScreen struct {
 func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.hud = hud
-	ls.info = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI,
-		mtk.SIZE_MEDIUM, accent_color, main_color)
+	infoParams := mtk.Params{
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	ls.info = mtk.NewTextbox(infoParams)
 	return ls
 }
 

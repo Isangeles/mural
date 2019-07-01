@@ -24,8 +24,6 @@
 package mainmenu
 
 import (
-	"github.com/faiface/pixel"
-
 	"github.com/isangeles/mtk"
 )
 
@@ -40,8 +38,12 @@ type LoadingScreen struct {
 func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.mainmenu = mainmenu
-	ls.info = mtk.NewTextbox(pixel.V(0, 0), mtk.SIZE_MINI,
-		mtk.SIZE_MEDIUM, accent_color, main_color)
+	infoParams := mtk.Params{
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	ls.info = mtk.NewTextbox(infoParams)
 	return ls
 }
 

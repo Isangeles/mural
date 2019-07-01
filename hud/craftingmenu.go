@@ -25,16 +25,16 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/craft"
-	
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 )
@@ -108,8 +108,13 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	// Recipe info.
 	infoSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(10))
-	cm.recipeInfo = mtk.NewTextbox(infoSize, mtk.SIZE_MINI,
-		mtk.SIZE_SMALL, accent_color, main_color)
+	recipeInfoParams := mtk.Params{
+		SizeRaw:     infoSize,
+		FontSize:    mtk.SIZE_MINI,
+		MainColor:   main_color,
+		AccentColor: accent_color,
+	}
+	cm.recipeInfo = mtk.NewTextbox(recipeInfoParams)
 	// Recipes list.
 	recipesSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(100))

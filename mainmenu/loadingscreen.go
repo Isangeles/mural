@@ -39,7 +39,7 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.mainmenu = mainmenu
 	infoParams := mtk.Params{
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SIZE_MEDIUM,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}

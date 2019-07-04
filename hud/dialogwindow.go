@@ -87,7 +87,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		dw.Size().Y/2)
 	chatParams := mtk.Params{
 		SizeRaw:     chatSize,
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SIZE_MEDIUM,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}

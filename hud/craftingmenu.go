@@ -110,7 +110,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		cm.Size().Y/2-mtk.ConvSize(10))
 	recipeInfoParams := mtk.Params{
 		SizeRaw:     infoSize,
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SIZE_MEDIUM,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -182,6 +182,7 @@ func (cm *CraftingMenu) Show(show bool) {
 		cm.insertRecipes(pc.Recipes()...)
 	} else {
 		cm.recipeInfo.Clear()
+		cm.makeButton.Active(false)
 	}
 }
 
@@ -227,6 +228,7 @@ func (cm *CraftingMenu) onRecipeSelected(cs *mtk.CheckSlot) {
 		log.Err.Printf("hud_crafting:fail to retrieve recipe from list")
 		return
 	}
+	cm.makeButton.Active(true)
 	// Show recipe info.
 	mod := cm.hud.game.Module()
 	recipesLang := mod.Conf().RecipesLangPath()

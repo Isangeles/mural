@@ -70,10 +70,10 @@ func newChat(hud *HUD) *Chat {
 	}
 	// Textbox.
 	boxSize := c.Size()
-	boxSize.Y -= mtk.ConvSize(30)
+	boxSize.Y -= mtk.ConvSize(70)
 	textboxParams := mtk.Params{
 		SizeRaw:     boxSize,
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SIZE_MEDIUM,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -95,7 +95,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Textedit.
 	editSize := pixel.V(c.Size().X, mtk.ConvSize(30))
 	c.textedit.SetSize(editSize)
-	editMove := pixel.V(0, -c.Size().Y/2+mtk.ConvSize(30))
+	editMove := pixel.V(0, -c.Size().Y/2+mtk.ConvSize(10))
 	c.textedit.Draw(win, matrix.Moved(editMove))
 }
 

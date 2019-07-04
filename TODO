@@ -1,7 +1,7 @@
 MAJOR:
 * HUD: character window
 * HUD: map window
-* HUD: crafting window
+* HUD: trade window
 * Graphical effects
 * Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
@@ -22,4 +22,5 @@ DONE:
 * HUD: dialog window
 * HUD: chat
 * HUD: journal window
+* HUD: crafting window
 * Objects

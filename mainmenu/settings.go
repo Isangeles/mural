@@ -29,6 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mtk"
@@ -92,7 +93,6 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.langSwitch.SetLabel(lang.Text("gui", "lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
-
 	return s
 }
 
@@ -137,8 +137,7 @@ func (s *Settings) Apply() {
 	// Fullscreen.
 	fscr, ok := s.fullscrSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf(
-			"settings_menu:fail_to_retrive_fullscreen_switch_value")
+		log.Err.Printf("settings_menu:fail_to_retrive_fullscreen_switch_value")
 		return
 	}
 	// Resolution.
@@ -188,8 +187,17 @@ func (s *Settings) close() {
 // main menu messages list.
 func (s *Settings) closeWithDialog() {
 	if s.Changed() {
-		dlg := mtk.NewDialogWindow(mtk.SIZE_SMALL,
-			lang.Text("gui", "settings_save_msg"))
+		langPath := flameconf.LangPath()
+		dlgParams := mtk.Params{
+			Size:      mtk.SIZE_BIG,
+			FontSize:  mtk.SIZE_MEDIUM,
+			MainColor: main_color,
+			SecColor:  accent_color,
+			Info:      lang.Text("gui", "settings_save_msg"),
+		}
+		dlg := mtk.NewDialogWindow(dlgParams)
+		dlg.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
+		dlg.SetCancelLabel(lang.TextDir(langPath, "cancel_b_label"))
 		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
 		s.mainmenu.ShowMessageWindow(dlg)

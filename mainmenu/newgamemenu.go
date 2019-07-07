@@ -69,7 +69,7 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 	ngm.charSwitch.SetLabel(lang.Text("gui", "newgame_char_switch_label"))
 	ngm.charSwitch.SetOnChangeFunc(ngm.onCharSwitchChanged)
 	charInfoParams := mtk.Params{
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SIZE_BIG,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}

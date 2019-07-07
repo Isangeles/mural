@@ -110,7 +110,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		cm.Size().Y/2-mtk.ConvSize(10))
 	recipeInfoParams := mtk.Params{
 		SizeRaw:     infoSize,
-		FontSize:    mtk.SIZE_MEDIUM,
+		FontSize:    mtk.SIZE_SMALL,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}

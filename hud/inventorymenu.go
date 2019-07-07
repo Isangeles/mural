@@ -29,10 +29,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
-	
+
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
-	flameconf "github.com/isangeles/flame/config"
 
 	"github.com/isangeles/mtk"
 
@@ -310,8 +310,18 @@ func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
 // from inventory slot after warning dialog accepted.
 func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	s.Drag(false)
-	msg := lang.TextDir(flameconf.LangPath(), "hud_inv_remove_item_warn")
-	dlg := mtk.NewDialogWindow(mtk.SIZE_MEDIUM, msg)
+	langPath := flameconf.LangPath()
+	msg := lang.TextDir(langPath, "hud_inv_remove_item_warn")
+	dlgParams := mtk.Params{
+		Size:      mtk.SIZE_MEDIUM,
+		FontSize:  mtk.SIZE_MEDIUM,
+		MainColor: main_color,
+		SecColor:  accent_color,
+		Info:      msg,
+	}
+	dlg := mtk.NewDialogWindow(dlgParams)
+	dlg.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
+	dlg.SetCancelLabel(lang.TextDir(langPath, "cancel_b_label"))
 	rmFunc := func(mw *mtk.MessageWindow) {
 		im.removeSlotItem(s)
 	}

@@ -32,9 +32,11 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame"
+	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	
+	"github.com/isangeles/flame/core/data/text/lang"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/imp"
@@ -52,20 +54,20 @@ var (
 // all menu screens(settings menu, new game menu, etc.).
 // Wraps all main menu screens.
 type MainMenu struct {
-	menu           *Menu
-	newgamemenu    *NewGameMenu
-	newcharmenu    *NewCharacterMenu
-	loadgamemenu   *LoadGameMenu
-	settings       *Settings
-	console        *Console
-	loadscreen     *LoadingScreen
-	userFocus      *mtk.Focus
-	msgs           *mtk.MessagesQueue
-	playableChars  []*object.Avatar
-	onGameCreated  func(g *flamecore.Game)
-	onSaveLoaded   func(g *flamecore.Game, savename string)
-	loading        bool
-	exiting        bool
+	menu          *Menu
+	newgamemenu   *NewGameMenu
+	newcharmenu   *NewCharacterMenu
+	loadgamemenu  *LoadGameMenu
+	settings      *Settings
+	console       *Console
+	loadscreen    *LoadingScreen
+	userFocus     *mtk.Focus
+	msgs          *mtk.MessagesQueue
+	playableChars []*object.Avatar
+	onGameCreated func(g *flamecore.Game)
+	onSaveLoaded  func(g *flamecore.Game, savename string)
+	loading       bool
+	exiting       bool
 }
 
 // New creates new main menu
@@ -228,7 +230,16 @@ func (mm *MainMenu) ShowMessageWindow(m *mtk.MessageWindow) {
 // ShowMessage creates new message window with specified message
 // and adds it to messages queue.
 func (mm *MainMenu) ShowMessage(msg string) {
-	mw := mtk.NewMessageWindow(mtk.SIZE_BIG, msg)
+	langPath := flameconf.LangPath()
+	params := mtk.Params{
+		Size:      mtk.SIZE_BIG,
+		FontSize:  mtk.SIZE_MEDIUM,
+		MainColor: main_color,
+		SecColor:  accent_color,
+		Info:      msg,
+	}
+	mw := mtk.NewMessageWindow(params)
+	mw.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
 	mw.Show(true)
 	mm.msgs.Append(mw)
 }

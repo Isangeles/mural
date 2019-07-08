@@ -1,7 +1,7 @@
 /*
  * loadingscreen.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.mainmenu = mainmenu
 	infoParams := mtk.Params{
-		FontSize:    mtk.SIZE_MEDIUM,
+		FontSize:    mtk.SizeMedium,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -49,7 +49,7 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
-	infoSize := mtk.SIZE_MEDIUM.MessageWindowSize()
+	infoSize := mtk.SizeMedium.MessageWindowSize()
 	infoPos := win.Bounds().Center()
 	ls.info.SetSize(infoSize)
 	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))

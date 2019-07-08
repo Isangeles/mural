@@ -62,18 +62,18 @@ func newMenu(hud *HUD) *Menu {
 		log.Err.Printf("hud_menu:bg_texture_not_found:%v", err)
 	}
 	// Title.
-	m.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	m.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
 	// Buttons.
 	closeButtonParams := mtk.Params{
-		Size:      mtk.SIZE_MEDIUM,
-		Shape:     mtk.SHAPE_SQUARE,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	menuButtonParams := mtk.Params{
-		Size:      mtk.SIZE_MINI,
-		FontSize:  mtk.SIZE_MINI,
-		Shape:     mtk.SHAPE_RECTANGLE,
+		Size:      mtk.SizeMini,
+		FontSize:  mtk.SizeMini,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accent_color,
 	}
 	greenButtonBG, err := data.PictureUI("button_green.png")

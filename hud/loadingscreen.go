@@ -39,7 +39,7 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.hud = hud
 	infoParams := mtk.Params{
-		FontSize:    mtk.SIZE_MINI,
+		FontSize:    mtk.SizeMini,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -49,7 +49,7 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
-	infoSize := mtk.SIZE_MEDIUM.MessageWindowSize()
+	infoSize := mtk.SizeMedium.MessageWindowSize()
 	infoPos := win.Bounds().Center()
 	ls.info.SetSize(infoSize)
 	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))

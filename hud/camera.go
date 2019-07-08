@@ -31,7 +31,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/object"
@@ -65,8 +65,8 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.size = size
 	c.position = pixel.V(0, 0)
 	c.fow = imdraw.New(nil)
-	c.cameraInfo = mtk.NewText(mtk.SIZE_MEDIUM, 0)
-	c.cursorInfo = mtk.NewText(mtk.SIZE_MEDIUM, 0)
+	c.cameraInfo = mtk.NewText(mtk.SizeMedium, 0)
+	c.cursorInfo = mtk.NewText(mtk.SizeMedium, 0)
 	return c
 }
 
@@ -144,7 +144,7 @@ func (c *Camera) Update(win *mtk.Window) {
 			c.position.X -= mTileSize.X
 		}
 	}
-	// Mouse events.	
+	// Mouse events.
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		c.onMouseLeftPressed(win.MousePosition())
 	}

@@ -55,17 +55,17 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 	lgm := new(LoadGameMenu)
 	lgm.mainmenu = mainmenu
 	// Title.
-	lgm.title = mtk.NewText(mtk.SIZE_BIG, 0)
+	lgm.title = mtk.NewText(mtk.SizeBig, 0)
 	lgm.title.SetText(lang.Text("gui", "loadgame_menu_title"))
 	// Saves list.
-	listSize := mtk.SIZE_BIG.ListSize()
-	lgm.savesList = mtk.NewList(listSize, mtk.SIZE_BIG, main_color,
+	listSize := mtk.SizeBig.ListSize()
+	lgm.savesList = mtk.NewList(listSize, mtk.SizeBig, main_color,
 		sec_color, accent_color)
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		FontSize:  mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_RECTANGLE,
+		Size: mtk.SizeMedium,
+		FontSize:  mtk.SizeMedium,
+		Shape: mtk.ShapeRectangle,
 		MainColor: accent_color,
 	}
 	lgm.backButton = mtk.NewButton(buttonParams)

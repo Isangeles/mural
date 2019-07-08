@@ -52,13 +52,13 @@ func newConsole() *Console {
 	c.msgs = make(map[string]*enginelog.Message)
 	// Text box.
 	textboxParams := mtk.Params{
-		FontSize:    mtk.SIZE_MEDIUM,
+		FontSize:    mtk.SizeMedium,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Text input.
-	c.textedit = mtk.NewTextedit(mtk.SIZE_MEDIUM, colornames.Grey)
+	c.textedit = mtk.NewTextedit(mtk.SizeMedium, colornames.Grey)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }

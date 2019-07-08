@@ -56,13 +56,13 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
-	s.title = mtk.NewText(mtk.SIZE_BIG, 900)
+	s.title = mtk.NewText(mtk.SizeBig, 900)
 	s.title.SetText(lang.Text("gui", "settings_menu_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size:      mtk.SIZE_MEDIUM,
-		FontSize:  mtk.SIZE_MEDIUM,
-		Shape:     mtk.SHAPE_RECTANGLE,
+		Size:      mtk.SizeMedium,
+		FontSize:  mtk.SizeMedium,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accent_color,
 	}
 	s.backButton = mtk.NewButton(buttonParams)
@@ -70,7 +70,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
 	switchParams := mtk.Params{
-		Size:      mtk.SIZE_MEDIUM,
+		Size:      mtk.SizeMedium,
 		MainColor: main_color,
 	}
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
@@ -189,8 +189,8 @@ func (s *Settings) closeWithDialog() {
 	if s.Changed() {
 		langPath := flameconf.LangPath()
 		dlgParams := mtk.Params{
-			Size:      mtk.SIZE_BIG,
-			FontSize:  mtk.SIZE_MEDIUM,
+			Size:      mtk.SizeBig,
+			FontSize:  mtk.SizeMedium,
 			MainColor: main_color,
 			SecColor:  accent_color,
 			Info:      lang.Text("gui", "settings_save_msg"),

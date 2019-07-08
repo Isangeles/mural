@@ -31,7 +31,7 @@ import (
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/skill"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -54,9 +54,9 @@ type SkillMenu struct {
 }
 
 var (
-	skills_slots      = 50
-	skills_slot_size  = mtk.SIZE_BIG
-	skills_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	skillsSlots     = 50
+	skillsSlotSize  = mtk.SizeBig
+	skillsSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // newSkillsMenu creates new skills menu for HUD.
@@ -70,12 +70,12 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	sm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	sm.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	sm.titleText.SetText(lang.Text("gui", "hud_skills_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	sm.closeButton = mtk.NewButton(buttonParams)
@@ -89,7 +89,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	// Slots.
 	sm.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 350)),
-		inv_slot_color, inv_slot_size)
+		skillsSlotColor, skillsSlotSize)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err != nil {
 		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
@@ -107,7 +107,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		sm.slots.SetDownButtonBackground(downBG)
 	}
 	// Create empty slots.
-	for i := 0; i < skills_slots; i++ {
+	for i := 0; i < skillsSlots; i++ {
 		s := sm.createSlot()
 		sm.slots.Add(s)
 	}
@@ -199,8 +199,8 @@ func (sm *SkillMenu) insert(skills ...*object.SkillGraphic) {
 
 // createSlot creates empty slot for skills slot list.
 func (sm *SkillMenu) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(skills_slot_size, mtk.SIZE_MINI)
-	s.SetColor(skills_slot_color)
+	s := mtk.NewSlot(skillsSlotSize, mtk.SizeMini)
+	s.SetColor(skillsSlotColor)
 	s.SetOnRightClickFunc(sm.onSlotRightClicked)
 	s.SetOnLeftClickFunc(sm.onSlotLeftClicked)
 	return s

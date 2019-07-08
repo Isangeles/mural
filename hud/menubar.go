@@ -26,7 +26,7 @@ package hud
 import (
 	"fmt"
 	"path/filepath"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -35,7 +35,7 @@ import (
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/serial"
 	flameconf "github.com/isangeles/flame/config"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -58,7 +58,7 @@ type MenuBar struct {
 
 var (
 	bar_slots      = 10
-	bar_slot_size  = mtk.SIZE_MEDIUM
+	bar_slot_size  = mtk.SizeMedium
 	bar_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
@@ -75,8 +75,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	// Menu Button.
@@ -107,7 +107,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
 	if err == nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
-		mb.skillsButton.SetBackground(skillsButtonSpr)	
+		mb.skillsButton.SetBackground(skillsButtonSpr)
 	} else {
 		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
 	}
@@ -235,7 +235,7 @@ func (mb *MenuBar) drawIMBackground(t pixel.Target) {
 
 // createSlot creates new slot for bar.
 func (mb *MenuBar) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(bar_slot_size, mtk.SIZE_MINI)
+	s := mtk.NewSlot(bar_slot_size, mtk.SizeMini)
 	s.SetOnRightClickFunc(mb.onSlotRightClicked)
 	s.SetOnLeftClickFunc(mb.onSlotLeftClicked)
 	return s
@@ -263,7 +263,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 			if pc.Equipment().Equiped(eqit) {
 				pc.Equipment().Unequip(eqit)
 				return
-			} 
+			}
 			pc.Equipment().Equip(eqit)
 			return
 		}

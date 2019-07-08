@@ -232,8 +232,8 @@ func (mm *MainMenu) ShowMessageWindow(m *mtk.MessageWindow) {
 func (mm *MainMenu) ShowMessage(msg string) {
 	langPath := flameconf.LangPath()
 	params := mtk.Params{
-		Size:      mtk.SIZE_BIG,
-		FontSize:  mtk.SIZE_MEDIUM,
+		Size:      mtk.SizeBig,
+		FontSize:  mtk.SizeMedium,
 		MainColor: main_color,
 		SecColor:  accent_color,
 		Info:      msg,

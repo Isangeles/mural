@@ -57,11 +57,11 @@ type InventoryMenu struct {
 }
 
 var (
-	inv_slots         = 90
-	inv_slot_size     = mtk.SIZE_BIG
-	inv_slot_color    = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	inv_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
-	inv_special_key   = pixelgl.KeyLeftShift
+	invSlots       = 90
+	invSlotSize    = mtk.SizeBig
+	invSlotColor   = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	invSlotEqColor = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
+	invSpecialKey  = pixelgl.KeyLeftShift
 )
 
 // newInventoryMenu creates new inventory menu for HUD.
@@ -75,12 +75,12 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	im.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	im.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size:      mtk.SIZE_MEDIUM,
-		Shape:     mtk.SHAPE_SQUARE,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	im.closeButton = mtk.NewButton(buttonParams)
@@ -94,7 +94,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
 	// Slots list.
 	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)),
-		inv_slot_color, inv_slot_size)
+		invSlotColor, invSlotSize)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
@@ -112,7 +112,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 			err)
 	}
 	// Create empty slots.
-	for i := 0; i < inv_slots; i++ {
+	for i := 0; i < invSlots; i++ {
 		s := im.createSlot()
 		im.slots.Add(s)
 	}
@@ -273,9 +273,9 @@ func (im *InventoryMenu) updateLayout() {
 
 // createSlot creates empty slot for inventory slots list.
 func (im *InventoryMenu) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(inv_slot_size, mtk.SIZE_MINI)
-	s.SetColor(inv_slot_color)
-	s.SetSpecialKey(inv_special_key)
+	s := mtk.NewSlot(invSlotSize, mtk.SizeMini)
+	s.SetColor(invSlotColor)
+	s.SetSpecialKey(invSpecialKey)
 	s.SetOnRightClickFunc(im.onSlotRightClicked)
 	s.SetOnLeftClickFunc(im.onSlotLeftClicked)
 	s.SetOnSpecialLeftClickFunc(im.onSlotSpecialLeftClicked)
@@ -313,8 +313,8 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	langPath := flameconf.LangPath()
 	msg := lang.TextDir(langPath, "hud_inv_remove_item_warn")
 	dlgParams := mtk.Params{
-		Size:      mtk.SIZE_MEDIUM,
-		FontSize:  mtk.SIZE_MEDIUM,
+		Size:      mtk.SizeMedium,
+		FontSize:  mtk.SizeMedium,
 		MainColor: main_color,
 		SecColor:  accent_color,
 		Info:      msg,
@@ -352,7 +352,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	if im.hud.ActivePlayer().Equipment().Equiped(eit) {
 		im.hud.ActivePlayer().Equipment().Unequip(eit)
-		s.SetColor(inv_slot_color)
+		s.SetColor(invSlotColor)
 	} else {
 		err := im.hud.ActivePlayer().Equipment().Equip(eit)
 		if err != nil {
@@ -360,7 +360,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 				eit.Serial(), err)
 			return
 		}
-		s.SetColor(inv_slot_eq_color)
+		s.SetColor(invSlotEqColor)
 	}
 }
 

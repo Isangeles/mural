@@ -88,10 +88,10 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
 	// Info windows.
-	av.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
+	av.info = mtk.NewInfoWindow(mtk.SizeSmall, colornames.Grey)
 	av.info.SetText(av.infoText())
 	chatParams := mtk.Params{
-		FontSize:    mtk.SIZE_SMALL,
+		FontSize:    mtk.SizeSmall,
 		MainColor:   colornames.Grey,
 		AccentColor: colornames.Red,
 	}

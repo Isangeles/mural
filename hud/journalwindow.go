@@ -68,13 +68,13 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 			err)
 	}
 	// Title.
-	jw.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	jw.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	jw.titleText.SetText(lang.TextDir(flameconf.LangPath(),
 		"hud_journal_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	jw.closeButton = mtk.NewButton(buttonParams)
@@ -90,7 +90,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		jw.Size().Y/2)
 	questInfoParams := mtk.Params{
 		SizeRaw:     questInfoSize,
-		FontSize:    mtk.SIZE_SMALL,
+		FontSize:    mtk.SizeSmall,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -98,7 +98,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	// Quests list.
 	questsSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
 		jw.Size().Y/2-mtk.ConvSize(100))
-	jw.questsList = mtk.NewList(questsSize, mtk.SIZE_MINI,
+	jw.questsList = mtk.NewList(questsSize, mtk.SizeMini,
 		main_color, sec_color, accent_color)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {

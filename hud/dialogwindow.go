@@ -67,12 +67,12 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		dw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	dw.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	dw.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	dw.titleText.SetText(lang.TextDir(flameconf.LangPath(), "hud_dialog_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	dw.closeButton = mtk.NewButton(buttonParams)
@@ -87,7 +87,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		dw.Size().Y/2)
 	chatParams := mtk.Params{
 		SizeRaw:     chatSize,
-		FontSize:    mtk.SIZE_MEDIUM,
+		FontSize:    mtk.SizeMedium,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -95,7 +95,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	// Answers list.
 	answersSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2-mtk.ConvSize(100))
-	dw.answersList = mtk.NewList(answersSize, mtk.SIZE_SMALL, main_color, sec_color,
+	dw.answersList = mtk.NewList(answersSize, mtk.SizeSmall, main_color, sec_color,
 		accent_color)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {

@@ -25,15 +25,15 @@ package object
 
 import (
 	"fmt"
-	
+
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/effect"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/core/data/res"
 )
 
@@ -53,7 +53,7 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 	eg := new(EffectGraphic)
 	eg.Effect = effect
 	eg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
-	eg.timeText = mtk.NewText(mtk.SIZE_BIG, 0)
+	eg.timeText = mtk.NewText(mtk.SizeBig, 0)
 	eg.timeText.SetColor(time_label_color)
 	return eg
 }

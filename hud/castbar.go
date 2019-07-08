@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/object/skill"
-	
+
 	"github.com/isangeles/mtk"
 )
 
@@ -43,7 +43,7 @@ type CastBar struct {
 func newCastBar(hud *HUD) *CastBar {
 	cb := new(CastBar)
 	cb.hud = hud
-	cb.bar = mtk.NewProgressBar(mtk.SIZE_MEDIUM, accent_color)
+	cb.bar = mtk.NewProgressBar(mtk.SizeMedium, accent_color)
 	return cb
 }
 

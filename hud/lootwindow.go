@@ -29,7 +29,7 @@ import (
 
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -60,7 +60,7 @@ type LootTarget interface {
 
 var (
 	loot_slots         = 90
-	loot_slot_size     = mtk.SIZE_BIG
+	loot_slot_size     = mtk.SizeBig
 	loot_slot_color    = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 	loot_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
 )
@@ -76,12 +76,12 @@ func newLootWindow(hud *HUD) *LootWindow {
 		lw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	lw.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	lw.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	lw.titleText.SetText(lang.Text("gui", "hud_loot_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	lw.closeButton = mtk.NewButton(buttonParams)
@@ -221,7 +221,7 @@ func (lw *LootWindow) insertItems(items ...item.Item) {
 
 // createSlot creates empty slot for loot slots list.
 func (lw *LootWindow) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(loot_slot_size, mtk.SIZE_MINI)
+	s := mtk.NewSlot(loot_slot_size, mtk.SizeMini)
 	s.SetColor(loot_slot_color)
 	s.SetOnLeftClickFunc(lw.onSlotLeftClicked)
 	return s

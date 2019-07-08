@@ -33,7 +33,7 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
@@ -67,28 +67,28 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	sm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	sm.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	sm.titleText.SetText(lang.Text("gui", "hud_save_menu_title"))
 	// Saves list.
 	bgSize := sm.Size()
 	savesListSize := pixel.V(bgSize.X-mtk.ConvSize(50),
 		bgSize.Y-mtk.ConvSize(200))
-	sm.savesList = mtk.NewList(savesListSize, mtk.SIZE_MINI, main_color,
+	sm.savesList = mtk.NewList(savesListSize, mtk.SizeMini, main_color,
 		sec_color, accent_color)
 	sm.savesList.SetOnItemSelectFunc(sm.onSaveSelected)
 	// Text field.
-	sm.saveNameEdit = mtk.NewTextedit(mtk.SIZE_SMALL, main_color)
+	sm.saveNameEdit = mtk.NewTextedit(mtk.SizeSmall, main_color)
 	saveNameSize := pixel.V(savesListSize.X, mtk.ConvSize(20))
 	sm.saveNameEdit.SetSize(saveNameSize)
 	// Buttons.
 	closeButtonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	saveButtonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_RECTANGLE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeRectangle,
 		MainColor: accent_color,
 	}
 	sm.closeButton = mtk.NewButton(closeButtonParams)

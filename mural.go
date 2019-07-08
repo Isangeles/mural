@@ -5,8 +5,8 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * the Free Software Foundation; either Version 2 of the License, or
+ * (at your option) any later Version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -40,7 +40,7 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	
+
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
 
@@ -57,7 +57,7 @@ import (
 )
 
 const (
-	NAME, VERSION = "Mural", "0.0.0"
+	Name, Version = "Mural", "0.0.0"
 )
 
 var (
@@ -140,7 +140,7 @@ func run() {
 		winRes.X, winRes.Y = monitor.Size()
 	}
 	cfg := pixelgl.WindowConfig{
-		Title:  NAME + " " + VERSION,
+		Title:  Name + " " + Version,
 		Bounds: pixel.R(winPosX, winPosY, winRes.X, winRes.Y),
 		VSync:  true,
 	}
@@ -176,10 +176,10 @@ func run() {
 	ci.SetMainMenu(mainMenu)
 	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
-	fpsInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
+	fpsInfo := mtk.NewText(mtk.SizeMedium, 0)
 	fpsInfo.JustRight()
-	verInfo := mtk.NewText(mtk.SIZE_MEDIUM, 0)
-	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", NAME, VERSION,
+	verInfo := mtk.NewText(mtk.SizeMedium, 0)
+	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", Name, Version,
 		flame.NAME, flame.VERSION))
 	verInfo.JustRight()
 	// Main loop.
@@ -244,12 +244,12 @@ func EnterGame(g *flamecore.Game) {
 }
 
 // EnterSavedGame creates game and HUD from saved data.
-func EnterSavedGame(g *flamecore.Game, savename string) {
+func EnterSavedGame(g *flamecore.Game, saveName string) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	game = g
 	// Import saved GUI state.
-	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), savename)
+	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
 		log.Err.Printf("enter_saved_game:fail_to_load_gui_save:%v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
@@ -293,10 +293,10 @@ func ExecuteCommand(line string) (int, string, error) {
 }
 
 // ExecuteScriptFile executes Ash script file
-// with specified name.
-func ExecuteScriptFile(name string, args ...string) error {
+// with specified Name.
+func ExecuteScriptFile(Name string, args ...string) error {
 	modpath := game.Module().Conf().Path
-	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
+	path := filepath.FromSlash(modpath + "/gui/scripts/" + Name + ".ash")
 	return ci.RunScript(path, args...)
 }
 

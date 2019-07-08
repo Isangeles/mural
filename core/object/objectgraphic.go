@@ -27,14 +27,14 @@ import (
 	"fmt"
 
 	"golang.org/x/image/colornames"
-	
+
 	"github.com/faiface/pixel"
 
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/area"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
 )
@@ -59,7 +59,7 @@ func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraph
 	// Sprite.
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
 	// Info window.
-	og.info = mtk.NewInfoWindow(mtk.SIZE_SMALL, colornames.Grey)
+	og.info = mtk.NewInfoWindow(mtk.SizeSmall, colornames.Grey)
 	og.info.SetText(og.infoText())
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
@@ -126,7 +126,7 @@ func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 }
 
 // MaxMana returns 0, object do not have mana.
-// Function to satify frame target interface. 
+// Function to satify frame target interface.
 func (og *ObjectGraphic) MaxMana() int {
 	return 0
 }
@@ -144,7 +144,7 @@ func (og *ObjectGraphic) updateGraphic() {
 			delete(og.items, id)
 		}
 	}
-	
+
 	// Inventory.
 	for _, it := range og.Inventory().Items() {
 		if og.items[it.ID()+it.Serial()] != nil {

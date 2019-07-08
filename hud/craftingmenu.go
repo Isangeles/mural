@@ -69,19 +69,19 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 			err)
 	}
 	// Title.
-	cm.titleText = mtk.NewText(mtk.SIZE_SMALL, 0)
+	cm.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	cm.titleText.SetText(lang.TextDir(flameconf.LangPath(),
 		"hud_crafting_title"))
 	// Buttons.
 	closeButtonParams := mtk.Params{
-		Size: mtk.SIZE_MEDIUM,
-		Shape: mtk.SHAPE_SQUARE,
+		Size: mtk.SizeMedium,
+		Shape: mtk.ShapeSquare,
 		MainColor: accent_color,
 	}
 	makeButtonParams := mtk.Params{
-		Size:      mtk.SIZE_MINI,
-		FontSize:  mtk.SIZE_MINI,
-		Shape:     mtk.SHAPE_RECTANGLE,
+		Size:      mtk.SizeMini,
+		FontSize:  mtk.SizeMini,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accent_color,
 	}
 	cm.closeButton = mtk.NewButton(closeButtonParams)
@@ -110,7 +110,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		cm.Size().Y/2-mtk.ConvSize(10))
 	recipeInfoParams := mtk.Params{
 		SizeRaw:     infoSize,
-		FontSize:    mtk.SIZE_SMALL,
+		FontSize:    mtk.SizeSmall,
 		MainColor:   main_color,
 		AccentColor: accent_color,
 	}
@@ -118,7 +118,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	// Recipes list.
 	recipesSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(100))
-	cm.recipesList = mtk.NewList(recipesSize, mtk.SIZE_MINI,
+	cm.recipesList = mtk.NewList(recipesSize, mtk.SizeMini,
 		main_color, sec_color, accent_color)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {

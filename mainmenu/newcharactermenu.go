@@ -92,20 +92,20 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.nameLabel = mtk.NewText(mtk.SizeMedium, 0)
 	nameLabelText := lang.TextDir(flameconf.LangPath(), "newchar_name_edit_label")
 	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
-	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, main_color)
+	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
 	// Points box.
 	pointsBoxSize := mtk.SizeMedium.ButtonSize(mtk.ShapeRectangle)
 	pointsBoxParams := mtk.Params{
 		SizeRaw:     pointsBoxSize,
 		FontSize:    mtk.SizeMini,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	ncm.pointsBox = mtk.NewTextbox(pointsBoxParams)
 	// Portrait switch.
 	faceSwitchParams := mtk.Params{
 		Size:      mtk.SizeBig,
-		MainColor: main_color,
+		MainColor: mainColor,
 	}
 	ncm.faceSwitch = mtk.NewSwitch(faceSwitchParams)
 	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
@@ -119,7 +119,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	// Attributes switches.
 	attrSwitchParams := mtk.Params{
 		Size:      mtk.SizeMedium,
-		MainColor: main_color,
+		MainColor: mainColor,
 	}
 	ncm.strSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.strSwitch.SetLabel(lang.Text("gui", "newchar_str_switch_label"))
@@ -185,7 +185,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
 		Shape:     mtk.ShapeRectangle,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	ncm.doneButton = mtk.NewButton(buttonParams)
 	ncm.doneButton.SetLabel(lang.Text("gui", "done_b_label"))

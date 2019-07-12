@@ -74,12 +74,12 @@ func newChat(hud *HUD) *Chat {
 	textboxParams := mtk.Params{
 		SizeRaw:     boxSize,
 		FontSize:    mtk.SizeMedium,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Textedit.
-	c.textedit = mtk.NewTextedit(mtk.SizeMedium, main_color)
+	c.textedit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }

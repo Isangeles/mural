@@ -45,9 +45,9 @@ import (
 
 var (
 	// Main menu elements colors.
-	main_color   color.Color = colornames.Grey
-	sec_color    color.Color = colornames.Blue
-	accent_color color.Color = colornames.Red
+	mainColor   color.Color = colornames.Grey
+	secColor    color.Color = colornames.Blue
+	accentColor color.Color = colornames.Red
 )
 
 // MainMenu struct reperesents container with
@@ -234,8 +234,8 @@ func (mm *MainMenu) ShowMessage(msg string) {
 	params := mtk.Params{
 		Size:      mtk.SizeBig,
 		FontSize:  mtk.SizeMedium,
-		MainColor: main_color,
-		SecColor:  accent_color,
+		MainColor: mainColor,
+		SecColor:  accentColor,
 		Info:      msg,
 	}
 	mw := mtk.NewMessageWindow(params)

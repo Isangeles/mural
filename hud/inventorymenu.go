@@ -81,7 +81,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		Shape:     mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	im.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
@@ -315,8 +315,8 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	dlgParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
-		MainColor: main_color,
-		SecColor:  accent_color,
+		MainColor: mainColor,
+		SecColor:  accentColor,
 		Info:      msg,
 	}
 	dlg := mtk.NewDialogWindow(dlgParams)

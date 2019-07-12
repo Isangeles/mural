@@ -55,7 +55,7 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
 		Shape:     mtk.ShapeRectangle,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	m.newgameB = mtk.NewButton(buttonParams)
 	m.newgameB.SetLabel(lang.Text("gui", "newgame_b_label"))

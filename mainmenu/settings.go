@@ -63,7 +63,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
 		Shape:     mtk.ShapeRectangle,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	s.backButton = mtk.NewButton(buttonParams)
 	s.backButton.SetLabel(lang.Text("gui", "back_b_label"))
@@ -71,7 +71,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	// Switches.
 	switchParams := mtk.Params{
 		Size:      mtk.SizeMedium,
-		MainColor: main_color,
+		MainColor: mainColor,
 	}
 	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
 	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
@@ -191,8 +191,8 @@ func (s *Settings) closeWithDialog() {
 		dlgParams := mtk.Params{
 			Size:      mtk.SizeBig,
 			FontSize:  mtk.SizeMedium,
-			MainColor: main_color,
-			SecColor:  accent_color,
+			MainColor: mainColor,
+			SecColor:  accentColor,
 			Info:      lang.Text("gui", "settings_save_msg"),
 		}
 		dlg := mtk.NewDialogWindow(dlgParams)

@@ -73,7 +73,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	buttonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	dw.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
@@ -88,15 +88,15 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	chatParams := mtk.Params{
 		SizeRaw:     chatSize,
 		FontSize:    mtk.SizeMedium,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	dw.chatBox = mtk.NewTextbox(chatParams)
 	// Answers list.
 	answersSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2-mtk.ConvSize(100))
-	dw.answersList = mtk.NewList(answersSize, mtk.SizeSmall, main_color, sec_color,
-		accent_color)
+	dw.answersList = mtk.NewList(answersSize, mtk.SizeSmall, mainColor, secColor,
+		accentColor)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())

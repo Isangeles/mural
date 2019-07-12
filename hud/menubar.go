@@ -77,7 +77,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	buttonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	// Menu Button.
 	mb.menuButton = mtk.NewButton(buttonParams)

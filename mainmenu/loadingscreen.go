@@ -40,8 +40,8 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls.mainmenu = mainmenu
 	infoParams := mtk.Params{
 		FontSize:    mtk.SizeMedium,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	ls.info = mtk.NewTextbox(infoParams)
 	return ls

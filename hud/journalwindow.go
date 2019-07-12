@@ -75,7 +75,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	buttonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	jw.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
@@ -91,15 +91,15 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	questInfoParams := mtk.Params{
 		SizeRaw:     questInfoSize,
 		FontSize:    mtk.SizeSmall,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	jw.questInfo = mtk.NewTextbox(questInfoParams)
 	// Quests list.
 	questsSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
 		jw.Size().Y/2-mtk.ConvSize(100))
 	jw.questsList = mtk.NewList(questsSize, mtk.SizeMini,
-		main_color, sec_color, accent_color)
+		mainColor, secColor, accentColor)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG,

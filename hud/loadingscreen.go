@@ -40,8 +40,8 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls.hud = hud
 	infoParams := mtk.Params{
 		FontSize:    mtk.SizeMini,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	ls.info = mtk.NewTextbox(infoParams)
 	return ls

@@ -53,8 +53,8 @@ func newConsole() *Console {
 	// Text box.
 	textboxParams := mtk.Params{
 		FontSize:    mtk.SizeMedium,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Text input.

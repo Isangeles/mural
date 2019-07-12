@@ -51,17 +51,17 @@ import (
 
 var (
 	// HUD colors.
-	main_color   = colornames.Grey
-	sec_color    = colornames.Blue
-	accent_color = colornames.Red
+	mainColor   = colornames.Grey
+	secColor    = colornames.Blue
+	accentColor = colornames.Red
 	// Keys.
-	pause_key    = pixelgl.KeySpace
-	menu_key     = pixelgl.KeyEscape
-	chat_key     = pixelgl.KeyGraveAccent
-	inv_key      = pixelgl.KeyB
-	skills_key   = pixelgl.KeyK
-	journal_key  = pixelgl.KeyL
-	crafting_key = pixelgl.KeyV
+	pauseKey    = pixelgl.KeySpace
+	menuKey     = pixelgl.KeyEscape
+	chatKey     = pixelgl.KeyGraveAccent
+	invKey      = pixelgl.KeyB
+	skillsKey   = pixelgl.KeyK
+	journalKey  = pixelgl.KeyL
+	craftingKey = pixelgl.KeyV
 )
 
 // Struct for 'head-up display'.
@@ -199,7 +199,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		return
 	}
 	// Key events.
-	if win.JustPressed(chat_key) {
+	if win.JustPressed(chatKey) {
 		// Toggle chat activity.
 		if !hud.chat.Activated() {
 			hud.chat.Active(true)
@@ -210,7 +210,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		}
 	}
 	if !hud.chat.Activated() { // block rest of key events if chat is active
-		if win.JustPressed(pause_key) {
+		if win.JustPressed(pauseKey) {
 			// Pause game.
 			if !hud.game.Paused() {
 				hud.game.Pause(true)
@@ -218,7 +218,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.game.Pause(false)
 			}
 		}
-		if win.JustPressed(menu_key) {
+		if win.JustPressed(menuKey) {
 			// Show menu.
 			if !hud.menu.Opened() {
 				hud.menu.Show(true)
@@ -226,7 +226,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.menu.Show(false)
 			}
 		}
-		if win.JustPressed(inv_key) {
+		if win.JustPressed(invKey) {
 			// Show inventory.
 			if !hud.inv.Opened() {
 				hud.inv.Show(true)
@@ -234,7 +234,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.inv.Show(false)
 			}
 		}
-		if win.JustPressed(skills_key) {
+		if win.JustPressed(skillsKey) {
 			// Show skills.
 			if !hud.skills.Opened() {
 				hud.skills.Show(true)
@@ -242,7 +242,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.skills.Show(false)
 			}
 		}
-		if win.JustPressed(journal_key) {
+		if win.JustPressed(journalKey) {
 			// Show journal.
 			if !hud.journal.Opened() {
 				hud.journal.Show(true)
@@ -250,7 +250,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.journal.Show(false)
 			}
 		}
-		if win.JustPressed(crafting_key) {
+		if win.JustPressed(craftingKey) {
 			// Show crafting menu.
 			if !hud.crafting.Opened() {
 				hud.crafting.Show(true)

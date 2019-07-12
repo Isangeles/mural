@@ -74,7 +74,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 		of.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Bars.
-	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accent_color)
+	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.hpBar.SetLabel(lang.Text("gui", "char_frame_hp_bar_label"))
 	hpBarPic, err := data.PictureUI("bar_red.png")
 	if err != nil {
@@ -82,7 +82,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	} else {
 		of.hpBar.SetBackground(hpBarPic)
 	}
-	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accent_color)
+	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.manaBar.SetLabel(lang.Text("gui", "char_frame_mana_bar_label"))
 	manaBarPic, err := data.PictureUI("bar_blue.png")
 	if err != nil {
@@ -174,7 +174,7 @@ func (of *ObjectFrame) SetObject(ob Target) {
 // IMDraw.
 func (of *ObjectFrame) drawIMBackground(t pixel.Target) {
 	of.bgDraw.Clear()
-	of.bgDraw.Color = pixel.ToRGBA(main_color)
+	of.bgDraw.Color = pixel.ToRGBA(mainColor)
 	of.bgDraw.Push(of.DrawArea().Min)
 	of.bgDraw.Push(of.DrawArea().Max)
 	of.bgDraw.Rectangle(0)

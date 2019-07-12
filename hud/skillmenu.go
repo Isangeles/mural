@@ -76,7 +76,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	buttonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")

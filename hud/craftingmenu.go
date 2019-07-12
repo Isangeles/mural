@@ -76,13 +76,13 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	closeButtonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	makeButtonParams := mtk.Params{
 		Size:      mtk.SizeMini,
 		FontSize:  mtk.SizeMini,
 		Shape:     mtk.ShapeRectangle,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	cm.closeButton = mtk.NewButton(closeButtonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
@@ -111,15 +111,15 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	recipeInfoParams := mtk.Params{
 		SizeRaw:     infoSize,
 		FontSize:    mtk.SizeSmall,
-		MainColor:   main_color,
-		AccentColor: accent_color,
+		MainColor:   mainColor,
+		AccentColor: accentColor,
 	}
 	cm.recipeInfo = mtk.NewTextbox(recipeInfoParams)
 	// Recipes list.
 	recipesSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(100))
 	cm.recipesList = mtk.NewList(recipesSize, mtk.SizeMini,
-		main_color, sec_color, accent_color)
+		mainColor, secColor, accentColor)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG,

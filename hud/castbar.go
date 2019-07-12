@@ -43,7 +43,7 @@ type CastBar struct {
 func newCastBar(hud *HUD) *CastBar {
 	cb := new(CastBar)
 	cb.hud = hud
-	cb.bar = mtk.NewProgressBar(mtk.SizeMedium, accent_color)
+	cb.bar = mtk.NewProgressBar(mtk.SizeMedium, accentColor)
 	return cb
 }
 

@@ -68,13 +68,13 @@ func newMenu(hud *HUD) *Menu {
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		Shape:     mtk.ShapeSquare,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	menuButtonParams := mtk.Params{
 		Size:      mtk.SizeMini,
 		FontSize:  mtk.SizeMini,
 		Shape:     mtk.ShapeRectangle,
-		MainColor: accent_color,
+		MainColor: accentColor,
 	}
 	greenButtonBG, err := data.PictureUI("button_green.png")
 	if err != nil {

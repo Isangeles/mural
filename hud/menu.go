@@ -64,21 +64,11 @@ func newMenu(hud *HUD) *Menu {
 	// Title.
 	m.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
-	// Buttons.
+	// Close button.
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
-	}
-	menuButtonParams := mtk.Params{
-		Size:      mtk.SizeMini,
-		FontSize:  mtk.SizeMini,
-		Shape:     mtk.ShapeRectangle,
-		MainColor: accentColor,
-	}
-	greenButtonBG, err := data.PictureUI("button_green.png")
-	if err != nil {
-		log.Err.Printf("hud_menu:fail_to_retrieve_green_button_texture:%v", err)
 	}
 	m.closeButton = mtk.NewButton(closeButtonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
@@ -89,6 +79,17 @@ func newMenu(hud *HUD) *Menu {
 		log.Err.Printf("hud_menu:fail_to_retrieve_exit_button_texture:%v", err)
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
+	// Menu buttons.
+	menuButtonParams := mtk.Params{
+		Size:      mtk.SizeMini,
+		FontSize:  mtk.SizeMini,
+		Shape:     mtk.ShapeRectangle,
+		MainColor: accentColor,
+	}
+	greenButtonBG, err := data.PictureUI("button_green.png")
+	if err != nil {
+		log.Err.Printf("hud_menu:fail_to_retrieve_green_button_texture:%v", err)
+	}
 	m.saveButton = mtk.NewButton(menuButtonParams)
 	m.saveButton.SetLabel(lang.Text("gui", "savegame_b_label"))
 	m.saveButton.SetInfo(lang.Text("gui", "savegame_b_info"))
@@ -124,10 +125,10 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Buttons.
 	closeButtonPos := mtk.ConvVec(pixel.V(m.Size().X/2-20,
 		m.Size().Y/2-15))
-	m.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	saveButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2+20))
-	m.saveButton.Draw(win.Window, matrix.Moved(saveButtonPos))
 	exitButtonPos := mtk.ConvVec(pixel.V(0, -m.Size().X/2-20))
+	m.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
+	m.saveButton.Draw(win.Window, matrix.Moved(saveButtonPos))
 	m.exitButton.Draw(win.Window, matrix.Moved(exitButtonPos))
 }
 

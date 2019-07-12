@@ -95,12 +95,18 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	// Slots list.
 	im.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)),
 		invSlotColor, invSlotSize)
+	// Create empty slots.
+	for i := 0; i < invSlots; i++ {
+		s := im.createSlot()
+		im.slots.Add(s)
+	}
+	// Slot list scroll buttons.
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		im.slots.SetUpButtonBackground(upBG)
 	} else {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_button_texture:%v",
 			err)
 	}
 	downButtonBG, err := data.PictureUI("scrolldown.png")
@@ -108,13 +114,8 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		im.slots.SetDownButtonBackground(downBG)
 	} else {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_buttons_texture:%v",
+		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_button_texture:%v",
 			err)
-	}
-	// Create empty slots.
-	for i := 0; i < invSlots; i++ {
-		s := im.createSlot()
-		im.slots.Add(s)
 	}
 	return im
 }
@@ -127,7 +128,7 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if im.bgSpr != nil {
 		im.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, im.DrawArea(), nil)
+		mtk.DrawRectangle(win, im.DrawArea(), mainColor)
 	}
 	// Title.
 	titleTextPos := mtk.ConvVec(pixel.V(0, im.Size().Y/2-25))

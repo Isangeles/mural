@@ -81,6 +81,7 @@ type HUD struct {
 	dialog     *DialogWindow
 	journal    *JournalWindow
 	crafting   *CraftingMenu
+	trade      *TradeWindow
 	game       *flamecore.Game
 	pcs        []*object.Avatar
 	activePC   *object.Avatar
@@ -115,6 +116,7 @@ func New() *HUD {
 	hud.dialog = newDialogWindow(hud)
 	hud.journal = newJournalWindow(hud)
 	hud.crafting = newCraftingMenu(hud)
+	hud.trade = newTradeWindow(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
@@ -146,6 +148,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	dialogPos := win.Bounds().Center()
 	journalPos := win.Bounds().Center()
 	craftingPos := win.Bounds().Center()
+	tradePos := win.Bounds().Center()
 	// Draw elements.
 	hud.camera.Draw(win)
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
@@ -177,6 +180,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.crafting.Opened() {
 		hud.crafting.Draw(win, mtk.Matrix().Moved(craftingPos))
+	}
+	if hud.trade.Opened() {
+		hud.trade.Draw(win, mtk.Matrix().Moved(tradePos))
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -309,6 +315,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.crafting.Opened() {
 		hud.crafting.Update(win)
+	}
+	if hud.trade.Opened() {
+		hud.trade.Update(win)
 	}
 	hud.msgs.Update(win)
 }
@@ -561,7 +570,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		(hud.loot.Opened() && hud.loot.DrawArea().Contains(pos)) ||
 		(hud.dialog.Opened() && hud.dialog.DrawArea().Contains(pos)) ||
 		(hud.journal.Opened() && hud.journal.DrawArea().Contains(pos)) ||
-		(hud.crafting.Opened() && hud.crafting.DrawArea().Contains(pos)) {
+		(hud.crafting.Opened() && hud.crafting.DrawArea().Contains(pos)) ||
+		(hud.trade.Opened() && hud.trade.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

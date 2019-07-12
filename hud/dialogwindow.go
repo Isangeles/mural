@@ -32,6 +32,7 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/module/object/dialog"
 	"github.com/isangeles/flame/core/module/object/effect"
+	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mtk"
@@ -119,7 +120,7 @@ func (dw *DialogWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if dw.bgSpr != nil {
 		dw.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, dw.DrawArea(), nil)
+		mtk.DrawRectangle(win.Window, dw.DrawArea(), mainColor)
 	}
 	// Title.
 	titleTextMove := pixel.V(0, dw.Size().Y/2-mtk.ConvSize(20))
@@ -199,7 +200,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		}
 	}
 	if phase == nil {
-		log.Err.Printf("hud_dialog:no suitable dialog text found")
+		log.Err.Printf("hud_dialog:no suitable dialog phase found")
 		return
 	}
 	// Print phase text to chat box.
@@ -251,6 +252,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	answer, ok := cs.Value().(*dialog.Answer)
 	if !ok {
 		log.Err.Printf("hud_dialog:fail to retrieve answer from list")
+		return
 	}
 	// Print answer to chat box.
 	chapter := dw.hud.game.Module().Chapter()
@@ -271,6 +273,18 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		for _, mod := range answer.TalkerModifiers() {
 			mod.Affect(nil, dw.hud.ActivePlayer().Character)
 		}
+	}
+	// On trade.
+	if dw.dialog.Trading() {
+		con, ok := dw.dialog.Owner().(item.Container)
+		if !ok {
+			log.Err.Printf("hud_dialog:dialog onwer has no inventory")
+			return
+		}
+		dw.Show(false)
+		dw.hud.trade.SetSaler(con)
+		dw.hud.trade.Show(true)
+		return
 	}
 	// Update dialog view.
 	dw.dialogUpdate()

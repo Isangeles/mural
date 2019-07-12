@@ -72,16 +72,10 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	cm.titleText = mtk.NewText(mtk.SizeSmall, 0)
 	cm.titleText.SetText(lang.TextDir(flameconf.LangPath(),
 		"hud_crafting_title"))
-	// Buttons.
+	// Close button.
 	closeButtonParams := mtk.Params{
 		Size: mtk.SizeMedium,
 		Shape: mtk.ShapeSquare,
-		MainColor: accentColor,
-	}
-	makeButtonParams := mtk.Params{
-		Size:      mtk.SizeMini,
-		FontSize:  mtk.SizeMini,
-		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
 	cm.closeButton = mtk.NewButton(closeButtonParams)
@@ -95,13 +89,20 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 			err)
 	}
 	cm.closeButton.SetOnClickFunc(cm.onCloseButtonClicked)
+	// Make button.
+	makeButtonParams := mtk.Params{
+		Size:      mtk.SizeMini,
+		FontSize:  mtk.SizeMini,
+		Shape:     mtk.ShapeRectangle,
+		MainColor: accentColor,
+	}
 	cm.makeButton = mtk.NewButton(makeButtonParams)
-	greenButtonBG, err := data.PictureUI("button_green.png")
-	if err != nil {
-		log.Err.Printf("hud_inventory:fail_to_retrieve_green_button_texture:%v", err)
-	} else {
-		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
+	makeButtonBG, err := data.PictureUI("button_green.png")
+	if err == nil {
+		bg := pixel.NewSprite(makeButtonBG, makeButtonBG.Bounds())
 		cm.makeButton.SetBackground(bg)
+	} else {
+		log.Err.Printf("hud_inventory:fail_to_retrieve_make_button_texture:%v", err)
 	}
 	cm.makeButton.SetOnClickFunc(cm.onMakeButtonClicked)
 	cm.makeButton.SetLabel(lang.TextDir(flameconf.LangPath(), "hud_crafting_make"))

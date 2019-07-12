@@ -39,7 +39,7 @@ import (
 )
 
 var (
-	FOW_color pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+	FOWColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
 )
 
 // Struct for HUD camera.
@@ -299,7 +299,7 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 			tileDrawMin := c.ConvAreaPos(pos)
 			tileDrawMax := pixel.V(tileDrawMin.X+tileSizeX,
 				tileDrawMin.Y+tileSizeY)
-			c.fow.Color = FOW_color
+			c.fow.Color = FOWColor
 			c.fow.Push(tileDrawMin)
 			c.fow.Push(tileDrawMax)
 			c.fow.Rectangle(0)
@@ -312,7 +312,7 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 		}
 	}
 	// 'FOW ring' effect.
-	//c.fow.Color = FOW_color
+	//c.fow.Color = FOWColor
 	//c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
 	//c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
 	c.fow.Draw(t)
@@ -346,11 +346,12 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 // Triggered after left mouse button was pressed.
 func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	// Loot.
+	// TODO: check range.
 	for _, av := range c.Avatars() {
 		if !av.DrawArea().Contains(pos) || av.Live() || av == c.hud.ActivePlayer() {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s_%s", av.ID(), av.Serial())
+		log.Dbg.Printf("hud:loot:%s#%s", av.ID(), av.Serial())
 		c.hud.loot.SetTarget(av)
 		c.hud.loot.Show(true)
 		return
@@ -359,7 +360,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		if !ob.DrawArea().Contains(pos) || ob.Live() {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s_%s", ob.ID(), ob.Serial())
+		log.Dbg.Printf("hud:loot:%s#%s", ob.ID(), ob.Serial())
 		c.hud.loot.SetTarget(ob)
 		c.hud.loot.Show(true)
 		return
@@ -370,7 +371,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 			len(av.Dialogs()) < 1 {
 			continue
 		}
-		log.Dbg.Printf("hud:dialog:%s_%s", av.ID(), av.Serial())
+		log.Dbg.Printf("hud:dialog:%s#%s", av.ID(), av.Serial())
 		dialog := av.Dialogs()[0]
 		c.hud.dialog.SetDialog(dialog)
 		c.hud.dialog.Show(true)

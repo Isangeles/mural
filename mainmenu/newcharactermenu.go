@@ -48,9 +48,9 @@ import (
 )
 
 var (
-	new_char_id_form   = `player_%s` // player_[name]
-	new_char_attrs_min = config.NewCharAttrsMin()
-	new_char_attrs_max = config.NewCharAttrsMax()
+	newCharIDFrom   = `player_%s` // player_[name]
+	newCharAttrsMin = config.NewCharAttrsMin()
+	newCharAttrsMax = config.NewCharAttrsMax()
 )
 
 // NewCharacterMenu struct represents new game character
@@ -97,7 +97,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	pointsBoxSize := mtk.SizeMedium.ButtonSize(mtk.ShapeRectangle)
 	pointsBoxParams := mtk.Params{
 		SizeRaw:     pointsBoxSize,
-		FontSize:    mtk.SizeMini,
+		FontSize:    mtk.SizeBig,
 		MainColor:   mainColor,
 		AccentColor: accentColor,
 	}
@@ -277,8 +277,8 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rng.Intn(new_char_attrs_max-
-		new_char_attrs_min) + new_char_attrs_min
+	ncm.attrPointsMax = ncm.rng.Intn(newCharAttrsMax-
+		newCharAttrsMin) + newCharAttrsMin
 	ncm.attrPoints = ncm.attrPointsMax
 	ncm.updatePoints()
 }
@@ -347,7 +347,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
 	// ID.
-	id := fmt.Sprintf(new_char_id_form, strings.ToLower(name))
+	id := fmt.Sprintf(newCharIDFrom, strings.ToLower(name))
 	charData := flameres.CharacterBasicData{
 		ID:        id,
 		Name:      name,

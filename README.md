@@ -3,7 +3,7 @@
 
   GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with Pixel library.
 
-  Currently in a very early development stage.
+  Currently in a early development stage.
 
   ### Flame games with Mural support:
 

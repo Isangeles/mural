@@ -282,7 +282,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 			return
 		}
 		dw.Show(false)
-		dw.hud.trade.SetSaler(con)
+		dw.hud.trade.SetSeller(con)
 		dw.hud.trade.Show(true)
 		return
 	}

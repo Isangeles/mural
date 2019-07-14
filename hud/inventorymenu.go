@@ -343,12 +343,12 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	it, ok := s.Values()[0].(*object.ItemGraphic)
 	if !ok {
-		log.Err.Printf("hud_inv_menu:%v:is not item", s.Values()[0])
+		log.Err.Printf("hud_inv_menu:not_item:%v", s.Values()[0])
 		return
 	}
 	eit, ok := it.Item.(item.Equiper)
 	if !ok {
-		log.Err.Printf("hud_inv_menu:%s:is not equipable item", it.ID())
+		log.Err.Printf("hud_inv_menu:not_equipable_item:%s", it.ID())
 		return
 	}
 	if im.hud.ActivePlayer().Equipment().Equiped(eit) {

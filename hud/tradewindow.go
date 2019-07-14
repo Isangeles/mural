@@ -54,7 +54,7 @@ type TradeWindow struct {
 	tradeButton *mtk.Button
 	buySlots    *mtk.SlotList
 	sellSlots   *mtk.SlotList
-	saler       item.Container
+	seller      item.Container
 	sellItems   map[string]item.Item
 	buyItems    map[string]item.Item
 	opened      bool
@@ -204,8 +204,8 @@ func (tw *TradeWindow) Update(win *mtk.Window) {
 func (tw *TradeWindow) Show(show bool) {
 	tw.opened = show
 	if tw.Opened() {
-		if tw.saler != nil {
-			tw.insertBuyItems(tw.saler.Inventory().Items()...)
+		if tw.seller != nil {
+			tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
 		}
 		tw.insertSellItems(tw.hud.ActivePlayer().Inventory().Items()...)
 	} else {
@@ -231,9 +231,9 @@ func (tw *TradeWindow) Size() pixel.Vec {
 	return tw.bgSpr.Frame().Size()
 }
 
-// SetSaler sets c as saler.
-func (tw *TradeWindow) SetSaler(c item.Container) {
-	tw.saler = c
+// SetSeller sets c as seller.
+func (tw *TradeWindow) SetSeller(c item.Container) {
+	tw.seller = c
 }
 
 // reset resets all window elements to
@@ -255,7 +255,13 @@ func (tw *TradeWindow) reset() {
 // tradeValue returns current trade value.
 func (tw *TradeWindow) tradeValue() (v int) {
 	for _, it := range tw.buyItems {
-		v -= it.Value()
+		ti, ok := it.(*item.TradeItem)
+		if !ok {
+			log.Err.Printf("trade:item_not_tradable:%s#%s",
+				it.ID(), it.Serial())
+			continue
+		}
+		v -= ti.Price
 	}
 	for _, it := range tw.sellItems {
 		v += it.Value()
@@ -273,7 +279,7 @@ func (tw *TradeWindow) updateTradeValue() {
 }
 
 // insertBuyItems inserts specified items in buy slots.
-func (tw *TradeWindow) insertBuyItems(items ...item.Item) {
+func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 	tw.buySlots.Clear()
 	for _, it := range items {
 		// Retrieve item graphic.
@@ -398,12 +404,12 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	}
 	// Trade.
 	for _, it := range tw.buyItems {
-		tw.saler.Inventory().RemoveItem(it)
+		tw.seller.Inventory().RemoveItem(it)
 		tw.hud.ActivePlayer().Inventory().AddItem(it)
 	}
 	for _, it := range tw.sellItems {
 		tw.hud.ActivePlayer().Inventory().RemoveItem(it)
-		tw.saler.Inventory().AddItem(it)
+		tw.seller.Inventory().AddItem(it)
 	}
 	tw.Show(false)
 }
@@ -438,7 +444,7 @@ func (tw *TradeWindow) onBuySlotLeftClicked(s *mtk.Slot) {
 			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
 			return
 		}
-		tw.buyItems[itg.ID()+itg.Serial()] = itg
+		tw.buyItems[itg.ID()+itg.Serial()] = itg.Item
 	}
 	s.SetColor(tradeSelectSlotColor)
 	tw.updateTradeValue()
@@ -457,7 +463,7 @@ func (tw *TradeWindow) onBuySlotSpecialLeftClicked(s *mtk.Slot) {
 			return
 		}
 		if tw.buyItems[itg.ID()+itg.Serial()] == nil {
-			tw.buyItems[itg.ID()+itg.Serial()] = itg
+			tw.buyItems[itg.ID()+itg.Serial()] = itg.Item
 			break
 		}
 	}
@@ -501,7 +507,7 @@ func (tw *TradeWindow) onSellSlotLeftClicked(s *mtk.Slot) {
 			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
 			return
 		}
-		tw.sellItems[itg.ID()+itg.Serial()] = itg
+		tw.sellItems[itg.ID()+itg.Serial()] = itg.Item
 	}
 	s.SetColor(tradeSelectSlotColor)
 	tw.updateTradeValue()
@@ -520,7 +526,7 @@ func (tw *TradeWindow) onSellSlotSpecialLeftClicked(s *mtk.Slot) {
 			return
 		}
 		if tw.sellItems[itg.ID()+itg.Serial()] == nil {
-			tw.sellItems[itg.ID()+itg.Serial()] = itg
+			tw.sellItems[itg.ID()+itg.Serial()] = itg.Item
 			break
 		}
 	}

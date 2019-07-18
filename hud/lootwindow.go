@@ -59,10 +59,9 @@ type LootTarget interface {
 }
 
 var (
-	loot_slots         = 90
-	loot_slot_size     = mtk.SizeBig
-	loot_slot_color    = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	loot_slot_eq_color = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
+	lootSlots     = 90
+	lootSlotSize  = mtk.SizeBig
+	lootSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // newLootWindow creates new loot window for HUD.
@@ -80,8 +79,8 @@ func newLootWindow(hud *HUD) *LootWindow {
 	lw.titleText.SetText(lang.Text("gui", "hud_loot_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	lw.closeButton = mtk.NewButton(buttonParams)
@@ -92,8 +91,13 @@ func newLootWindow(hud *HUD) *LootWindow {
 	}
 	lw.closeButton.SetOnClickFunc(lw.onCloseButtonClicked)
 	// Slots list.
-	lw.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)), loot_slot_color,
-		loot_slot_size)
+	lw.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 300)), lootSlotColor,
+		lootSlotSize)
+	for i := 0; i < lootSlots; i++ {
+		s := lw.createSlot()
+		lw.slots.Add(s)
+	}
+	// Slot list scroll buttons.
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		spr := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
@@ -103,11 +107,6 @@ func newLootWindow(hud *HUD) *LootWindow {
 	if err == nil {
 		spr := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		lw.slots.SetDownButtonBackground(spr)
-	}
-	// Create empty slots.
-	for i := 0; i < loot_slots; i++ {
-		s := lw.createSlot()
-		lw.slots.Add(s)
 	}
 	return lw
 }
@@ -221,8 +220,12 @@ func (lw *LootWindow) insertItems(items ...item.Item) {
 
 // createSlot creates empty slot for loot slots list.
 func (lw *LootWindow) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(loot_slot_size, mtk.SizeMini)
-	s.SetColor(loot_slot_color)
+	params := mtk.Params{
+		Size:      lootSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: lootSlotColor,
+	}
+	s := mtk.NewSlot(params)
 	s.SetOnLeftClickFunc(lw.onSlotLeftClicked)
 	return s
 }

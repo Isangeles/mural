@@ -74,8 +74,8 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.titleText.SetText(lang.Text("gui", "hud_skills_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(buttonParams)
@@ -199,8 +199,12 @@ func (sm *SkillMenu) insert(skills ...*object.SkillGraphic) {
 
 // createSlot creates empty slot for skills slot list.
 func (sm *SkillMenu) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(skillsSlotSize, mtk.SizeMini)
-	s.SetColor(skillsSlotColor)
+	params := mtk.Params{
+		Size:      skillsSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: skillsSlotColor,
+	}
+	s := mtk.NewSlot(params)
 	s.SetOnRightClickFunc(sm.onSlotRightClicked)
 	s.SetOnLeftClickFunc(sm.onSlotLeftClicked)
 	return s

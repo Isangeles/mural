@@ -31,10 +31,10 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/item"
 	"github.com/isangeles/flame/core/module/serial"
-	flameconf "github.com/isangeles/flame/config"
 
 	"github.com/isangeles/mtk"
 
@@ -45,21 +45,21 @@ import (
 
 // Struct for HUD menu bar.
 type MenuBar struct {
-	hud          *HUD
-	bgSpr        *pixel.Sprite
-	bgDraw       *imdraw.IMDraw
-	drawArea     pixel.Rect
-	menuButton   *mtk.Button
-	invButton    *mtk.Button
-	skillsButton *mtk.Button
+	hud           *HUD
+	bgSpr         *pixel.Sprite
+	bgDraw        *imdraw.IMDraw
+	drawArea      pixel.Rect
+	menuButton    *mtk.Button
+	invButton     *mtk.Button
+	skillsButton  *mtk.Button
 	journalButton *mtk.Button
-	slots        []*mtk.Slot
+	slots         []*mtk.Slot
 }
 
 var (
-	bar_slots      = 10
-	bar_slot_size  = mtk.SizeMedium
-	bar_slot_color = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	barSlots     = 10
+	barSlotSize  = mtk.SizeMedium
+	barSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // newMenuBar creates new menu bar for HUD.
@@ -75,8 +75,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	// Menu Button.
@@ -125,7 +125,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	mb.journalButton.SetOnClickFunc(mb.onJournalButtonClicked)
 	// Slots.
-	for i := 0; i < bar_slots; i++ {
+	for i := 0; i < barSlots; i++ {
 		s := mb.createSlot()
 		s.SetLabel(fmt.Sprintf("%d", i+1))
 		mb.slots = append(mb.slots, s)
@@ -235,7 +235,11 @@ func (mb *MenuBar) drawIMBackground(t pixel.Target) {
 
 // createSlot creates new slot for bar.
 func (mb *MenuBar) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(bar_slot_size, mtk.SizeMini)
+	params := mtk.Params{
+		Size:     barSlotSize,
+		FontSize: mtk.SizeMini,
+	}
+	s := mtk.NewSlot(params)
 	s.SetOnRightClickFunc(mb.onSlotRightClicked)
 	s.SetOnLeftClickFunc(mb.onSlotLeftClicked)
 	return s

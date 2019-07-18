@@ -366,8 +366,12 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 
 // createBuySlot creates slot for buy list.
 func (tw *TradeWindow) createBuySlot() *mtk.Slot {
-	s := mtk.NewSlot(tradeSlotSize, mtk.SizeMini)
-	s.SetColor(tradeSlotColor)
+	params := mtk.Params{
+		Size:      tradeSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: tradeSlotColor,
+	}
+	s := mtk.NewSlot(params)
 	s.SetSpecialKey(tradeSpecialKey)
 	s.SetOnRightClickFunc(tw.onBuySlotRightClicked)
 	s.SetOnLeftClickFunc(tw.onBuySlotLeftClicked)
@@ -378,8 +382,12 @@ func (tw *TradeWindow) createBuySlot() *mtk.Slot {
 
 // createSellSlot creates slot for sell list.
 func (tw *TradeWindow) createSellSlot() *mtk.Slot {
-	s := mtk.NewSlot(tradeSlotSize, mtk.SizeMini)
-	s.SetColor(tradeSlotColor)
+	params := mtk.Params{
+		Size:      tradeSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: tradeSlotColor,
+	}
+	s := mtk.NewSlot(params)
 	s.SetSpecialKey(tradeSpecialKey)
 	s.SetOnRightClickFunc(tw.onSellSlotRightClicked)
 	s.SetOnLeftClickFunc(tw.onSellSlotLeftClicked)

@@ -274,8 +274,12 @@ func (im *InventoryMenu) updateLayout() {
 
 // createSlot creates empty slot for inventory slots list.
 func (im *InventoryMenu) createSlot() *mtk.Slot {
-	s := mtk.NewSlot(invSlotSize, mtk.SizeMini)
-	s.SetColor(invSlotColor)
+	params := mtk.Params{
+		Size:      invSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: invSlotColor,
+	}
+	s := mtk.NewSlot(params)
 	s.SetSpecialKey(invSpecialKey)
 	s.SetOnRightClickFunc(im.onSlotRightClicked)
 	s.SetOnLeftClickFunc(im.onSlotLeftClicked)

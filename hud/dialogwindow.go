@@ -30,10 +30,11 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	flameconf "github.com/isangeles/flame/config"
+	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/object/dialog"
 	"github.com/isangeles/flame/core/module/object/effect"
 	"github.com/isangeles/flame/core/module/object/item"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/train"
 
 	"github.com/isangeles/mtk"
 
@@ -72,8 +73,8 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	dw.titleText.SetText(lang.TextDir(flameconf.LangPath(), "hud_dialog_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	dw.closeButton = mtk.NewButton(buttonParams)
@@ -126,8 +127,8 @@ func (dw *DialogWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextMove := pixel.V(0, dw.Size().Y/2-mtk.ConvSize(20))
 	dw.titleText.Draw(win.Window, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(dw.Size().X/2 - 20,
-		dw.Size().Y/2 - 15))
+	closeButtonPos := mtk.ConvVec(pixel.V(dw.Size().X/2-20,
+		dw.Size().Y/2-15))
 	dw.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Chat & answers list.
 	chatMove := mtk.MoveTC(dw.Size(), dw.chatBox.Size())
@@ -284,6 +285,18 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		dw.Show(false)
 		dw.hud.trade.SetSeller(con)
 		dw.hud.trade.Show(true)
+		return
+	}
+	// On training.
+	if dw.dialog.Training() {
+		tra, ok := dw.dialog.Owner().(train.Trainer)
+		if !ok {
+			log.Err.Printf("hud_dialog:dialog onwer is not a trainer")
+			return
+		}
+		dw.Show(false)
+		dw.hud.training.SetTrainer(tra)
+		dw.hud.training.Show(true)
 		return
 	}
 	// Update dialog view.

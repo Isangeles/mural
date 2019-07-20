@@ -69,6 +69,8 @@ hud_trade_title:Trading
 hud_trade_accept:Trade
 hud_trade_value:Trade value
 hud_trade_low_value_msg:Sell value to low
+hud_training_title:Training
+hud_training_train:Train
 hud_bar_menu_open_info:Open menu
 hud_bar_inv_open_info:Open inventory
 hud_bar_skills_open_info:Open skills

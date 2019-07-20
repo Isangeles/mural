@@ -48,10 +48,10 @@ type CraftingMenu struct {
 	titleText   *mtk.Text
 	closeButton *mtk.Button
 	makeButton  *mtk.Button
-	opened      bool
-	focused     bool
 	recipeInfo  *mtk.Textbox
 	recipesList *mtk.List
+	opened      bool
+	focused     bool
 }
 
 // newCraftingMenu creates new crafting

@@ -122,9 +122,9 @@ func main() {
 		if err != nil {
 			log.Err.Printf("fail_to_load_main_theme_audio_data:%v", err)
 		} else {
-			mtk.Audio().AddMusic(m)
+			mtk.Audio().AddAudio(m)
 		}
-		mtk.Audio().PlayMusic()
+		mtk.Audio().ResumePlaylist()
 	}
 	// Graphic.
 	pixelgl.Run(run)

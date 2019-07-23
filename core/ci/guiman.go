@@ -277,10 +277,10 @@ func audioGUIOption(cmd burn.Command) (int, string) {
 	}
 	switch cmd.Args()[0] {
 	case "play-music":
-		gui_music.PlayMusic()
+		gui_music.ResumePlaylist()
 		return 0, ""
 	case "stop-music":
-		gui_music.StopMusic()
+		gui_music.StopPlaylist()
 		return 0, ""
 	case "next":
 		gui_music.Next()

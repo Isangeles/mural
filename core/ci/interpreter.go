@@ -21,7 +21,7 @@
  *
  */
 
-// ci package provides GUI specific command line tools
+// ci package provides GUI-specific command line tools
 // for Burn CI.
 package ci
 
@@ -35,16 +35,35 @@ import (
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/ash"
 
+	"github.com/isangeles/mtk"
+
+	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/mainmenu"
 )
 
 const (
-	GUI_MAN = "guiman"
+	GUIShow   = "guishow"
+	GUISet    = "guiset"
+	GUIExport = "guiexport"
+	GUIImport = "guiimport"
+	GUIAudio  = "guiaudio"
+)
+
+var (
+	guiMenu  *mainmenu.MainMenu
+	guiHUD   *hud.HUD
+	guiMusic *mtk.AudioPlayer
 )
 
 // On init.
 func init() {
-	burn.AddToolHandler(GUI_MAN, handleGUICommand)
+	burn.AddToolHandler(GUIAudio, guiaudio)
+	burn.AddToolHandler(GUIShow, guishow)
+	burn.AddToolHandler(GUISet, guiset)
+	burn.AddToolHandler(GUISet, guiset)
+	burn.AddToolHandler(GUIExport, guiexport)
+	burn.AddToolHandler(GUIImport, guiimport)
 }
 
 // RunScriptsDir runs in background all Ash scripts
@@ -84,6 +103,24 @@ func RunScript(path string, args ...string) error {
 	}
 	go runScript(script)
 	return nil
+}
+
+// SetMainMenu sets specified main menu as main
+// menu for guiman to manage.
+func SetMainMenu(menu *mainmenu.MainMenu) {
+	guiMenu = menu
+}
+
+// SetHUD sets specified HUD as HUD for
+// guiman to manage.
+func SetHUD(h *hud.HUD) {
+	guiHUD = h
+}
+
+// SetMusicPlayer sets specified audio player as
+// player for guiman to manage.
+func SetMusicPlayer(p *mtk.AudioPlayer) {
+	guiMusic = p
 }
 
 // runScript executes specified script,

@@ -13,7 +13,6 @@ DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment
 * Avatar: animations for idle, move, melee, range shoot and spell cast
-* HUD: display items in inventory
 * HUD: skills window
 * HUD: inventory window
 * HUD: menu bar

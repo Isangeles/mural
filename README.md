@@ -103,7 +103,7 @@ Description: specifies name of audio file(located in audio archive) for button c
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 
-Additionally to Burn tools, Mural implements guiman tool to manage game GUI.
+Additionally to Burn tools, Mural implements gui tools to manage game GUI.
 You can access CI by the dropdown console in the main menu or chat window in HUD,
 both accessible by pressing '`'(grave).
 
@@ -111,21 +111,33 @@ Note: all commands entered in HUD chat window must be prefixed by '$' character.
 
   Exit mural:
 ```
-guiman -o exit
+guiset -o exit
 ```
 Description: exits program.
 
   Save HUD state:
 ```
-guiman -o save -t gui-state -a [save name]
+guiimport -o gui-state -a [save name]
 ```
 Description: saves current HUD state to file in current /savegames directory(/savegames/[module]).
 
   Load HUD state:
 ```
-guiman -o load -t gui-state -a [save name]
+guiexport -o gui-state -a [save name]
 ```
 Description: load HUD state from file in current /savegames directory(/savegames/[module]).
+
+Mute music:
+```
+guiaudio -o set-mute -a true
+```
+Description: mutes/unmutes GUI music player.
+
+Set music volume:
+```
+guiaudio -o set-volue -a [value]
+```
+Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Contributing
 You are welcome to contribute to project development.

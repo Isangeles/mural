@@ -53,7 +53,7 @@ func guiset(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s: invalid input: '%s'", GUISet,
 				cmd.Args()[0])
 		}
-		config.SetResolution(pixel.V(resX, resY))
+		config.Resolution = pixel.V(resX, resY)
 		return 0, ""
 	case "fow":
 		if len(cmd.Args()) < 1 {
@@ -61,7 +61,7 @@ func guiset(cmd burn.Command) (int, string) {
 				cmd.OptionArgs()[0])
                 }
 		fow := cmd.Args()[0] == "on"
-		config.SetMapFOW(fow)
+		config.MapFOW = fow
 		return 0, ""
 	case "exit":
 		if guiHUD != nil {

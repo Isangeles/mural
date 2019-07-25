@@ -39,7 +39,7 @@ func guishow(cmd burn.Command) (int, string) {
 	}
 	switch cmd.OptionArgs()[0] {
 	case "version":
-		return 0, config.VERSION
+		return 0, config.Version
 	case "playable-chars":
 		if guiMenu == nil {
 			return 3, fmt.Sprintf("%s: no gui main menu set", GUIShow)

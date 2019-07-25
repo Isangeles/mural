@@ -35,62 +35,68 @@ import (
 
 	"github.com/isangeles/mural/log"
 
-	flameconfig "github.com/isangeles/flame/config"
+	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text"
 )
 
 const (
-	NAME, VERSION  = "Mural", "0.0.0"
-	CONF_FILE_NAME = ".mural"
+	Name, Version = "Mural", "0.0.0"
+	ConfFileName  = ".mural"
 )
 
 var (
-	fullscreen   = false
-	mapfow       = true
-	resolution   pixel.Vec
-	lang         = flameconfig.LangID()
-	mainFontName = ""
-	menuMusic    = ""
-	bClickSound  = ""
-	attrsPtsMin  = 1
-	attrsPtsMax  = 10
-	charSkills   []string
-	charItems    []string
+	Fullscreen       = false
+	MapFOW           = true
+	Resolution       pixel.Vec
+	MainFont         = ""
+	MenuMusic        = ""
+	ButtonClickSound = ""
+	MusicVolume      = 0.0
+	MusicMute        = false
+	CharAttrsMin     = 1
+	CharAttrsMax     = 10
+	CharSkills       []string
+	CharItems        []string
 )
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	values, err := text.ReadValue(CONF_FILE_NAME, "fullscreen", "resolution",
+	values, err := text.ReadValue(ConfFileName, "fullscreen", "resolution",
 		"map-fow", "main-font", "menu-music", "button-click-sound",
-	        "newchar-skills", "newchar-items")
+		"newchar-skills", "newchar-items", "music-volume", "music-mute")
 	if err != nil {
-		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
+		return fmt.Errorf("config_load: fail to retrieve config value: %v", err)
 	}
-	intValues, err := text.ReadInt(CONF_FILE_NAME, "newchar-attrs-min", "newchar-attrs-max")
+	intValues, err := text.ReadInt(ConfFileName, "newchar-attrs-min", "newchar-attrs-max")
 	if err != nil {
-		return fmt.Errorf("fail_to_retrieve_config_value:%v", err)
+		return fmt.Errorf("config_load: fail to retrieve config value: %v", err)
 	}
 	// Fullscreen.
-	fullscreen = values["fullscreen"] == "true"
+	Fullscreen = values["fullscreen"] == "true"
 	// Resolution.
 	resValue := values["resolution"]
-	resolution.X, err = strconv.ParseFloat(strings.Split(resValue, "x")[0], 64)
-	resolution.Y, err = strconv.ParseFloat(strings.Split(resValue, "x")[1], 64)
+	Resolution.X, err = strconv.ParseFloat(strings.Split(resValue, "x")[0], 64)
+	Resolution.Y, err = strconv.ParseFloat(strings.Split(resValue, "x")[1], 64)
 	if err != nil {
-		log.Err.Printf("fail_to_set_custom_resolution:%s", resValue)
+		log.Err.Printf("config_load: fail to set resolution: %v", err)
 	}
 	// Graphic effects.
-	mapfow = values["map-fow"] == "true"
-	mainFontName = values["main-font"]
+	MapFOW = values["map-fow"] == "true"
+	MainFont = values["main-font"]
 	// Audio effects.
-	menuMusic = values["menu-music"]
-	bClickSound = values["button-click-sound"]
+	MenuMusic = values["menu-music"]
+	ButtonClickSound = values["button-click-sound"]
+	MusicVolume, err = strconv.ParseFloat(values["music-volume"], 64)
+	if err != nil {
+		log.Err.Printf("config_load: fail to set music volume: %v", err)
+	}
+	MusicMute = values["music-mute"] == "true"
 	// New char attributes points.
-	attrsPtsMin = intValues["newchar-attrs-min"]
-	attrsPtsMax = intValues["newchar-attrs-max"]
+	CharAttrsMin = intValues["newchar-attrs-min"]
+	CharAttrsMax = intValues["newchar-attrs-max"]
 	// New char items & skills.
-	charSkills = strings.Split(values["newchar-skills"], ";")
-	charItems = strings.Split(values["newchar-items"], ";")
+	CharSkills = strings.Split(values["newchar-skills"], ";")
+	CharItems = strings.Split(values["newchar-items"], ";")
 	log.Dbg.Print("config file loaded")
 	return nil
 }
@@ -98,7 +104,7 @@ func LoadConfig() error {
 // SaveConfig saves current configuration to file.
 func SaveConfig() error {
 	// Create file.
-	f, err := os.Create(CONF_FILE_NAME)
+	f, err := os.Create(ConfFileName)
 	if err != nil {
 		return err
 	}
@@ -106,21 +112,23 @@ func SaveConfig() error {
 	// Write config values.
 	w := bufio.NewWriter(f)
 	w.WriteString(fmt.Sprintf("%s\n", "# Mural GUI configuration file.")) // default header
-	w.WriteString(fmt.Sprintf("fullscreen:%v\n", fullscreen))
-	w.WriteString(fmt.Sprintf("resolution:%fx%f\n", resolution.X, resolution.Y))
-	w.WriteString(fmt.Sprintf("map-fow:%v\n", mapfow))
-	w.WriteString(fmt.Sprintf("main-font:%s\n", mainFontName))
-	w.WriteString(fmt.Sprintf("menu-music:%s\n", menuMusic))
-	w.WriteString(fmt.Sprintf("button-click-sound:%s\n", bClickSound))
-	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d\n", attrsPtsMin))
-	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d\n", attrsPtsMax))
+	w.WriteString(fmt.Sprintf("fullscreen:%v\n", Fullscreen))
+	w.WriteString(fmt.Sprintf("resolution:%fx%f\n", Resolution.X, Resolution.Y))
+	w.WriteString(fmt.Sprintf("map-fow:%v\n", MapFOW))
+	w.WriteString(fmt.Sprintf("main-font:%s\n", MainFont))
+	w.WriteString(fmt.Sprintf("menu-music:%s\n", MenuMusic))
+	w.WriteString(fmt.Sprintf("button-click-sound:%s\n", ButtonClickSound))
+	w.WriteString(fmt.Sprintf("music-volume:%f\n", MusicVolume))
+	w.WriteString(fmt.Sprintf("music-mute:%v\n", MusicMute))
+	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d\n", CharAttrsMin))
+	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d\n", CharAttrsMax))
 	w.WriteString("newchar-skills:")
-	for _, sid := range charSkills {
+	for _, sid := range CharSkills {
 		w.WriteString(sid + ";")
 	}
 	w.WriteString("\n")
 	w.WriteString("newchar-items:")
-	for _, iid := range charItems {
+	for _, iid := range CharItems {
 		w.WriteString(iid + ";")
 	}
 	w.WriteString("\n")
@@ -129,128 +137,14 @@ func SaveConfig() error {
 	return nil
 }
 
-// Fullscreen returns fullscreen config value.
-func Fullscreen() bool {
-	return fullscreen
-}
-
-// Returns current resolution width and height.
-func Resolution() pixel.Vec {
-	return resolution
-}
-
-// Lang returns current language ID.
-func Lang() string {
-	return lang
-}
-
 // Debug checks whether debug mode is enabled.
 func Debug() bool {
-	return flameconfig.Debug()
+	return flameconf.Debug()
 }
 
-// MapFOW checks whether map 'Fog Of War' effect
-// in enabled.
-func MapFOW() bool {
-	return mapfow
-}
-
-// MainFontName returns name of main font
-// for UI.
-func MainFontName() string {
-	return mainFontName
-}
-
-// MenuMusicFile returns name of audio file
-// with main menu music theme.
-func MenuMusicFile() string {
-	return menuMusic
-}
-
-// ButtonClickSoundFile returns name of audio file
-// with button click audio effect.
-func ButtonClickSoundFile() string {
-	return bClickSound
-}
-
-// NewCharAttrsMin returns minimal
-// amount of attributes points for
-// new character.
-func NewCharAttrsMin() int {
-	return attrsPtsMin
-}
-
-// NewCharAttrsMax returns maximal
-// amount of attributes points for
-// new character.
-func NewCharAttrsMax() int {
-	return attrsPtsMax
-}
-
-// NewCharSkills returns IDs of skills
-// for new character.
-func NewCharSkills() (ids []string) {
-	for _, id := range charSkills {
-		if len(id) < 1 {
-			continue
-		}
-		ids = append(ids, id)
-	}
-	return
-}
-
-// NewCharItems returns IDs of items
-// for new character.
-func NewCharItems() (ids []string) {
-	for _, id := range charItems {
-		if len(id) < 1 {
-			continue
-		}
-		ids = append(ids, id)
-	}
-	return
-}
-
-// SetFullscreen toggles fullscreen mode.
-func SetFullscreen(fs bool) {
-	fullscreen = fs
-}
-
-// SetResolution sets specified XY size as current
-// resolution.
-func SetResolution(res pixel.Vec) {
-	resolution = res
-}
-
-// SetLang sets language with specified ID as current
-// language.
-func SetLang(langID string) {
-	_ = flameconfig.SetLang(langID)
-}
-
-// SetMapFOW toggles map 'Fog Of War' graphical
-// effect.
-func SetMapFOW(fow bool) {
-	mapfow = fow
-}
-
-// SetMainFotName set specified font file name
-// as name for main UI font.
-func SetMainFontName(font string) {
-	mainFontName = font
-}
-
-// SetMenuMusicFile sets name of audio file with
-// main menu music theme.
-func SetMenuMusicFile(fileName string) {
-	menuMusic = fileName
-}
-
-// SetButtonClickSoundFile sets specified file name
-// as name of audio file with global button click
-// effect.
-func SetButtonClickSoundFile(fileName string) {
-	bClickSound = fileName
+// Lang returns ID of current language.
+func Lang() string {
+	return flameconf.LangID()
 }
 
 // SupportedResolutions returns all resolutions

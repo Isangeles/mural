@@ -100,7 +100,7 @@ func New() *HUD {
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
-	hud.camera = newCamera(hud, config.Resolution())
+	hud.camera = newCamera(hud, config.Resolution)
 	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
 	hud.tarFrame = newObjectFrame(hud)

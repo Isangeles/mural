@@ -41,18 +41,21 @@ import (
 // Settings struct represents main menu
 // settings screen.
 type Settings struct {
-	mainmenu      *MainMenu
-	title         *mtk.Text
-	backButton    *mtk.Button
-	fullscrSwitch *mtk.Switch
-	resSwitch     *mtk.Switch
-	langSwitch    *mtk.Switch
-	opened        bool
-	changed       bool
+	mainmenu          *MainMenu
+	title             *mtk.Text
+	backButton        *mtk.Button
+	fullscrSwitch     *mtk.Switch
+	resSwitch         *mtk.Switch
+	langSwitch        *mtk.Switch
+	musicVolumeSwitch *mtk.Switch
+	musicMuteSwitch   *mtk.Switch
+	opened            bool
+	changed           bool
 }
 
 // newSettings returns new settings screen instance.
 func newSettings(mainmenu *MainMenu) *Settings {
+	langPath := flameconf.LangPath()
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
@@ -66,50 +69,75 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		MainColor: accentColor,
 	}
 	s.backButton = mtk.NewButton(buttonParams)
-	s.backButton.SetLabel(lang.Text("gui", "back_b_label"))
+	s.backButton.SetLabel(lang.TextDir(langPath, "back_b_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
 	switchParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		MainColor: mainColor,
 	}
-	fullscrTrue := mtk.SwitchValue{lang.Text("ui", "com_yes"), true}
-	fullscrFalse := mtk.SwitchValue{lang.Text("ui", "com_no"), false}
-	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
+	// Fullscreen.
 	s.fullscrSwitch = mtk.NewSwitch(switchParams)
-	s.fullscrSwitch.SetLabel(lang.Text("gui", "settings_fullscr_switch_label"))
+	s.fullscrSwitch.SetLabel(lang.TextDir(langPath, "settings_fullscr_switch_label"))
+	fullscrTrue := mtk.SwitchValue{lang.TextDir(langPath, "com_yes"), true}
+	fullscrFalse := mtk.SwitchValue{lang.TextDir(langPath, "com_no"), false}
+	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
 	s.fullscrSwitch.SetValues(fullscrValues)
-	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsChanged)
-	var resSwitchValues []mtk.SwitchValue
-	for _, res := range config.SupportedResolutions() {
-		resSwitchValues = append(resSwitchValues,
-			mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res})
-	}
+	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Resolution.
 	s.resSwitch = mtk.NewSwitch(switchParams)
-	s.resSwitch.SetLabel(lang.Text("gui", "resolution_s_label"))
-	s.resSwitch.SetValues(resSwitchValues)
-	s.resSwitch.SetOnChangeFunc(s.onSettingsChanged)
+	s.resSwitch.SetLabel(lang.TextDir(langPath, "resolution_s_label"))
+	var resValues []mtk.SwitchValue
+	for _, res := range config.SupportedResolutions() {
+		v := mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res}
+		resValues = append(resValues, v)
+	}
+	s.resSwitch.SetValues(resValues)
+	s.resSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Language.
 	s.langSwitch = mtk.NewSwitch(switchParams)
-	s.langSwitch.SetLabel(lang.Text("gui", "lang_s_label"))
+	s.langSwitch.SetLabel(lang.TextDir(langPath, "lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
-	s.langSwitch.SetOnChangeFunc(s.onSettingsChanged)
+	s.langSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Music volume.
+	s.musicVolumeSwitch = mtk.NewSwitch(switchParams)
+	s.musicVolumeSwitch.SetLabel(lang.TextDir(langPath, "settings_vol_switch_label"))
+	volValues := []mtk.SwitchValue{
+		mtk.SwitchValue{"-1", -1.0},
+		mtk.SwitchValue{lang.TextDir(langPath, "settings_vol_sys"), 0.0},
+		mtk.SwitchValue{"+1", 1.0},
+	}
+	s.musicVolumeSwitch.SetValues(volValues)
+	s.musicVolumeSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Music mute.
+	s.musicMuteSwitch = mtk.NewSwitch(switchParams)
+	s.musicMuteSwitch.SetLabel(lang.TextDir(langPath, "settings_mute_switch_label"))
+	muteTrue := mtk.SwitchValue{lang.TextDir(langPath, "com_yes"), true}
+	muteFalse := mtk.SwitchValue{lang.TextDir(langPath, "com_no"), false}
+	muteValues := []mtk.SwitchValue{muteTrue, muteFalse}
+	s.musicMuteSwitch.SetValues(muteValues)
+	s.musicMuteSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	return s
 }
 
 // Draw draws all menu elements.
 func (s *Settings) Draw(win *pixelgl.Window) {
-	// Positions.
+	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X, win.Bounds().Max.Y-s.title.Size().Y)
+	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
+	// Switches.
 	fullscrSwitchPos := mtk.BottomOf(s.title.DrawArea(), s.fullscrSwitch.Size(), 50)
 	resSwitchPos := mtk.BottomOf(s.fullscrSwitch.DrawArea(), s.resSwitch.Size(), 30)
 	langSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.langSwitch.Size(), 30)
-	backButtonPos := mtk.BottomOf(s.langSwitch.DrawArea(), s.backButton.Size(), 30)
-	// Title.
-	s.title.Draw(win, mtk.Matrix().Moved(titlePos))
-	// Buttons & switches.
+	mVolSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.musicVolumeSwitch.Size(), 30)
+	mMuteSwitchPos := mtk.BottomOf(s.musicVolumeSwitch.DrawArea(), s.musicMuteSwitch.Size(), 30)
 	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(fullscrSwitchPos))
 	s.resSwitch.Draw(win, mtk.Matrix().Moved(resSwitchPos))
 	s.langSwitch.Draw(win, mtk.Matrix().Moved(langSwitchPos))
+	s.musicVolumeSwitch.Draw(win, mtk.Matrix().Moved(mVolSwitchPos))
+	s.musicMuteSwitch.Draw(win, mtk.Matrix().Moved(mMuteSwitchPos))
+	// Buttons.
+	backButtonPos := mtk.BottomOf(s.musicMuteSwitch.DrawArea(), s.backButton.Size(), 30)
 	s.backButton.Draw(win, mtk.Matrix().Moved(backButtonPos))
 }
 
@@ -118,6 +146,8 @@ func (s *Settings) Update(win *mtk.Window) {
 	s.fullscrSwitch.Update(win)
 	s.resSwitch.Update(win)
 	s.langSwitch.Update(win)
+	s.musicVolumeSwitch.Update(win)
+	s.musicMuteSwitch.Update(win)
 	s.backButton.Update(win)
 }
 
@@ -137,24 +167,38 @@ func (s *Settings) Apply() {
 	// Fullscreen.
 	fscr, ok := s.fullscrSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf("settings_menu:fail_to_retrive_fullscreen_switch_value")
+		log.Err.Printf("settings_menu: fail to retrive fullscreen switch value")
 		return
 	}
+	config.Fullscreen = fscr
 	// Resolution.
 	res, ok := s.resSwitch.Value().Value.(pixel.Vec)
 	if !ok {
-		log.Err.Printf("settings_menu:fail_to_retrive_res_switch_value")
+		log.Err.Printf("settings_menu: fail to retrive res switch value")
 		return
 	}
+	config.Resolution = res
 	// Language.
 	lang, ok := s.langSwitch.Value().Value.(string)
 	if !ok {
-		log.Err.Printf("settings_menu:fail_to_retrive_lang_switch_value")
+		log.Err.Printf("settings_menu: fail to retrive lang switch value")
 		return
 	}
-	config.SetFullscreen(fscr)
-	config.SetResolution(res)
-	config.SetLang(lang)
+	flameconf.SetLang(lang)
+	// Music volume.
+	mVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
+	if !ok {
+		log.Err.Printf("settings_menu: fail to retrive music volume switch value")
+		return
+	}
+	config.MusicVolume = mVol
+	// Music mute.
+	mMute, ok := s.musicMuteSwitch.Value().Value.(bool)
+	if !ok {
+		log.Err.Printf("settings_menu: fail to retrive music mute switch value")
+		return
+	}
+	config.MusicMute = mMute
 }
 
 // Changed checks if any settings value was changed.
@@ -164,12 +208,16 @@ func (s *Settings) Changed() bool {
 
 // updateValues values of all settings elements.
 func (s *Settings) updateValues() {
-	fullscrSwitchIndex := s.fullscrSwitch.Find(config.Fullscreen())
-	s.fullscrSwitch.SetIndex(fullscrSwitchIndex)
-	resSwitchIndex := s.resSwitch.Find(config.Resolution())
-	s.resSwitch.SetIndex(resSwitchIndex)
-	langSwitchIndex := s.langSwitch.Find(config.Lang())
-	s.langSwitch.SetIndex(langSwitchIndex)
+	fullscrIndex := s.fullscrSwitch.Find(config.Fullscreen)
+	s.fullscrSwitch.SetIndex(fullscrIndex)
+	resIndex := s.resSwitch.Find(config.Resolution)
+	s.resSwitch.SetIndex(resIndex)
+	langIndex := s.langSwitch.Find(flameconf.LangID())
+	s.langSwitch.SetIndex(langIndex)
+	mVolIndex := s.musicVolumeSwitch.Find(config.MusicVolume)
+	s.musicVolumeSwitch.SetIndex(mVolIndex)
+	mMuteIndex := s.musicMuteSwitch.Find(config.MusicMute)
+	s.musicMuteSwitch.SetIndex(mMuteIndex)
 }
 
 // close closes settings menu and displays message
@@ -206,8 +254,8 @@ func (s *Settings) closeWithDialog() {
 	}
 }
 
-// Triggered after settings change.
-func (s *Settings) onSettingsChanged(sw *mtk.Switch, old, new *mtk.SwitchValue) {
+// Triggered after one of settings switch was changed.
+func (s *Settings) onSettingsSwitchChanged(sw *mtk.Switch, old, new *mtk.SwitchValue) {
 	s.changed = true
 }
 

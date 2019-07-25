@@ -49,8 +49,8 @@ import (
 
 var (
 	newCharIDFrom   = `player_%s` // player_[name]
-	newCharAttrsMin = config.NewCharAttrsMin()
-	newCharAttrsMax = config.NewCharAttrsMax()
+	newCharAttrsMin = config.CharAttrsMin
+	newCharAttrsMax = config.CharAttrsMax
 )
 
 // NewCharacterMenu struct represents new game character
@@ -381,7 +381,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		char.Inventory().AddItem(i)
 	}
 	// Player skills & items from interface config.
-	for _, sid := range config.NewCharSkills() {
+	for _, sid := range config.CharSkills {
 		s, err := flamedata.Skill(sid)
 		if err != nil {
 			log.Err.Printf("newchar_menu:fail_to_retrieve_new_player_skill:%v", err)
@@ -389,7 +389,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		}
 		char.AddSkill(s)
 	}
-	for _, iid := range config.NewCharItems() {
+	for _, iid := range config.CharItems {
 		i, err := flamedata.Item(iid)
 		if err != nil {
 			log.Err.Printf("newchar_menu:fail_to_retireve_new_player_items:%v", err)

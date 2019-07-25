@@ -56,10 +56,6 @@ import (
 	"github.com/isangeles/mural/mainmenu"
 )
 
-const (
-	Name, Version = "Mural", "0.0.0"
-)
-
 var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
@@ -118,12 +114,15 @@ func main() {
 	mtk.InitAudio(beep.Format{44100, 2, 2})
 	if mtk.Audio() != nil {
 		ci.SetMusicPlayer(mtk.Audio())
-		m, err := data.Music(config.MenuMusicFile())
-		if err != nil {
-			log.Err.Printf("fail_to_load_main_theme_audio_data:%v", err)
+		m, err := data.Music(config.MenuMusic)
+		if err == nil {
+			pl := []beep.Streamer{m.Streamer(0, m.Len())}
+			mtk.Audio().SetPlaylist(pl)
 		} else {
-			mtk.Audio().AddAudio(m)
+			log.Err.Printf("fail_to_load_main_theme_audio_data:%v", err)
 		}
+		mtk.Audio().SetVolume(config.MusicVolume)
+		mtk.Audio().SetMute(config.MusicMute)
 		mtk.Audio().ResumePlaylist()
 	}
 	// Graphic.
@@ -135,16 +134,16 @@ func run() {
 	// Configure window.
 	monitor := pixelgl.PrimaryMonitor()
 	winPosX, winPosY := 0.0, 0.0
-	winRes := config.Resolution()
+	winRes := config.Resolution
 	if winRes.X == 0 || winRes.Y == 0 {
 		winRes.X, winRes.Y = monitor.Size()
 	}
 	cfg := pixelgl.WindowConfig{
-		Title:  Name + " " + Version,
+		Title:  config.Name + " " + config.Version,
 		Bounds: pixel.R(winPosX, winPosY, winRes.X, winRes.Y),
 		VSync:  true,
 	}
-	if config.Fullscreen() {
+	if config.Fullscreen {
 		monitor := pixelgl.PrimaryMonitor()
 		cfg.Monitor = monitor
 	}
@@ -153,12 +152,12 @@ func run() {
 		panic(fmt.Errorf("fail_to_create_mtk_window:%v", err))
 	}
 	// UI Font.
-	uiFont, err := data.Font(config.MainFontName())
+	uiFont, err := data.Font(config.MainFont)
 	if err == nil { // if font from config was found
 		mtk.SetMainFont(uiFont)
 	}
 	// Audio effects.
-	bClickSound, err := data.AudioEffect(config.ButtonClickSoundFile())
+	bClickSound, err := data.AudioEffect(config.ButtonClickSound)
 	if err != nil {
 		log.Err.Printf("init_run:fail_to_retrieve_button_click_audio_data:%v",
 			err)
@@ -179,7 +178,7 @@ func run() {
 	fpsInfo := mtk.NewText(mtk.SizeMedium, 0)
 	fpsInfo.JustRight()
 	verInfo := mtk.NewText(mtk.SizeMedium, 0)
-	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", Name, Version,
+	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
 		flame.NAME, flame.VERSION))
 	verInfo.JustRight()
 	// Main loop.

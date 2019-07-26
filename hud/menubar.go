@@ -53,6 +53,7 @@ type MenuBar struct {
 	invButton     *mtk.Button
 	skillsButton  *mtk.Button
 	journalButton *mtk.Button
+	charButton    *mtk.Button
 	slots         []*mtk.Slot
 }
 
@@ -87,7 +88,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
 		mb.menuButton.SetBackground(menuButtonSpr)
 	} else {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_menu_button_texture:%v", err)
+		log.Err.Printf("hud_menubar: fail to retrieve menu button texture: %v", err)
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
@@ -98,7 +99,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
 		mb.invButton.SetBackground(invButtonSpr)
 	} else {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_inv_button_texture:%v", err)
+		log.Err.Printf("hud_menubar: fail to retrieve inv button texture: %v", err)
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
@@ -109,7 +110,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
 		mb.skillsButton.SetBackground(skillsButtonSpr)
 	} else {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_skills_button_texture:%v", err)
+		log.Err.Printf("hud_menubar: fail to retrieve skills button texture: %v", err)
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
 	// Journal button.
@@ -121,9 +122,21 @@ func newMenuBar(hud *HUD) *MenuBar {
 		journalButtonSpr := pixel.NewSprite(journalButtonBG, journalButtonBG.Bounds())
 		mb.journalButton.SetBackground(journalButtonSpr)
 	} else {
-		log.Err.Printf("hud_menu_bar:fail_to_retrieve_quests_button_texture:%v", err)
+		log.Err.Printf("hud_menubar: fail to retrieve quests button texture: %v", err)
 	}
 	mb.journalButton.SetOnClickFunc(mb.onJournalButtonClicked)
+	// Character button.
+	mb.charButton = mtk.NewButton(buttonParams)
+	charInfo := lang.AllText(guiLang, "hud_bar_char_open_info")[0]
+	mb.charButton.SetInfo(charInfo)
+	charButtonBG, err := data.PictureUI("charbutton.png")
+	if err == nil {
+		charButtonSpr := pixel.NewSprite(charButtonBG, charButtonBG.Bounds())
+		mb.charButton.SetBackground(charButtonSpr)
+	} else {
+		log.Err.Printf("hud_menubar: fail to retrieve char button texture: %v", err)		
+	}
+	mb.charButton.SetOnClickFunc(mb.onCharButtonClicked)
 	// Slots.
 	for i := 0; i < barSlots; i++ {
 		s := mb.createSlot()
@@ -143,21 +156,23 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	} else {
 		mb.drawIMBackground(win)
 	}
-	// Buttons.
-	menuButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-30, 0))
-	invButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-65, 0))
-	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-100, 0))
-	questsButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+100, 0))
-	mb.menuButton.Draw(win, matrix.Moved(menuButtonPos))
-	mb.invButton.Draw(win, matrix.Moved(invButtonPos))
-	mb.skillsButton.Draw(win, matrix.Moved(skillsButtonPos))
-	mb.journalButton.Draw(win, matrix.Moved(questsButtonPos))
 	// Slots.
 	slotsStartPos := mtk.ConvVec(pixel.V(-163, 0))
 	for _, s := range mb.slots {
 		s.Draw(win, matrix.Moved(slotsStartPos))
 		slotsStartPos.X += s.Size().X + mtk.ConvSize(6)
 	}
+	// Buttons.
+	menuButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-30, 0))
+	invButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-65, 0))
+	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-100, 0))
+	journalButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+100, 0))
+	charButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+65, 0))
+	mb.menuButton.Draw(win, matrix.Moved(menuButtonPos))
+	mb.invButton.Draw(win, matrix.Moved(invButtonPos))
+	mb.skillsButton.Draw(win, matrix.Moved(skillsButtonPos))
+	mb.journalButton.Draw(win, matrix.Moved(journalButtonPos))
+	mb.charButton.Draw(win, matrix.Moved(charButtonPos))
 }
 
 // Update updates menu bar.
@@ -209,6 +224,7 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	mb.invButton.Update(win)
 	mb.skillsButton.Update(win)
 	mb.journalButton.Update(win)
+	mb.charButton.Update(win)
 	// Slots.
 	for _, s := range mb.slots {
 		s.Update(win)
@@ -364,6 +380,15 @@ func (mb *MenuBar) onJournalButtonClicked(b *mtk.Button) {
 		mb.hud.journal.Show(false)
 	} else {
 		mb.hud.journal.Show(true)
+	}
+}
+
+// Triggered after character button clicked.
+func (mb *MenuBar) onCharButtonClicked(b *mtk.Button) {
+	if mb.hud.charinfo.Opened() {
+		mb.hud.charinfo.Show(false)
+	} else {
+		mb.hud.charinfo.Show(true)
 	}
 }
 

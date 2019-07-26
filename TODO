@@ -1,5 +1,4 @@
 MAJOR:
-* HUD: character window
 * HUD: map window
 * Graphical effects
 * Avatar: animations for kneel and lie
@@ -9,6 +8,7 @@ MAJOR:
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)
+* Display portrait in character window
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment
@@ -23,4 +23,5 @@ DONE:
 * HUD: crafting window
 * HUD: trade window
 * HUD: training window
+* HUD: character window
 * Area objects

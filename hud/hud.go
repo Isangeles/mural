@@ -62,6 +62,7 @@ var (
 	skillsKey   = pixelgl.KeyK
 	journalKey  = pixelgl.KeyL
 	craftingKey = pixelgl.KeyV
+	charinfoKey = pixelgl.KeyC
 )
 
 // Struct for 'head-up display'.
@@ -81,6 +82,7 @@ type HUD struct {
 	dialog     *DialogWindow
 	journal    *JournalWindow
 	crafting   *CraftingMenu
+	charinfo   *CharacterWindow
 	trade      *TradeWindow
 	training   *TrainingWindow
 	game       *flamecore.Game
@@ -117,6 +119,7 @@ func New() *HUD {
 	hud.dialog = newDialogWindow(hud)
 	hud.journal = newJournalWindow(hud)
 	hud.crafting = newCraftingMenu(hud)
+	hud.charinfo = newCharacterWindow(hud)
 	hud.trade = newTradeWindow(hud)
 	hud.training = newTrainingWindow(hud)
 	// Messages & focus.
@@ -150,6 +153,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	dialogPos := win.Bounds().Center()
 	journalPos := win.Bounds().Center()
 	craftingPos := win.Bounds().Center()
+	charinfoPos := win.Bounds().Center()
 	tradePos := win.Bounds().Center()
 	trainPos := win.Bounds().Center()
 	// Draw elements.
@@ -183,6 +187,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.crafting.Opened() {
 		hud.crafting.Draw(win, mtk.Matrix().Moved(craftingPos))
+	}
+	if hud.charinfo.Opened() {
+		hud.charinfo.Draw(win, mtk.Matrix().Moved(charinfoPos))
 	}
 	if hud.trade.Opened() {
 		hud.trade.Draw(win, mtk.Matrix().Moved(tradePos))
@@ -270,6 +277,14 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.crafting.Show(false)
 			}
 		}
+		if win.JustPressed(charinfoKey) {
+			// Show character window.
+			if !hud.charinfo.Opened() {
+				hud.charinfo.Show(true)
+			} else {
+				hud.charinfo.Show(false)
+			}
+		}
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.onMouseLeftPressed(win.MousePosition())
@@ -321,6 +336,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	if hud.crafting.Opened() {
 		hud.crafting.Update(win)
+	}
+	if hud.charinfo.Opened() {
+		hud.charinfo.Update(win)
 	}
 	if hud.trade.Opened() {
 		hud.trade.Update(win)
@@ -581,7 +599,8 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		(hud.journal.Opened() && hud.journal.DrawArea().Contains(pos)) ||
 		(hud.crafting.Opened() && hud.crafting.DrawArea().Contains(pos)) ||
 		(hud.trade.Opened() && hud.trade.DrawArea().Contains(pos)) ||
-		(hud.training.Opened() && hud.training.DrawArea().Contains(pos)) {
+		(hud.training.Opened() && hud.training.DrawArea().Contains(pos)) ||
+		(hud.charinfo.Opened() && hud.charinfo.DrawArea().Contains(pos)) {
 		return true
 	}
 	return false

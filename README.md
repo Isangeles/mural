@@ -66,6 +66,8 @@ L - open journal
 
 V - open crafting menu
 
+C - open character window
+
 ## Configuration
 Configuration values are loaded from '.mural' file in Mural executable directory.
 

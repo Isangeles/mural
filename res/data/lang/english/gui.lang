@@ -74,10 +74,12 @@ hud_trade_value:Trade value
 hud_trade_low_value_msg:Sell value to low
 hud_training_title:Training
 hud_training_train:Train
+hud_charwin_title:Character
 hud_bar_menu_open_info:Open menu
 hud_bar_inv_open_info:Open inventory
 hud_bar_skills_open_info:Open skills
 hud_bar_journal_open_info:Open journal
+hud_bar_char_open_info:Open character window
 char_frame_hp_bar_label:Health
 char_frame_mana_bar_label:Mana
 reqs_not_meet:Requirements not meet

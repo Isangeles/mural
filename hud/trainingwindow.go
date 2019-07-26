@@ -68,7 +68,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 	if err == nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_training:fail_to_retrieve_background_tex:%v", err)
+		log.Err.Printf("hud_training: fail to retrieve background tex: %v", err)
 	}
 	// Title.
 	tw.titleText = mtk.NewText(mtk.SizeSmall, 0)
@@ -86,7 +86,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 			closeButtonBG.Bounds())
 		tw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_training:fail_to_retrieve_close_button_tex:%v", err)
+		log.Err.Printf("hud_training: fail to retrieve close button tex: %v", err)
 	}
 	tw.closeButton.SetOnClickFunc(tw.onCloseButtonClicked)
 	// Train button.
@@ -102,7 +102,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		bg := pixel.NewSprite(trainButtonBG, trainButtonBG.Bounds())
 		tw.trainButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud_training:fail_to_retrieve_train_button_tex:%v", err)
+		log.Err.Printf("hud_training: fail to retrieve train button tex: %v", err)
 	}
 	tw.trainButton.SetOnClickFunc(tw.onTrainButtonClicked)
 	tw.trainButton.SetLabel(lang.TextDir(flameconf.LangPath(), "hud_training_train"))

@@ -98,8 +98,13 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	// Quests list.
 	questsSize := pixel.V(jw.Size().X-mtk.ConvSize(20),
 		jw.Size().Y/2-mtk.ConvSize(100))
-	jw.questsList = mtk.NewList(questsSize, mtk.SizeMini,
-		mainColor, secColor, accentColor)
+	questsParams := mtk.Params{
+		SizeRaw:     questsSize,
+		MainColor:   mainColor,
+		SecColor:    secColor,
+		AccentColor: accentColor,
+	}
+	jw.questsList = mtk.NewList(questsParams)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG,

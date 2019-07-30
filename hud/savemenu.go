@@ -73,8 +73,13 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	bgSize := sm.Size()
 	savesListSize := pixel.V(bgSize.X-mtk.ConvSize(50),
 		bgSize.Y-mtk.ConvSize(200))
-	sm.savesList = mtk.NewList(savesListSize, mtk.SizeMini, mainColor,
-		secColor, accentColor)
+	savesListParams := mtk.Params{
+		SizeRaw:     savesListSize,
+		MainColor:   mainColor,
+		SecColor:    secColor,
+		AccentColor: accentColor,
+	}
+	sm.savesList = mtk.NewList(savesListParams)
 	sm.savesList.SetOnItemSelectFunc(sm.onSaveSelected)
 	// Text field.
 	sm.saveNameEdit = mtk.NewTextedit(mtk.SizeSmall, mainColor)

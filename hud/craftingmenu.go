@@ -119,8 +119,13 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	// Recipes list.
 	recipesSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(100))
-	cm.recipesList = mtk.NewList(recipesSize, mtk.SizeMini,
-		mainColor, secColor, accentColor)
+	recipesParams := mtk.Params{
+		SizeRaw:     recipesSize,
+		MainColor:   mainColor,
+		SecColor:    secColor,
+		AccentColor: accentColor,
+	}
+	cm.recipesList = mtk.NewList(recipesParams)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG,

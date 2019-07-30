@@ -25,7 +25,7 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
@@ -119,8 +119,13 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 	// Trainings list.
 	trainingsSize := pixel.V(tw.Size().X-mtk.ConvSize(20),
 		tw.Size().Y/2-mtk.ConvSize(100))
-	tw.trainingsList = mtk.NewList(trainingsSize, mtk.SizeMini,
-		mainColor, secColor, accentColor)
+	trainingsParams := mtk.Params{
+		SizeRaw:     trainingsSize,
+		MainColor:   mainColor,
+		SecColor:    secColor,
+		AccentColor: accentColor,
+	}
+	tw.trainingsList = mtk.NewList(trainingsParams)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG,

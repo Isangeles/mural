@@ -97,8 +97,13 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	// Answers list.
 	answersSize := pixel.V(dw.Size().X-mtk.ConvSize(20),
 		dw.Size().Y/2-mtk.ConvSize(100))
-	dw.answersList = mtk.NewList(answersSize, mtk.SizeSmall, mainColor, secColor,
-		accentColor)
+	answersParams := mtk.Params{
+		SizeRaw:     answersSize,
+		MainColor:   mainColor,
+		SecColor:    secColor,
+		AccentColor: accentColor,
+	}
+	dw.answersList = mtk.NewList(answersParams)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err == nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())

@@ -86,10 +86,16 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	rngSrc := rand.NewSource(time.Now().UnixNano())
 	ncm.rng = rand.New(rngSrc)
 	// Title.
-	ncm.title = mtk.NewText(mtk.SizeBig, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeBig,
+	}
+	ncm.title = mtk.NewText(titleParams)
 	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
 	// Name Edit.
-	ncm.nameLabel = mtk.NewText(mtk.SizeMedium, 0)
+	labelParams := mtk.Params{
+		FontSize: mtk.SizeMedium,
+	}
+	ncm.nameLabel = mtk.NewText(labelParams)
 	nameLabelText := lang.TextDir(flameconf.LangPath(), "newchar_name_edit_label")
 	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
 	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)

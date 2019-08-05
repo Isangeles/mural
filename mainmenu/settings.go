@@ -59,7 +59,11 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
-	s.title = mtk.NewText(mtk.SizeBig, 900)
+	titleParams := mtk.Params{
+		SizeRaw:  mtk.ConvVec(pixel.V(900, 0)),
+		FontSize: mtk.SizeBig,
+	}
+	s.title = mtk.NewText(titleParams)
 	s.title.SetText(lang.Text("gui", "settings_menu_title"))
 	// Buttons.
 	buttonParams := mtk.Params{

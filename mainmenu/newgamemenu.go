@@ -58,7 +58,10 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 	ngm := new(NewGameMenu)
 	ngm.mainmenu = mainmenu
 	// Title.
-	ngm.title = mtk.NewText(mtk.SizeBig, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeBig,
+	}
+	ngm.title = mtk.NewText(titleParams)
 	ngm.title.SetText(lang.Text("gui", "newgame_menu_title"))
 	// Swtches & text.
 	charSwitchParams := mtk.Params{

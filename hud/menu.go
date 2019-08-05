@@ -62,7 +62,10 @@ func newMenu(hud *HUD) *Menu {
 		log.Err.Printf("hud_menu:bg_texture_not_found:%v", err)
 	}
 	// Title.
-	m.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	m.titleText = mtk.NewText(titleParams)
 	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{

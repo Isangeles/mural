@@ -52,8 +52,13 @@ type EffectGraphic struct {
 func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *EffectGraphic {
 	eg := new(EffectGraphic)
 	eg.Effect = effect
+	// Icon.
 	eg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
-	eg.timeText = mtk.NewText(mtk.SizeBig, 0)
+	// Time text.
+	textParams := mtk.Params{
+		FontSize: mtk.SizeBig,
+	}
+	eg.timeText = mtk.NewText(textParams)
 	eg.timeText.SetColor(time_label_color)
 	return eg
 }

@@ -68,7 +68,10 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 			err)
 	}
 	// Title.
-	jw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	jw.titleText = mtk.NewText(titleParams)
 	jw.titleText.SetText(lang.TextDir(flameconf.LangPath(),
 		"hud_journal_title"))
 	// Buttons.

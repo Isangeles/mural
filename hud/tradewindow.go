@@ -87,10 +87,16 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		log.Err.Printf("hud_trade:fail_to_retrieve_background_tex:%v", err)
 	}
 	// Title.
-	tw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	tw.titleText = mtk.NewText(titleParams)
 	tw.titleText.SetText(lang.TextDir(langPath, "hud_trade_title"))
 	// Trade value text.
-	tw.valueText = mtk.NewText(mtk.SizeMini, 0)
+	valueTextParams := mtk.Params{
+		FontSize: mtk.SizeMini,
+	}
+	tw.valueText = mtk.NewText(valueTextParams)
 	// Close button.
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,

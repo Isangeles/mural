@@ -67,7 +67,10 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	sm.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	sm.titleText = mtk.NewText(titleParams)
 	sm.titleText.SetText(lang.Text("gui", "hud_save_menu_title"))
 	// Saves list.
 	bgSize := sm.Size()

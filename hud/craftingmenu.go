@@ -69,7 +69,10 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 			err)
 	}
 	// Title.
-	cm.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	cm.titleText = mtk.NewText(titleParams)
 	cm.titleText.SetText(lang.TextDir(flameconf.LangPath(),
 		"hud_crafting_title"))
 	// Close button.

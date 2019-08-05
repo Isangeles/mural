@@ -65,8 +65,12 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.size = size
 	c.position = pixel.V(0, 0)
 	c.fow = imdraw.New(nil)
-	c.cameraInfo = mtk.NewText(mtk.SizeMedium, 0)
-	c.cursorInfo = mtk.NewText(mtk.SizeMedium, 0)
+	// Debug info.
+	textParams := mtk.Params{
+		FontSize: mtk.SizeMedium,
+	}
+	c.cameraInfo = mtk.NewText(textParams)
+	c.cursorInfo = mtk.NewText(textParams)
 	return c
 }
 

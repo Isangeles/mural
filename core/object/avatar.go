@@ -26,8 +26,6 @@ package object
 import (
 	"fmt"
 
-	"golang.org/x/image/colornames"
-
 	"github.com/faiface/pixel"
 
 	flameobject "github.com/isangeles/flame/core/module/object"
@@ -50,7 +48,7 @@ type Avatar struct {
 	data      *res.AvatarData
 	sprite    *internal.AvatarSprite
 	info      *mtk.InfoWindow
-	chat      *mtk.Textbox
+	chat      *mtk.Text
 	hovered   bool
 	speaking  bool
 	chatTimer int64
@@ -88,14 +86,12 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
 	// Info windows.
-	av.info = mtk.NewInfoWindow(mtk.SizeSmall, colornames.Grey)
+	av.info = mtk.NewInfoWindow(mtk.SizeSmall, pixel.RGBA{0.1, 0.1, 0.1, 0.5})
 	av.info.SetText(av.infoText())
 	chatParams := mtk.Params{
 		FontSize:    mtk.SizeSmall,
-		MainColor:   colornames.Grey,
-		AccentColor: colornames.Red,
 	}
-	av.chat = mtk.NewTextbox(chatParams)
+	av.chat = mtk.NewText(chatParams)
 	// Items, effects, skills.
 	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
@@ -149,7 +145,6 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.sprite.Update(win)
 	// Info window.
 	av.info.Update(win)
-	av.chat.Update(win)
 	if av.speaking {
 		av.chatTimer += win.Delta()
 		if av.chatTimer >= 2000 {
@@ -369,6 +364,5 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 // chat channel.
 func (av *Avatar) onChatSent(t string) {
 	av.chat.SetText(t)
-	av.chat.SetSize(av.chat.TextSize())
 	av.speaking = true
 }

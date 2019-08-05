@@ -175,12 +175,15 @@ func run() {
 	ci.SetMainMenu(mainMenu)
 	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
-	fpsInfo := mtk.NewText(mtk.SizeMedium, 0)
-	fpsInfo.JustRight()
-	verInfo := mtk.NewText(mtk.SizeMedium, 0)
+	textParams := mtk.Params{
+		FontSize: mtk.SizeMedium,
+	}
+	fpsInfo := mtk.NewText(textParams)
+	fpsInfo.Align(mtk.AlignRight)
+	verInfo := mtk.NewText(textParams)
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
 		flame.NAME, flame.VERSION))
-	verInfo.JustRight()
+	verInfo.Align(mtk.AlignRight)
 	// Main loop.
 	for !win.Closed() {
 		// Draw.

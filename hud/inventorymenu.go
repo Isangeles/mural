@@ -75,7 +75,10 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	im.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	im.titleText = mtk.NewText(titleParams)
 	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
 	// Buttons.
 	buttonParams := mtk.Params{

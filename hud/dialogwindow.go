@@ -69,7 +69,10 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		dw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	dw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	dw.titleText = mtk.NewText(titleParams)
 	dw.titleText.SetText(lang.TextDir(flameconf.LangPath(), "hud_dialog_title"))
 	// Buttons.
 	buttonParams := mtk.Params{

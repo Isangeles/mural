@@ -25,15 +25,15 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
-	
+
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
 
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 )
@@ -66,7 +66,10 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 		log.Err.Printf("hud_char: fail to retrieve background tex: %v", err)
 	}
 	// Title.
-	cw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	cw.titleText = mtk.NewText(titleParams)
 	cw.titleText.SetText(lang.TextDir(langPath, "hud_charwin_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{

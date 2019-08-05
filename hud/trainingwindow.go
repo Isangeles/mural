@@ -71,7 +71,10 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		log.Err.Printf("hud_training: fail to retrieve background tex: %v", err)
 	}
 	// Title.
-	tw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	tw.titleText = mtk.NewText(titleParams)
 	tw.titleText.SetText(lang.TextDir(langPath, "hud_training_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{

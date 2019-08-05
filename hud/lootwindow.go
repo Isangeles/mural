@@ -75,7 +75,10 @@ func newLootWindow(hud *HUD) *LootWindow {
 		lw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
-	lw.titleText = mtk.NewText(mtk.SizeSmall, 0)
+	titleParams := mtk.Params{
+		FontSize: mtk.SizeSmall,
+	}
+	lw.titleText = mtk.NewText(titleParams)
 	lw.titleText.SetText(lang.Text("gui", "hud_loot_title"))
 	// Buttons.
 	buttonParams := mtk.Params{

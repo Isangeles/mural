@@ -30,7 +30,7 @@ import (
 // Struct for HUD loading screen.
 type LoadingScreen struct {
 	hud  *HUD
-	info *mtk.Textbox
+	info *mtk.Text
 }
 
 // newLoadingScreen returns new HUD loading
@@ -39,25 +39,23 @@ func newLoadingScreen(hud *HUD) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.hud = hud
 	infoParams := mtk.Params{
+		SizeRaw:     mtk.SizeMedium.MessageWindowSize(),
 		FontSize:    mtk.SizeMini,
 		MainColor:   mainColor,
 		AccentColor: accentColor,
 	}
-	ls.info = mtk.NewTextbox(infoParams)
+	ls.info = mtk.NewText(infoParams)
 	return ls
 }
 
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
-	infoSize := mtk.SizeMedium.MessageWindowSize()
 	infoPos := win.Bounds().Center()
-	ls.info.SetSize(infoSize)
 	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))
 }
 
 // Update updates loading screen.
 func (ls *LoadingScreen) Update(win *mtk.Window) {
-	ls.info.Update(win)
 }
 
 // SetLoadInfo sets specified text as current load info text.

@@ -125,6 +125,7 @@ func (cw *CharacterWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates window.
 func (cw *CharacterWindow) Update(win *mtk.Window) {
 	cw.closeButton.Update(win)
+	cw.charInfo.Update(win)
 }
 
 // Show toggles window visibility.
@@ -164,8 +165,8 @@ Gender:     %s
 Race:       %s
 Alignment   %s
 Attributes: %s`
-        pc := cw.hud.ActivePlayer()
-        info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.TextDir(langPath, pc.Gender().ID()),
+	pc := cw.hud.ActivePlayer()
+  info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.TextDir(langPath, pc.Gender().ID()),
 		lang.TextDir(langPath, pc.Race().ID()), lang.TextDir(langPath, pc.Alignment().ID()),
 		pc.Attributes())
 	cw.charInfo.SetText(info)

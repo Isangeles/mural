@@ -141,6 +141,9 @@ guiaudio -o set-volue -a [value]
 ```
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
+## Scripts
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in '[module]/gui/scripts' directory. To start script enter script name in chat window or game console with '%' prefix.
+
 ## Contributing
 You are welcome to contribute to project development.
 

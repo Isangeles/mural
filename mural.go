@@ -236,13 +236,19 @@ func EnterGame(g *flamecore.Game) {
 	}
 	err = hud.SetGame(game)
 	if err != nil {
-		log.Err.Printf("enter_game:fail_to_set_hud_game:%v", err)
+		log.Err.Printf("enter game: fail to set hud game: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
 	// Set HUD.
 	setHUD(hud)
 	inGame = true
+	// Run module scripts.
+	modpath := game.Module().Conf().Path
+	err = ci.RunScriptsDir(modpath + "/gui/scripts/run");
+	if err != nil {
+		log.Err.Printf("fail to run module scripts: %v", err)
+	}
 }
 
 // EnterSavedGame creates game and HUD from saved data.
@@ -253,7 +259,7 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
-		log.Err.Printf("enter_saved_game:fail_to_load_gui_save:%v", err)
+		log.Err.Printf("enter saved game: fail  load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
@@ -265,20 +271,26 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 	err = imp.LoadChapterResources(game.Module().Chapter())
 	err = hud.SetGame(game)
 	if err != nil {
-		log.Err.Printf("enter_saved_game:fail_to_set_hud_game:%v", err)
+		log.Err.Printf("enter saved game: fail to set hud game: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
 	// Load HUD state.
 	err = hud.LoadGUISave(guisav)
 	if err != nil {
-		log.Err.Printf("enter_saved_game:fail_to_set_hud_layout:%v", err)
+		log.Err.Printf("enter saved game: fail to set hud layout: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
 	// Set HUD.
 	setHUD(hud)
 	inGame = true
+	// Run module scripts.
+	modpath := game.Module().Conf().Path
+	err = ci.RunScriptsDir(modpath + "/gui/scripts/run");
+	if err != nil {
+		log.Err.Printf("fail to run module scripts: %v", err)
+	}
 }
 
 // ExecuteCommand handles specified text line
@@ -288,22 +300,22 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 func ExecuteCommand(line string) (int, string, error) {
 	cmd, err := syntax.NewSTDExpression(line)
 	if err != nil {
-		return -1, "", fmt.Errorf("invalid_input:%s", line)
+		return -1, "", fmt.Errorf("invalid input: %s", line)
 	}
 	res, out := burn.HandleExpression(cmd)
 	return res, out, nil
 }
 
 // ExecuteScriptFile executes Ash script file
-// with specified Name.
-func ExecuteScriptFile(Name string, args ...string) error {
+// with specified name.
+func ExecuteScriptFile(name string, args ...string) error {
 	modpath := game.Module().Conf().Path
-	path := filepath.FromSlash(modpath + "/gui/scripts/" + Name + ".ash")
+	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
 	return ci.RunScript(path, args...)
 }
 
-// setHUD sets specified HUD instance as current GUI player
-// HUD.
+// setHUD sets specified HUD instance as current
+// GUI player HUD.
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)

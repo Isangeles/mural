@@ -30,7 +30,7 @@ import (
 // Struct for main menu loading screen.
 type LoadingScreen struct {
 	mainmenu *MainMenu
-	info     *mtk.Textbox
+	info     *mtk.Text
 }
 
 // newLoadingScreen creates new main menu
@@ -39,25 +39,23 @@ func newLoadingScreen(mainmenu *MainMenu) *LoadingScreen {
 	ls := new(LoadingScreen)
 	ls.mainmenu = mainmenu
 	infoParams := mtk.Params{
+		SizeRaw:     mtk.SizeMedium.MessageWindowSize(),
 		FontSize:    mtk.SizeMedium,
 		MainColor:   mainColor,
 		AccentColor: accentColor,
 	}
-	ls.info = mtk.NewTextbox(infoParams)
+	ls.info = mtk.NewText(infoParams)
 	return ls
 }
 
 // Draw draws loading screen.
 func (ls *LoadingScreen) Draw(win *mtk.Window) {
-	infoSize := mtk.SizeMedium.MessageWindowSize()
 	infoPos := win.Bounds().Center()
-	ls.info.SetSize(infoSize)
 	ls.info.Draw(win, mtk.Matrix().Moved(infoPos))
 }
 
 // Update updates loading screen.
 func (ls *LoadingScreen) Update(win *mtk.Window) {
-	ls.info.Update(win)
 }
 
 // SetLoadInfo sets specified text as current load info text.

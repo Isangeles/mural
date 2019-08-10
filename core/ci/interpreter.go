@@ -71,7 +71,7 @@ func init() {
 func RunScriptsDir(path string) error {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return fmt.Errorf("fail_to_read_dir:%v", err)
+		return fmt.Errorf("fail to read dir: %v", err)
 	}
 	for _, finfo := range files {
 		if !strings.HasSuffix(finfo.Name(), ash.SCRIPT_FILE_EXT) {
@@ -80,7 +80,7 @@ func RunScriptsDir(path string) error {
 		filepath := filepath.FromSlash(path + "/" + finfo.Name())
 		err := RunScript(filepath)
 		if err != nil {
-			log.Err.Printf("ci:script:%s:%v", err)
+			log.Err.Printf("ci: script: %s: %v", err)
 		}
 	}
 	return nil
@@ -91,15 +91,21 @@ func RunScriptsDir(path string) error {
 func RunScript(path string, args ...string) error {
 	file, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("fail_to_open_file:%v", err)
+		return fmt.Errorf("fail to open file: %v", err)
 	}
 	text, err := ioutil.ReadAll(file)
 	if err != nil {
-		return fmt.Errorf("fail_to_read_file:%v", err)
+		return fmt.Errorf("fail to read file: %v", err)
 	}
-	script, err := ash.NewScript(fmt.Sprintf("%s", text), args...)
+	scriptPath := strings.Split(path, "/")
+	scriptName := scriptPath[len(scriptPath)-1]
+	scriptArgs := []string{scriptName}
+	for _, a := range args {
+		scriptArgs = append(scriptArgs, a)
+	}
+	script, err := ash.NewScript(fmt.Sprintf("%s", text), scriptArgs...)
 	if err != nil {
-		return fmt.Errorf("fail_to_create_ash_script:%v", err)
+		return fmt.Errorf("fail to create ash script: %v", err)
 	}
 	go runScript(script)
 	return nil
@@ -129,7 +135,7 @@ func SetMusicPlayer(p *mtk.AudioPlayer) {
 func runScript(s *ash.Script) {
 	err := ash.Run(s)
 	if err != nil {
-		log.Err.Printf("ci:fail_to_run_script:%v", err)
+		log.Err.Printf("ci: fail to run script: %v", err)
 		return
 	}
 }

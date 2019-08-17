@@ -31,7 +31,6 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	flameres "github.com/isangeles/flame/core/data/res"
@@ -61,7 +60,7 @@ type NewCharacterMenu struct {
 	nameLabel     *mtk.Text
 	nameEdit      *mtk.Textedit
 	faceSwitch    *mtk.Switch
-	pointsBox     *mtk.Textbox
+	pointsBox     *mtk.Text
 	strSwitch     *mtk.Switch
 	conSwitch     *mtk.Switch
 	dexSwitch     *mtk.Switch
@@ -104,10 +103,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	pointsBoxParams := mtk.Params{
 		SizeRaw:     pointsBoxSize,
 		FontSize:    mtk.SizeBig,
-		MainColor:   mainColor,
-		AccentColor: accentColor,
 	}
-	ncm.pointsBox = mtk.NewTextbox(pointsBoxParams)
+	ncm.pointsBox = mtk.NewText(pointsBoxParams)
 	// Portrait switch.
 	faceSwitchParams := mtk.Params{
 		Size:      mtk.SizeBig,
@@ -257,7 +254,6 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	ncm.doneButton.Update(win)
 	ncm.backButton.Update(win)
 	ncm.rollButton.Update(win)
-	ncm.pointsBox.Update(win)
 	ncm.faceSwitch.Update(win)
 	ncm.strSwitch.Update(win)
 	ncm.conSwitch.Update(win)
@@ -369,23 +365,6 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		Wis:       wis,
 	}
 	char := character.New(charData)
-	// Character skills & items from mod config.
-	for _, sid := range flame.Mod().Conf().CharSkills {
-		s, err := flamedata.Skill(sid)
-		if err != nil {
-			log.Err.Printf("newchar_menu:fail_to_retireve_conf_char_skill:%v", err)
-			continue
-		}
-		char.AddSkill(s)
-	}
-	for _, iid := range flame.Mod().Conf().CharItems {
-		i, err := flamedata.Item(iid)
-		if err != nil {
-			log.Err.Printf("newchar_menu:fail_to_retireve_conf_char_item:%v", err)
-			continue
-		}
-		char.Inventory().AddItem(i)
-	}
 	// Player skills & items from interface config.
 	for _, sid := range config.CharSkills {
 		s, err := flamedata.Skill(sid)

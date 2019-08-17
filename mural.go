@@ -40,8 +40,10 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/burn"
+	"github.com/isangeles/burn/ash"
 	"github.com/isangeles/burn/syntax"
 
 	"github.com/isangeles/mtk"
@@ -57,10 +59,11 @@ import (
 )
 
 var (
-	mainMenu *mainmenu.MainMenu
-	pcHUD    *hud.HUD
-	game     *flamecore.Game
-	inGame   bool
+	mainMenu    *mainmenu.MainMenu
+	pcHUD       *hud.HUD
+	game        *flamecore.Game
+	inGame      bool
+	areaScripts []*ash.Script
 )
 
 // On init.
@@ -68,19 +71,19 @@ func init() {
 	// Load flame config.
 	err := flameconf.LoadConfig()
 	if err != nil {
-		log.Err.Printf("fail_to_load_flame_config_file:%v\n", err)
+		log.Err.Printf("fail to load flame config file: %v", err)
 		flameconf.SaveConfig() // override 'corrupted' config file with default configuration
 	}
 	// Load module.
 	m, err := flamedata.Module(flameconf.ModulePath(), flameconf.LangID())
 	if err != nil {
-		log.Err.Printf("fail_to_load_config_module:%v", err)
+		log.Err.Printf("fail to load config module: %v", err)
 	}
 	flame.SetModule(m)
 	// Load GUI config.
 	err = config.LoadConfig()
 	if err != nil {
-		log.Err.Printf("fail_to_load_config_file:%v\n", err)
+		log.Err.Printf("fail to load config file: %v", err)
 	}
 }
 
@@ -93,22 +96,22 @@ func main() {
 	// Load UI graphic.
 	err := data.LoadUIData()
 	if err != nil {
-		panic(fmt.Errorf("fail_to_load_gui_data:%v", err))
+		panic(fmt.Errorf("fail to load gui data: %v", err))
 	}
 	// Load game graphic.
 	err = data.LoadGameData()
 	if err != nil {
-		panic(fmt.Errorf("fail_to_load_game_graphic_data:%v", err))
+		panic(fmt.Errorf("fail to load game graphic data: %v", err))
 	}
 	// Load module data.
 	err = flamedata.LoadModuleData(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail_to_load_module_data:%v", err))
+		panic(fmt.Errorf("fail to load module data: %v", err))
 	}
 	// Load module graphic data.
 	err = imp.LoadModuleResources(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail_to_load_module_resources:%v", err))
+		panic(fmt.Errorf("fail to load module resources: %v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -119,7 +122,7 @@ func main() {
 			pl := []beep.Streamer{m.Streamer(0, m.Len())}
 			mtk.Audio().SetPlaylist(pl)
 		} else {
-			log.Err.Printf("fail_to_load_main_theme_audio_data:%v", err)
+			log.Err.Printf("fail to load main theme audio data: %v", err)
 		}
 		mtk.Audio().SetVolume(config.MusicVolume)
 		mtk.Audio().SetMute(config.MusicMute)
@@ -149,7 +152,7 @@ func run() {
 	}
 	win, err := mtk.NewWindow(cfg)
 	if err != nil {
-		panic(fmt.Errorf("fail_to_create_mtk_window:%v", err))
+		panic(fmt.Errorf("fail to create mtk window: %v", err))
 	}
 	// UI Font.
 	uiFont, err := data.Font(config.MainFont)
@@ -159,7 +162,7 @@ func run() {
 	// Audio effects.
 	bClickSound, err := data.AudioEffect(config.ButtonClickSound)
 	if err != nil {
-		log.Err.Printf("init_run:fail_to_retrieve_button_click_audio_data:%v",
+		log.Err.Printf("init run: fail to retrieve button click audio data: %v",
 			err)
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
@@ -169,7 +172,7 @@ func run() {
 	mainMenu.SetOnSaveLoadedFunc(EnterSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
 	if err != nil {
-		log.Err.Printf("init_run:fail_to_import_playable_characters:%v",
+		log.Err.Printf("init run: fail to import playable characters: %v",
 			err)
 	}
 	ci.SetMainMenu(mainMenu)
@@ -227,10 +230,12 @@ func EnterGame(g *flamecore.Game) {
 	game = g
 	// Create HUD.
 	hud := hud.New()
+	// Set HUD.
+	setHUD(hud)
 	// Set game for HUD.
 	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
-		log.Err.Printf("enter_game:fail_to_load_chapter_resources:%v", err)
+		log.Err.Printf("enter game: fail to load chapter resources: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
@@ -240,14 +245,15 @@ func EnterGame(g *flamecore.Game) {
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
-	// Set HUD.
-	setHUD(hud)
 	inGame = true
 	// Run module scripts.
 	modpath := game.Module().Conf().Path
-	err = ci.RunScriptsDir(modpath + "/gui/scripts/run");
+	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
 	if err != nil {
-		log.Err.Printf("fail to run module scripts: %v", err)
+		log.Err.Printf("enter saved game: fail to retrieve module scripts: %v", err)
+	}
+	for _, s := range scripts {
+		go ci.RunScript(s)
 	}
 }
 
@@ -268,6 +274,8 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 	}
 	// Create HUD.
 	hud := hud.New()
+	// Set HUD.
+	setHUD(hud)
 	err = imp.LoadChapterResources(game.Module().Chapter())
 	err = hud.SetGame(game)
 	if err != nil {
@@ -282,14 +290,15 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
-	// Set HUD.
-	setHUD(hud)
 	inGame = true
 	// Run module scripts.
 	modpath := game.Module().Conf().Path
-	err = ci.RunScriptsDir(modpath + "/gui/scripts/run");
+	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
 	if err != nil {
-		log.Err.Printf("fail to run module scripts: %v", err)
+		log.Err.Printf("enter saved game: fail to retrieve module scripts: %v", err)
+	}
+	for _, s := range scripts {
+		go ci.RunScript(s)
 	}
 }
 
@@ -306,12 +315,40 @@ func ExecuteCommand(line string) (int, string, error) {
 	return res, out, nil
 }
 
-// ExecuteScriptFile executes Ash script file
-// with specified name.
+// ExecuteScriptFile executes Ash script from file
+// with specified name in background.
 func ExecuteScriptFile(name string, args ...string) error {
 	modpath := game.Module().Conf().Path
 	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
-	return ci.RunScript(path, args...)
+	script, err := data.Script(path)
+	if err != nil {
+		return fmt.Errorf("fail to retrieve script: %v", err)
+	}
+	go ci.RunScript(script)
+	return nil
+}
+
+// RunAreaScripts executes all scripts for specified area
+// placed in gui/chapters/[chapter]/areas/scripts/[area].
+func RunAreaScripts(a *scenario.Area) {
+	// Stop previous area scripts.
+	for _, s := range areaScripts {
+		s.Stop(true)
+	}
+	// Retrive scripts.
+	mod := game.Module()
+	path := filepath.FromSlash(mod.Conf().Path + "/gui/chapters/" +
+		mod.Chapter().ID() + "/areas/scripts/" + a.ID())
+	scripts, err := data.ScriptsDir(path)
+	if err != nil {
+		log.Err.Printf("run area scripts: fail to retrieve scripts: %v", err)
+		return
+	}
+	// Run scripts in background.
+	for _, s := range scripts {
+		go ci.RunScript(s)
+		areaScripts = append(areaScripts, s)
+	}
 }
 
 // setHUD sets specified HUD instance as current
@@ -319,6 +356,7 @@ func ExecuteScriptFile(name string, args ...string) error {
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)
+	pcHUD.SetOnAreaChangedFunc(RunAreaScripts)
 	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
 	pcHUD.Chat().SetOnScriptNameFunc(ExecuteScriptFile)
 }

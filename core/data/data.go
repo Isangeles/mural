@@ -30,6 +30,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/golang/freetype/truetype"
 
@@ -40,6 +41,8 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	
+	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -257,7 +260,7 @@ func PlayablePortraits() (map[string]pixel.Picture, error) {
 	path := flame.Mod().Conf().Path + "/gui/portraits"
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail to read dir: %v", err)
 	}
 	portraits := make(map[string]pixel.Picture)
 	for _, f := range files {
@@ -326,6 +329,47 @@ func ErrorItemGraphic() (*res.ItemGraphicData, error) {
 		MaxStack: 100,
 	}
 	return &igd, nil
+}
+
+// ScriptsDir returns all scripts from directory with
+// specified path.
+func ScriptsDir(path string) ([]*ash.Script, error) {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return nil, fmt.Errorf("fail to read dir: %v", err)
+	}
+	scripts := make([]*ash.Script, 0)
+	for _, info := range files {
+		if !strings.HasSuffix(info.Name(), ash.SCRIPT_FILE_EXT) {
+			continue
+		}
+		scriptPath := filepath.FromSlash(path + "/" + info.Name())
+		s, err := Script(scriptPath)
+		if err != nil {
+			log.Err.Printf("fail to retrieve script: %v", err)
+			continue
+		}
+		scripts = append(scripts, s)
+	}
+	return scripts, nil
+}
+
+// Script parses file with specified path to
+// Ash scirpt.
+func Script(path string) (*ash.Script, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("fail to open file: %v", err)
+	}
+	text, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("fail to read file: %v", err)
+	}
+	script, err := ash.NewScript(fmt.Sprintf("%s", text), file.Name())
+	if err != nil {
+		return nil, fmt.Errorf("fail to parse script text: %v", err)
+	}
+	return script, nil
 }
 
 // Load loads grpahic directories.

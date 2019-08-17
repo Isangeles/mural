@@ -38,8 +38,8 @@ import (
 )
 
 var (
-	chat_command_prefix = "$"
-	chat_script_prefix  = "%"
+	chatCommandPrefix = "$"
+	chatScriptPrefix  = "%"
 )
 
 // Chat represents HUD chat window.
@@ -167,8 +167,8 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
-	if strings.HasPrefix(input, chat_command_prefix) && c.onCommand != nil {
-		cmdInput := strings.TrimPrefix(input, chat_command_prefix)
+	if strings.HasPrefix(input, chatCommandPrefix) && c.onCommand != nil {
+		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
 		res, out, err := c.onCommand(cmdInput)
 		if err != nil {
 			log.Err.Printf("fail_to_execute_command:%v", err)
@@ -178,8 +178,8 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		return
 	}
 	// Execute script file.
-	if strings.HasPrefix(input, chat_script_prefix) && c.onScriptName != nil {
-		input = strings.TrimPrefix(input, chat_script_prefix)
+	if strings.HasPrefix(input, chatScriptPrefix) && c.onScriptName != nil {
+		input = strings.TrimPrefix(input, chatScriptPrefix)
 		args := strings.Split(input, " ")
 		err := c.onScriptName(args[0], args...)
 		if err != nil {

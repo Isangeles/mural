@@ -67,33 +67,34 @@ var (
 
 // Struct for 'head-up display'.
 type HUD struct {
-	loadScreen *LoadingScreen
-	camera     *Camera
-	bar        *MenuBar
-	menu       *Menu
-	savemenu   *SaveMenu
-	pcFrame    *ObjectFrame
-	tarFrame   *ObjectFrame
-	castBar    *CastBar
-	chat       *Chat
-	inv        *InventoryMenu
-	skills     *SkillMenu
-	loot       *LootWindow
-	dialog     *DialogWindow
-	journal    *JournalWindow
-	crafting   *CraftingMenu
-	charinfo   *CharacterWindow
-	trade      *TradeWindow
-	training   *TrainingWindow
-	game       *flamecore.Game
-	pcs        []*object.Avatar
-	activePC   *object.Avatar
-	userFocus  *mtk.Focus
-	msgs       *mtk.MessagesQueue
-	layouts    map[string]*Layout
-	loading    bool
-	exiting    bool
-	loaderr    error
+	loadScreen    *LoadingScreen
+	camera        *Camera
+	bar           *MenuBar
+	menu          *Menu
+	savemenu      *SaveMenu
+	pcFrame       *ObjectFrame
+	tarFrame      *ObjectFrame
+	castBar       *CastBar
+	chat          *Chat
+	inv           *InventoryMenu
+	skills        *SkillMenu
+	loot          *LootWindow
+	dialog        *DialogWindow
+	journal       *JournalWindow
+	crafting      *CraftingMenu
+	charinfo      *CharacterWindow
+	trade         *TradeWindow
+	training      *TrainingWindow
+	game          *flamecore.Game
+	pcs           []*object.Avatar
+	activePC      *object.Avatar
+	userFocus     *mtk.Focus
+	msgs          *mtk.MessagesQueue
+	layouts       map[string]*Layout
+	loading       bool
+	exiting       bool
+	loaderr       error
+	onAreaChanged func(a *scenario.Area)
 }
 
 // New creates new HUD instance.
@@ -543,6 +544,9 @@ func (hud *HUD) ChangeArea(area *scenario.Area) error {
 	hud.camera.SetObjects(objects)
 	// Reload HUD.
 	hud.Reload()
+	if hud.onAreaChanged != nil {
+		hud.onAreaChanged(area)
+	}
 	return nil
 }
 
@@ -582,6 +586,11 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Reload UI.
 	hud.Reload()
 	return nil
+}
+
+// SetOnAreaChangedFunc sets function triggered on area change.
+func (hud *HUD) SetOnAreaChangedFunc(f func(a *scenario.Area)) {
+	hud.onAreaChanged = f
 }
 
 // containsPos checks is specified position is contained

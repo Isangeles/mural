@@ -102,6 +102,9 @@ Description: specifies name of audio file(located in audio archive) for main men
 ```
 Description: specifies name of audio file(located in audio archive) for button click sound.
 
+## Module directory
+All GUI-related files are must be stored in 'data/module/[module]/gui' directory.
+
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 
@@ -142,7 +145,9 @@ guiaudio -o set-volue -a [value]
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
-Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in '[module]/gui/scripts' directory. To start script enter script name in chat window or game console with '%' prefix.
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in '[module]/gui/scripts' directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from 'run' subdirectory are started automatically on game start/load.
+
+Area scripts are stored in 'chapters/[chapter]/areas/scripts[area]' directory and started after area change.
 
 ## Contributing
 You are welcome to contribute to project development.

@@ -161,13 +161,12 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 	if !ok {
 		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
 	}
-	charInfoForm := `
-                         Name:       %s
-                         Level:      %d
-                         Gender:     %s
-                         Race:       %s
-                         Alignment   %s
-                         Attributes: %s`
+	charInfoForm := `Name:       %s
+Level:      %d
+Gender:     %s
+Race:       %s
+Alignment   %s
+Attributes: %s`
 	info := fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
 		lang.Text("ui", c.Gender().ID()), lang.Text("ui", c.Race().ID()),
 		lang.Text("ui", c.Alignment().ID()), c.Attributes().String())

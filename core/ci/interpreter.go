@@ -26,12 +26,6 @@
 package ci
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/ash"
 
@@ -66,51 +60,6 @@ func init() {
 	burn.AddToolHandler(GUIImport, guiimport)
 }
 
-// RunScriptsDir runs in background all Ash scripts
-// in directory with specified path.
-func RunScriptsDir(path string) error {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return fmt.Errorf("fail to read dir: %v", err)
-	}
-	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), ash.SCRIPT_FILE_EXT) {
-			continue
-		}
-		filepath := filepath.FromSlash(path + "/" + finfo.Name())
-		err := RunScript(filepath)
-		if err != nil {
-			log.Err.Printf("ci: script: %s: %v", err)
-		}
-	}
-	return nil
-}
-
-// RunScript runs in background Asg script
-// from specified path.
-func RunScript(path string, args ...string) error {
-	file, err := os.Open(path)
-	if err != nil {
-		return fmt.Errorf("fail to open file: %v", err)
-	}
-	text, err := ioutil.ReadAll(file)
-	if err != nil {
-		return fmt.Errorf("fail to read file: %v", err)
-	}
-	scriptPath := strings.Split(path, "/")
-	scriptName := scriptPath[len(scriptPath)-1]
-	scriptArgs := []string{scriptName}
-	for _, a := range args {
-		scriptArgs = append(scriptArgs, a)
-	}
-	script, err := ash.NewScript(fmt.Sprintf("%s", text), scriptArgs...)
-	if err != nil {
-		return fmt.Errorf("fail to create ash script: %v", err)
-	}
-	go runScript(script)
-	return nil
-}
-
 // SetMainMenu sets specified main menu as main
 // menu for guiman to manage.
 func SetMainMenu(menu *mainmenu.MainMenu) {
@@ -129,10 +78,9 @@ func SetMusicPlayer(p *mtk.AudioPlayer) {
 	guiMusic = p
 }
 
-// runScript executes specified script,
-// in case of error sends err message to
-// Mural log.
-func runScript(s *ash.Script) {
+// RunScript executes specified script, in case
+// of error sends err message to Mural error log.
+func RunScript(s *ash.Script) {
 	err := ash.Run(s)
 	if err != nil {
 		log.Err.Printf("ci: fail to run script: %v", err)

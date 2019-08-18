@@ -185,7 +185,7 @@ func run() {
 	fpsInfo.Align(mtk.AlignRight)
 	verInfo := mtk.NewText(textParams)
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
-		flame.NAME, flame.VERSION))
+		flame.Name, flame.Version))
 	verInfo.Align(mtk.AlignRight)
 	// Main loop.
 	for !win.Closed() {

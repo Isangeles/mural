@@ -26,8 +26,6 @@ package hud
 import (
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/module/object/skill"
-
 	"github.com/isangeles/mtk"
 )
 
@@ -35,7 +33,6 @@ import (
 // TODO: bar background.
 type CastBar struct {
 	hud   *HUD
-	owner skill.SkillUser
 	bar   *mtk.ProgressBar
 }
 
@@ -54,20 +51,25 @@ func (cb *CastBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates cast bar.
 func (cb *CastBar) Update(win *mtk.Window) {
-	if cb.owner == nil {
+	pc := cb.hud.ActivePlayer()
+	if pc == nil {
 		return
 	}
-	for _, s := range cb.owner.Skills() {
-		if s.Casting() {
-			cb.bar.SetMax(int(s.CastTimeMax()))
-			cb.bar.SetValue(int(s.CastTime()))
+	for _, s := range pc.Skills() {
+		if !s.Casting() {
+			continue
 		}
+		cb.bar.SetMax(int(s.CastTimeMax()))
+		cb.bar.SetValue(int(s.CastTime()))
+		break
+	}
+	for _, r := range pc.Recipes() {
+		if !r.Casting() {
+			continue
+		}
+		cb.bar.SetMax(int(r.CastTimeMax()))
+		cb.bar.SetValue(int(r.CastTime()))
+		break
 	}
 	cb.bar.Update(win)
-}
-
-// SetOwner sets specified skill user as cast
-// bar owner.
-func (cb *CastBar) SetOwner(o skill.SkillUser) {
-	cb.owner = o
 }

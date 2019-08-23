@@ -382,7 +382,6 @@ func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
 	hud.activePC = pc
 	hud.camera.CenterAt(hud.ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.ActivePlayer())
-	hud.castBar.SetOwner(hud.ActivePlayer().Character)
 	hud.Reload()
 }
 

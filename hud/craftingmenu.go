@@ -180,6 +180,7 @@ func (cm *CraftingMenu) Update(win *mtk.Window) {
 	cm.closeButton.Update(win)
 	cm.makeButton.Update(win)
 	cm.recipesList.Update(win)
+	cm.recipeInfo.Update(win)
 }
 
 // Show toggles menu visibility.
@@ -259,14 +260,6 @@ func (cm *CraftingMenu) onMakeButtonClicked(b *mtk.Button) {
 	if !ok {
 		return
 	}
-	pc := cm.hud.ActivePlayer()
-	if !pc.MeetReqs(recipe.Reqs()...) {
-		log.Err.Printf(lang.TextDir(flameconf.LangPath(), "reqs_not_meet"))
-	}
-	pc.ChargeReqs(recipe.Reqs()...)
-	res := recipe.Make()
-	for _, i := range res {
-		pc.Inventory().AddItem(i)
-	}
+	cm.hud.ActivePlayer().Craft(recipe)
 	return
 }

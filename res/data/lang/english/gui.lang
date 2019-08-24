@@ -83,5 +83,6 @@ hud_bar_char_open_info:Open character window
 char_frame_hp_bar_label:Health
 char_frame_mana_bar_label:Mana
 reqs_not_meet:Requirements not meet
+tar_too_far:Target is too far
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file
 load_game_err:Fail to load game

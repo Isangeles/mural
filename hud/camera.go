@@ -25,10 +25,15 @@ package hud
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+
+	flameconf "github.com/isangeles/flame/config"
+	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mtk"
 
@@ -40,6 +45,11 @@ import (
 
 var (
 	FOWColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+)
+
+const (
+	LootRange   = 50
+	DialogRange = 50
 )
 
 // Struct for HUD camera.
@@ -349,13 +359,21 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 
 // Triggered after left mouse button was pressed.
 func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
+	pc := c.hud.ActivePlayer()
+	langPath := flameconf.LangPath()
 	// Loot.
-	// TODO: check range.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() || av == c.hud.ActivePlayer() {
+		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s#%s", av.ID(), av.Serial())
+		// Range check.
+		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
+		if r > LootRange {
+			pc.SendPrivate(lang.TextDir(langPath, "tar_too_far"))
+			continue
+		}
+		// Show loot window.
+		log.Dbg.Printf("hud: loot: %s#%s", av.ID(), av.Serial())
 		c.hud.loot.SetTarget(av)
 		c.hud.loot.Show(true)
 		return
@@ -364,18 +382,32 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		if !ob.DrawArea().Contains(pos) || ob.Live() {
 			continue
 		}
-		log.Dbg.Printf("hud:loot:%s#%s", ob.ID(), ob.Serial())
+		// Range check.
+		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
+		if r > LootRange {
+			pc.SendPrivate(lang.TextDir(langPath, "tar_too_far"))
+			continue
+		}
+		// Show loot window.
+		log.Dbg.Printf("hud: loot: %s#%s", ob.ID(), ob.Serial())
 		c.hud.loot.SetTarget(ob)
 		c.hud.loot.Show(true)
 		return
 	}
 	// Dialog.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || !av.Live() || av == c.hud.ActivePlayer() ||
-			len(av.Dialogs()) < 1 {
+		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc ||
+			av.AttitudeFor(pc) == character.Hostile || len(av.Dialogs()) < 1 {
 			continue
 		}
-		log.Dbg.Printf("hud:dialog:%s#%s", av.ID(), av.Serial())
+		// Range check.
+		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
+		if r > DialogRange {
+			pc.SendPrivate(lang.TextDir(langPath, "tar_too_far"))
+			continue
+		}
+		// Show dialog window.
+		log.Dbg.Printf("hud: dialog: %s#%s", av.ID(), av.Serial())
 		dialog := av.Dialogs()[0]
 		c.hud.dialog.SetDialog(dialog)
 		c.hud.dialog.Show(true)

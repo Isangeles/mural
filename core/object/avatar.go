@@ -63,13 +63,17 @@ type Avatar struct {
 type AvatarAnimType int
 
 const (
+	// Animation types.
 	AvatarIdle AvatarAnimType = iota
 	AvatarMove
-	AvatarCast
+	AvatarSpellCast
+	AvatarCraftCast
 	AvatarMelee
 	AvatarShoot
 	AvatarKneel
 	AvatarLie
+	// Chat popup visibility time.
+	chatTimeMax = 2000
 )
 
 // NewAvatar creates new avatar for specified game character
@@ -121,9 +125,12 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates avatar.
 func (av *Avatar) Update(win *mtk.Window) {
 	// Animations
-	if av.Casting() {
-		av.sprite.Cast()
-	} else if av.Moving() {
+	switch {
+	case av.castingSpell():
+		av.sprite.SpellCast()
+	case av.castingRecipe():
+		av.sprite.CraftCast()
+	case av.Moving():
 		av.sprite.Move()
 		pos := av.Position()
 		dest := av.DestPoint()
@@ -137,7 +144,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 		case pos.Y > dest.Y:
 			av.sprite.Down()
 		}
-	} else {
+	default:
 		av.sprite.Idle()
 	}
 	// Sprite
@@ -147,7 +154,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.info.Update(win)
 	if av.speaking {
 		av.chatTimer += win.Delta()
-		if av.chatTimer >= 2000 {
+		if av.chatTimer >= chatTimeMax {
 			av.speaking = false
 			av.chatTimer = 0
 		}
@@ -370,4 +377,26 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 func (av *Avatar) onChatSent(t string) {
 	av.chat.SetText(t)
 	av.speaking = true
+}
+
+// castingRecipe checks if avatar crafting
+// any items right now.
+func (av *Avatar) castingRecipe() bool {
+	for _, r := range av.Recipes() {
+		if r.Casting() {
+			return true
+		}
+	}
+	return false
+}
+
+// castingSpell check if avatar casting
+// any skills right now.
+func (av *Avatar) castingSpell() bool {
+	for _, s := range av.Skills() {
+		if s.Casting() {
+			return true
+		}
+	}
+	return false
 }

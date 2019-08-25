@@ -25,7 +25,7 @@ package internal
 
 import (
 	"github.com/faiface/pixel"
-	
+
 	"github.com/isangeles/mtk"
 )
 
@@ -33,139 +33,145 @@ import (
 // (e.g. body, head, weapon).
 // TODO: animations for kneel and lie.
 type AvatarBodyPart struct {
-	drawAnim  *mtk.MultiAnimation
-	secAnim   *mtk.MultiAnimation
-	idleAnim  *mtk.MultiAnimation
-	moveAnim  *mtk.MultiAnimation
-	meleeAnim *mtk.MultiAnimation
-	shootAnim *mtk.MultiAnimation
-	castAnim  *mtk.MultiAnimation
+	drawAnim      *mtk.MultiAnimation
+	secAnim       *mtk.MultiAnimation
+	idleAnim      *mtk.MultiAnimation
+	moveAnim      *mtk.MultiAnimation
+	meleeAnim     *mtk.MultiAnimation
+	shootAnim     *mtk.MultiAnimation
+	spellCastAnim *mtk.MultiAnimation
+	craftCastAnim *mtk.MultiAnimation
 }
 
 const (
-	anim_fps = 2
+	animFPS = 2
 )
 
 // newAvatarBodyPart creates new body part from
-// specified avatar sdpritesheet.
+// specified avatar spritesheet.
 func newAvatarBodyPart(spritesheet pixel.Picture) *AvatarBodyPart {
-	part := new(AvatarBodyPart)
-	part.idleAnim = buildIdleAnim(spritesheet)
-	part.moveAnim = buildMoveAnim(spritesheet)
-	part.meleeAnim = buildMeleeAnim(spritesheet)
-	part.shootAnim = buildShootAnim(spritesheet)
-	part.castAnim = buildCastAnim(spritesheet)
-	part.drawAnim = part.idleAnim
-	return part
+	abp := new(AvatarBodyPart)
+	abp.idleAnim = buildIdleAnim(spritesheet)
+	abp.moveAnim = buildMoveAnim(spritesheet)
+	abp.meleeAnim = buildMeleeAnim(spritesheet)
+	abp.shootAnim = buildShootAnim(spritesheet)
+	abp.spellCastAnim = buildCastAnim(spritesheet)
+	abp.craftCastAnim = buildCastAnim(spritesheet)
+	abp.drawAnim = abp.idleAnim
+	return abp
 }
 
 // Draw draws current body animation.
-func (body *AvatarBodyPart) Draw(t pixel.Target, matrix pixel.Matrix) {
-	if body.secAnim != nil {
-		body.secAnim.Draw(t, matrix)
+func (abp *AvatarBodyPart) Draw(t pixel.Target, matrix pixel.Matrix) {
+	if abp.secAnim != nil {
+		abp.secAnim.Draw(t, matrix)
 		return
 	}
-	body.drawAnim.Draw(t, matrix)
+	abp.drawAnim.Draw(t, matrix)
 }
 
 // Update updates current body animation.
-func (body *AvatarBodyPart) Update(win *mtk.Window) {
-	if body.secAnim != nil {
-		body.secAnim.Update(win)
-		if body.secAnim.Finished() {
-			body.secAnim.Loop(true)
-			body.secAnim = nil
+func (abp *AvatarBodyPart) Update(win *mtk.Window) {
+	if abp.secAnim != nil {
+		abp.secAnim.Update(win)
+		if abp.secAnim.Finished() {
+			abp.secAnim.Loop(true)
+			abp.secAnim = nil
 		}
 		return
 	}
-	body.drawAnim.Update(win)
+	abp.drawAnim.Update(win)
 }
 
 // Up turns current animataion up.
-func (part *AvatarBodyPart) Up() {
-	part.idleAnim.Up()
-	part.moveAnim.Up()
-	part.meleeAnim.Up()
-	part.shootAnim.Up()
-	part.castAnim.Up()
+func (abp *AvatarBodyPart) Up() {
+	abp.idleAnim.Up()
+	abp.moveAnim.Up()
+	abp.meleeAnim.Up()
+	abp.shootAnim.Up()
+	abp.spellCastAnim.Up()
+	abp.craftCastAnim.Up()
 }
 
 // Right turns current animataion right.
-func (part *AvatarBodyPart) Right() {
-	part.idleAnim.Right()
-	part.moveAnim.Right()
-	part.meleeAnim.Right()
-	part.shootAnim.Right()
-	part.castAnim.Right()
+func (abp *AvatarBodyPart) Right() {
+	abp.idleAnim.Right()
+	abp.moveAnim.Right()
+	abp.meleeAnim.Right()
+	abp.shootAnim.Right()
+	abp.spellCastAnim.Right()
+	abp.craftCastAnim.Right()
 }
 
 // Down turns current animataion down.
-func (part *AvatarBodyPart) Down() {
-	part.idleAnim.Down()
-	part.moveAnim.Down()
-	part.meleeAnim.Down()
-	part.shootAnim.Down()
-	part.castAnim.Down()
+func (abp *AvatarBodyPart) Down() {
+	abp.idleAnim.Down()
+	abp.moveAnim.Down()
+	abp.meleeAnim.Down()
+	abp.shootAnim.Down()
+	abp.spellCastAnim.Down()
+	abp.craftCastAnim.Down()
 }
 
 // Left turns current animataion left.
-func (part *AvatarBodyPart) Left() {
-	part.idleAnim.Left()
-	part.moveAnim.Left()
-	part.meleeAnim.Left()
-	part.shootAnim.Left()
-	part.castAnim.Left()
+func (abp *AvatarBodyPart) Left() {
+	abp.idleAnim.Left()
+	abp.moveAnim.Left()
+	abp.meleeAnim.Left()
+	abp.shootAnim.Left()
+	abp.spellCastAnim.Left()
+	abp.craftCastAnim.Left()
 }
 
 // Idle sets idle animation as current
 // draw animation.
-func (part *AvatarBodyPart) Idle() {
-	part.drawAnim = part.idleAnim
+func (abp *AvatarBodyPart) Idle() {
+	abp.drawAnim = abp.idleAnim
 }
 
 // Move sets move animation as current
 // draw animation.
-func (part *AvatarBodyPart) Move() {
-	part.drawAnim = part.moveAnim
+func (abp *AvatarBodyPart) Move() {
+	abp.drawAnim = abp.moveAnim
 }
 
 // Melee sets melee animation as current
 // draw animation.
-func (part *AvatarBodyPart) Melee() {
-	part.drawAnim = part.meleeAnim
+func (abp *AvatarBodyPart) Melee() {
+	abp.drawAnim = abp.meleeAnim
 }
 
 // Shoot sets shoot animation as current
 // draw animation.
-func (part *AvatarBodyPart) Shoot() {
-	part.drawAnim = part.shootAnim
+func (abp *AvatarBodyPart) Shoot() {
+	abp.drawAnim = abp.shootAnim
 }
 
-// Cast sets cast animation as current
-// draw animation.
-func (part *AvatarBodyPart) Cast() {
-	part.drawAnim = part.castAnim
+// SpellCast sets spell cast animation as
+// current draw animation.
+func (abp *AvatarBodyPart) SpellCast() {
+	abp.drawAnim = abp.spellCastAnim
 }
 
 // MeleeOnce restarts and sets melee animation
 // as secondary animation to show only once.
-func (part *AvatarBodyPart) MeleeOnce() {
-	part.meleeAnim.Loop(false)
-	part.meleeAnim.Restart()
-	part.secAnim = part.meleeAnim
+func (abp *AvatarBodyPart) MeleeOnce() {
+	abp.meleeAnim.Loop(false)
+	abp.meleeAnim.Restart()
+	abp.secAnim = abp.meleeAnim
 }
 
 // ShootOnce restarts and sets shoot animation
 // as secondary animation to show only once.
-func (part *AvatarBodyPart) ShootOnce() {
-	part.shootAnim.Loop(false)
-	part.shootAnim.Restart()
-	part.secAnim = part.shootAnim
+func (abp *AvatarBodyPart) ShootOnce() {
+	abp.shootAnim.Loop(false)
+	abp.shootAnim.Restart()
+	abp.secAnim = abp.shootAnim
 }
 
 // DrawArea returns current draw area.
-func (part *AvatarBodyPart) DrawArea() pixel.Rect {
-	return part.drawAnim.DrawArea()
+func (abp *AvatarBodyPart) DrawArea() pixel.Rect {
+	return abp.drawAnim.DrawArea()
 }
 
 // buildIdleAnim creates idle animations for each direction(up, right, down,
@@ -174,19 +180,19 @@ func buildIdleAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 	framesUp := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(0, 270, 80, 360)),
 	}
-	animUp := mtk.NewAnimation(framesUp, anim_fps)
+	animUp := mtk.NewAnimation(framesUp, animFPS)
 	framesRight := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(0, 180, 80, 270)),
 	}
-	animRight := mtk.NewAnimation(framesRight, anim_fps)
+	animRight := mtk.NewAnimation(framesRight, animFPS)
 	framesDown := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(0, 90, 80, 180)),
 	}
-	animDown := mtk.NewAnimation(framesDown, anim_fps)
+	animDown := mtk.NewAnimation(framesDown, animFPS)
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(0, 0, 80, 90)),
 	}
-	animLeft := mtk.NewAnimation(framesLeft, anim_fps)
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
 	return anim
 }
@@ -198,22 +204,22 @@ func buildMoveAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 		pixel.NewSprite(spritesheet, pixel.R(80, 270, 160, 360)),
 		pixel.NewSprite(spritesheet, pixel.R(160, 270, 240, 360)),
 	}
-	animUp := mtk.NewAnimation(framesUp, anim_fps)
+	animUp := mtk.NewAnimation(framesUp, animFPS)
 	framesRight := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(80, 180, 160, 270)),
 		pixel.NewSprite(spritesheet, pixel.R(160, 180, 240, 270)),
 	}
-	animRight := mtk.NewAnimation(framesRight, anim_fps)
+	animRight := mtk.NewAnimation(framesRight, animFPS)
 	framesDown := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(80, 90, 160, 180)),
 		pixel.NewSprite(spritesheet, pixel.R(160, 90, 240, 180)),
 	}
-	animDown := mtk.NewAnimation(framesDown, anim_fps)
+	animDown := mtk.NewAnimation(framesDown, animFPS)
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(80, 0, 160, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(160, 0, 240, 90)),
 	}
-	animLeft := mtk.NewAnimation(framesLeft, anim_fps)
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
 	return anim
 }
@@ -225,22 +231,22 @@ func buildMeleeAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 		pixel.NewSprite(spritesheet, pixel.R(240, 270, 320, 360)),
 		pixel.NewSprite(spritesheet, pixel.R(320, 270, 400, 360)),
 	}
-	animUp := mtk.NewAnimation(framesUp, anim_fps)
+	animUp := mtk.NewAnimation(framesUp, animFPS)
 	framesRight := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(240, 180, 320, 270)),
 		pixel.NewSprite(spritesheet, pixel.R(320, 180, 400, 270)),
 	}
-	animRight := mtk.NewAnimation(framesRight, anim_fps)
+	animRight := mtk.NewAnimation(framesRight, animFPS)
 	framesDown := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(240, 90, 320, 180)),
 		pixel.NewSprite(spritesheet, pixel.R(320, 90, 400, 180)),
 	}
-	animDown := mtk.NewAnimation(framesDown, anim_fps)
+	animDown := mtk.NewAnimation(framesDown, animFPS)
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(240, 0, 320, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(320, 0, 400, 90)),
 	}
-	animLeft := mtk.NewAnimation(framesLeft, anim_fps)
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
 	return anim
 }
@@ -252,22 +258,22 @@ func buildShootAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 		pixel.NewSprite(spritesheet, pixel.R(400, 270, 480, 360)),
 		pixel.NewSprite(spritesheet, pixel.R(480, 270, 560, 360)),
 	}
-	animUp := mtk.NewAnimation(framesUp, anim_fps)
+	animUp := mtk.NewAnimation(framesUp, animFPS)
 	framesRight := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(400, 180, 480, 270)),
 		pixel.NewSprite(spritesheet, pixel.R(480, 180, 560, 270)),
 	}
-	animRight := mtk.NewAnimation(framesRight, anim_fps)
+	animRight := mtk.NewAnimation(framesRight, animFPS)
 	framesDown := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(400, 90, 480, 180)),
 		pixel.NewSprite(spritesheet, pixel.R(480, 90, 560, 180)),
 	}
-	animDown := mtk.NewAnimation(framesDown, anim_fps)
+	animDown := mtk.NewAnimation(framesDown, animFPS)
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(400, 0, 480, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(480, 0, 560, 90)),
 	}
-	animLeft := mtk.NewAnimation(framesLeft, anim_fps)
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
 	return anim
 }
@@ -279,23 +285,22 @@ func buildCastAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 		pixel.NewSprite(spritesheet, pixel.R(560, 270, 640, 360)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 270, 720, 360)),
 	}
-	animUp := mtk.NewAnimation(framesUp, anim_fps)
+	animUp := mtk.NewAnimation(framesUp, animFPS)
 	framesRight := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(560, 180, 640, 270)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 180, 720, 270)),
 	}
-	animRight := mtk.NewAnimation(framesRight, anim_fps)
+	animRight := mtk.NewAnimation(framesRight, animFPS)
 	framesDown := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(560, 90, 640, 180)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 90, 720, 180)),
 	}
-	animDown := mtk.NewAnimation(framesDown, anim_fps)
+	animDown := mtk.NewAnimation(framesDown, animFPS)
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(560, 0, 640, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 0, 720, 90)),
 	}
-	animLeft := mtk.NewAnimation(framesLeft, anim_fps)
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
 	return anim
 }
-

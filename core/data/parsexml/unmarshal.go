@@ -35,8 +35,10 @@ func UnmarshalAvatarAnim(s string) object.AvatarAnimType {
 		return object.AvatarIdle
 	case "move":
 		return object.AvatarMove
-	case "cast":
-		return object.AvatarCast
+	case "spell":
+		return object.AvatarSpellCast
+	case "craft":
+		return object.AvatarCraftCast
 	case "melee":
 		return object.AvatarMelee
 	case "shoot":

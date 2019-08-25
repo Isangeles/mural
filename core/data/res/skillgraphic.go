@@ -25,11 +25,14 @@ package res
 
 import (
 	"github.com/faiface/pixel"
+
+	"github.com/faiface/beep"
 )
 
 // Struct for skill graphical data.
 type SkillGraphicData struct {
-	SkillID        string
-	IconPic        pixel.Picture
-	ActivationAnim int
+	SkillID         string
+	IconPic         pixel.Picture
+	ActivationAudio *beep.Buffer
+	ActivationAnim  int
 }

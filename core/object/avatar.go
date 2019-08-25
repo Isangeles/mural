@@ -350,13 +350,18 @@ func (av *Avatar) infoText() string {
 func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	sg := av.skills[s.ID()+s.Serial()]
 	if sg == nil {
-		log.Err.Printf("avatar:%s_%s:on_skill_activated:fail_to_find_skill_graphic:%s_%s",
+		log.Err.Printf("avatar: %s_%s: on skill activated: fail to find skill graphic: %s_%s",
 			av.ID(), av.Serial(), s.ID(), s.Serial())
 		return
 	}
+	// Animation.
 	switch sg.ActivationAnim() {
 	case AvatarMelee:
 		av.sprite.MeleeOnce()
+	}
+	// Audio effect.
+	if mtk.Audio() != nil && sg.ActivationAudio() != nil {
+		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }
 

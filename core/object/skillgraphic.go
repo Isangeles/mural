@@ -26,6 +26,8 @@ package object
 import (
 	"github.com/faiface/pixel"
 
+	"github.com/faiface/beep"
+
 	"github.com/isangeles/flame/core/module/object/skill"
 
 	"github.com/isangeles/mural/core/data/res"
@@ -50,6 +52,11 @@ func NewSkillGraphic(skill *skill.Skill, data *res.SkillGraphicData) *SkillGraph
 // Icon returns skill icon sprite.
 func (sg *SkillGraphic) Icon() pixel.Picture {
 	return sg.data.IconPic
+}
+
+// AudioEffect returns skill audio effect.
+func (sg *SkillGraphic) ActivationAudio() *beep.Buffer {
+	return sg.data.ActivationAudio
 }
 
 // ActivationAnim returns skill activation animation.

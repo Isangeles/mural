@@ -4,7 +4,7 @@ MAJOR:
 * Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
 * Spawning avatars
-* Audio effects
+* Skill cast audio effects
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)
@@ -25,3 +25,4 @@ DONE:
 * HUD: training window
 * HUD: character window
 * Area objects
+* Audio effects

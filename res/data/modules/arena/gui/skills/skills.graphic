@@ -1,9 +1,12 @@
-<?xml version="1.0?>
+<?xml version="1.0"?>
 <base>
 	<skill id="melee1" icon="melee1.png">
-	       <animations>
+		<animations>
 			<activation>melee</activation>
-	       </animations>
+		</animations>
+		<audio>
+			<activation>meele1.ogg</activation>
+		</audio>
 	</skill>
 	<skill id="fireball1" icon="fireball1.png" />
 </base>

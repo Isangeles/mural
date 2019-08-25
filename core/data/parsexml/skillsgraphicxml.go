@@ -46,13 +46,21 @@ type SkillGraphicXML struct {
 	ID         string             `xml:"id,attr"`
 	Icon       string             `xml:"icon,attr"`
 	Animations SkillAnimationsXML `xml:"animations"`
+	Audio      SkillAudioXML      `xml:"audio"`
 }
 
 // Struct for skill animations XML node.
 type SkillAnimationsXML struct {
 	XMLName    xml.Name `xml:"animations"`
-	Activation string   `xml:"activation,value"`
 	Cast       string   `xml:"cast,value"`
+	Activation string   `xml:"activation,value"`
+}
+
+// Struct for skill audio XML node.
+type SkillAudioXML struct {
+	XMLName    xml.Name `xml:"audio"`
+	Cast       string   `xml:"cast,value"`
+	Activation string   `xml:"activation,value"`
 }
 
 // UnmarshalSkillsGraphicsBase retrieves all skills graphic data
@@ -62,13 +70,13 @@ func UnmarshalSkillsGraphicsBase(data io.Reader) ([]*res.SkillGraphicData, error
 	xmlBase := new(SkillsGraphicsBaseXML)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	skills := make([]*res.SkillGraphicData, 0)
 	for _, xmlData := range xmlBase.Nodes {
 		sgd, err := buildSkillGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml:unmarshal_skill_graphic:%s:fail_to_build_data:%v",
+			log.Err.Printf("xml: unmarshal skill graphic: %s: fail to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -82,13 +90,20 @@ func UnmarshalSkillsGraphicsBase(data io.Reader) ([]*res.SkillGraphicData, error
 func buildSkillGraphicData(xmlSkill *SkillGraphicXML) (*res.SkillGraphicData, error) {
 	skillIcon, err := data.Icon(xmlSkill.Icon)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_skill_icon:%v", err)
+		return nil, fmt.Errorf("fail to retrieve skill icon: %v", err)
 	}
 	activationAnim := UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
 	skillData := res.SkillGraphicData{
 		SkillID:        xmlSkill.ID,
 		IconPic:        skillIcon,
 		ActivationAnim: int(activationAnim),
+	}
+	if xmlSkill.Audio.Activation != "" {
+		activeAudio, err := data.AudioEffect(xmlSkill.Audio.Activation)
+		if err != nil {
+			return nil, fmt.Errorf("fail to retrieve skill audio: %v", err)
+		}
+		skillData.ActivationAudio = activeAudio
 	}
 	return &skillData, nil
 }

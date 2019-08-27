@@ -178,7 +178,7 @@ func (sm *SaveMenu) Show(show bool) {
 	sm.hud.Camera().Lock(sm.Opened())
 	err := sm.loadSaves()
 	if err != nil {
-		log.Err.Printf("hud_save_menu:fail_to_load_saves:%e", err)
+		log.Err.Printf("hud save menu: fail to load saves: %e", err)
 	}
 }
 
@@ -198,11 +198,11 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Insert save names.
-	pattern := fmt.Sprintf(".*%s", flamedata.SAVEGAME_FILE_EXT)
+	pattern := fmt.Sprintf(".*%s", flamedata.SavegameFileExt)
 	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
 		pattern)
 	if err != nil {
-		return fmt.Errorf("fail_to_read_saved_games_dir:%v", err)
+		return fmt.Errorf("fail to read saved games dir: %v", err)
 	}
 	for _, s := range saves {
 		sm.savesList.AddItem(s, s)
@@ -214,7 +214,7 @@ func (sm *SaveMenu) loadSaves() error {
 func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
 	saveName, ok := cs.Value().(string)
 	if !ok {
-		log.Err.Printf("hud_savegame:fail to retireve save name")
+		log.Err.Printf("hud savegame:fail to retireve save name")
 		return
 	}
 	sm.saveNameEdit.SetText(saveName)
@@ -231,7 +231,7 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 	saveName := strings.Split(saveFileName, ".")[0]
 	err := sm.save(saveName)
 	if err != nil {
-		log.Err.Printf("hud_savegame:fail_to_save:%v")
+		log.Err.Printf("hud savegame: fail to save: %v")
 	}
 }
 
@@ -243,14 +243,13 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Save current game.
 	err := flamedata.SaveGame(sm.hud.Game(), savesPath, saveName)
 	if err != nil {
-		return fmt.Errorf("fail_to_save_game:%v",
-			err)
+		return fmt.Errorf("fail to save game: %v", err)
 	}
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()
 	err = exp.ExportGUISave(guisav, savesPath, saveName)
 	if err != nil {
-		return fmt.Errorf("fail_to_save_gui:%v", err)
+		return fmt.Errorf("fail to save gui: %v", err)
 	}
 	return nil
 }

@@ -31,8 +31,8 @@ import (
 )
 
 var (
-	Inf *log.Logger = log.New(enginelog.InfLog, "mural:", 0)
-	Err *log.Logger = log.New(enginelog.ErrLog, "mural-error:", 0)
-	Dbg *log.Logger = log.New(enginelog.DbgLog, "mural-debug:", 0)
-	Cli *log.Logger = log.New(enginelog.InfLog, "mural-cli:", 0)
+	Inf *log.Logger = log.New(enginelog.InfLog, "mural: ", 0)
+	Err *log.Logger = log.New(enginelog.ErrLog, "mural-error: ", 0)
+	Dbg *log.Logger = log.New(enginelog.DbgLog, "mural-debug: ", 0)
+	Cli *log.Logger = log.New(enginelog.InfLog, "mural-cli: ", 0)
 )

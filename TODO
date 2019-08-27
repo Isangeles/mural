@@ -5,6 +5,7 @@ MAJOR:
 * Focusing UI elements with tab key
 * Spawning avatars
 * Skill cast audio effects
+* Support for avatar sprites with crafting animation.
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)

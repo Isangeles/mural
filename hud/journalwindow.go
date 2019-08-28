@@ -156,6 +156,7 @@ func (jw *JournalWindow) Update(win *mtk.Window) {
 	// Elements.
 	jw.closeButton.Update(win)
 	jw.questsList.Update(win)
+	jw.questInfo.Update(win)
 }
 
 // Show toggles window visibility.

@@ -343,7 +343,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 				slotID)
 			continue
 		}
-		insertSlotItem(i, slot)
+		mb.hud.insertSlotItem(i, slot)
 	}
 }
 

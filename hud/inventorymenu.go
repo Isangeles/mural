@@ -24,8 +24,6 @@
 package hud
 
 import (
-	"fmt"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -36,7 +34,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
@@ -245,7 +242,7 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 			return
 		}
 		// Insert item to slot.
-		insertSlotItem(ig, slot)
+		im.hud.insertSlotItem(ig, slot)
 	}
 }
 
@@ -413,7 +410,7 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 					ds.AddValues(dv) // return value back to dragged slot
 					return
 				}
-				insertSlotItem(ig, s)
+				im.hud.insertSlotItem(ig, s)
 			}
 		} else {
 			v, ok := s.Values()[0].(*object.ItemGraphic)
@@ -439,32 +436,4 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 		return
 	}
 	s.Drag(true)
-}
-
-// insertSlotItem inserts specified item to specified slot.
-func insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
-	s.AddValues(it)
-	s.SetInfo(itemInfo(it.Item))
-	s.SetIcon(it.Icon())
-}
-
-// itemInfo returns formated string with
-// informations about specified item.
-func itemInfo(it item.Item) string {
-	info := ""
-	switch i := it.(type) {
-	case *item.Weapon:
-		infoForm := "%s\n%d-%d"
-		dmgMin, dmgMax := i.Damage()
-		info = fmt.Sprintf(infoForm, i.Name(),
-			dmgMin, dmgMax)
-	case *item.Misc:
-		infoForm := "%s"
-		info = fmt.Sprintf(infoForm, i.Name())
-	}
-	if config.Debug() { // add serial ID info
-		info = fmt.Sprintf("%s\n[%s_%s]", info,
-			it.ID(), it.Serial())
-	}
-	return info
 }

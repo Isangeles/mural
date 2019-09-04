@@ -197,7 +197,7 @@ func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
 			slot = lw.createSlot()
 			lw.slots.Add(slot)
 		}
-		insertSlotItem(it, slot)
+		lw.hud.insertSlotItem(it, slot)
 	}
 }
 
@@ -217,7 +217,7 @@ func (lw *LootWindow) insertItems(items ...item.Item) {
 			slot = lw.createSlot()
 			lw.slots.Add(slot)
 		}
-		insertSlotItem(ig, slot)
+		lw.hud.insertSlotItem(ig, slot)
 	}
 }
 

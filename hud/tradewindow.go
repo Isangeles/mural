@@ -323,7 +323,7 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 			return
 		}
 		// Insert item to slot.
-		insertSlotItem(ig, slot)
+		tw.hud.insertSlotItem(ig, slot)
 	}
 }
 
@@ -366,7 +366,7 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 			return
 		}
 		// Insert item to slot.
-		insertSlotItem(ig, slot)
+		tw.hud.insertSlotItem(ig, slot)
 	}
 }
 

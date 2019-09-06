@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<base>
-	<object id="aloe1">
+<object-graphics>
+	<object-graphic id="aloe1">
 		<sprite>
 			<picture>herb1.png</picture>
 		</sprite>
 		<portrait>
 			<picture></picture>
 		</portrait>
-	</object>
-</base>
+	</object-graphic>
+</object-graphics>

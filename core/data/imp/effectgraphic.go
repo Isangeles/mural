@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	EFFECTS_GRAPHIC_FILE_EXT = ".graphic"
+	EffectGraphicsFileExt = ".graphic"
 )
 
 // ImportEffectsGraphics imports all effects graphics from
@@ -44,11 +44,11 @@ var (
 func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_base_file:%v", err)
+		return nil, fmt.Errorf("fail to open base file: %v", err)
 	}
-	effects, err := parsexml.UnmarshalEffectsGraphicsBase(f)
+	effects, err := parsexml.UnmarshalEffectGraphics(f)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
+		return nil, fmt.Errorf("fail to parse xml: %v", err)
 	}
 	return effects, nil
 }
@@ -58,17 +58,17 @@ func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
 func ImportEffectsGraphicsDir(path string) ([]*res.EffectGraphicData, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("fail to read dir: %v", err)
 	}
 	effects := make([]*res.EffectGraphicData, 0)
 	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), EFFECTS_GRAPHIC_FILE_EXT) {
+		if !strings.HasSuffix(finfo.Name(), EffectGraphicsFileExt) {
 			continue
 		}
 		basePath := filepath.FromSlash(path + "/" + finfo.Name())
 		impEffects, err := ImportEffectsGraphics(basePath)
 		if err != nil {
-			log.Err.Printf("data_effects_graphic_import:%s:fail_to_parse_file:%v",
+			log.Err.Printf("data effects graphic import: %s: fail to parse file: %v",
 				basePath, err)
 			continue
 		}

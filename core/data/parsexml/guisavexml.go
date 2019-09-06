@@ -28,54 +28,48 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	
+
 	flamexml "github.com/isangeles/flame/core/data/parsexml"
-	
+
 	"github.com/isangeles/mural/core/data/res"
 )
 
 // Struct for XML GUI save.
-type GUISaveXML struct {
-	XMLName     xml.Name   `xml:"save"`
-	Name        string     `xml:"name,attr"`
-	PlayersNode PlayersXML `xml:"players"`
-        CameraNode  CameraXML  `xml:"camera"`
-}
-
-// Struct for PCs avatars node.
-type PlayersXML struct {
-	XMLName xml.Name    `xml:"players"`
-	Players []PlayerXML `xml:"player"`
+type Save struct {
+	XMLName xml.Name `xml:"save"`
+	Name    string   `xml:"name,attr"`
+	Players []Player `xml:"players>player"`
+	Camera  Camera   `xml:"camera"`
 }
 
 // Struct for PC node.
-type PlayerXML struct {
-	XMLName   xml.Name     `xml:"player"`
-	Avatar    AvatarXML    `xml:"avatar"`
-	Inventory InventoryXML `xml:"inventory"`
-	MenuBar   BarXML       `xml:"bar"`
+type Player struct {
+	XMLName   xml.Name  `xml:"player"`
+	Avatar    Avatar    `xml:"avatar"`
+	Inventory Inventory `xml:"inventory"`
+	MenuBar   Bar       `xml:"bar"`
 }
 
 // Struct for GUI camera XML node.
-type CameraXML struct {
+type Camera struct {
 	XMLName  xml.Name `xml:"camera"`
 	Position string   `xml:"position,attr"`
 }
 
 // Struct for inventory node of avatar node.
-type InventoryXML struct {
-	XMLName xml.Name  `xml:"inventory"`
-	Slots   []SlotXML `xml:"slot"`
+type Inventory struct {
+	XMLName xml.Name `xml:"inventory"`
+	Slots   []Slot   `xml:"slot"`
 }
 
 // Struct for menu bar node of avatar node.
-type BarXML struct {
-	XMLName xml.Name  `xml:"bar"`
-	Slots   []SlotXML `xml:"slot"`
+type Bar struct {
+	XMLName xml.Name `xml:"bar"`
+	Slots   []Slot   `xml:"slot"`
 }
 
 // Struct for slot node of inventory node.
-type SlotXML struct {
+type Slot struct {
 	XMLName xml.Name `xml:"slot"`
 	ID      int      `xml:"id,attr"`
 	Content string   `xml:"content,attr"`
@@ -84,37 +78,35 @@ type SlotXML struct {
 // MarshalGUISave parses specified game save to XML
 // data.
 func MarshalGUISave(save *res.GUISave) (string, error) {
-	xmlGUI := new(GUISaveXML)
+	xmlGUI := new(Save)
 	xmlGUI.Name = save.Name
-	xmlGUI.PlayersNode.Players = make([]PlayerXML, 0)
+	xmlGUI.Players = make([]Player, 0)
 	// Players.
 	for _, pcData := range save.PlayersData {
-		xmlPC := new(PlayerXML)
+		xmlPC := new(Player)
 		// Avatar.
 		xmlPC.Avatar = buildAvatarDataXML(pcData.Avatar)
 		// Layouts.
 		for serial, slot := range pcData.InvSlots {
-			xmlSlot := SlotXML{
+			xmlSlot := Slot{
 				ID:      slot,
 				Content: serial,
 			}
 			xmlPC.Inventory.Slots = append(xmlPC.Inventory.Slots, xmlSlot)
 		}
 		for serial, slot := range pcData.BarSlots {
-			xmlSlot := SlotXML{
+			xmlSlot := Slot{
 				ID:      slot,
 				Content: serial,
 			}
 			xmlPC.MenuBar.Slots = append(xmlPC.MenuBar.Slots, xmlSlot)
 		}
-		xmlGUI.PlayersNode.Players = append(xmlGUI.PlayersNode.Players, *xmlPC)
+		xmlGUI.Players = append(xmlGUI.Players, *xmlPC)
 	}
-	xmlGUI.CameraNode.Position = fmt.Sprintf("%fx%f", save.CameraPosX,
-		save.CameraPosY)
+	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX, save.CameraPosY)
 	out, err := xml.Marshal(xmlGUI)
 	if err != nil {
-		return "", fmt.Errorf("fail_to_marshal_xml_data:%v",
-			err)
+		return "", fmt.Errorf("fail to marshal xml data: %v", err)
 	}
 	return string(out[:]), nil
 }
@@ -122,31 +114,30 @@ func MarshalGUISave(save *res.GUISave) (string, error) {
 // Unmarshal parses XML data to GUI save struct.
 func UnmarshalGUISave(data io.Reader) (*res.GUISave, error) {
 	doc, _ := ioutil.ReadAll(data)
-	xmlGUISave := new(GUISaveXML)
+	xmlGUISave := new(Save)
 	err := xml.Unmarshal(doc, xmlGUISave)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v",
-			err)
+		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	save, err := buildGUISave(xmlGUISave)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_build_data:%v", err)
+		return nil, fmt.Errorf("fail to build data: %v", err)
 	}
 	return save, nil
 }
 
 // buildGUISave builds GUI save from specified XML data.
-func buildGUISave(xmlSave *GUISaveXML) (*res.GUISave, error) {
+func buildGUISave(xmlSave *Save) (*res.GUISave, error) {
 	save := new(res.GUISave)
 	// Save name.
 	save.Name = xmlSave.Name
 	// Players.
-	for _, xmlPC := range xmlSave.PlayersNode.Players {
+	for _, xmlPC := range xmlSave.Players {
 		pcData := new(res.PlayerSave)
 		// Avatar.
 		avData, err := buildAvatarData(&xmlPC.Avatar)
 		if err != nil {
-			return nil, fmt.Errorf("player:%s_%s:fail_to_load_player_avatar:%v",
+			return nil, fmt.Errorf("player: %s#%s: fail to load player avatar: %v",
 				pcData.Avatar.ID, pcData.Avatar.Serial, err)
 		}
 		pcData.Avatar = avData
@@ -163,10 +154,9 @@ func buildGUISave(xmlSave *GUISaveXML) (*res.GUISave, error) {
 		}
 	}
 	// Camera position.
-	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.CameraNode.Position)
+	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.Camera.Position)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_camera_position:%v",
-			err)
+		return nil, fmt.Errorf("fail to unmarshal camera position: %v", err)
 	}
 	save.CameraPosX, save.CameraPosY = camX, camY
 	return save, nil

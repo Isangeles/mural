@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	SKILLS_GRAPHIC_FILE_EXT = ".graphic"
+	SkillGraphicsFileExt = ".graphic"
 )
 
 // ImportSkillsGraphics imports all skills graphics from
@@ -44,11 +44,11 @@ var (
 func ImportSkillsGraphics(path string) ([]*res.SkillGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_base_file:%v", err)
+		return nil, fmt.Errorf("fail to open base file: %v", err)
 	}
-	skills, err := parsexml.UnmarshalSkillsGraphicsBase(f)
+	skills, err := parsexml.UnmarshalSkillGraphics(f)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
+		return nil, fmt.Errorf("fail to parse xml: %v", err)
 	}
 	return skills, nil
 }
@@ -58,17 +58,17 @@ func ImportSkillsGraphics(path string) ([]*res.SkillGraphicData, error) {
 func ImportSkillsGraphicsDir(path string) ([]*res.SkillGraphicData, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("fail to read dir: %v", err)
 	}
 	skills := make([]*res.SkillGraphicData, 0)
 	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), SKILLS_GRAPHIC_FILE_EXT) {
+		if !strings.HasSuffix(finfo.Name(), SkillGraphicsFileExt) {
 			continue
 		}
 		basePath := filepath.FromSlash(path + "/" + finfo.Name())
 		impSkills, err := ImportSkillsGraphics(basePath)
 		if err != nil {
-			log.Err.Printf("data_skills_graphic_import:%s:fail_to_parse_file:%v",
+			log.Err.Printf("data skills graphic import: %s: fail to parse file: %v",
 				basePath, err)
 			continue
 		}

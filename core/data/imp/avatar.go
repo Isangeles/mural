@@ -39,7 +39,7 @@ import (
 )
 
 var (
-	AVATARS_FILE_EXT = ".avatars"
+	AvatarsFileExt = ".avatars"
 )
 
 // ImportAvatarsData imports all avatars data for specified characters
@@ -47,12 +47,12 @@ var (
 func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("xml:%s:fail_to_open_avatars_file:%v",
+		return nil, fmt.Errorf("xml: %s: fail to open avatars file: %v",
 			path, err)
 	}
 	avatars, err := parsexml.UnmarshalAvatarsBase(f)
 	if err != nil {
-		return nil, fmt.Errorf("xml:%s:fail_to_parse_XML:%v",
+		return nil, fmt.Errorf("xml: %s: fail to parse xml: %v",
 			path, err)
 	}
 	return avatars, nil
@@ -63,17 +63,17 @@ func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
 func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("fail to read dir: %v", err)
 	}
 	avsData := make([]*res.AvatarData, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), AVATARS_FILE_EXT) {
+		if !strings.HasSuffix(fInfo.Name(), AvatarsFileExt) {
 			continue
 		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impAvs, err := ImportAvatarsData(avFilePath)
 		if err != nil {
-			log.Err.Printf("data_avatar_import:%s:fail_to_parse_char_file:%v",
+			log.Err.Printf("data avatar import: %s: fail to parse char file: %v",
 				avFilePath, err)
 			continue
 		}
@@ -97,18 +97,17 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
+		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v",
 			err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v",
+		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v",
 			err)
 	}
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v\n",
-			err)
+		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:           char.ID(),
@@ -136,13 +135,14 @@ func defaultAvatarHeadSpritesheet() string {
 }
 
 // buildXMLAvatar builds avatar from specified XML data.
-func buildXMLAvatarData(avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
+// TODO: move this function to parsexml package.
+func buildXMLAvatarData(avXML *parsexml.Avatar) (*res.AvatarData, error) {
 	ssHeadName := avXML.Spritesheet.Head
 	ssTorsoName := avXML.Spritesheet.Torso
 	portraitName := avXML.Portrait
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
+		return nil, fmt.Errorf("fail to retrieve portrait picture: %v",
 			avXML.ID, err)
 	}
 	if ssHeadName == "" {
@@ -153,12 +153,12 @@ func buildXMLAvatarData(avXML *parsexml.AvatarXML) (*res.AvatarData, error) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
+		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v",
 			avXML.ID, err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v",
+		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v",
 			avXML.ID, err)
 	}
 	avData := res.AvatarData{

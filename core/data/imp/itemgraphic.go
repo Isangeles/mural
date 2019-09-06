@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	ITEMS_GRAPHIC_FILE_EXT = ".graphic"
+	ItemGraphicsFileExt = ".graphic"
 )
 
 // ImportItemsGraphics imports all items grpahics from
@@ -44,11 +44,11 @@ var (
 func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_base_file:%s", err)
+		return nil, fmt.Errorf("fail to open base file: %s", err)
 	}
-	items, err := parsexml.UnmarshalItemsGraphicBase(f)
+	items, err := parsexml.UnmarshalItemGraphics(f)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_parse_xml:%v", err)
+		return nil, fmt.Errorf("fail to parse xml: %v", err)
 	}
 	return items, nil
 }
@@ -58,17 +58,17 @@ func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
 func ImportItemsGraphicsDir(dirPath string) ([]*res.ItemGraphicData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("fail to read dir:%v", err)
 	}
 	items := make([]*res.ItemGraphicData, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), ITEMS_GRAPHIC_FILE_EXT) {
+		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
 			continue
 		}
 		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
 		if err != nil {
-			log.Err.Printf("data_items_graphic_import:%s:fail_to_parse_file:%v",
+			log.Err.Printf("data items graphic import: %s: fail to parse file: %v",
 				itemsGraphicFilePath, err)
 			continue
 		}

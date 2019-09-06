@@ -35,45 +35,45 @@ import (
 )
 
 // Struct for object graphic base XML node.
-type ObjectGraphicBaseXML struct {
-	XMLName xml.Name           `xml:"base"`
-	Nodes   []ObjectGraphicXML `xml:"object"`
+type ObjectGraphics struct {
+	XMLName        xml.Name        `xml:"object-graphics"`
+	ObjectGraphics []ObjectGraphic `xml:"object-graphic"`
 }
 
 // Struct for object graphic XML node.
-type ObjectGraphicXML struct {
-	XMLName  xml.Name          `xml:"object"`
-	ID       string            `xml:"id,attr"`
-	Portrait ObjectPortraitXML `xml:"portrait"`
-	Sprite   ObjectSpriteXML   `xml:"sprite"`
+type ObjectGraphic struct {
+	XMLName  xml.Name       `xml:"object-graphic"`
+	ID       string         `xml:"id,attr"`
+	Portrait ObjectPortrait `xml:"portrait"`
+	Sprite   ObjectSprite   `xml:"sprite"`
 }
 
 // Struct for object sprite XML node.
-type ObjectSpriteXML struct {
+type ObjectSprite struct {
 	XMLName xml.Name `xml:"sprite"`
 	Picture string   `xml:"picture,value"`
 }
 
 // Struct for object portrait XML node.
-type ObjectPortraitXML struct {
+type ObjectPortrait struct {
 	XMLName xml.Name `xml:"portrait"`
 	Picture string   `xml:"picture,value"`
 }
 
-// UnmarshalkObjectsGraphicBase retrieves all object graphic data from
+// UnmarshalkObjectsGraphics retrieves all object graphic data from
 // specified XML data.
-func UnmarshalObjectsGraphicBase(data io.Reader) ([]*res.ObjectGraphicData, error) {
+func UnmarshalObjectsGraphics(data io.Reader) ([]*res.ObjectGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
-	xmlBase := new(ObjectGraphicBaseXML)
+	xmlBase := new(ObjectGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	objects := make([]*res.ObjectGraphicData, 0)
-	for _, xmlData := range xmlBase.Nodes {
+	for _, xmlData := range xmlBase.ObjectGraphics {
 		ogd, err := buildObjectGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml:unmarshal_object_graphic:%s:fail_to_build_data:%v",
+			log.Err.Printf("xml: unmarshal object graphic: %s: fail to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -84,10 +84,10 @@ func UnmarshalObjectsGraphicBase(data io.Reader) ([]*res.ObjectGraphicData, erro
 
 // buildObjectGraphicData creates object graphic data from specified XML object
 // node.
-func buildObjectGraphicData(xmlObject *ObjectGraphicXML) (*res.ObjectGraphicData, error) {
+func buildObjectGraphicData(xmlObject *ObjectGraphic) (*res.ObjectGraphicData, error) {
 	sprite, err := data.ObjectSpritesheet(xmlObject.Sprite.Picture)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retireve_object_spritesheet:%v", err)
+		return nil, fmt.Errorf("fail to retireve object spritesheet: %v", err)
 	}
 	portrait, _ := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
 	data := res.ObjectGraphicData{

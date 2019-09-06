@@ -37,23 +37,23 @@ import (
 
 // Struct for representation of avatars
 // XML base.
-type AvatarsBaseXML struct {
-	XMLName xml.Name    `xml:"base"`
-	Avatars []AvatarXML `xml:"avatar"`
+type Avatars struct {
+	XMLName xml.Name `xml:"avatars"`
+	Avatars []Avatar `xml:"avatar"`
 }
 
 // Struct for representation of XML avatar
 // node.
-type AvatarXML struct {
-	XMLName     xml.Name            `xml:"avatar"`
-	ID          string              `xml:"id,attr"`
-	Serial      string              `xml:"serial,attr"`
-	Portrait    string              `xml:"portrait,value"`
-	Spritesheet AvatarSpriteNodeXML `xml:"sprite"`
+type Avatar struct {
+	XMLName     xml.Name     `xml:"avatar"`
+	ID          string       `xml:"id,attr"`
+	Serial      string       `xml:"serial,attr"`
+	Portrait    string       `xml:"portrait,value"`
+	Spritesheet AvatarSprite `xml:"sprite"`
 }
 
 // Struct for spritesheet node of avatar node.
-type AvatarSpriteNodeXML struct {
+type AvatarSprite struct {
 	XMLName  xml.Name `xml:"sprite"`
 	Head     string   `xml:"head,value"`
 	Torso    string   `xml:"torso,value"`
@@ -63,14 +63,14 @@ type AvatarSpriteNodeXML struct {
 // MarshalAvatarsBase parses specified avatars to avatars
 // base XML data.
 func MarshalAvatarsBase(avs []*object.Avatar) (string, error) {
-	xmlAvatarsBase := new(AvatarsBaseXML)
+	xmlAvatarsBase := new(Avatars)
 	for _, av := range avs {
 		xmlAvatar := buildAvatarXML(av)
 		xmlAvatarsBase.Avatars = append(xmlAvatarsBase.Avatars, xmlAvatar)
 	}
 	out, err := xml.Marshal(xmlAvatarsBase)
 	if err != nil {
-		return "", fmt.Errorf("fail_to_marshal_avatars_base:%v", err)
+		return "", fmt.Errorf("fail to marshal avatars base: %v", err)
 	}
 	return string(out[:]), nil
 }
@@ -85,16 +85,16 @@ func MarshalAvatar(av *object.Avatar) (string, error) {
 // XML data.
 func UnmarshalAvatarsBase(data io.Reader) ([]*res.AvatarData, error) {
 	doc, _ := ioutil.ReadAll(data)
-	xmlBase := new(AvatarsBaseXML)
+	xmlBase := new(Avatars)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	avatars := make([]*res.AvatarData, 0)
 	for _, xmlData := range xmlBase.Avatars {
 		ad, err := buildAvatarData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml:unmarshal_avatar:%s:fail_to_build_data:%v",
+			log.Err.Printf("xml: unmarshal avatar: %s: fail to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -105,8 +105,8 @@ func UnmarshalAvatarsBase(data io.Reader) ([]*res.AvatarData, error) {
 
 // buildAvatarXML build XML node struct for specified
 // avatar.
-func buildAvatarXML(av *object.Avatar) AvatarXML {
-	xmlAvatar := AvatarXML{}
+func buildAvatarXML(av *object.Avatar) Avatar {
+	xmlAvatar := Avatar{}
 	xmlAvatar.ID = av.ID()
 	xmlAvatar.Serial = av.Serial()
 	xmlAvatar.Portrait = av.Data().PortraitName
@@ -118,8 +118,8 @@ func buildAvatarXML(av *object.Avatar) AvatarXML {
 
 // buildAvatarXML build XML node struct for specified
 // avatar.
-func buildAvatarDataXML(avData *res.AvatarData) AvatarXML {
-	xmlAvatar := AvatarXML{}
+func buildAvatarDataXML(avData *res.AvatarData) Avatar {
+	xmlAvatar := Avatar{}
 	xmlAvatar.ID = avData.ID
 	xmlAvatar.Serial = avData.Serial
 	xmlAvatar.Portrait = avData.PortraitName
@@ -130,21 +130,21 @@ func buildAvatarDataXML(avData *res.AvatarData) AvatarXML {
 }
 
 // buildAvatarData build data avatar from specified XML data.
-func buildAvatarData(avXML *AvatarXML) (*res.AvatarData, error) {
+func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	ssHeadName := avXML.Spritesheet.Head
 	ssTorsoName := avXML.Spritesheet.Torso
 	portraitName := avXML.Portrait
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v", err)
+		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v", err)
+		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v", err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_torso_spritesheet_picture:%v", err)
+		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:           avXML.ID,
@@ -161,18 +161,16 @@ func buildAvatarData(avXML *AvatarXML) (*res.AvatarData, error) {
 
 // buildStaticAvatarData build new static avatar data for specified
 // character from specified XML data.
-func buildStaticAvatarData(avXML *AvatarXML) (*res.AvatarData, error) {
+func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	ssFullBodyName := avXML.Spritesheet.FullBody
 	portraitName := avXML.Portrait
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_portrait_picture:%v",
-			err)
+		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
 	}
 	ssFullBodyPic, err := data.AvatarSpritesheet(ssFullBodyName)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_head_spritesheet_picture:%v",
-			err)
+		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:             avXML.ID,

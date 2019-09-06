@@ -35,32 +35,32 @@ import (
 )
 
 // Struct for XML effect graphic base.
-type EffectsGraphicsBaseXML struct {
-	XMLName xml.Name           `xml:"base"`
-	Nodes   []EffectGraphicXML `xml:"effect"`
+type EffectGraphics struct {
+	XMLName  xml.Name        `xml:"effect-graphics"`
+	Graphics []EffectGraphic `xml:"effect-graphic"`
 }
 
 // Struct for XML effect graphic node.
-type EffectGraphicXML struct {
-	XMLName xml.Name `xml:"effect"`
+type EffectGraphic struct {
+	XMLName xml.Name `xml:"effect-graphic"`
 	ID      string   `xml:"id,attr"`
 	Icon    string   `xml:"icon,attr"`
 }
 
-// UnmarshalEffectsGraphicsBase retrieves all effect graphic
+// UnmarshalEffectGraphics retrieves all effect graphic
 // data from specified XML data.
-func UnmarshalEffectsGraphicsBase(data io.Reader) ([]*res.EffectGraphicData, error) {
+func UnmarshalEffectGraphics(data io.Reader) ([]*res.EffectGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
-	xmlBase := new(EffectsGraphicsBaseXML)
+	xmlBase := new(EffectGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_xml_data:%v", err)
+		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	effects := make([]*res.EffectGraphicData, 0)
-	for _, xmlData := range xmlBase.Nodes {
+	for _, xmlData := range xmlBase.Graphics {
 		egd, err := buildEffectGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml:unmarshal_effect_graphic:%s:fail_to_build_data:%v",
+			log.Err.Printf("xml: unmarshal effect graphic: %s: fail to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -71,10 +71,10 @@ func UnmarshalEffectsGraphicsBase(data io.Reader) ([]*res.EffectGraphicData, err
 
 // buildEffectGraphicData creates effect graphic data from specified
 // effect XML data.
-func buildEffectGraphicData(xmlEffect *EffectGraphicXML) (*res.EffectGraphicData, error) {
+func buildEffectGraphicData(xmlEffect *EffectGraphic) (*res.EffectGraphicData, error) {
 	effIcon, err := data.Icon(xmlEffect.Icon)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_retrieve_effect_icon:%v", err)
+		return nil, fmt.Errorf("fail to retrieve effect icon: %v", err)
 	}
 	effData := res.EffectGraphicData{
 		EffectID: xmlEffect.ID,

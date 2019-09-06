@@ -28,52 +28,52 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
 // Struct for skill graphics base XML node.
-type SkillsGraphicsBaseXML struct {
-	XMLName xml.Name          `xml:"base"`
-	Nodes   []SkillGraphicXML `xml:"skill"`
+type SkillGraphics struct {
+	XMLName  xml.Name       `xml:"skill-graphics"`
+	Graphics []SkillGraphic `xml:"skill-graphic"`
 }
 
 // Struct for skill graphic XML node.
-type SkillGraphicXML struct {
-	XMLName    xml.Name           `xml:"skill"`
-	ID         string             `xml:"id,attr"`
-	Icon       string             `xml:"icon,attr"`
-	Animations SkillAnimationsXML `xml:"animations"`
-	Audio      SkillAudioXML      `xml:"audio"`
+type SkillGraphic struct {
+	XMLName    xml.Name        `xml:"skill-graphic"`
+	ID         string          `xml:"id,attr"`
+	Icon       string          `xml:"icon,attr"`
+	Animations SkillAnimations `xml:"animations"`
+	Audio      SkillAudio      `xml:"audio"`
 }
 
 // Struct for skill animations XML node.
-type SkillAnimationsXML struct {
+type SkillAnimations struct {
 	XMLName    xml.Name `xml:"animations"`
 	Cast       string   `xml:"cast,value"`
 	Activation string   `xml:"activation,value"`
 }
 
 // Struct for skill audio XML node.
-type SkillAudioXML struct {
+type SkillAudio struct {
 	XMLName    xml.Name `xml:"audio"`
 	Cast       string   `xml:"cast,value"`
 	Activation string   `xml:"activation,value"`
 }
 
-// UnmarshalSkillsGraphicsBase retrieves all skills graphic data
+// UnmarshalSkillGraphics retrieves all skills graphic data
 // for speicfied XML data.
-func UnmarshalSkillsGraphicsBase(data io.Reader) ([]*res.SkillGraphicData, error) {
+func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 	doc, _ := ioutil.ReadAll(data)
-	xmlBase := new(SkillsGraphicsBaseXML)
+	xmlBase := new(SkillGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
 		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
 	}
 	skills := make([]*res.SkillGraphicData, 0)
-	for _, xmlData := range xmlBase.Nodes {
+	for _, xmlData := range xmlBase.Graphics {
 		sgd, err := buildSkillGraphicData(&xmlData)
 		if err != nil {
 			log.Err.Printf("xml: unmarshal skill graphic: %s: fail to build data: %v",
@@ -87,7 +87,7 @@ func UnmarshalSkillsGraphicsBase(data io.Reader) ([]*res.SkillGraphicData, error
 
 // buildSkillGraphicData creates skill graphic data from specified
 // skill XML data.
-func buildSkillGraphicData(xmlSkill *SkillGraphicXML) (*res.SkillGraphicData, error) {
+func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error) {
 	skillIcon, err := data.Icon(xmlSkill.Icon)
 	if err != nil {
 		return nil, fmt.Errorf("fail to retrieve skill icon: %v", err)

@@ -257,6 +257,10 @@ func (as *AvatarSprite) SetHead(spritesheet pixel.Picture) {
 // SetTorso creates body animations from specified
 // avatar spritesheet.
 func (as *AvatarSprite) SetTorso(spritesheet pixel.Picture) {
+	if spritesheet == nil {
+		as.torso = as.baseTorso
+		return
+	}
 	as.torso = newAvatarBodyPart(spritesheet)
 }
 

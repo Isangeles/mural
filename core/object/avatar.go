@@ -221,14 +221,17 @@ func (av *Avatar) Data() *res.AvatarData {
 }
 
 // equip adds graphic of specified item to avatar.
-func (av *Avatar) equip(gItem *ItemGraphic) error {
+func (av *Avatar) equip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(gItem.Spritesheet())
 		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
-		return nil
+	case *item.Armor:
+		av.sprite.SetTorso(gItem.Spritesheet())
+		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
 	default:
-		return fmt.Errorf("not_equipable_item_type")
+		log.Dbg.Printf("avatar: %s#%s: equip: not equipable item type",
+			av.ID(), av.Serial())
 	}
 }
 
@@ -239,6 +242,12 @@ func (av *Avatar) unequip(gItem *ItemGraphic) {
 	case *item.Weapon:
 		av.sprite.SetWeapon(nil)
 		delete(av.eqItems, gItem.ID()+gItem.Serial())
+	case *item.Armor:
+		av.sprite.SetTorso(nil)
+		delete(av.eqItems, gItem.ID()+gItem.Serial())
+	default:
+		log.Dbg.Printf("avatar: %s#%s: equip: not equipable item type",
+			av.ID(), av.Serial())
 	}
 }
 
@@ -311,10 +320,7 @@ func (av *Avatar) updateGraphic() {
 			continue
 		}
 		itemGraphic := NewItemGraphic(it, itemGData)
-		err := av.equip(itemGraphic)
-		if err != nil {
-			av.eqItems[it.ID()+it.Serial()] = itemGraphic
-		}
+		av.equip(itemGraphic)
 	}
 	// Effects.
 	for _, e := range av.Character.Effects() {

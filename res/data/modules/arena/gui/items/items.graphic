@@ -1,5 +1,14 @@
 <?xml version="1.0"?>
 <base>
-  <item id="iwIronSword" spritesheet="longsword-1222211-80x90.png" icon="sword1.png" stack="10"></item>
-  <item id="imAloeLeaves1" icon="herb1.png" stack="10"></item>
+  <item id="iwIronSword" 
+	spritesheet="longsword-1222211-80x90.png" 
+	icon="sword1.png" 
+	stack="10"/>
+  <item id="imAloeLeaves1" 
+ 	icon="herb1.png" 
+	stack="10"/>
+  <item id="iaLeatherArmor1" 
+	spritesheet="m-leather-1222211-80x90.png"
+	icon="unknown.png" 
+	stack="1"/>
 </base>

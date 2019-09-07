@@ -60,9 +60,9 @@ type AvatarSprite struct {
 	FullBody string   `xml:"fullbody,value"`
 }
 
-// MarshalAvatarsBase parses specified avatars to avatars
+// MarshalAvatars parses specified avatars to avatars
 // base XML data.
-func MarshalAvatarsBase(avs []*object.Avatar) (string, error) {
+func MarshalAvatars(avs []*object.Avatar) (string, error) {
 	xmlAvatarsBase := new(Avatars)
 	for _, av := range avs {
 		xmlAvatar := buildAvatarXML(av)
@@ -78,12 +78,12 @@ func MarshalAvatarsBase(avs []*object.Avatar) (string, error) {
 // MarshalAvatar parses specified character avatar to
 // XML data.
 func MarshalAvatar(av *object.Avatar) (string, error) {
-	return MarshalAvatarsBase([]*object.Avatar{av})
+	return MarshalAvatars([]*object.Avatar{av})
 }
 
-// UnmarshalAvatarsBase retrieves all avatar data from specified
+// UnmarshalAvatars retrieves all avatar data from specified
 // XML data.
-func UnmarshalAvatarsBase(data io.Reader) ([]*res.AvatarData, error) {
+func UnmarshalAvatars(data io.Reader) ([]*res.AvatarData, error) {
 	doc, _ := ioutil.ReadAll(data)
 	xmlBase := new(Avatars)
 	err := xml.Unmarshal(doc, xmlBase)

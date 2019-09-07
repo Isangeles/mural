@@ -35,25 +35,25 @@ import (
 )
 
 var (
-	AVATARS_FILE_EXT = ".avatars"
+	AvatarsFileExt = ".avatars"
 )
 
 // ExportAvatars exports specified avatars to file
 // with specified path.
 func ExportAvatars(avs []*object.Avatar, basePath string) error {
 	// Marshal avatars to base data.
-	xml, err := parsexml.MarshalAvatarsBase(avs)
+	xml, err := parsexml.MarshalAvatars(avs)
 	if err != nil {
-		return fmt.Errorf("fail_to_marshal_avatars:%v", err)
+		return fmt.Errorf("fail to marshal avatars: %v", err)
 	}
 	// Check whether file path ends with proper extension.
-	if !strings.HasSuffix(basePath, AVATARS_FILE_EXT) {
-		basePath = basePath + AVATARS_FILE_EXT
+	if !strings.HasSuffix(basePath, AvatarsFileExt) {
+		basePath = basePath + AvatarsFileExt
 	}
 	// Create base file.
 	f, err := os.Create(filepath.FromSlash(basePath))
 	if err != nil {
-		return fmt.Errorf("fail_to_create_avatars_file:%v", err)
+		return fmt.Errorf("fail to create avatars file: %v", err)
 	}
 	defer f.Close()
 	// Write data to base file.
@@ -67,6 +67,6 @@ func ExportAvatars(avs []*object.Avatar, basePath string) error {
 // with specified path.
 func ExportAvatar(av *object.Avatar, dirPath string) error {
 	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
-		AVATARS_FILE_EXT)
+		AvatarsFileExt)
 	return ExportAvatars([]*object.Avatar{av}, filePath)
 }

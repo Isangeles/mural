@@ -50,7 +50,7 @@ func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
 		return nil, fmt.Errorf("xml: %s: fail to open avatars file: %v",
 			path, err)
 	}
-	avatars, err := parsexml.UnmarshalAvatarsBase(f)
+	avatars, err := parsexml.UnmarshalAvatars(f)
 	if err != nil {
 		return nil, fmt.Errorf("xml: %s: fail to parse xml: %v",
 			path, err)
@@ -112,58 +112,6 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 	avData := res.AvatarData{
 		ID:           char.ID(),
 		Serial:       char.Serial(),
-		PortraitName: portraitName,
-		SSHeadName:   ssHeadName,
-		SSTorsoName:  ssTorsoName,
-		PortraitPic:  portraitPic,
-		SSHeadPic:    ssHeadPic,
-		SSTorsoPic:   ssTorsoPic,
-	}
-	return &avData, nil
-}
-
-// defaultAvatarSpritesheet returns default spritesheet
-// for specified character.
-func defaultAvatarTorsoSpritesheet() string {
-	return "m-cloth-1222211-80x90.png"
-}
-
-// defaultAvatarHeadSpritesheet retruns default spritesheet
-// for specified character.
-func defaultAvatarHeadSpritesheet() string {
-	return "m-head-black-1222211-80x90.png"
-}
-
-// buildXMLAvatar builds avatar from specified XML data.
-// TODO: move this function to parsexml package.
-func buildXMLAvatarData(avXML *parsexml.Avatar) (*res.AvatarData, error) {
-	ssHeadName := avXML.Spritesheet.Head
-	ssTorsoName := avXML.Spritesheet.Torso
-	portraitName := avXML.Portrait
-	portraitPic, err := data.AvatarPortrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve portrait picture: %v",
-			avXML.ID, err)
-	}
-	if ssHeadName == "" {
-		ssHeadName = defaultAvatarHeadSpritesheet()
-	}
-	if ssTorsoName == "" {
-		ssTorsoName = defaultAvatarTorsoSpritesheet()
-	}
-	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v",
-			avXML.ID, err)
-	}
-	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v",
-			avXML.ID, err)
-	}
-	avData := res.AvatarData{
-		ID:           avXML.ID,
-		Serial:       avXML.Serial,
 		PortraitName: portraitName,
 		SSHeadName:   ssHeadName,
 		SSTorsoName:  ssTorsoName,

@@ -41,8 +41,7 @@ type AvatarSprite struct {
 
 // NewAvatarSprite creates new sprite for specified
 // body and head spritesheets.
-func NewAvatarSprite(bodySpritesheet,
-	headSpritesheet pixel.Picture) *AvatarSprite {
+func NewAvatarSprite(bodySpritesheet, headSpritesheet pixel.Picture) *AvatarSprite {
 	as := new(AvatarSprite)
 	as.baseHead = newAvatarBodyPart(headSpritesheet)
 	as.baseTorso = newAvatarBodyPart(bodySpritesheet)

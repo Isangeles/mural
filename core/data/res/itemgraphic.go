@@ -31,8 +31,15 @@ import (
 type ItemGraphicData struct {
 	ItemID          string
 	IconPic         pixel.Picture
-	SpritesheetPic  pixel.Picture
 	MaxStack        int
+	Spritesheets    []*SpritesheetData
+}
+
+// Struct for avatar spritesheet data.
+type SpritesheetData struct {
+	Texture pixel.Picture
+	Race    int
+	Gender  int
 }
 
 

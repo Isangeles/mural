@@ -46,9 +46,9 @@ func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	return itg
 }
 
-// Spritesheet returns item spritesheet.
-func (itg *ItemGraphic) Spritesheet() pixel.Picture {
-	return itg.data.SpritesheetPic
+// Spritesheets returns all spritesheets data.
+func (itg *ItemGraphic) Spritesheets() []*res.SpritesheetData {
+	return itg.data.Spritesheets
 }
 
 // Icon returns item icon.

@@ -224,10 +224,10 @@ func (av *Avatar) Data() *res.AvatarData {
 func (av *Avatar) equip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
 	case *item.Weapon:
-		av.sprite.SetWeapon(gItem.Spritesheet())
+		av.sprite.SetWeapon(av.spritesheet(gItem.Spritesheets()))
 		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
 	case *item.Armor:
-		av.sprite.SetTorso(gItem.Spritesheet())
+		av.sprite.SetTorso(av.spritesheet(gItem.Spritesheets()))
 		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
 	default:
 		log.Dbg.Printf("avatar: %s#%s: equip: not equipable item type",
@@ -405,4 +405,21 @@ func (av *Avatar) castingSpell() bool {
 		}
 	}
 	return false
+}
+
+// spritesheet selects proper spritesheet for avatar from
+// specified slice and returns its texture.
+func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
+	for _, s := range sprs {
+		race := character.Race(s.Race)
+		gender := character.Gender(s.Gender)
+		if race != character.UnknownRace && av.Race() != race {
+			continue
+		}
+		if gender != character.UnknownGender && av.Gender() != gender {
+			continue
+		}
+		return s.Texture
+	}
+	return nil
 }

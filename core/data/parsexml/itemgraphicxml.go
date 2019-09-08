@@ -29,6 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 
+	flamexml "github.com/isangeles/flame/core/data/parsexml"
+
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -42,11 +44,20 @@ type ItemGraphics struct {
 
 // Struct for XML item graphic node.
 type ItemGraphic struct {
-	XMLName     xml.Name `xml:"item-graphic"`
-	ID          string   `xml:"id,attr"`
-	Spritesheet string   `xml:"spritesheet,attr"`
-	Icon        string   `xml:"icon,attr"`
-	Stack       int      `xml:"stack,attr"`
+	XMLName      xml.Name      `xml:"item-graphic"`
+	ID           string        `xml:"id,attr"`
+	Spritesheet  string        `xml:"spritesheet,attr"`
+	Icon         string        `xml:"icon,attr"`
+	Stack        int           `xml:"stack,attr"`
+	Spritesheets []Spritesheet `xml:"spritesheets>spritesheet"`
+}
+
+// Struct for XML graphic spritesheet node.
+type Spritesheet struct {
+	XMLName xml.Name `xml:"spritesheet"`
+	Texture string   `xml:"texture,attr"`
+	Race    string   `xml:"race,attr"`
+	Gender  string   `xml:"gender,attr"`
 }
 
 // UnmarshalItemGraphics parses specified XML data
@@ -71,8 +82,7 @@ func UnmarshalItemGraphics(data io.Reader) ([]*res.ItemGraphicData, error) {
 	return items, nil
 }
 
-// buildXMLItemGraphic creates item graphic object from
-// specified item XML data.
+// buildXMLItemGraphic creates item graphic data from specified item graphic node.
 func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 	// Basic data.
 	d := res.ItemGraphicData{
@@ -85,13 +95,37 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 		return nil, fmt.Errorf("fail to retrieve item icon: %v", err)
 	}
 	d.IconPic = icon
-	// Spritesheet.
-	if len(xmlItem.Spritesheet) > 0 {
-		sprite, err := data.ItemSpritesheet(xmlItem.Spritesheet)
+	// Spritesheets.
+	d.Spritesheets = make([]*res.SpritesheetData, 0)
+	for _, xmlSpritesheet := range xmlItem.Spritesheets {
+		s, err := buildSpritesheetData(&xmlSpritesheet)
 		if err != nil {
-			return nil, fmt.Errorf("fail to retrieve item spritesheet: %v", err)
+			return nil, fmt.Errorf("fail to build spritesheet data: %v", err)
 		}
-		d.SpritesheetPic = sprite
+		d.Spritesheets = append(d.Spritesheets, s)
+	}
+	return &d, nil
+}
+
+// buildSpritesheetData creates spriteseheet data from specified XML
+// spritesheet node.
+func buildSpritesheetData(xmlSpritesheet *Spritesheet) (*res.SpritesheetData, error) {
+	tex, err := data.ItemSpritesheet(xmlSpritesheet.Texture)
+	if err != nil {
+		return nil, fmt.Errorf("fail to retrieve texture: %v", err)
+	}
+	race, err := flamexml.UnmarshalRace(xmlSpritesheet.Race)
+	if err != nil {
+		return nil, fmt.Errorf("fail to unmarshal race: %v", err)
+	}
+	gender, err := flamexml.UnmarshalGender(xmlSpritesheet.Gender)
+	if err != nil {
+		return nil, fmt.Errorf("fail to unmarshal gender: %v", err)
+	}
+	d := res.SpritesheetData{
+		Texture: tex,
+		Race:    int(race),
+		Gender:  int(gender),
 	}
 	return &d, nil
 }

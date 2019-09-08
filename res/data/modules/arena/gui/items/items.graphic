@@ -1,14 +1,24 @@
 <?xml version="1.0"?>
 <item-graphics>
-  <item-graphic id="iwIronSword" 
-	spritesheet="longsword-1222211-80x90.png" 
-	icon="sword1.png" 
-	stack="10"/>
+  <item-graphic id="iwIronSword"
+	        icon="sword1.png" 
+	        stack="10">
+	<spritesheets>
+		<spritesheet texture="longsword-1222211-80x90.png" 
+	                     race="*" 
+ 			     gender="*"/>
+	</spritesheets>
+  </item-graphic>
   <item-graphic id="imAloeLeaves1" 
- 	icon="herb1.png" 
-	stack="10"/>
-  <item-graphic id="iaLeatherArmor1" 
-	spritesheet="m-leather-1222211-80x90.png"
-	icon="unknown.png" 
-	stack="1"/>
+ 	        icon="herb1.png" 
+	        stack="10"/>
+  <item-graphic id="iaLeatherArmor1"
+	        icon="unknown.png" 
+	        stack="1">
+	<spritesheets>
+		<spritesheet texture="m-leather-1222211-80x90.png"
+	                     race="*"
+ 			     gender="*"/>
+	</spritesheets>
+  </item-graphic>
 </item-graphics>

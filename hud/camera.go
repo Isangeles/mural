@@ -26,6 +26,7 @@ package hud
 import (
 	"fmt"
 	"math"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -33,12 +34,15 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/character"
+ 	"github.com/isangeles/flame/core/module/object/character"
+ 	"github.com/isangeles/flame/core/module/scenario"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"	
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -58,6 +62,7 @@ type Camera struct {
 	position pixel.Vec
 	size     pixel.Vec
 	locked   bool
+	area     *scenario.Area
 	// Map & objects.
 	areaMap *areamap.Map
 	fow     *imdraw.IMDraw
@@ -142,8 +147,7 @@ func (c *Camera) Update(win *mtk.Window) {
 				win.JustPressed(pixelgl.KeyUp)) {
 			c.position.Y += mTileSize.Y
 		}
-		if c.position.X < mapSizePlus.X &&
-			(win.JustPressed(pixelgl.KeyD) ||
+		if c.position.X < mapSizePlus.X && (win.JustPressed(pixelgl.KeyD) ||
 				win.JustPressed(pixelgl.KeyRight)) {
 			c.position.X += mTileSize.X
 		}
@@ -191,24 +195,62 @@ func (c *Camera) Update(win *mtk.Window) {
 		win.MousePosition()))
 }
 
-// SetMap sets maps for camera.
-func (c *Camera) SetMap(m *areamap.Map) {
-	c.areaMap = m
-}
-
-// SetAvatars sets avatars to draw.
-func (c *Camera) SetAvatars(avs []*object.Avatar) {
-	c.avatars = avs
-}
-
-// SetObjects sets area objects to draw.
-func (c *Camera) SetObjects(obs []*object.ObjectGraphic) {
-	c.objects = obs
-}
-
 // SetPosition sets camera position.
 func (c *Camera) SetPosition(pos pixel.Vec) {
 	c.position = pos
+}
+
+// SetArea sets area for camera to display.
+func (c *Camera) SetArea(a *scenario.Area) error {
+	c.area = a
+	// Set map.
+	chapter := c.hud.game.Module().Chapter()
+	mapsPath := filepath.FromSlash(chapter.Conf().ModulePath +
+		"/gui/chapters/" + chapter.Conf().ID + "/areas/maps")
+	tmxMap, err := data.Map(mapsPath, a.ID())
+	if err != nil {
+		return fmt.Errorf("fail to retrieve tmx map: %v", err)
+	}
+	areaMap, err := areamap.NewMap(tmxMap, mapsPath)
+	if err != nil {
+		return fmt.Errorf("fail to create pc area map: %v", err)
+	}
+	c.areaMap = areaMap
+	// Avatars.
+	c.avatars = make([]*object.Avatar, 0)
+	for _, char := range a.Characters() {
+		var pcAvatar *object.Avatar
+		for _, pc := range c.hud.Players() {
+			if char == pc.Character {
+				pcAvatar = pc
+				break
+			}
+		}
+		if pcAvatar != nil { // skip players, PCs already have avatars
+			c.avatars = append(c.avatars, pcAvatar)
+			continue
+		}
+		avData := res.Avatar(char.ID())
+		if avData == nil {
+			log.Err.Printf("hud camera: set area: avatar data not found: %s",
+				char.ID())
+			continue
+		}
+		av := object.NewAvatar(char, avData)
+		c.avatars = append(c.avatars, av)
+	}
+	// Objects.
+	c.objects = make([]*object.ObjectGraphic, 0)
+	for _, o := range a.Objects() {
+		ogData := res.Object(o.ID())
+		if ogData == nil {
+			log.Err.Printf("hud camera: set area: object data not found: %s", o.ID())
+			continue
+		}
+		og := object.NewObjectGraphic(o, ogData)
+		c.objects = append(c.objects, og)
+	}
+	return nil
 }
 
 // CenterAt centers camera at specified position.

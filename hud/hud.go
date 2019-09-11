@@ -26,7 +26,6 @@ package hud
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -42,8 +41,6 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/areamap"
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -490,57 +487,11 @@ func (hud *HUD) ChangeArea(area *scenario.Area) error {
 	// Map.
 	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
 	defer hud.CloseLoadingScreen()
-	chapter := hud.game.Module().Chapter()
-	mapsPath := filepath.FromSlash(chapter.Conf().ModulePath +
-		"/gui/chapters/" + chapter.Conf().ID + "/areas/maps")
-	tmxMap, err := data.Map(mapsPath, area.ID())
+	err := hud.camera.SetArea(area)
 	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_retrieve_tmx_map:%v", err)
+		hud.loaderr = err
 		return hud.loaderr
 	}
-	areaMap, err := areamap.NewMap(tmxMap, mapsPath)
-	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_create_pc_area_map:%v", err)
-		return hud.loaderr
-	}
-	hud.camera.SetMap(areaMap)
-	// Avatars.
-	hud.OpenLoadingScreen(lang.Text("gui", "load_avatars_info"))
-	avatars := make([]*object.Avatar, 0)
-	for _, c := range area.Characters() {
-		var pcAvatar *object.Avatar
-		for _, pc := range hud.Players() {
-			if c == pc.Character {
-				pcAvatar = pc
-				break
-			}
-		}
-		if pcAvatar != nil { // skip players, PCs already have avatars
-			avatars = append(avatars, pcAvatar)
-			continue
-		}
-		avData := res.Avatar(c.ID())
-		if avData == nil {
-			log.Err.Printf("hud:area_change:avatar_data_not_found:%s", c.ID())
-			continue
-		}
-		av := object.NewAvatar(c, avData)
-		avatars = append(avatars, av)
-	}
-	hud.camera.SetAvatars(avatars)
-	// Objects.
-	hud.OpenLoadingScreen(lang.Text("gui", "load_objects_info"))
-	objects := make([]*object.ObjectGraphic, 0)
-	for _, o := range area.Objects() {
-		ogData := res.Object(o.ID())
-		if ogData == nil {
-			log.Err.Printf("hud:area_change:object_data_not_found:%s", o.ID())
-			continue
-		}
-		og := object.NewObjectGraphic(o, ogData)
-		objects = append(objects, og)
-	}
-	hud.camera.SetObjects(objects)
 	// Reload HUD.
 	hud.Reload()
 	if hud.onAreaChanged != nil {

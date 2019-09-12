@@ -66,8 +66,8 @@ type Camera struct {
 	// Map & objects.
 	areaMap *areamap.Map
 	fow     *imdraw.IMDraw
-	avatars []*object.Avatar
-	objects []*object.ObjectGraphic
+	avatars map[string]*object.Avatar
+	objects map[string]*object.ObjectGraphic
 	// Debug mode.
 	cameraInfo *mtk.Text
 	cursorInfo *mtk.Text
@@ -80,6 +80,8 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.size = size
 	c.position = pixel.V(0, 0)
 	c.fow = imdraw.New(nil)
+	c.avatars = make(map[string]*object.Avatar)
+	c.objects = make(map[string]*object.ObjectGraphic)
 	// Debug info.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
@@ -136,6 +138,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	if c.areaMap == nil {
 		return
 	}
+	c.updateAreaObjects()
 	if !c.locked {
 		mSize := c.areaMap.Size()
 		mTileSize := c.areaMap.TileSize()
@@ -216,8 +219,8 @@ func (c *Camera) SetArea(a *scenario.Area) error {
 		return fmt.Errorf("fail to create pc area map: %v", err)
 	}
 	c.areaMap = areaMap
-	// Avatars.
-	c.avatars = make([]*object.Avatar, 0)
+	// PC avatars.
+	c.avatars = make(map[string]*object.Avatar)
 	for _, char := range a.Characters() {
 		var pcAvatar *object.Avatar
 		for _, pc := range c.hud.Players() {
@@ -226,30 +229,12 @@ func (c *Camera) SetArea(a *scenario.Area) error {
 				break
 			}
 		}
-		if pcAvatar != nil { // skip players, PCs already have avatars
-			c.avatars = append(c.avatars, pcAvatar)
+		if pcAvatar == nil {
 			continue
 		}
-		avData := res.Avatar(char.ID())
-		if avData == nil {
-			log.Err.Printf("hud camera: set area: avatar data not found: %s",
-				char.ID())
-			continue
-		}
-		av := object.NewAvatar(char, avData)
-		c.avatars = append(c.avatars, av)
+		c.avatars[char.ID()+char.Serial()] = pcAvatar
 	}
-	// Objects.
-	c.objects = make([]*object.ObjectGraphic, 0)
-	for _, o := range a.Objects() {
-		ogData := res.Object(o.ID())
-		if ogData == nil {
-			log.Err.Printf("hud camera: set area: object data not found: %s", o.ID())
-			continue
-		}
-		og := object.NewObjectGraphic(o, ogData)
-		c.objects = append(c.objects, og)
-	}
+	c.updateAreaObjects()
 	return nil
 }
 
@@ -265,8 +250,19 @@ func (c *Camera) Map() *areamap.Map {
 }
 
 // Avatars returns all avatars from current area.
-func (c *Camera) Avatars() []*object.Avatar {
-	return c.avatars
+func (c *Camera) Avatars() (avatars []*object.Avatar) {
+	for _, av := range c.avatars {
+		avatars = append(avatars, av)
+	}
+	return
+}
+
+// AreaObjects returns all objects in current area.
+func (c *Camera) AreaObjects() (objects []*object.ObjectGraphic) {
+	for _, ob := range c.objects {
+		objects = append(objects, ob)
+	}
+	return
 }
 
 // DrawObjects returns all objects with 'drawable'
@@ -280,11 +276,6 @@ func (c *Camera) DrawObjects() []object.Drawer {
 		objects = append(objects, ob)
 	}
 	return objects
-}
-
-// AreaObjects returns all objects in current area.
-func (c *Camera) AreaObjects() []*object.ObjectGraphic {
-	return c.objects
 }
 
 // Position return camera position.
@@ -374,6 +365,40 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 	c.fow.Draw(t)
 }
 
+// updateAreaObjects updates lists with avatars
+// and graphical objects for current area.
+func (c *Camera) updateAreaObjects() {
+	if c.area == nil {
+		return
+	}
+	for _, char := range c.area.Characters() {
+		if c.avatars[char.ID()+char.Serial()] != nil {
+			continue
+		}
+		avData := res.Avatar(char.ID())
+		if avData == nil {
+			log.Err.Printf("hud camera: update area objects: avatar data not found: %s",
+				char.ID())
+			continue
+		}
+		av := object.NewAvatar(char, avData)
+		c.avatars[char.ID()+char.Serial()] = av
+	}
+	for _, ob := range c.area.Objects() {
+		if c.objects[ob.ID()+ob.Serial()] != nil {
+			continue
+		}
+		ogData := res.Object(ob.ID())
+		if ogData == nil {
+			log.Err.Printf("hud camera: update area objects: object data not found: %s",
+				ob.ID())
+			continue
+		}
+		og := object.NewObjectGraphic(ob, ogData)
+		c.objects[ob.ID()+ob.Serial()] = og
+	}
+}
+
 // Triggered after right mouse button was pressed.
 func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 	// Set target.
@@ -384,7 +409,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 		if !av.DrawArea().Contains(pos) {
 			continue
 		}
-		log.Dbg.Printf("hud:set_target:%s", av.ID()+"_"+av.Serial())
+		log.Dbg.Printf("hud: set target: %s", av.ID()+"_"+av.Serial())
 		c.hud.ActivePlayer().SetTarget(av.Character)
 		return
 	}
@@ -392,7 +417,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 		if !ob.DrawArea().Contains(pos) {
 			continue
 		}
-		log.Dbg.Printf("hud:set_target:%s", ob.ID()+"_"+ob.Serial())
+		log.Dbg.Printf("hud: set target: %s", ob.ID()+"_"+ob.Serial())
 		c.hud.ActivePlayer().SetTarget(ob.Object)
 		return
 	}

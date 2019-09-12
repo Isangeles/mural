@@ -3,7 +3,6 @@ MAJOR:
 * Graphical effects
 * Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
-* Spawning avatars
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation.
 MINOR:
@@ -27,3 +26,4 @@ DONE:
 * HUD: character window
 * Area objects
 * Audio effects
+* Spawning avatars

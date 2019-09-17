@@ -5,6 +5,7 @@ MAJOR:
 * Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation.
+* Only visible objects should be able to play audio effects
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)

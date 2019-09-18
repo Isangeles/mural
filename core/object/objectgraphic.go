@@ -47,6 +47,7 @@ type ObjectGraphic struct {
 	sprite   *mtk.Animation
 	info     *mtk.InfoWindow
 	hovered  bool
+	silenced bool
 	effects  map[string]*EffectGraphic
 	items    map[string]*ItemGraphic
 }
@@ -129,6 +130,16 @@ func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 // Function to satify frame target interface.
 func (og *ObjectGraphic) MaxMana() int {
 	return 0
+}
+
+// Silenced checks if audio effects are silenced.
+func (og *ObjectGraphic) Silenced() bool {
+	return og.silenced
+}
+
+// Silence toggles object audio effects.
+func (og *ObjectGraphic) Silence(silence bool) {
+	og.silenced = silence
 }
 
 // updateGraphic updates object

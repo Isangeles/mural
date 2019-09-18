@@ -175,20 +175,22 @@ func (c *Camera) Update(win *mtk.Window) {
 	// Avatars.
 	for _, av := range c.avatars {
 		for _, pc := range c.hud.Players() {
-			if mtk.Range(pc.Position(),
-				av.Position()) > pc.SightRange() {
+			if mtk.Range(pc.Position(), av.Position()) > pc.SightRange() {
+				av.Silence(true)
 				continue
 			}
+			av.Silence(false)
 			av.Update(win)
 		}
 	}
 	// Objects.
 	for _, ob := range c.objects {
 		for _, pc := range c.hud.Players() {
-			if mtk.Range(pc.Position(),
-				ob.Position()) > pc.SightRange() {
+			if mtk.Range(pc.Position(), ob.Position()) > pc.SightRange() {
+				ob.Silence(true)
 				continue
 			}
+			ob.Silence(false)
 			ob.Update(win)
 		}
 	}

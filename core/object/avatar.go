@@ -51,6 +51,7 @@ type Avatar struct {
 	chat      *mtk.Text
 	hovered   bool
 	speaking  bool
+	silenced  bool
 	chatTimer int64
 	items     map[string]*ItemGraphic
 	eqItems   map[string]*ItemGraphic
@@ -220,6 +221,16 @@ func (av *Avatar) Data() *res.AvatarData {
 	return av.data
 }
 
+// Silenced checks if audio effects are silenced.
+func (av *Avatar) Silenced() bool {
+	return av.silenced
+}
+
+// Silence toggles avatar audio effects.
+func (av *Avatar) Silence(silence bool) {
+	av.silenced = silence
+}
+
 // equip adds graphic of specified item to avatar.
 func (av *Avatar) equip(gItem *ItemGraphic) {
 	switch gItem.Item.(type) {
@@ -373,7 +384,7 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 		av.sprite.MeleeOnce()
 	}
 	// Audio effect.
-	if mtk.Audio() != nil && sg.ActivationAudio() != nil {
+	if !av.Silenced() && mtk.Audio() != nil && sg.ActivationAudio() != nil {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }

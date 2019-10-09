@@ -291,9 +291,8 @@ func Font(fileName string) (*truetype.Font, error) {
 
 // Map loads TMX map from file with specified
 // directory and name.
-func Map(mapDir, mapName string) (*tmx.Map, error) {
-	mapPath := filepath.FromSlash(mapDir + "/" + mapName + ".tmx")
-	tmxFile, err := os.Open(mapPath)
+func Map(areaDir string) (*tmx.Map, error) {
+	tmxFile, err := os.Open(areaDir + "/map.tmx")
 	if err != nil {
 		return nil, fmt.Errorf("fail_to_open_tmx_file:%v", err)
 	}

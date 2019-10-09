@@ -26,7 +26,6 @@ package hud
 import (
 	"fmt"
 	"math"
-	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -210,13 +209,13 @@ func (c *Camera) SetArea(a *scenario.Area) error {
 	c.area = a
 	// Set map.
 	chapter := c.hud.game.Module().Chapter()
-	mapsPath := filepath.FromSlash(chapter.Conf().ModulePath +
-		"/gui/chapters/" + chapter.Conf().ID + "/areas/maps")
-	tmxMap, err := data.Map(mapsPath, a.ID())
+	areaPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s",
+		chapter.Conf().ModulePath, chapter.ID(), a.ID())
+	tmxMap, err := data.Map(areaPath)
 	if err != nil {
 		return fmt.Errorf("fail to retrieve tmx map: %v", err)
 	}
-	areaMap, err := areamap.NewMap(tmxMap, mapsPath)
+	areaMap, err := areamap.NewMap(tmxMap, areaPath)
 	if err != nil {
 		return fmt.Errorf("fail to create pc area map: %v", err)
 	}

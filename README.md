@@ -1,5 +1,5 @@
 ## Introduction
-  Mural is a 2D graphical frontend for Flame RPG engine written in Go with Pixel library.
+  Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with Pixel library.
 
   GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with Pixel library.
 
@@ -26,11 +26,11 @@ $ go get -u github.com/isangeles/mural
 $ go build github.com/isangeles/mural
 ```
 
-Copy 'data' directory from /res to directory with Mural executable.
+Copy `data` directory from `/res` to directory with Mural executable.
 
 Now, specify the path to a valid Flame module in Flame configuration file.
 
-Create file '.flame' in Mural executable directory(or run Mural to create it
+Create file `.flame` in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
   module:[module name];[module path](optional);
@@ -69,7 +69,7 @@ V - open crafting menu
 C - open character window
 
 ## Configuration
-Configuration values are loaded from '.mural' file in Mural executable directory.
+Configuration values are loaded from `.mural` file in Mural executable directory.
 
 ### Configuration values:
 ```
@@ -103,7 +103,7 @@ Description: specifies name of audio file(located in audio archive) for main men
 Description: specifies name of audio file(located in audio archive) for button click sound.
 
 ## Module directory
-All GUI-related files are must be stored in 'data/module/[module]/gui' directory.
+All GUI-related files must be stored in `data/module/[module]/gui` directory.
 
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
@@ -145,9 +145,9 @@ guiaudio -o set-volue -a [value]
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
-Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in '[module]/gui/scripts' directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from 'run' subdirectory are started automatically on game start/load.
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module]/gui/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` subdirectory are started automatically on game start/load.
 
-Area scripts are stored in 'chapters/[chapter]/areas/scripts[area]' directory and started after area change.
+Area scripts are stored in `chapters/[chapter]/areas/[area]/scripts` directory and started after area change.
 
 ## Contributing
 You are welcome to contribute to project development.

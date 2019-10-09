@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <scenario id="area1">
-  <mainarea id="area1_main" map="area01.tmx">
+  <mainarea id="area1_main">
     <npcs>
       <char id="testchar" position="500x300"></char>
     </npcs>
@@ -8,6 +8,10 @@
       <object id="aloe1" position="500x500"></object>
     </objects>
     <subareas>
+	<area id="cave1">
+		<npcs></npcs>
+		<objects></objects>
+	</area>
     </subareas>
   </mainarea>
 </scenario>

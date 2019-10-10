@@ -65,7 +65,7 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 		tsPath := filepath.FromSlash(mapDir + "/" + ts.Image.Source)
 		tsPic, err := data.PictureFromDir(tsPath)
 		if err != nil {
-			return nil, fmt.Errorf("fail_to_retrieve_tilset_source:%v",
+			return nil, fmt.Errorf("fail to retrieve tilset source: %v",
 				ts.Name)
 		}
 		m.tilesets[ts.Name] = tsPic
@@ -77,12 +77,12 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 		case "ground":
 			l, err := mapLayer(m, l)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_create_ground_layer:%v",
+				return nil, fmt.Errorf("fail to create ground layer: %v",
 					err)
 			}
 			m.ground = l
 		default:
-			fmt.Printf("map_builder:unknown_layer:%s\n", l.Name)
+			fmt.Printf("map builder: unknown layer: %s\n", l.Name)
 		}
 	}
 	return m, nil
@@ -203,7 +203,7 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 		if tileset != nil {
 			tilesetPic := m.tilesets[tileset.Name]
 			if tilesetPic == nil {
-				return nil, fmt.Errorf("fail_to_found_tileset_source:%s",
+				return nil, fmt.Errorf("fail to found tileset source: %s",
 					tileset.Name)
 			}
 			tileBounds := m.tileBounds(tilesetPic, dt.ID)

@@ -337,8 +337,8 @@ func RunAreaScripts(a *scenario.Area) {
 	}
 	// Retrive scripts.
 	mod := game.Module()
-	path := filepath.FromSlash(mod.Conf().Path + "/gui/chapters/" +
-		mod.Chapter().ID() + "/areas/scripts/" + a.ID())
+	path := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/scripts",
+		mod.Conf().Path, mod.Chapter().ID(), a.ID())
 	scripts, err := data.ScriptsDir(path)
 	if err != nil {
 		log.Err.Printf("run area scripts: fail to retrieve scripts: %v", err)

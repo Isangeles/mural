@@ -95,8 +95,18 @@ func LoadConfig() error {
 	CharAttrsMin = intValues["newchar-attrs-min"]
 	CharAttrsMax = intValues["newchar-attrs-max"]
 	// New char items & skills.
-	CharSkills = strings.Split(values["newchar-skills"], ";")
-	CharItems = strings.Split(values["newchar-items"], ";")
+	for _, v := range strings.Split(values["newchar-skills"], ";") {
+		if len(v) < 1 {
+			continue
+		}
+		CharSkills = append(CharSkills, v)
+	}
+	for _, v := range strings.Split(values["newchar-items"], ";") {
+		if len(v) < 1 {
+			continue
+		}
+		CharItems = append(CharItems, v)
+	}
 	log.Dbg.Print("config file loaded")
 	return nil
 }

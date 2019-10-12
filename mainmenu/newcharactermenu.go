@@ -349,7 +349,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		return nil, fmt.Errorf("fail_to_retrieve_alignment")
 	}
 	// ID.
-	name := strings.ReplaceAll(name, " ", "_")
+	name = strings.ReplaceAll(name, " ", "_")
 	id := fmt.Sprintf(newCharIDFrom, strings.ToLower(name))
 	charData := flameres.CharacterBasicData{
 		ID:        id,

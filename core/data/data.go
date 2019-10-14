@@ -345,7 +345,8 @@ func ScriptsDir(path string) ([]*ash.Script, error) {
 		scriptPath := filepath.FromSlash(path + "/" + info.Name())
 		s, err := Script(scriptPath)
 		if err != nil {
-			log.Err.Printf("fail to retrieve script: %v", err)
+			log.Err.Printf("data scripts dir: %s: fail to retrieve script: %v",
+				path, err)
 			continue
 		}
 		scripts = append(scripts, s)

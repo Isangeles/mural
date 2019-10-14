@@ -265,7 +265,7 @@ func EnterSavedGame(g *flamecore.Game, saveName string) {
 	// Import saved GUI state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
-		log.Err.Printf("enter saved game: fail  load gui save: %v", err)
+		log.Err.Printf("enter saved game: fail load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}

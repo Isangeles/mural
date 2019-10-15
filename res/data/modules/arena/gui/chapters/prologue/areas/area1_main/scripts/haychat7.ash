@@ -10,7 +10,7 @@ true {
 		@1 != @3 {
 		     	rawdis(@1, @3) < 50 {
 				out(objecthave -o flag -t @3 -a fAloeSearch_start) == "false" {
-					charman -o set -a chat "@2" -t @1;
+					charman -o set -a chat @2 -t @1;
 					wait(5);
 			     	};
 			};

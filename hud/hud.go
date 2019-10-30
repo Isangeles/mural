@@ -36,7 +36,7 @@ import (
 	"github.com/isangeles/flame/core/data/text/lang"
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
-	"github.com/isangeles/flame/core/module/scenario"
+	"github.com/isangeles/flame/core/module/area"
 
 	"github.com/isangeles/mtk"
 
@@ -91,7 +91,7 @@ type HUD struct {
 	loading       bool
 	exiting       bool
 	loaderr       error
-	onAreaChanged func(a *scenario.Area)
+	onAreaChanged func(a *area.Area)
 }
 
 // New creates new HUD instance.
@@ -483,7 +483,7 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 }
 
 // ChangeArea changes current HUD area.
-func (hud *HUD) ChangeArea(area *scenario.Area) error {
+func (hud *HUD) ChangeArea(area *area.Area) error {
 	// Map.
 	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
 	defer hud.CloseLoadingScreen()
@@ -539,7 +539,7 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 }
 
 // SetOnAreaChangedFunc sets function triggered on area change.
-func (hud *HUD) SetOnAreaChangedFunc(f func(a *scenario.Area)) {
+func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 	hud.onAreaChanged = f
 }
 

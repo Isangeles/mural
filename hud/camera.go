@@ -34,7 +34,7 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
  	"github.com/isangeles/flame/core/module/object/character"
- 	"github.com/isangeles/flame/core/module/scenario"
+ 	"github.com/isangeles/flame/core/module/area"
 
 	"github.com/isangeles/mtk"
 
@@ -61,7 +61,7 @@ type Camera struct {
 	position pixel.Vec
 	size     pixel.Vec
 	locked   bool
-	area     *scenario.Area
+	area     *area.Area
 	// Map & objects.
 	areaMap *areamap.Map
 	fow     *imdraw.IMDraw
@@ -205,7 +205,7 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 }
 
 // SetArea sets area for camera to display.
-func (c *Camera) SetArea(a *scenario.Area) error {
+func (c *Camera) SetArea(a *area.Area) error {
 	c.area = a
 	// Set map.
 	chapter := c.hud.game.Module().Chapter()

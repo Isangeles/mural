@@ -40,7 +40,7 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/scenario"
+	"github.com/isangeles/flame/core/module/area"
 
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/ash"
@@ -330,7 +330,7 @@ func ExecuteScriptFile(name string, args ...string) error {
 
 // RunAreaScripts executes all scripts for specified area
 // placed in gui/chapters/[chapter]/areas/scripts/[area].
-func RunAreaScripts(a *scenario.Area) {
+func RunAreaScripts(a *area.Area) {
 	// Stop previous area scripts.
 	for _, s := range areaScripts {
 		s.Stop(true)

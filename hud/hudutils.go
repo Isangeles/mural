@@ -25,12 +25,12 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/item"
-	
+	"github.com/isangeles/flame/core/module/item"
+
 	"github.com/isangeles/mtk"
-	
+
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/object"
 )

@@ -32,7 +32,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
 

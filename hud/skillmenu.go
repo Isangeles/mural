@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/skill"
+	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"
 

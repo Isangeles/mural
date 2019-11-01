@@ -33,7 +33,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/serial"
 
 	"github.com/isangeles/mtk"
@@ -134,7 +134,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 		charButtonSpr := pixel.NewSprite(charButtonBG, charButtonBG.Bounds())
 		mb.charButton.SetBackground(charButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve char button texture: %v", err)		
+		log.Err.Printf("hud_menubar: fail to retrieve char button texture: %v", err)
 	}
 	mb.charButton.SetOnClickFunc(mb.onCharButtonClicked)
 	// Slots.

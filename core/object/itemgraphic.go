@@ -26,7 +26,7 @@ package object
 import (
 	"github.com/faiface/pixel"
 	
-	"github.com/isangeles/flame/core/module/object/item"
+	"github.com/isangeles/flame/core/module/item"
 	
 	"github.com/isangeles/mural/core/data/res"
 )

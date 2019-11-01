@@ -28,7 +28,7 @@ import (
 
 	"github.com/faiface/beep"
 
-	"github.com/isangeles/flame/core/module/object/skill"
+	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mural/core/data/res"
 )

@@ -28,10 +28,10 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame/core/module/item"
 	flameobject "github.com/isangeles/flame/core/module/object"
 	"github.com/isangeles/flame/core/module/object/character"
-	"github.com/isangeles/flame/core/module/object/item"
-	"github.com/isangeles/flame/core/module/object/skill"
+	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"
 
@@ -94,7 +94,7 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.info = mtk.NewInfoWindow(mtk.SizeSmall, pixel.RGBA{0.1, 0.1, 0.1, 0.5})
 	av.info.SetText(av.infoText())
 	chatParams := mtk.Params{
-		FontSize:    mtk.SizeSmall,
+		FontSize: mtk.SizeSmall,
 	}
 	av.chat = mtk.NewText(chatParams)
 	// Items, effects, skills.

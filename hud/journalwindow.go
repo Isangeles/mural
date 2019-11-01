@@ -31,7 +31,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
-	"github.com/isangeles/flame/core/module/object/quest"
+	"github.com/isangeles/flame/core/module/quest"
 
 	"github.com/isangeles/mtk"
 
@@ -76,8 +76,8 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		"hud_journal_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	jw.closeButton = mtk.NewButton(buttonParams)
@@ -138,8 +138,8 @@ func (jw *JournalWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextMove := pixel.V(0, jw.Size().Y/2-mtk.ConvSize(25))
 	jw.titleText.Draw(win, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(jw.Size().X/2 - 20,
-		jw.Size().Y/2 - 15))
+	closeButtonMove := mtk.ConvVec(pixel.V(jw.Size().X/2-20,
+		jw.Size().Y/2-15))
 	jw.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	// Quest info.
 	questInfoMove := mtk.MoveTC(jw.Size(), jw.questInfo.Size())

@@ -30,7 +30,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/module/object/effect"
+	"github.com/isangeles/flame/core/module/effect"
 
 	"github.com/isangeles/mtk"
 

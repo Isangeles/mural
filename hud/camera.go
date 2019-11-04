@@ -372,6 +372,8 @@ func (c *Camera) updateAreaObjects() {
 	if c.area == nil {
 		return
 	}
+	c.clearAreaObjects()
+	// Add new objects & characters.
 	for _, char := range c.area.Characters() {
 		if c.avatars[char.ID()+char.Serial()] != nil {
 			continue
@@ -397,6 +399,37 @@ func (c *Camera) updateAreaObjects() {
 		}
 		og := object.NewObjectGraphic(ob, ogData)
 		c.objects[ob.ID()+ob.Serial()] = og
+	}
+}
+
+// clearAreaObjecs removes avatars & graphics without
+// corresponding objects in current area.
+func (c *Camera) clearAreaObjects() {
+	for _, av := range c.Avatars() {
+		found := false
+		for _, char := range c.area.Characters() {
+			if char.ID() == av.ID() && char.Serial() == av.Serial() {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+		delete(c.avatars, av.ID()+av.Serial())
+	}
+	for _, gob := range c.AreaObjects() {
+		found := false
+		for _, ob := range c.area.Objects() {
+			if ob.ID() == gob.ID() && ob.Serial() == gob.Serial() {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+		delete(c.objects, gob.ID()+gob.Serial())
 	}
 }
 

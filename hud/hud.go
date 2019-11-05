@@ -215,6 +215,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if hud.ActivePlayer() == nil { // no active pc, don't update
 		return
 	}
+	hud.updateCurrentArea()
 	// Key events.
 	if win.JustPressed(chatKey) {
 		// Toggle chat activity.
@@ -541,6 +542,15 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 // SetOnAreaChangedFunc sets function triggered on area change.
 func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 	hud.onAreaChanged = f
+}
+
+// updateCurrentArea updates HUD area to active player area.
+func (hud *HUD) updateCurrentArea() {
+	chapter := hud.Game().Module().Chapter()
+	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
+	if pcArea != hud.Camera().Area() {
+		hud.Camera().SetArea(pcArea)
+	}
 }
 
 // containsPos checks is specified position is contained

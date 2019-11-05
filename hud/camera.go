@@ -33,15 +33,15 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/core/data/text/lang"
- 	"github.com/isangeles/flame/core/module/object/character"
- 	"github.com/isangeles/flame/core/module/area"
+	"github.com/isangeles/flame/core/module/area"
+	"github.com/isangeles/flame/core/module/object/character"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"	
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -150,7 +150,7 @@ func (c *Camera) Update(win *mtk.Window) {
 			c.position.Y += mTileSize.Y
 		}
 		if c.position.X < mapSizePlus.X && (win.JustPressed(pixelgl.KeyD) ||
-				win.JustPressed(pixelgl.KeyRight)) {
+			win.JustPressed(pixelgl.KeyRight)) {
 			c.position.X += mTileSize.X
 		}
 		if c.position.Y > 0-offset.Y &&
@@ -207,6 +207,10 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 // SetArea sets area for camera to display.
 func (c *Camera) SetArea(a *area.Area) error {
 	c.area = a
+	if c.area == nil {
+		c.clear()
+		return nil
+	}
 	// Set map.
 	chapter := c.hud.game.Module().Chapter()
 	areaPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s",
@@ -277,6 +281,11 @@ func (c *Camera) DrawObjects() []object.Drawer {
 		objects = append(objects, ob)
 	}
 	return objects
+}
+
+// Area retuns current area.
+func (c *Camera) Area() *area.Area {
+	return c.area
 }
 
 // Position return camera position.
@@ -431,6 +440,14 @@ func (c *Camera) clearAreaObjects() {
 		}
 		delete(c.objects, gob.ID()+gob.Serial())
 	}
+}
+
+// clear removes removes current area and all objects.
+func (c *Camera) clear() {
+	c.area = nil
+	c.areaMap = nil
+	c.avatars = make(map[string]*object.Avatar)
+	c.objects = make(map[string]*object.ObjectGraphic)
 }
 
 // Triggered after right mouse button was pressed.

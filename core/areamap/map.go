@@ -46,6 +46,7 @@ type Map struct {
 	tilescount   pixel.Vec
 	// Layers.
 	ground       []*tile
+	buildings    []*tile
 }
 
 // NewMap creates new map for specified scenario area.
@@ -81,6 +82,13 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 					err)
 			}
 			m.ground = l
+		case "buildings":
+			l, err := mapLayer(m, l)
+			if err != nil {
+				return nil, fmt.Errorf("fail to create building layer: %v",
+					err)
+			}
+			m.buildings = l
 		default:
 			fmt.Printf("map builder: unknown layer: %s\n", l.Name)
 		}
@@ -132,6 +140,15 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
 			matrix[0]).Moved(tileDrawPos))
 	}
+	for _, t := range m.buildings {
+		tileDrawPos := MapDrawPos(t.Position(), matrix)
+		batch := m.tilesBatches[t.Picture()]
+		if batch == nil {
+			continue
+		}
+		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+			matrix[0]).Moved(tileDrawPos))
+	}
 	// Draw bateches with layers tiles.
 	for _, batch := range m.tilesBatches {
 		batch.Draw(win)
@@ -175,13 +192,12 @@ func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
 
 // tileBounds returns bounds for tile with specified size and ID
 // from specified tileset picture.
-func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
-	tileCount := 0
+func (m *Map) tileBounds(tileset pixel.Picture, tileID tmx.ID) pixel.Rect {
 	tilesetSize := roundTilesetSize(tileset.Bounds().Max, m.tilesize)
-	for h := tilesetSize.Y - m.tilesize.Y; h - m.tilesize.Y >= 0;
-	h -= m.tilesize.Y {
+	tileCount := 0
+	for h := tilesetSize.Y - m.tilesize.Y; h >= 0; h -= m.tilesize.Y {
 		for w := 0.0; w + m.tilesize.X <= tilesetSize.X; w += m.tilesize.X {
-			if tileCount == int(tileId) {
+			if tileCount == int(tileID) {
 				tileBounds := pixel.R(w, h, w + m.tilesize.X,
 					h + m.tilesize.Y)
 				return tileBounds
@@ -190,15 +206,16 @@ func (m *Map) tileBounds(tileset pixel.Picture, tileId tmx.ID) pixel.Rect {
 		}
 	}
 	return pixel.R(0, 0, 0, 0)
+        
 }
 
 // mapLayer parses specified TMX layer data to slice
 // with tile sprites.
-func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
+func mapLayer(m *Map, l tmx.Layer) ([]*tile, error) {
 	tiles := make([]*tile, 0)
-	tileIdX := 0
-	tileIdY := 0
-	for _, dt := range layer.DecodedTiles {
+	tileX := 0
+	tileY := 0
+	for _, dt := range l.DecodedTiles {
 		tileset := dt.Tileset
 		if tileset != nil {
 			tilesetPic := m.tilesets[tileset.Name]
@@ -208,15 +225,16 @@ func mapLayer(m *Map, layer tmx.Layer) ([]*tile, error) {
 			}
 			tileBounds := m.tileBounds(tilesetPic, dt.ID)
 			pic := pixel.NewSprite(tilesetPic, tileBounds)
-			tilePos := pixel.V(float64(int(m.tilesize.X)*tileIdX),
-				float64(int(m.tilesize.Y)*tileIdY))
+			tilePos := pixel.V(float64(int(m.tilesize.X)*tileX),
+				float64(int(m.tilesize.Y)*tileY))
+			tilePos.Y = m.Size().Y - tilePos.Y
 			tile := newTile(pic, tilePos)
-			tiles = append(tiles, tile)
-			tileIdX++
-			if tileIdX > int(m.tilescount.X)-1 {
-				tileIdX = 0
-				tileIdY++
-			}		
+			tiles = append(tiles, tile)		
+		}
+		tileX++
+		if tileX > int(m.tilescount.X)-1 {
+			tileX = 0
+			tileY++
 		}
 	}
 	return tiles, nil

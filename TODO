@@ -4,7 +4,8 @@ MAJOR:
 * Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
 * Skill cast audio effects
-* Support for avatar sprites with crafting animation.
+* Support for avatar sprites with crafting animation
+* Map: fix flickering tiles from layer different than ground
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)

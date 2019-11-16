@@ -150,20 +150,28 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 			matrix[0]).Moved(tileDrawPos))
 	}
 	// Draw bateches with layer tiles.
+	drawn := make(map[pixel.Picture]*pixel.Batch)
 	for _, t := range m.ground {
 		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
+		if batch == nil || drawn[t.Picture()] != nil {
 			continue
 		}
 		batch.Draw(win)
+		drawn[t.Picture()] = batch
 	}
 	for _, t := range m.buildings {
 		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
+		if batch == nil || drawn[t.Picture()] != nil {
 			continue
 		}
 		batch.Draw(win)
+		drawn[t.Picture()] = batch
 	}
+	/*
+	for _, b := range m.tilesBatches {
+		b.Draw(win)
+	}
+        */
 }
 
 // TileSize returns size of map tile.

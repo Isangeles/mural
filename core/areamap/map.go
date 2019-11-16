@@ -130,27 +130,38 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 	for _, batch := range m.tilesBatches {
 		batch.Clear()
 	}
-	// Draw layers tiles to tilesets batechs.
+	// Draw layers tile to tileset batechs.
 	for _, t := range m.ground {
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		batch := m.tilesBatches[t.Picture()]
 		if batch == nil {
 			continue
 		}
+		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
 			matrix[0]).Moved(tileDrawPos))
 	}
 	for _, t := range m.buildings {
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		batch := m.tilesBatches[t.Picture()]
 		if batch == nil {
 			continue
 		}
+		tileDrawPos := MapDrawPos(t.Position(), matrix)
 		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
 			matrix[0]).Moved(tileDrawPos))
 	}
-	// Draw bateches with layers tiles.
-	for _, batch := range m.tilesBatches {
+	// Draw bateches with layer tiles.
+	for _, t := range m.ground {
+		batch := m.tilesBatches[t.Picture()]
+		if batch == nil {
+			continue
+		}
+		batch.Draw(win)
+	}
+	for _, t := range m.buildings {
+		batch := m.tilesBatches[t.Picture()]
+		if batch == nil {
+			continue
+		}
 		batch.Draw(win)
 	}
 }
@@ -241,7 +252,7 @@ func mapLayer(m *Map, l tmx.Layer) ([]*tile, error) {
 }
 
 // roundTilesetSize rounds tileset size to to value that can be divided
-// by tile size without rest.
+// by tile size without remainder.
 func roundTilesetSize(tilesetSize pixel.Vec, tileSize pixel.Vec) pixel.Vec {
 	size := pixel.V(0, 0)
 	xCount := math.Floor(tilesetSize.X / tileSize.X)

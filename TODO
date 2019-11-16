@@ -5,11 +5,11 @@ MAJOR:
 * Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation
-* Map: fix flickering tiles from layer different than ground
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)
 * Display portrait in character window
+* Right now TMX tileset pictures need to have size that could be divided by single tile size without remainder, if not map will not be drawn correctly, this should be changed somehow
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

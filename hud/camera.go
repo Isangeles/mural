@@ -53,6 +53,7 @@ var (
 const (
 	LootRange   = 50
 	DialogRange = 50
+	ActionRange = 50
 )
 
 // Struct for HUD camera.
@@ -479,6 +480,26 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	pc := c.hud.ActivePlayer()
 	langPath := flameconf.LangPath()
+	// Action.
+	for _, ob := range c.AreaObjects() {
+		if !ob.DrawArea().Contains(pos) || ob.Live() {
+			continue
+		}
+		// Range check.
+		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
+		if r > ActionRange {
+			pc.SendPrivate(lang.TextDir(langPath, "tar_too_far"))
+			continue
+		}
+		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
+		for _, m := range ob.Action().SelfMods {
+			m.Affect(ob.Object, ob.Object)
+		}
+		for _, m := range ob.Action().UserMods {
+			m.Affect(ob.Object, pc.Character)
+		}
+		return
+	}
 	// Loot.
 	for _, av := range c.Avatars() {
 		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {

@@ -167,11 +167,6 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 		batch.Draw(win)
 		drawn[t.Picture()] = batch
 	}
-	/*
-	for _, b := range m.tilesBatches {
-		b.Draw(win)
-	}
-        */
 }
 
 // TileSize returns size of map tile.

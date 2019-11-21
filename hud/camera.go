@@ -496,12 +496,8 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
-		for _, m := range ob.Action().SelfMods {
-			m.Affect(ob.Object, ob.Object)
-		}
-		for _, m := range ob.Action().UserMods {
-			m.Affect(ob.Object, pc.Character)
-		}
+		pc.TakeModifiers(ob.Object, ob.Action().UserMods...)
+		ob.TakeModifiers(ob.Object, ob.Action().SelfMods...)
 		return
 	}
 	// Loot.

@@ -209,7 +209,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		}
 	}
 	if phase == nil {
-		log.Err.Printf("hud_dialog:no suitable dialog phase found")
+		log.Err.Printf("hud_dialog: no suitable dialog phase found")
 		return
 	}
 	// Print phase text to chat box.
@@ -219,17 +219,12 @@ func (dw *DialogWindow) dialogUpdate() {
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Apply phase modifiers.
+	pc := dw.hud.ActivePlayer()
 	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
-		for _, mod := range phase.OwnerModifiers() {
-			mod.Affect(dw.hud.ActivePlayer().Character, tar)
-		}
-		for _, mod := range phase.TalkerModifiers() {
-			mod.Affect(tar, dw.hud.ActivePlayer().Character)
-		}
+		tar.TakeModifiers(pc.Character, phase.OwnerModifiers()...)
+		pc.TakeModifiers(tar, phase.TalkerModifiers()...)
 	} else {
-		for _, mod := range phase.TalkerModifiers() {
-			mod.Affect(nil, dw.hud.ActivePlayer().Character)
-		}
+		pc.TakeModifiers(tar, phase.TalkerModifiers()...)
 	}
 	// Select answers.
 	answers := make([]*dialog.Answer, 0)
@@ -260,7 +255,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	// Retrieve answer from slot.
 	answer, ok := cs.Value().(*dialog.Answer)
 	if !ok {
-		log.Err.Printf("hud_dialog:fail to retrieve answer from list")
+		log.Err.Printf("hud_dialog: fail to retrieve answer from list")
 		return
 	}
 	// Print answer to chat box.
@@ -271,23 +266,18 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	// Move dialog forward.
 	dw.dialog.Next(answer)
 	// Apply answer modifiers.
+	pc := dw.hud.ActivePlayer()
 	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
-		for _, mod := range answer.OwnerModifiers() {
-			mod.Affect(dw.hud.ActivePlayer().Character, tar)
-		}
-		for _, mod := range answer.TalkerModifiers() {
-			mod.Affect(tar, dw.hud.ActivePlayer().Character)
-		}
+		tar.TakeModifiers(pc.Character, answer.OwnerModifiers()...)
+		pc.TakeModifiers(tar, answer.TalkerModifiers()...)
 	} else {
-		for _, mod := range answer.TalkerModifiers() {
-			mod.Affect(nil, dw.hud.ActivePlayer().Character)
-		}
+		pc.TakeModifiers(tar, answer.TalkerModifiers()...)
 	}
 	// On trade.
 	if dw.dialog.Trading() {
 		con, ok := dw.dialog.Owner().(item.Container)
 		if !ok {
-			log.Err.Printf("hud_dialog:dialog onwer has no inventory")
+			log.Err.Printf("hud_dialog: dialog onwer has no inventory")
 			return
 		}
 		dw.Show(false)
@@ -299,7 +289,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	if dw.dialog.Training() {
 		tra, ok := dw.dialog.Owner().(train.Trainer)
 		if !ok {
-			log.Err.Printf("hud_dialog:dialog onwer is not a trainer")
+			log.Err.Printf("hud_dialog: dialog onwer is not a trainer")
 			return
 		}
 		dw.Show(false)

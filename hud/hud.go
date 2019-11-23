@@ -34,7 +34,7 @@ import (
 
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/text/lang"
-	flameobject "github.com/isangeles/flame/core/module/object"
+	flameobject "github.com/isangeles/flame/core/module/objects"
 	"github.com/isangeles/flame/core/module/object/character"
 	"github.com/isangeles/flame/core/module/area"
 

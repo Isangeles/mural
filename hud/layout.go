@@ -24,7 +24,7 @@
 package hud
 
 import (
-	flameobject "github.com/isangeles/flame/core/module/object"
+	flameobject "github.com/isangeles/flame/core/module/objects"
 )
 
 // Struct for HUD layout.

@@ -30,7 +30,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameobject "github.com/isangeles/flame/core/module/object"
+	flameobject "github.com/isangeles/flame/core/module/objects"
 	"github.com/isangeles/flame/core/module/object/area"
 
 	"github.com/isangeles/mtk"

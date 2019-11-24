@@ -30,7 +30,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/flame/core/module/object/character"
+	"github.com/isangeles/flame/core/module/character"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"

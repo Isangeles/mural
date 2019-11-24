@@ -30,8 +30,8 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameobject "github.com/isangeles/flame/core/module/objects"
-	"github.com/isangeles/flame/core/module/object/area"
+	"github.com/isangeles/flame/core/module/objects"
+	flameobject "github.com/isangeles/flame/core/module/object"
 
 	"github.com/isangeles/mtk"
 
@@ -42,7 +42,7 @@ import (
 // Struct for graphical representation
 // of area object.
 type ObjectGraphic struct {
-	*area.Object
+	*flameobject.Object
 	data     *res.ObjectGraphicData
 	sprite   *mtk.Animation
 	info     *mtk.InfoWindow
@@ -53,7 +53,7 @@ type ObjectGraphic struct {
 }
 
 // NewObject creates new graphical wrapper for specified object.
-func NewObjectGraphic(ob *area.Object, data *res.ObjectGraphicData) *ObjectGraphic {
+func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *ObjectGraphic {
 	og := new(ObjectGraphic)
 	og.Object = ob
 	og.data = data
@@ -149,7 +149,7 @@ func (og *ObjectGraphic) updateGraphic() {
 	for id, ig := range og.items {
 		found := false
 		for _, it := range og.Inventory().Items() {
-			found = flameobject.Equals(it, ig)
+			found = objects.Equals(it, ig)
 		}
 		if !found {
 			delete(og.items, id)

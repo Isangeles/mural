@@ -30,7 +30,7 @@ import (
 
 	"github.com/isangeles/flame/core/module/item"
 	flameobject "github.com/isangeles/flame/core/module/objects"
-	"github.com/isangeles/flame/core/module/object/character"
+	"github.com/isangeles/flame/core/module/character"
 	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"

@@ -159,7 +159,7 @@ func (ngm *NewGameMenu) updateCharInfo() error {
 	}
 	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
-		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
+		return fmt.Errorf("fail to retrieve avatar from switch")
 	}
 	charInfoForm := `Name:       %s
 Level:      %d
@@ -188,7 +188,7 @@ func (ngm *NewGameMenu) exportChar() error {
 	}
 	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
-		return fmt.Errorf("fail_to_retrieve_avatar_from_switch")
+		return fmt.Errorf("fail to retrieve avatar from switch")
 	}
 	err := flamedata.ExportCharacter(c.Character, flame.Mod().Conf().CharactersPath())
 	if err != nil {
@@ -196,24 +196,25 @@ func (ngm *NewGameMenu) exportChar() error {
 	}
 	err = exp.ExportAvatar(c, flame.Mod().Conf().CharactersPath())
 	if err != nil {
-		return fmt.Errorf("fail_to_export_avatar:%v", err)
+		return fmt.Errorf("fail to export avatar: %v", err)
 	}
 	return nil
 }
 
 // startGame starts new game.
 func (ngm *NewGameMenu) startGame() {
+	// Show loading screen.
 	ngm.mainmenu.OpenLoadingScreen(lang.Text("gui", "newgame_start_info"))
 	defer ngm.mainmenu.CloseLoadingScreen()
+	// Retrive character from character switch.
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
-		log.Err.Printf("main_menu:new_game:no char switch value")
+		log.Err.Printf("main menu: new game: no char switch value")
 		return
 	}
-	// Character from avatar switch.
 	c, ok := switchVal.Value.(*object.Avatar)
 	if !ok {
-		log.Err.Printf("main_menu:new_game:fail to retrieve avatar from switch")
+		log.Err.Printf("main menu: new game: fail to retrieve avatar from switch")
 		return
 	}
 	// Add avatar data to resources base.
@@ -221,7 +222,7 @@ func (ngm *NewGameMenu) startGame() {
 	// Create game.
 	g, err := flame.StartGame(c.Character)
 	if err != nil {
-		log.Err.Printf("main_menu:new_game:fail_to_start_game:%v", err)
+		log.Err.Printf("main menu: new game: fail to start game: %v", err)
 		return
 	}
 	// Pass new game.
@@ -246,7 +247,7 @@ func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 	err := ngm.exportChar()
 	if err != nil {
-		log.Err.Printf("main_menu:new_game:fail_to_export_character:%v", err)
+		log.Err.Printf("main menu: new game: fail to export character: %v", err)
 		return
 	}
 	msg := lang.Text("gui", "newgame_export_msg")
@@ -258,6 +259,6 @@ func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
 	old, new *mtk.SwitchValue) {
 	err := ngm.updateCharInfo()
 	if err != nil {
-		log.Err.Printf("main_menu:new_game:fail_to_update_char_info:%v\n", err)
+		log.Err.Printf("main menu: new game: fail to update char info: %v\n", err)
 	}
 }

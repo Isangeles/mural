@@ -24,6 +24,8 @@
 package mainmenu
 
 import (
+	"fmt"
+	
 	"github.com/isangeles/mtk"
 )
 
@@ -60,5 +62,6 @@ func (ls *LoadingScreen) Update(win *mtk.Window) {
 
 // SetLoadInfo sets specified text as current load info text.
 func (ls *LoadingScreen) SetLoadInfo(text string) {
+	fmt.Sprintf("load screen: set text: %s\n", text)
 	ls.info.SetText(text)
 }

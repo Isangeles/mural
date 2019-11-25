@@ -370,7 +370,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	for _, sid := range config.CharSkills {
 		s, err := flamedata.Skill(sid)
 		if err != nil {
-			log.Err.Printf("newchar_menu:fail_to_retrieve_new_player_skill:%v", err)
+			log.Err.Printf("newchar menu: fail to retrieve new player skill: %v", err)
 			continue
 		}
 		char.AddSkill(s)
@@ -378,7 +378,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	for _, iid := range config.CharItems {
 		i, err := flamedata.Item(iid)
 		if err != nil {
-			log.Err.Printf("newchar_menu:fail_to_retireve_new_player_items:%v", err)
+			log.Err.Printf("newchar menu: fail to retireve new player items: %v", err)
 			continue
 		}
 		char.Inventory().AddItem(i)
@@ -395,7 +395,7 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	char, err := ncm.createChar()
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_create_character:%v", err)
+		log.Err.Printf("newchar menu: fail to create character: %v", err)
 		return
 	}
 	ssHeadName := "m-head-black-1222211-80x90.png"
@@ -406,20 +406,20 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_head_spritesheet_picture:%v",
+		log.Err.Printf("newchar menu: fail to retrieve head spritesheet picture: %v",
 			err)
 		return
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_torso_spritesheet_picture:%v",
+		log.Err.Printf("newchar menu: fail to retrieve torso spritesheet picture: %v",
 			err)
 		return
 	}
 	portraitName, err := ncm.faceSwitch.Value().TextValue()
 	portraitPic, err := data.AvatarPortrait(portraitName)
 	if err != nil {
-		log.Err.Printf("newchar_menu:fail_to_retrieve_portrait_picture:%v",
+		log.Err.Printf("newchar menu: fail to retrieve portrait picture: %v",
 			err)
 		return
 	}
@@ -450,27 +450,27 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 	old, new *mtk.SwitchValue) {
 	str, ok := ncm.strSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new_char_menu:fail_to_retrieve_str_switch_value")
+		log.Err.Print("new char menu: fail to retrieve str switch value")
 		return
 	}
 	con, ok := ncm.conSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new_char_menu:fail_to_retrieve_con_switch_value")
+		log.Err.Print("new char menu: fail to retrieve con switch value")
 		return
 	}
 	dex, ok := ncm.dexSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new_char_menu:fail_to_retrieve_con_switch_value")
+		log.Err.Print("new char menu: fail to retrieve con switch value")
 		return
 	}
 	inte, ok := ncm.intSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new_char_menu:fail_to_retrieve_int_switch_value")
+		log.Err.Print("new char menu: fail to retrieve int switch value")
 		return
 	}
 	wis, ok := ncm.wisSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new_char_menu:fail_to_retrieve_wis_switch_value")
+		log.Err.Print("new char menu: fail to retrieve wis switch value")
 		return
 	}
 	pts := ncm.attrPointsMax

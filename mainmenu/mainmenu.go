@@ -202,8 +202,8 @@ func (mm *MainMenu) OpenSettings() {
 // OpenLoadingScreen opens loading screen
 // with specified loading information.
 func (mm *MainMenu) OpenLoadingScreen(loadInfo string) {
-	mm.loading = true
 	mm.loadscreen.SetLoadInfo(loadInfo)
+	mm.loading = true
 }
 
 // CloseLoadingScreen closes loading screen.
@@ -265,11 +265,11 @@ func (mm *MainMenu) AddPlayableChar(c *object.Avatar) {
 func (mm *MainMenu) ImportPlayableChars(path string) error {
 	chars, err := flamedata.ImportCharactersDir(flame.Mod(), path)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_characters:%v", err)
+		return fmt.Errorf("fail to import characters: %v", err)
 	}
 	avsData, err := imp.ImportAvatarsDataDir(path)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_avatars:%v", err)
+		return fmt.Errorf("fail to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
 		for _, char := range chars {

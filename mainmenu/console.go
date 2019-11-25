@@ -143,7 +143,7 @@ func (c *Console) onTexteditInput(t *mtk.Textedit) {
 	}
 	res, out, err := c.onCommand(input)
 	if err != nil {
-		log.Err.Printf("fail_to_execute_command:%s", input)
+		log.Err.Printf("fail to execute command: '%s'", input)
 	}
 	// Echo command result to log.
 	log.Cli.Printf("[%d]:%s", res, out)

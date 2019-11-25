@@ -171,35 +171,35 @@ func (s *Settings) Apply() {
 	// Fullscreen.
 	fscr, ok := s.fullscrSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf("settings_menu: fail to retrive fullscreen switch value")
+		log.Err.Printf("settings menu: fail to retrive fullscreen switch value")
 		return
 	}
 	config.Fullscreen = fscr
 	// Resolution.
 	res, ok := s.resSwitch.Value().Value.(pixel.Vec)
 	if !ok {
-		log.Err.Printf("settings_menu: fail to retrive res switch value")
+		log.Err.Printf("settings menu: fail to retrive res switch value")
 		return
 	}
 	config.Resolution = res
 	// Language.
 	lang, ok := s.langSwitch.Value().Value.(string)
 	if !ok {
-		log.Err.Printf("settings_menu: fail to retrive lang switch value")
+		log.Err.Printf("settings menu: fail to retrive lang switch value")
 		return
 	}
 	flameconf.SetLang(lang)
 	// Music volume.
 	mVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
 	if !ok {
-		log.Err.Printf("settings_menu: fail to retrive music volume switch value")
+		log.Err.Printf("settings menu: fail to retrive music volume switch value")
 		return
 	}
 	config.MusicVolume = mVol
 	// Music mute.
 	mMute, ok := s.musicMuteSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf("settings_menu: fail to retrive music mute switch value")
+		log.Err.Printf("settings menu: fail to retrive music mute switch value")
 		return
 	}
 	config.MusicMute = mMute

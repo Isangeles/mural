@@ -148,7 +148,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 // importSave imports saved game from file with
 // specified name.
 func (lgm *LoadGameMenu) loadSave(savName string) {
-	// Import saved game from file.
+	// Show loading screen.
 	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
 	defer lgm.mainmenu.CloseLoadingScreen()
 	// Load game.

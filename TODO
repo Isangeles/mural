@@ -10,6 +10,7 @@ MINOR:
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)
 * Display portrait in character window
 * Right now TMX tileset pictures need to have size that could be divided by single tile size without remainder, if not map will not be drawn correctly, this should be changed somehow
+* Importing object graphics from GUI chapter directory
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

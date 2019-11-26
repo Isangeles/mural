@@ -68,6 +68,18 @@ var (
 	fonts       map[string]*truetype.Font
 )
 
+// Init function.
+func init() {
+	uiTexs = make(map[string]pixel.Picture)
+	avatarsTexs = make(map[string]pixel.Picture)
+	objectsTexs = make(map[string]pixel.Picture)
+	itemsTexs = make(map[string]pixel.Picture)
+	icons = make(map[string]pixel.Picture)
+	portraits = make(map[string]pixel.Picture)
+	music = make(map[string]*beep.Buffer)
+	fonts = make(map[string]*truetype.Font)
+}
+
 // LoadModuleData loads graphic data for specified module.
 // Should be called by GUI before creating any
 // in-game elements.
@@ -75,7 +87,6 @@ func LoadModuleData(mod *module.Module) error {
 	// Load data resource paths.
 	loadPaths(mod)
 	// Portraits.
-	portraits = make(map[string]pixel.Picture, 0)
 	avsPortraits, err := loadPicturesFromArch(modGraphicArchPath, "avatar/portrait")
 	if err != nil {
 		return fmt.Errorf("fail to load avatars portraits: %v", err)
@@ -95,21 +106,26 @@ func LoadModuleData(mod *module.Module) error {
 	if err != nil {
 		return fmt.Errorf("fail to load avatars spritesheets: %v", err)
 	}
-	avatarsTexs = avTexs
+	for n, t := range avTexs {
+		avatarsTexs[n] = t
+	}
 	// Objects spritesheets.
 	obTexs, err := loadPicturesFromArch(modGraphicArchPath, "object/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail to load objects spritesheets: %v", err)
 	}
-	objectsTexs = obTexs
+	for n, t := range obTexs {
+		objectsTexs[n] = t
+	}
 	// Items spritesheets.
 	itTexs, err := loadPicturesFromArch(modGraphicArchPath, "item/spritesheet")
 	if err != nil {
 		return fmt.Errorf("fail to load items spritesheets: %v", err)
 	}
-	itemsTexs = itTexs
+	for n, t := range itTexs {
+		itemsTexs[n] = t
+	}
 	// Icons.
-	icons = make(map[string]pixel.Picture, 0)
 	itemIcons, err := loadPicturesFromArch(modGraphicArchPath, "item/icon")
 	if err != nil {
 		return fmt.Errorf("fail to load items icons: %v", err)

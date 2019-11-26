@@ -43,25 +43,25 @@ func LoadModuleResources(mod *module.Module) error {
 	// Objects graphics.
 	obGraphics, err := ImportObjectsGraphicsDir(obPath)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_objects_graphics:%v", err)
+		return fmt.Errorf("fail to import objects graphics: %v", err)
 	}
 	res.SetObjectsData(obGraphics)
 	// Items graphics.
 	itGraphics, err := ImportItemsGraphicsDir(itPath)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_items_graphics:%v", err)
+		return fmt.Errorf("fail to import items graphics: %v", err)
 	}
 	res.SetItemsData(itGraphics)
 	// Effects graphic.
 	effGraphics, err := ImportEffectsGraphicsDir(effPath)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_effects_graphics:%v", err)
+		return fmt.Errorf("fail to import effects graphics: %v", err)
 	}
 	res.SetEffectsData(effGraphics)
 	// Skills graphic.
 	skillGraphics, err := ImportSkillsGraphicsDir(skillPath)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_skills_graphics:%v", err)
+		return fmt.Errorf("fail to import skills graphics: %v", err)
 	}
 	res.SetSkillsData(skillGraphics)
 	return nil
@@ -76,7 +76,7 @@ func LoadChapterResources(chapter *module.Chapter) error {
 	// Avatars.
 	avs, err := ImportAvatarsDataDir(avsPath)
 	if err != nil {
-		return fmt.Errorf("fail_to_import_chapter_avatars:%v", err)
+		return fmt.Errorf("fail to import chapter avatars: %v", err)
 	}
 	res.SetAvatarData(avs)
 	return nil

@@ -48,12 +48,12 @@ func ImportGUISave(dirPath, saveName string) (*res.GUISave, error) {
 	filePath := filepath.FromSlash(dirPath + "/" + saveName)
 	f, err := os.Open(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_save_file:%v",
+		return nil, fmt.Errorf("fail to open save file: %v",
 			err)
 	}
 	save, err := parsexml.UnmarshalGUISave(f)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_unmarshal_save_data:%v",
+		return nil, fmt.Errorf("fail to unmarshal save data: %v",
 			err)
 	}
 	return save, nil
@@ -64,7 +64,7 @@ func ImportGUISave(dirPath, saveName string) (*res.GUISave, error) {
 func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("fail to read dir: %v", err)
 	}
 	saves := make([]*res.GUISave, 0)
 	for _, fInfo := range files {
@@ -73,7 +73,7 @@ func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
 		}
 		sav, err := ImportGUISave(dirPath, fInfo.Name())
 		if err != nil {
-			log.Err.Printf("data_saves_import:fail_to_load_save_fail:%v",
+			log.Err.Printf("data saves import: fail to load save fail: %v",
 				err)
 			continue
 		}

@@ -41,6 +41,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core/module"
 	
 	"github.com/isangeles/burn/ash"
 
@@ -67,15 +68,12 @@ var (
 	fonts       map[string]*truetype.Font
 )
 
-// LoadGameData loads game graphic data.
+// LoadModuleData loads graphic data for specified module.
 // Should be called by GUI before creating any
 // in-game elements.
-func LoadGameData() error {
-	// Load data resources paths.
-	err := loadPaths()
-	if err != nil {
-		return fmt.Errorf("fail to load paths: %v", err)
-	}
+func LoadModuleData(mod *module.Module) error {
+	// Load data resource paths.
+	loadPaths(mod)
 	// Portraits.
 	portraits = make(map[string]pixel.Picture, 0)
 	avsPortraits, err := loadPicturesFromArch(modGraphicArchPath, "avatar/portrait")
@@ -136,15 +134,12 @@ func LoadGameData() error {
 	return nil
 }
 
-// LoadUIData loads UI graphic data.
+// LoadUIData loads UI graphic data for specified module.
 // Should be called by GUI before creating any
 // GUI elements.
-func LoadUIData() error {
+func LoadUIData(mod *module.Module) error {
 	// Load data sources paths.
-	err := loadPaths()
-	if err != nil {
-		return fmt.Errorf("fail to load paths: %v", err)
-	}
+	loadPaths(mod)
 	// GUI elements textures.
 	texs, err := loadPicturesFromArch(modGraphicArchPath, "ui")
 	if err != nil {
@@ -373,17 +368,13 @@ func Script(path string) (*ash.Script, error) {
 }
 
 // Load loads grpahic directories.
-func loadPaths() error {
-	if flame.Mod() == nil {
-		return fmt.Errorf("no module loaded")
-	}
+func loadPaths(mod *module.Module) {
 	modGraphicDirPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		flame.Mod().Conf().ID))
+		mod.Conf().ID))
 	modAudioDirPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		flame.Mod().Conf().ID))
+		mod.Conf().ID))
 	modGraphicArchPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
-		flame.Mod().Conf().ID))
+		mod.Conf().ID))
 	modAudioArchPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
-		flame.Mod().Conf().ID))
-	return nil
+		mod.Conf().ID))
 }

@@ -94,12 +94,12 @@ func main() {
 		panic(fmt.Sprintf("%s\n", lang.Text("gui", "no_mod_loaded_err")))
 	}
 	// Load UI graphic.
-	err := data.LoadUIData()
+	err := data.LoadUIData(flame.Mod())
 	if err != nil {
 		panic(fmt.Errorf("fail to load gui data: %v", err))
 	}
 	// Load game graphic.
-	err = data.LoadGameData()
+	err = data.LoadModuleData(flame.Mod())
 	if err != nil {
 		panic(fmt.Errorf("fail to load game graphic data: %v", err))
 	}

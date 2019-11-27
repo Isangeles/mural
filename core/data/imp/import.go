@@ -73,11 +73,21 @@ func LoadChapterResources(chapter *module.Chapter) error {
 	// Paths.
 	avsPath := filepath.FromSlash(chapter.Conf().ModulePath + "/gui/chapters/" +
 		chapter.Conf().ID + "/npc")
+	obsPath := filepath.FromSlash(chapter.Conf().ModulePath + "/gui/chapters/" +
+		chapter.Conf().ID + "/objects")
 	// Avatars.
 	avs, err := ImportAvatarsDataDir(avsPath)
 	if err != nil {
 		return fmt.Errorf("fail to import chapter avatars: %v", err)
 	}
 	res.SetAvatarData(avs)
+	// Objects graphics.
+	obGraphics, err := ImportObjectsGraphicsDir(obsPath)
+	if err != nil {
+		return fmt.Errorf("fail to import objects graphics: %v", err)
+	}
+	for _, og := range obGraphics {
+		res.AddObjectsData(og)
+	}
 	return nil
 }

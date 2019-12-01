@@ -486,7 +486,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	langPath := flameconf.LangPath()
 	// Action.
 	for _, ob := range c.AreaObjects() {
-		if !ob.DrawArea().Contains(pos) || ob.Live() {
+		if !ob.DrawArea().Contains(pos) || ob.Live() || ob.Action() == nil {
 			continue
 		}
 		// Range check.
@@ -496,8 +496,8 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
-		pc.TakeModifiers(ob.Object, ob.Action().UserMods...)
-		ob.TakeModifiers(ob.Object, ob.Action().SelfMods...)
+		pc.TakeModifiers(ob.Object, ob.Action().UserMods()...)
+		ob.TakeModifiers(ob.Object, ob.Action().SelfMods()...)
 		return
 	}
 	// Loot.

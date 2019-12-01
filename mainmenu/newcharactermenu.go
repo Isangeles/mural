@@ -351,7 +351,8 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	// ID.
 	name = strings.ReplaceAll(name, " ", "_")
 	id := fmt.Sprintf(newCharIDFrom, strings.ToLower(name))
-	charData := flameres.CharacterBasicData{
+	charData := flameres.CharacterData{}
+	charData.BasicData = flameres.CharacterBasicData{
 		ID:        id,
 		Name:      name,
 		Level:     1,
@@ -365,7 +366,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		Int:       inte,
 		Wis:       wis,
 	}
-	char := character.New(charData)
+	char := character.New(charData.BasicData)
 	// Player skills & items from interface config.
 	for _, sid := range config.CharSkills {
 		s, err := flamedata.Skill(sid)

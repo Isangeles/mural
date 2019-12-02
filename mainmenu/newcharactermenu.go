@@ -366,7 +366,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		Int:       inte,
 		Wis:       wis,
 	}
-	char := character.New(charData.BasicData)
+	char := character.New(charData)
 	// Player skills & items from interface config.
 	for _, sid := range config.CharSkills {
 		s, err := flamedata.Skill(sid)

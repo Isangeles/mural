@@ -486,7 +486,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	langPath := flameconf.LangPath()
 	// Action.
 	for _, ob := range c.AreaObjects() {
-		if !ob.DrawArea().Contains(pos) || ob.Live() || ob.Action() == nil {
+		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.Action() == nil {
 			continue
 		}
 		// Range check.

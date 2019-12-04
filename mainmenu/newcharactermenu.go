@@ -36,6 +36,7 @@ import (
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/character"
+	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"
 
@@ -369,11 +370,12 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 	char := character.New(charData)
 	// Player skills & items from interface config.
 	for _, sid := range config.CharSkills {
-		s, err := flamedata.Skill(sid)
-		if err != nil {
-			log.Err.Printf("newchar menu: fail to retrieve new player skill: %v", err)
+		sd := flameres.Skill(sid)
+		if sd == nil {
+			log.Err.Printf("newchar menu: fail to retrieve new player skill data: %s", sid)
 			continue
 		}
+		s := skill.New(*sd)
 		char.AddSkill(s)
 	}
 	for _, iid := range config.CharItems {

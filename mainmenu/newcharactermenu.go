@@ -32,10 +32,10 @@ import (
 	"github.com/faiface/pixel"
 
 	flameconf "github.com/isangeles/flame/config"
-	flamedata "github.com/isangeles/flame/core/data"
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/text/lang"
 	"github.com/isangeles/flame/core/module/character"
+	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"
@@ -102,8 +102,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	// Points box.
 	pointsBoxSize := mtk.SizeMedium.ButtonSize(mtk.ShapeRectangle)
 	pointsBoxParams := mtk.Params{
-		SizeRaw:     pointsBoxSize,
-		FontSize:    mtk.SizeBig,
+		SizeRaw:  pointsBoxSize,
+		FontSize: mtk.SizeBig,
 	}
 	ncm.pointsBox = mtk.NewText(pointsBoxParams)
 	// Portrait switch.
@@ -379,11 +379,12 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		char.AddSkill(s)
 	}
 	for _, iid := range config.CharItems {
-		i, err := flamedata.Item(iid)
-		if err != nil {
-			log.Err.Printf("newchar menu: fail to retireve new player items: %v", err)
+		id := flameres.Item(iid)
+		if id == nil {
+			log.Err.Printf("newchar menu: fail to retireve new player items data: %s", iid)
 			continue
 		}
+		i := item.New(id)
 		char.Inventory().AddItem(i)
 	}
 	return char, nil

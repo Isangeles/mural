@@ -32,16 +32,16 @@ import (
 )
 
 // Struct for map layer.
-type layer struct {
+type Layer struct {
 	name    string
-	tiles   []*tile
+	tiles   []*Tile
 }
 
 // newLayer creates new layer with tiles for specified map.
-func newLayer(m *Map, tmxLayer tmx.Layer) (*layer, error) {
-	l := new(layer)
+func newLayer(m *Map, tmxLayer tmx.Layer) (*Layer, error) {
+	l := new(Layer)
 	l.name = tmxLayer.Name
-	l.tiles = make([]*tile, 0)
+	l.tiles = make([]*Tile, 0)
 	tileX := 0
 	tileY := 0
 	for _, dt := range tmxLayer.DecodedTiles {
@@ -67,4 +67,9 @@ func newLayer(m *Map, tmxLayer tmx.Layer) (*layer, error) {
 		}
 	}
 	return l, nil
+}
+
+// Name returns layer name from tmx data.
+func (l *Layer) Name() string {
+	return l.name
 }

@@ -44,7 +44,7 @@ type Map struct {
 	tilesize    pixel.Vec
 	mapsize     pixel.Vec
 	tilescount  pixel.Vec
-	layers      []*layer
+	layers      []*Layer
 }
 
 // NewMap creates new map for specified scenario area.
@@ -154,6 +154,11 @@ func (m *Map) Size() pixel.Vec {
 	return m.mapsize
 }
 
+// Layers returns all map layers.
+func (m *Map) Layers() []*Layer {
+	return m.layers
+}
+
 // Moveable checks whether specified position is
 // passable.
 func (m *Map) Passable(pos pixel.Vec) bool {
@@ -161,7 +166,7 @@ func (m *Map) Passable(pos pixel.Vec) bool {
 		return false
 	}
 	for _, t := range m.layers[0].tiles {
-		if t.Bounds().Contains(pos) {
+		if t.bounds.Contains(pos) {
 			return true
 		}
 	}

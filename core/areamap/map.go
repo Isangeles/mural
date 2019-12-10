@@ -38,13 +38,13 @@ import (
 
 // Struct for graphical representation of area map.
 type Map struct {
-	tmxMap       *tmx.Map
-	tilesets     map[string]pixel.Picture
-	tilesBatches map[pixel.Picture]*pixel.Batch
-	tilesize     pixel.Vec
-	mapsize      pixel.Vec
-	tilescount   pixel.Vec
-	layers       []*layer
+	tmxMap      *tmx.Map
+	tilesets    map[string]pixel.Picture
+	tileBatches map[pixel.Picture]*pixel.Batch
+	tilesize    pixel.Vec
+	mapsize     pixel.Vec
+	tilescount  pixel.Vec
+	layers      []*layer
 }
 
 // NewMap creates new map for specified scenario area.
@@ -58,7 +58,7 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 	m.mapsize = pixel.V(float64(int(m.tilesize.X * m.tilescount.X)),
 		float64(int(m.tilesize.Y * m.tilescount.Y)))
 	m.tilesets = make(map[string]pixel.Picture)
-	m.tilesBatches = make(map[pixel.Picture]*pixel.Batch)
+	m.tileBatches = make(map[pixel.Picture]*pixel.Batch)
 	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapDir + "/" + ts.Image.Source)
@@ -68,7 +68,7 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 				ts.Name)
 		}
 		m.tilesets[ts.Name] = tsPic
-		m.tilesBatches[tsPic] = pixel.NewBatch(&pixel.TrianglesData{}, tsPic)
+		m.tileBatches[tsPic] = pixel.NewBatch(&pixel.TrianglesData{}, tsPic)
 	}
 	// Map layers.
 	for _, l := range m.tmxMap.Layers {
@@ -89,7 +89,7 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 	drawArea := pixel.R(matrix[4], matrix[5], matrix[4] + size.X,
 		matrix[5] + size.Y)
 	// Clear all tilesets draw batches.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
@@ -97,7 +97,7 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 		for _, t := range l.tiles {
 			tileDrawPos := MapDrawPos(t.Position(), matrix)
 			if drawArea.Contains(t.Position()) {
-				batch := m.tilesBatches[t.Picture()]
+				batch := m.tileBatches[t.Picture()]
 				if batch == nil {
 					continue
 				}
@@ -107,7 +107,7 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 		}
 	}
 	// Draw bateches with layers tiles.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Draw(win)
 	}
 }
@@ -115,13 +115,13 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 // DrawFull draws whole map starting from specified position.
 func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 	// Clear all tilesets draw batches.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Clear()
 	}
 	// Draw layers tile to tileset batechs.
 	for _, l := range m.layers {
 		for _, t := range l.tiles {
-			batch := m.tilesBatches[t.Picture()]
+			batch := m.tileBatches[t.Picture()]
 			if batch == nil {
 				continue
 			}
@@ -134,7 +134,7 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 	drawn := make(map[pixel.Picture]*pixel.Batch)
 	for _, l := range m.layers {
 		for _, t := range l.tiles {
-			batch := m.tilesBatches[t.Picture()]
+			batch := m.tileBatches[t.Picture()]
 			if batch == nil || drawn[t.Picture()] != nil {
 				continue
 			}

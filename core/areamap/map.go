@@ -44,9 +44,7 @@ type Map struct {
 	tilesize     pixel.Vec
 	mapsize      pixel.Vec
 	tilescount   pixel.Vec
-	// Layers.
-	ground       []*tile
-	buildings    []*tile
+	layers       []*layer
 }
 
 // NewMap creates new map for specified scenario area.
@@ -74,24 +72,12 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 	}
 	// Map layers.
 	for _, l := range m.tmxMap.Layers {
-		switch l.Name {
-		case "ground":
-			l, err := mapLayer(m, l)
-			if err != nil {
-				return nil, fmt.Errorf("fail to create ground layer: %v",
-					err)
-			}
-			m.ground = l
-		case "buildings":
-			l, err := mapLayer(m, l)
-			if err != nil {
-				return nil, fmt.Errorf("fail to create building layer: %v",
-					err)
-			}
-			m.buildings = l
-		default:
-			fmt.Printf("map builder: unknown layer: %s\n", l.Name)
+		layer, err := newLayer(m, l)
+		if err != nil {
+			return nil, fmt.Errorf("fail to create layer: %s: %v",
+				l.Name, err)
 		}
+		m.layers = append(m.layers, layer)
 	}
 	return m, nil
 }
@@ -107,15 +93,17 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
-	for _, t := range m.ground {
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		if drawArea.Contains(t.Position()) {
-			batch := m.tilesBatches[t.Picture()]
-			if batch == nil {
-				continue
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			if drawArea.Contains(t.Position()) {
+				batch := m.tilesBatches[t.Picture()]
+				if batch == nil {
+					continue
+				}
+				t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+					matrix[0]).Moved(tileDrawPos))
 			}
-			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-				matrix[0]).Moved(tileDrawPos))
 		}
 	}
 	// Draw bateches with layers tiles.
@@ -131,41 +119,28 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 		batch.Clear()
 	}
 	// Draw layers tile to tileset batechs.
-	for _, t := range m.ground {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
-			continue
-		}
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-			matrix[0]).Moved(tileDrawPos))
-	}
-	for _, t := range m.buildings {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
-			continue
-		}
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-			matrix[0]).Moved(tileDrawPos))
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			batch := m.tilesBatches[t.Picture()]
+			if batch == nil {
+				continue
+			}
+			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+				matrix[0]).Moved(tileDrawPos))
+		}	
 	}
 	// Draw bateches with layer tiles.
 	drawn := make(map[pixel.Picture]*pixel.Batch)
-	for _, t := range m.ground {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil || drawn[t.Picture()] != nil {
-			continue
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			batch := m.tilesBatches[t.Picture()]
+			if batch == nil || drawn[t.Picture()] != nil {
+				continue
+			}
+			batch.Draw(win)
+			drawn[t.Picture()] = batch
 		}
-		batch.Draw(win)
-		drawn[t.Picture()] = batch
-	}
-	for _, t := range m.buildings {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil || drawn[t.Picture()] != nil {
-			continue
-		}
-		batch.Draw(win)
-		drawn[t.Picture()] = batch
 	}
 }
 
@@ -182,10 +157,10 @@ func (m *Map) Size() pixel.Vec {
 // Moveable checks whether specified position is
 // passable.
 func (m *Map) Passable(pos pixel.Vec) bool {
-	if m.ground == nil {
+	if len(m.layers) < 1 {
 		return false
 	}
-	for _, t := range m.ground {
+	for _, t := range m.layers[0].tiles {
 		if t.Bounds().Contains(pos) {
 			return true
 		}
@@ -221,37 +196,6 @@ func (m *Map) tileBounds(tileset pixel.Picture, tileID tmx.ID) pixel.Rect {
 	}
 	return pixel.R(0, 0, 0, 0)
         
-}
-
-// mapLayer parses specified TMX layer data to slice
-// with tile sprites.
-func mapLayer(m *Map, l tmx.Layer) ([]*tile, error) {
-	tiles := make([]*tile, 0)
-	tileX := 0
-	tileY := 0
-	for _, dt := range l.DecodedTiles {
-		tileset := dt.Tileset
-		if tileset != nil {
-			tilesetPic := m.tilesets[tileset.Name]
-			if tilesetPic == nil {
-				return nil, fmt.Errorf("fail to found tileset source: %s",
-					tileset.Name)
-			}
-			tileBounds := m.tileBounds(tilesetPic, dt.ID)
-			pic := pixel.NewSprite(tilesetPic, tileBounds)
-			tilePos := pixel.V(float64(int(m.tilesize.X)*tileX),
-				float64(int(m.tilesize.Y)*tileY))
-			tilePos.Y = m.Size().Y - tilePos.Y
-			tile := newTile(pic, tilePos)
-			tiles = append(tiles, tile)		
-		}
-		tileX++
-		if tileX > int(m.tilescount.X)-1 {
-			tileX = 0
-			tileY++
-		}
-	}
-	return tiles, nil
 }
 
 // roundTilesetSize rounds tileset size to to value that can be divided

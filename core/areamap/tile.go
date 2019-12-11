@@ -28,15 +28,15 @@ import (
 )
 
 // Struct for map tile.
-type tile struct {
+type Tile struct {
 	*pixel.Sprite
 	bounds pixel.Rect
 }
 
 // newTile creates new map tile with specified sprite
 // and position.
-func newTile(spr *pixel.Sprite, pos pixel.Vec) *tile {
-	t := new(tile)
+func newTile(spr *pixel.Sprite, pos pixel.Vec) *Tile {
+	t := new(Tile)
 	t.Sprite = spr
 	t.bounds = pixel.R(pos.X, pos.Y, pos.X + t.Sprite.Frame().W(),
 		pos.Y + t.Sprite.Frame().H())
@@ -44,11 +44,6 @@ func newTile(spr *pixel.Sprite, pos pixel.Vec) *tile {
 }
 
 // Position returns tile position.
-func (t *tile) Position() pixel.Vec {
+func (t *Tile) Position() pixel.Vec {
 	return t.bounds.Min
-}
-
-// Bounds returns tile position and size.
-func (t *tile) Bounds() pixel.Rect {
-	return t.bounds
 }

@@ -38,15 +38,13 @@ import (
 
 // Struct for graphical representation of area map.
 type Map struct {
-	tmxMap       *tmx.Map
-	tilesets     map[string]pixel.Picture
-	tilesBatches map[pixel.Picture]*pixel.Batch
-	tilesize     pixel.Vec
-	mapsize      pixel.Vec
-	tilescount   pixel.Vec
-	// Layers.
-	ground       []*tile
-	buildings    []*tile
+	tmxMap      *tmx.Map
+	tilesets    map[string]pixel.Picture
+	tileBatches map[pixel.Picture]*pixel.Batch
+	tilesize    pixel.Vec
+	mapsize     pixel.Vec
+	tilescount  pixel.Vec
+	layers      []*Layer
 }
 
 // NewMap creates new map for specified scenario area.
@@ -60,7 +58,7 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 	m.mapsize = pixel.V(float64(int(m.tilesize.X * m.tilescount.X)),
 		float64(int(m.tilesize.Y * m.tilescount.Y)))
 	m.tilesets = make(map[string]pixel.Picture)
-	m.tilesBatches = make(map[pixel.Picture]*pixel.Batch)
+	m.tileBatches = make(map[pixel.Picture]*pixel.Batch)
 	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapDir + "/" + ts.Image.Source)
@@ -70,28 +68,16 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 				ts.Name)
 		}
 		m.tilesets[ts.Name] = tsPic
-		m.tilesBatches[tsPic] = pixel.NewBatch(&pixel.TrianglesData{}, tsPic)
+		m.tileBatches[tsPic] = pixel.NewBatch(&pixel.TrianglesData{}, tsPic)
 	}
 	// Map layers.
 	for _, l := range m.tmxMap.Layers {
-		switch l.Name {
-		case "ground":
-			l, err := mapLayer(m, l)
-			if err != nil {
-				return nil, fmt.Errorf("fail to create ground layer: %v",
-					err)
-			}
-			m.ground = l
-		case "buildings":
-			l, err := mapLayer(m, l)
-			if err != nil {
-				return nil, fmt.Errorf("fail to create building layer: %v",
-					err)
-			}
-			m.buildings = l
-		default:
-			fmt.Printf("map builder: unknown layer: %s\n", l.Name)
+		layer, err := newLayer(m, l)
+		if err != nil {
+			return nil, fmt.Errorf("fail to create layer: %s: %v",
+				l.Name, err)
 		}
+		m.layers = append(m.layers, layer)
 	}
 	return m, nil
 }
@@ -103,23 +89,25 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 	drawArea := pixel.R(matrix[4], matrix[5], matrix[4] + size.X,
 		matrix[5] + size.Y)
 	// Clear all tilesets draw batches.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Clear()
 	}
 	// Draw layers tiles to tilesets batechs.
-	for _, t := range m.ground {
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		if drawArea.Contains(t.Position()) {
-			batch := m.tilesBatches[t.Picture()]
-			if batch == nil {
-				continue
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			if drawArea.Contains(t.Position()) {
+				batch := m.tileBatches[t.Picture()]
+				if batch == nil {
+					continue
+				}
+				t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+					matrix[0]).Moved(tileDrawPos))
 			}
-			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-				matrix[0]).Moved(tileDrawPos))
 		}
 	}
 	// Draw bateches with layers tiles.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Draw(win)
 	}
 }
@@ -127,45 +115,32 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 // DrawFull draws whole map starting from specified position.
 func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 	// Clear all tilesets draw batches.
-	for _, batch := range m.tilesBatches {
+	for _, batch := range m.tileBatches {
 		batch.Clear()
 	}
 	// Draw layers tile to tileset batechs.
-	for _, t := range m.ground {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
-			continue
-		}
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-			matrix[0]).Moved(tileDrawPos))
-	}
-	for _, t := range m.buildings {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil {
-			continue
-		}
-		tileDrawPos := MapDrawPos(t.Position(), matrix)
-		t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
-			matrix[0]).Moved(tileDrawPos))
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			batch := m.tileBatches[t.Picture()]
+			if batch == nil {
+				continue
+			}
+			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
+				matrix[0]).Moved(tileDrawPos))
+		}	
 	}
 	// Draw bateches with layer tiles.
 	drawn := make(map[pixel.Picture]*pixel.Batch)
-	for _, t := range m.ground {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil || drawn[t.Picture()] != nil {
-			continue
+	for _, l := range m.layers {
+		for _, t := range l.tiles {
+			batch := m.tileBatches[t.Picture()]
+			if batch == nil || drawn[t.Picture()] != nil {
+				continue
+			}
+			batch.Draw(win)
+			drawn[t.Picture()] = batch
 		}
-		batch.Draw(win)
-		drawn[t.Picture()] = batch
-	}
-	for _, t := range m.buildings {
-		batch := m.tilesBatches[t.Picture()]
-		if batch == nil || drawn[t.Picture()] != nil {
-			continue
-		}
-		batch.Draw(win)
-		drawn[t.Picture()] = batch
 	}
 }
 
@@ -179,14 +154,19 @@ func (m *Map) Size() pixel.Vec {
 	return m.mapsize
 }
 
+// Layers returns all map layers.
+func (m *Map) Layers() []*Layer {
+	return m.layers
+}
+
 // Moveable checks whether specified position is
 // passable.
 func (m *Map) Passable(pos pixel.Vec) bool {
-	if m.ground == nil {
+	if len(m.layers) < 1 {
 		return false
 	}
-	for _, t := range m.ground {
-		if t.Bounds().Contains(pos) {
+	for _, t := range m.layers[0].tiles {
+		if t.bounds.Contains(pos) {
 			return true
 		}
 	}
@@ -221,37 +201,6 @@ func (m *Map) tileBounds(tileset pixel.Picture, tileID tmx.ID) pixel.Rect {
 	}
 	return pixel.R(0, 0, 0, 0)
         
-}
-
-// mapLayer parses specified TMX layer data to slice
-// with tile sprites.
-func mapLayer(m *Map, l tmx.Layer) ([]*tile, error) {
-	tiles := make([]*tile, 0)
-	tileX := 0
-	tileY := 0
-	for _, dt := range l.DecodedTiles {
-		tileset := dt.Tileset
-		if tileset != nil {
-			tilesetPic := m.tilesets[tileset.Name]
-			if tilesetPic == nil {
-				return nil, fmt.Errorf("fail to found tileset source: %s",
-					tileset.Name)
-			}
-			tileBounds := m.tileBounds(tilesetPic, dt.ID)
-			pic := pixel.NewSprite(tilesetPic, tileBounds)
-			tilePos := pixel.V(float64(int(m.tilesize.X)*tileX),
-				float64(int(m.tilesize.Y)*tileY))
-			tilePos.Y = m.Size().Y - tilePos.Y
-			tile := newTile(pic, tilePos)
-			tiles = append(tiles, tile)		
-		}
-		tileX++
-		if tileX > int(m.tilescount.X)-1 {
-			tileX = 0
-			tileY++
-		}
-	}
-	return tiles, nil
 }
 
 // roundTilesetSize rounds tileset size to to value that can be divided

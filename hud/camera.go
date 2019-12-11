@@ -40,7 +40,6 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/areamap"
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -214,13 +213,9 @@ func (c *Camera) SetArea(a *area.Area) error {
 	}
 	// Set map.
 	chapter := c.hud.game.Module().Chapter()
-	areaPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s",
+	mapPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/map.tmx",
 		chapter.Conf().ModulePath, chapter.ID(), a.ID())
-	tmxMap, err := data.Map(areaPath)
-	if err != nil {
-		return fmt.Errorf("fail to retrieve tmx map: %v", err)
-	}
-	areaMap, err := areamap.NewMap(tmxMap, areaPath)
+	areaMap, err := areamap.NewMap(mapPath)
 	if err != nil {
 		return fmt.Errorf("fail to create pc area map: %v", err)
 	}
@@ -324,7 +319,14 @@ func (c *Camera) Locked() bool {
 // ConvAreaPos translates specified area
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	return areamap.MapDrawPos(pos, mtk.Matrix().Moved(c.Position()))
+	drawMatrix := mtk.Matrix().Moved(c.Position())
+	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) 
+	drawScale := drawMatrix[0]
+	posX := pos.X * drawScale
+	posY := pos.Y * drawScale
+	drawX := drawPos.X //* drawScale
+	drawY := drawPos.Y //* drawScale
+	return pixel.V(posX - drawX, posY - drawY)
 }
 
 // ConvCameraPos translates specified camera

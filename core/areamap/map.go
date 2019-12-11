@@ -27,13 +27,10 @@ package areamap
 import (
 	"fmt"
 	"path/filepath"
-	"math"
 	
 	"github.com/salviati/go-tmx/tmx"
 
 	"github.com/faiface/pixel"
-
-	"github.com/isangeles/mural/core/data"
 )
 
 // Struct for graphical representation of area map.
@@ -47,10 +44,14 @@ type Map struct {
 	layers      []*Layer
 }
 
-// NewMap creates new map for specified scenario area.
-func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
+// NewMap creates new map from .tmx file with specified path.
+func NewMap(path string) (*Map, error) {
+	tmxMap, err := tmxMap(path)
+	if err != nil {
+		return nil, fmt.Errorf("fail to retive tmx map: %v")
+	}
 	m := new(Map)
-	m.tmxMap = mapData
+	m.tmxMap = tmxMap
 	m.tilesize = pixel.V(float64(m.tmxMap.TileWidth),
 		float64(m.tmxMap.TileHeight))
 	m.tilescount = pixel.V(float64(m.tmxMap.Width),
@@ -59,10 +60,11 @@ func NewMap(mapData *tmx.Map, mapDir string) (*Map, error) {
 		float64(int(m.tilesize.Y * m.tilescount.Y)))
 	m.tilesets = make(map[string]pixel.Picture)
 	m.tileBatches = make(map[pixel.Picture]*pixel.Batch)
+	mapDir := filepath.Dir(path)
 	// Tilesets.
 	for _, ts := range m.tmxMap.Tilesets {
 		tsPath := filepath.FromSlash(mapDir + "/" + ts.Image.Source)
-		tsPic, err := data.PictureFromDir(tsPath)
+		tsPic, err := picture(tsPath)
 		if err != nil {
 			return nil, fmt.Errorf("fail to retrieve tilset source: %v",
 				ts.Name)
@@ -95,7 +97,7 @@ func (m *Map) Draw(win pixel.Target, matrix pixel.Matrix, size pixel.Vec) {
 	// Draw layers tiles to tilesets batechs.
 	for _, l := range m.layers {
 		for _, t := range l.tiles {
-			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			tileDrawPos := mapDrawPos(t.Position(), matrix)
 			if drawArea.Contains(t.Position()) {
 				batch := m.tileBatches[t.Picture()]
 				if batch == nil {
@@ -125,7 +127,7 @@ func (m *Map) DrawFull(win pixel.Target, matrix pixel.Matrix) {
 			if batch == nil {
 				continue
 			}
-			tileDrawPos := MapDrawPos(t.Position(), matrix)
+			tileDrawPos := mapDrawPos(t.Position(), matrix)
 			t.Draw(batch, pixel.IM.Scaled(pixel.V(0, 0),
 				matrix[0]).Moved(tileDrawPos))
 		}	
@@ -173,17 +175,6 @@ func (m *Map) Passable(pos pixel.Vec) bool {
 	return false
 }
 
-// MapDrawPos translates real position to map draw position.
-func MapDrawPos(pos pixel.Vec, drawMatrix pixel.Matrix) pixel.Vec {
-	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) 
-	drawScale := drawMatrix[0]
-	posX := pos.X * drawScale
-	posY := pos.Y * drawScale
-	drawX := drawPos.X //* drawScale
-	drawY := drawPos.Y //* drawScale
-	return pixel.V(posX - drawX, posY - drawY)
-}
-
 // tileBounds returns bounds for tile with specified size and ID
 // from specified tileset picture.
 func (m *Map) tileBounds(tileset pixel.Picture, tileID tmx.ID) pixel.Rect {
@@ -201,15 +192,4 @@ func (m *Map) tileBounds(tileset pixel.Picture, tileID tmx.ID) pixel.Rect {
 	}
 	return pixel.R(0, 0, 0, 0)
         
-}
-
-// roundTilesetSize rounds tileset size to to value that can be divided
-// by tile size without remainder.
-func roundTilesetSize(tilesetSize pixel.Vec, tileSize pixel.Vec) pixel.Vec {
-	size := pixel.V(0, 0)
-	xCount := math.Floor(tilesetSize.X / tileSize.X)
-	yCount := math.Floor(tilesetSize.Y / tileSize.Y)
-	size.X = tileSize.X * xCount
-	size.Y = tileSize.Y * yCount
-	return size
 }

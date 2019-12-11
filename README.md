@@ -1,5 +1,5 @@
 ## Introduction
-  Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with Pixel library.
+  Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
 
   GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with Pixel library.
 

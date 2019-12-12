@@ -5,7 +5,6 @@ MAJOR:
 * Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation
-* Remove areamap package and use Stone library to render map
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Optimize tiled map drawing(now draws whole map instead of only visible fragment)

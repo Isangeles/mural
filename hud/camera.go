@@ -36,10 +36,11 @@ import (
 	"github.com/isangeles/flame/core/module/area"
 	"github.com/isangeles/flame/core/module/character"
 
+	"github.com/isangeles/stone"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/areamap"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -63,7 +64,7 @@ type Camera struct {
 	locked   bool
 	area     *area.Area
 	// Map & objects.
-	areaMap *areamap.Map
+	areaMap *stone.Map
 	fow     *imdraw.IMDraw
 	avatars map[string]*object.Avatar
 	objects map[string]*object.ObjectGraphic
@@ -94,8 +95,7 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		//c.areaMap.Draw(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
-		c.areaMap.DrawFull(win.Window, mtk.Matrix().Moved(c.Position()))
+		c.areaMap.DrawPart(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
 	}
 	// Avatars.
 	for _, av := range c.avatars {
@@ -215,7 +215,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	chapter := c.hud.game.Module().Chapter()
 	mapPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/map.tmx",
 		chapter.Conf().ModulePath, chapter.ID(), a.ID())
-	areaMap, err := areamap.NewMap(mapPath)
+	areaMap, err := stone.NewMap(mapPath)
 	if err != nil {
 		return fmt.Errorf("fail to create pc area map: %v", err)
 	}
@@ -250,7 +250,7 @@ func (c *Camera) CenterAt(pos pixel.Vec) {
 }
 
 // Map returns current map.
-func (c *Camera) Map() *areamap.Map {
+func (c *Camera) Map() *stone.Map {
 	return c.areaMap
 }
 
@@ -314,6 +314,17 @@ func (c *Camera) Lock(lock bool) {
 // Locked checks whether camera is locked.
 func (c *Camera) Locked() bool {
 	return c.locked
+}
+
+// PassablePosition checks if specified position is 'passable',
+// i.e. map there is visible layer on this position where player
+// is allowed to move(like 'ground' layer').
+func (c *Camera) PassablePosition(pos pixel.Vec) bool {
+	layer := c.Map().PositionLayer(pos)
+	if layer == nil {
+		return false
+	}
+	return layer.Name() == "ground"
 }
 
 // ConvAreaPos translates specified area
@@ -555,7 +566,9 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Paused() && c.Map().Passable(destPos) && !c.hud.containsPos(pos) {
+	if !c.hud.game.Paused() && c.PassablePosition(destPos) && !c.hud.containsPos(pos) {
 		c.hud.ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }
+
+

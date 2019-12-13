@@ -31,7 +31,6 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
@@ -263,7 +262,7 @@ func (mm *MainMenu) AddPlayableChar(c *object.Avatar) {
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
-	chars, err := flamedata.ImportCharactersDir(flame.Mod(), path)
+	chars, err := flamedata.ImportCharactersDir(path)
 	if err != nil {
 		return fmt.Errorf("fail to import characters: %v", err)
 	}

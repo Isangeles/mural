@@ -399,7 +399,7 @@ func (av *Avatar) onChatSent(t string) {
 // castingRecipe checks if avatar crafting
 // any items right now.
 func (av *Avatar) castingRecipe() bool {
-	for _, r := range av.Recipes() {
+	for _, r := range av.Crafting().Recipes() {
 		if r.Casting() {
 			return true
 		}

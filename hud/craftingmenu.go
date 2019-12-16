@@ -189,7 +189,7 @@ func (cm *CraftingMenu) Show(show bool) {
 	if cm.Opened() {
 		cm.recipesList.Clear()
 		pc := cm.hud.ActivePlayer()
-		cm.insertRecipes(pc.Recipes()...)
+		cm.insertRecipes(pc.Crafting().Recipes()...)
 	} else {
 		cm.recipeInfo.Clear()
 		cm.makeButton.Active(false)

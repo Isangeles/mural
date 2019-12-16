@@ -63,7 +63,7 @@ func (cb *CastBar) Update(win *mtk.Window) {
 		cb.bar.SetValue(int(s.CastTime()))
 		break
 	}
-	for _, r := range pc.Recipes() {
+	for _, r := range pc.Crafting().Recipes() {
 		if !r.Casting() {
 			continue
 		}

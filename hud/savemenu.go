@@ -241,7 +241,7 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
 	savesPath := flameconf.ModuleSavegamesPath()
 	// Save current game.
-	err := flamedata.SaveGame(sm.hud.Game(), savesPath, saveName)
+	err := flamedata.ExportGame(sm.hud.Game(), savesPath, saveName)
 	if err != nil {
 		return fmt.Errorf("fail to save game: %v", err)
 	}

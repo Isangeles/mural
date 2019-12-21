@@ -29,7 +29,6 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/text/lang"
@@ -145,26 +144,6 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	return nil
 }
 
-// importSave imports saved game from file with
-// specified name.
-func (lgm *LoadGameMenu) loadSave(savName string) {
-	// Show loading screen.
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("gui", "loadgame_import_save_info"))
-	defer lgm.mainmenu.CloseLoadingScreen()
-	// Load game.
-	g, err := flame.LoadGame(savName)
-	if err != nil {
-		log.Err.Printf("load game menu: fail to load game_save: %v", err)
-		lgm.mainmenu.ShowMessage(lang.Text("gui", "load_game_err"))
-		return
-	}
-	// Pass imported save.
-	if lgm.mainmenu.onSaveLoaded == nil {
-		return
-	}
-	lgm.mainmenu.onSaveLoaded(g, savName)
-}
-
 // Triggered after back button clicked.
 func (lgm *LoadGameMenu) onBackButtonClicked(b *mtk.Button) {
 	lgm.mainmenu.OpenMenu()
@@ -182,6 +161,8 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		return
 	}
 	savename := strings.Replace(filename, ".savegame", "", 1)
-	go lgm.loadSave(savename)
+	if lgm.mainmenu.onSaveLoad != nil {
+		go lgm.mainmenu.onSaveLoad(savename)
+	}
 	lgm.mainmenu.OpenMenu()
 }

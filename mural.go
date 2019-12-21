@@ -169,7 +169,7 @@ func run() {
 	// Create main menu.
 	mainMenu = mainmenu.New()
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
-	mainMenu.SetOnSaveLoadedFunc(EnterSavedGame)
+	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init run: fail to import playable characters: %v",
@@ -257,48 +257,36 @@ func EnterGame(g *flamecore.Game) {
 	}
 }
 
-// EnterSavedGame creates game and HUD from saved data.
-func EnterSavedGame(g *flamecore.Game, saveName string) {
+// LoadSavedGame creates game and HUD from saved data.
+func LoadSavedGame(saveName string) {
 	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
-	game = g
-	// Import saved GUI state.
+	// Import saved game.
+	game, err := flamedata.ImportGame(flame.Mod(), flameconf.ModuleSavegamesPath(), saveName)
+	if err != nil {
+		log.Err.Printf("load saved game: fail to import game: %v", err)
+		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		return
+	}
+	flame.SetGame(game)
+	// Enter game.
+	EnterGame(game)
+	// Import saved HUD state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
-		log.Err.Printf("enter saved game: fail load gui save: %v", err)
+		log.Err.Printf("load saved game: fail load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
 	}
 	for _, pcd := range guisav.PlayersData {
 		res.AddAvatarData(pcd.Avatar)
 	}
-	// Create HUD.
-	hud := hud.New()
-	// Set HUD.
-	setHUD(hud)
-	err = imp.LoadChapterResources(game.Module().Chapter())
-	err = hud.SetGame(game)
-	if err != nil {
-		log.Err.Printf("enter saved game: fail to set hud game: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
-		return
-	}
 	// Load HUD state.
-	err = hud.LoadGUISave(guisav)
+	err = pcHUD.LoadGUISave(guisav)
 	if err != nil {
-		log.Err.Printf("enter saved game: fail to set hud layout: %v", err)
+		log.Err.Printf("load saved game: fail to set hud layout: %v", err)
 		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
 		return
-	}
-	inGame = true
-	// Run module scripts.
-	modpath := game.Module().Conf().Path
-	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
-	if err != nil {
-		log.Err.Printf("enter saved game: fail to retrieve module scripts: %v", err)
-	}
-	for _, s := range scripts {
-		go ci.RunScript(s)
 	}
 }
 

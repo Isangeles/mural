@@ -64,7 +64,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	playableChars []*object.Avatar
 	onGameCreated func(g *flamecore.Game)
-	onSaveLoaded  func(g *flamecore.Game, savename string)
+	onSaveLoad    func(savename string)
 	loading       bool
 	exiting       bool
 }
@@ -164,8 +164,8 @@ func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game)) {
 
 // SetOnSaveImportedFunc sets specified function as function
 // triggered after save game imported.
-func (mm *MainMenu) SetOnSaveLoadedFunc(f func(g *flamecore.Game, savename string)) {
-	mm.onSaveLoaded = f
+func (mm *MainMenu) SetOnSaveLoadFunc(f func(savename string)) {
+	mm.onSaveLoad = f
 }
 
 // OpenMenu opens menu.

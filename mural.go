@@ -336,6 +336,7 @@ func RunAreaScripts(a *area.Area) {
 	for _, s := range scripts {
 		go ci.RunScript(s)
 		areaScripts = append(areaScripts, s)
+		log.Dbg.Printf("script started: %s\n", s.Name())
 	}
 }
 

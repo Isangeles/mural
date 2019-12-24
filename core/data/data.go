@@ -57,6 +57,8 @@ var (
 	modAudioArchPath    string
 	mainGraphicArchPath = "data/gui/gdata.zip"
 	mainAudioArchPath   = "data/gui/adata.zip"
+	// Scritps.
+	ashScriptExt = ".ash"
 	// Textures & fonts.
 	uiTexs      map[string]pixel.Picture
 	avatarsTexs map[string]pixel.Picture
@@ -350,7 +352,7 @@ func ScriptsDir(path string) ([]*ash.Script, error) {
 	}
 	scripts := make([]*ash.Script, 0)
 	for _, info := range files {
-		if !strings.HasSuffix(info.Name(), ash.SCRIPT_FILE_EXT) {
+		if !strings.HasSuffix(info.Name(), ashScriptExt) {
 			continue
 		}
 		scriptPath := filepath.FromSlash(path + "/" + info.Name())
@@ -376,7 +378,8 @@ func Script(path string) (*ash.Script, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fail to read file: %v", err)
 	}
-	script, err := ash.NewScript(fmt.Sprintf("%s", text), file.Name())
+	scriptName := filepath.Base(path)
+	script, err := ash.NewScript(scriptName, fmt.Sprintf("%s", text))
 	if err != nil {
 		return nil, fmt.Errorf("fail to parse script text: %v", err)
 	}

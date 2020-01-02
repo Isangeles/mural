@@ -1,27 +1,25 @@
 ## Introduction
-  Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
+Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
 
-  GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with Pixel library.
+GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with [Pixel](https://github.com/faiface/pixel) library.
 
-  Currently in a early development stage.
+Currently in a early development stage.
 
-  ### Flame games with Mural support:
-
+### Flame games with Mural support:
 ### Arena
+Description: simple demo game based on [Arena](https://github.com/isangeles/arena) module with [Mural GUI](https://github.com/isangeles/mural) support.
 
-  Description: simple demo game that presents [Flame engine](https://github.com/isangeles/flame) and Mural GUI features.
-
-  Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
+Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
 
 ## Build
-  Get [Pixel](https://github.com/faiface/pixel), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
+Get [Pixel](https://github.com/faiface/pixel), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
 
-  Get sources from git:
+Get sources from git:
 ```
 $ go get -u github.com/isangeles/mural
 ```
 
-  Build GUI:
+Build GUI:
 ```
 $ go build github.com/isangeles/mural
 ```
@@ -108,6 +106,8 @@ Description: specifies name of audio file(located in audio archive) for button c
 ## Module directory
 All GUI-related files must be stored in `data/modules/[module name]/gui` directory.
 
+For example check [Arena](https://github.com/Isangeles/arena) module.
+
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 
@@ -164,7 +164,7 @@ After you finish, open pull request to merge your changes with master branch.
 * Isangeles <<dev@isangeles.pl>>
 
 ## License
-Copyright 2018-2019 Dariusz Sikora <<dev@isangeles.pl>>
+Copyright 2018-2020 Dariusz Sikora <<dev@isangeles.pl>>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

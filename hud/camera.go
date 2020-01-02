@@ -235,11 +235,11 @@ func (c *Camera) SetArea(a *area.Area) error {
 		}
 		c.avatars[char.ID()+char.Serial()] = pcAvatar
 	}
+	// Update objects graphics.
+	c.updateAreaObjects()
 	// Center camera at player.
 	pc := c.hud.ActivePlayer()
 	c.CenterAt(pc.Position())
-	// Update objects graphics.
-	c.updateAreaObjects()
 	return nil
 }
 

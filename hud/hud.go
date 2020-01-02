@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,7 +208,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
 	if hud.loading {
 		if hud.loaderr != nil { // on loading error
-			log.Err.Printf("hud_loading_fail:%v", hud.loaderr)
+			log.Err.Printf("hud loading fail: %v", hud.loaderr)
 			hud.Exit()
 		}
 	}
@@ -364,7 +364,7 @@ func (hud *HUD) ActivePlayer() *object.Avatar {
 func (hud *HUD) AddPlayer(char *character.Character) error {
 	avData := res.Avatar(char.ID())
 	if avData == nil {
-		return fmt.Errorf("fail_to_find_avatar_data:%s", char.ID())
+		return fmt.Errorf("fail to find avatar data: %s", char.ID())
 	}
 	av := object.NewAvatar(char, avData)
 	hud.pcs = append(hud.pcs, av)
@@ -465,7 +465,7 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 	for _, pc := range hud.game.Players() {
 		err := hud.AddPlayer(pc)
 		if err != nil {
-			return fmt.Errorf("fail_to_add_player:%v", err)
+			return fmt.Errorf("fail to add player: %v", err)
 		}
 	}
 	// Setup active player area.
@@ -477,7 +477,7 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 	}
 	err := hud.ChangeArea(pcArea)
 	if err != nil {
-		hud.loaderr = fmt.Errorf("fail_to_change_area:%v", err)
+		hud.loaderr = fmt.Errorf("fail to change area: %v", err)
 		return hud.loaderr
 	}
 	return nil
@@ -549,7 +549,7 @@ func (hud *HUD) updateCurrentArea() {
 	chapter := hud.Game().Module().Chapter()
 	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
 	if pcArea != hud.Camera().Area() {
-		hud.Camera().SetArea(pcArea)
+		go hud.ChangeArea(pcArea)
 	}
 }
 

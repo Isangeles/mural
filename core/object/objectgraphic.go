@@ -60,7 +60,11 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	// Sprite.
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
 	// Info window.
-	og.info = mtk.NewInfoWindow(mtk.SizeSmall, colornames.Grey)
+	infoParams := mtk.Params{
+		FontSize:  mtk.SizeSmall,
+		MainColor: colornames.Grey,
+	}
+	og.info = mtk.NewInfoWindow(infoParams)
 	og.info.SetText(og.infoText())
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)

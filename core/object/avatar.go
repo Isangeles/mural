@@ -90,8 +90,12 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
-	// Info windows.
-	av.info = mtk.NewInfoWindow(mtk.SizeSmall, pixel.RGBA{0.1, 0.1, 0.1, 0.5})
+	// Info & chat window.
+	infoParams := mtk.Params{
+		FontSize:  mtk.SizeSmall,
+		MainColor: pixel.RGBA{0.1, 0.1, 0.1, 0.5},
+	}
+	av.info = mtk.NewInfoWindow(infoParams)
 	av.info.SetText(av.infoText())
 	chatParams := mtk.Params{
 		FontSize: mtk.SizeSmall,

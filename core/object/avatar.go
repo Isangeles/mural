@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,6 @@ type Avatar struct {
 	*character.Character
 	data      *res.AvatarData
 	sprite    *internal.AvatarSprite
-	info      *mtk.InfoWindow
 	chat      *mtk.Text
 	hovered   bool
 	speaking  bool
@@ -90,13 +89,6 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
 		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
 	}
-	// Info & chat window.
-	infoParams := mtk.Params{
-		FontSize:  mtk.SizeSmall,
-		MainColor: pixel.RGBA{0.1, 0.1, 0.1, 0.5},
-	}
-	av.info = mtk.NewInfoWindow(infoParams)
-	av.info.SetText(av.infoText())
 	chatParams := mtk.Params{
 		FontSize: mtk.SizeSmall,
 	}
@@ -117,10 +109,7 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Sprite.
 	av.sprite.Draw(win, matrix)
-	// Info window.
-	if av.hovered {
-		av.info.Draw(win)
-	}
+	// Chat.
 	chatPos := mtk.MoveTC(av.sprite.DrawArea().Size(), av.chat.Size())
 	if av.speaking {
 		av.chat.Draw(win, matrix.Moved(chatPos))
@@ -155,8 +144,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 	// Sprite
 	av.updateGraphic()
 	av.sprite.Update(win)
-	// Info window.
-	av.info.Update(win)
+	// Chat.
 	if av.speaking {
 		av.chatTimer += win.Delta()
 		if av.chatTimer >= chatTimeMax {
@@ -233,6 +221,12 @@ func (av *Avatar) Silenced() bool {
 // Silence toggles avatar audio effects.
 func (av *Avatar) Silence(silence bool) {
 	av.silenced = silence
+}
+
+// Hovered check if avatar is hovered
+// by HUD user mouse cursor.
+func (av *Avatar) Hovered() bool {
+	return av.hovered
 }
 
 // equip adds graphic of specified item to avatar.

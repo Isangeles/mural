@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,6 @@
 package object
 
 import (
-	"fmt"
-
-	"golang.org/x/image/colornames"
-
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/core/module/objects"
@@ -35,7 +31,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
 )
 
@@ -45,7 +40,6 @@ type ObjectGraphic struct {
 	*flameobject.Object
 	data     *res.ObjectGraphicData
 	sprite   *mtk.Animation
-	info     *mtk.InfoWindow
 	hovered  bool
 	silenced bool
 	effects  map[string]*EffectGraphic
@@ -59,13 +53,6 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	og.data = data
 	// Sprite.
 	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
-	// Info window.
-	infoParams := mtk.Params{
-		FontSize:  mtk.SizeSmall,
-		MainColor: colornames.Grey,
-	}
-	og.info = mtk.NewInfoWindow(infoParams)
-	og.info.SetText(og.infoText())
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
@@ -76,18 +63,12 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 func (og *ObjectGraphic) Draw(t pixel.Target, matrix pixel.Matrix) {
 	// Sprite.
 	og.sprite.Draw(t, matrix)
-	// Info window.
-	if og.hovered {
-		og.info.Draw(t)
-	}
 }
 
 // Update updates object.
 func (og *ObjectGraphic) Update(win *mtk.Window) {
 	// Sprite.
 	og.sprite.Update(win)
-	// Info window.
-	og.info.Update(win)
 	og.hovered = og.sprite.DrawArea().Contains(win.MousePosition())
 	// Graphic.
 	og.updateGraphic()
@@ -146,6 +127,12 @@ func (og *ObjectGraphic) Silence(silence bool) {
 	og.silenced = silence
 }
 
+// Hovered checks if object is hovered by
+// HUD user mouse cursor.
+func (og *ObjectGraphic) Hovered() bool {
+	return og.hovered
+}
+
 // updateGraphic updates object
 // graphical content.
 func (og *ObjectGraphic) updateGraphic() {
@@ -172,17 +159,6 @@ func (og *ObjectGraphic) updateGraphic() {
 		itemGraphic := NewItemGraphic(it, data)
 		og.items[it.ID()+it.Serial()] = itemGraphic
 	}
-}
-
-// infoText returns text for object info
-// window.
-func (og *ObjectGraphic) infoText() string {
-	form := "%s"
-	info := fmt.Sprintf(form, og.Name())
-	if config.Debug() {
-		info = fmt.Sprintf("%s\n[%s_%s]", info, og.ID(), og.Serial())
-	}
-	return info
 }
 
 // buildSpriteFrames creates animation frames from specified

@@ -71,6 +71,7 @@ type HUD struct {
 	savemenu      *SaveMenu
 	pcFrame       *ObjectFrame
 	tarFrame      *ObjectFrame
+	objectInfo    *ObjectInfo
 	castBar       *CastBar
 	chat          *Chat
 	inv           *InventoryMenu
@@ -104,6 +105,8 @@ func New() *HUD {
 	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
 	hud.tarFrame = newObjectFrame(hud)
+	// Hovered object info window.
+	hud.objectInfo = newObjectInfo(hud)
 	// Cast bar.
 	hud.castBar = newCastBar(hud)
 	// Windows & menus.
@@ -194,6 +197,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.training.Opened() {
 		hud.training.Draw(win, mtk.Matrix().Moved(trainPos))
+	}
+	if hud.objectInfo.Opened() {
+		hud.objectInfo.Draw(win)
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
@@ -312,6 +318,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.pcFrame.Update(win)
 	hud.tarFrame.Update(win)
 	hud.castBar.Update(win)
+	hud.objectInfo.Update(win)
 	if hud.menu.Opened() {
 		hud.menu.Update(win)
 	}

@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,11 @@ func init() {
 	if err != nil {
 		log.Err.Printf("fail to load flame config file: %v", err)
 		flameconf.SaveConfig() // override 'corrupted' config file with default configuration
+	}
+	// Load UI translation files.
+	err = flamedata.LoadTranslationData(flameconf.LangPath())
+	if err != nil {
+		log.Err.Printf("fail to load ui translation files: %v", err)
 	}
 	// Load module.
 	m, err := flamedata.Module(flameconf.ModulePath(), flameconf.LangID())

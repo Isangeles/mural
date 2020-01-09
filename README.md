@@ -12,23 +12,20 @@ Description: simple demo game based on [Arena](https://github.com/isangeles/aren
 Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
 
 ## Build
-Get [Pixel](https://github.com/faiface/pixel), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
+Get [Pixel](https://github.com/faiface/pixel), [MTK](https://github.com/Isangeles/mtk), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
 
 Get sources from git:
 ```
 $ go get -u github.com/isangeles/mural
 ```
-
 Build GUI:
 ```
 $ go build github.com/isangeles/mural
 ```
-
-Copy `data` directory from `res` to directory with `mural` executable(it contains default translation files for UI):
+Copy `data` directory from `res` to directory with `mural` executable(it contains default translation files for UI), for example:
 ```
-  cp -r ~/go/src/github.com/isangeles/mural/res/data .
+$ cp -r ~/go/src/github.com/isangeles/mural/res/data .
 ```
-
 Now, specify the path to a valid Flame module in Flame configuration file:
 
 Create file `.flame` in Mural executable directory(or run Mural to create it
@@ -40,7 +37,7 @@ If no path provided, the engine will search default modules directory(`data/modu
 
 Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 
-  Run Mural:
+Run Mural:
 ```
 $ ./mural
 ```

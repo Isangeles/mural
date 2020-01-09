@@ -33,7 +33,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	flamecore "github.com/isangeles/flame/core"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/area"
 	"github.com/isangeles/flame/core/module/character"
 	flameobject "github.com/isangeles/flame/core/module/objects"
@@ -493,7 +493,7 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *area.Area) error {
 	// Map.
-	hud.OpenLoadingScreen(lang.Text("gui", "load_map_info"))
+	hud.OpenLoadingScreen(lang.Text("load_map_info"))
 	defer hud.CloseLoadingScreen()
 	err := hud.camera.SetArea(area)
 	if err != nil {

@@ -39,7 +39,7 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/area"
 
 	"github.com/isangeles/burn"
@@ -96,7 +96,7 @@ func init() {
 func main() {
 	// Check if Flame module is loaded.
 	if flame.Mod() == nil {
-		panic(fmt.Sprintf("%s\n", lang.Text("gui", "no_mod_loaded_err")))
+		panic(fmt.Sprintf("%s\n", lang.Text("no_mod_loaded_err")))
 	}
 	// Load UI graphic.
 	err := data.LoadUIData(flame.Mod())
@@ -230,7 +230,7 @@ func run() {
 
 // EnterGame creates HUD for specified game.
 func EnterGame(g *flamecore.Game) {
-	mainMenu.OpenLoadingScreen(lang.Text("gui", "enter_game_info"))
+	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	game = g
 	// Create HUD.
@@ -241,13 +241,13 @@ func EnterGame(g *flamecore.Game) {
 	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
 		log.Err.Printf("enter game: fail to load chapter resources: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	err = hud.SetGame(game)
 	if err != nil {
 		log.Err.Printf("enter game: fail to set hud game: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	inGame = true
@@ -264,13 +264,13 @@ func EnterGame(g *flamecore.Game) {
 
 // LoadSavedGame creates game and HUD from saved data.
 func LoadSavedGame(saveName string) {
-	mainMenu.OpenLoadingScreen(lang.Text("gui", "loadgame_load_game_info"))
+	mainMenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
 	game, err := flamedata.ImportGame(flame.Mod(), flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
 		log.Err.Printf("load saved game: fail to import game: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	flame.SetGame(game)
@@ -280,7 +280,7 @@ func LoadSavedGame(saveName string) {
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
 		log.Err.Printf("load saved game: fail load gui save: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	for _, pcd := range guisav.PlayersData {
@@ -290,7 +290,7 @@ func LoadSavedGame(saveName string) {
 	err = pcHUD.LoadGUISave(guisav)
 	if err != nil {
 		log.Err.Printf("load saved game: fail to set hud layout: %v", err)
-		mainMenu.ShowMessage(lang.Text("gui", "load_game_err"))
+		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 }

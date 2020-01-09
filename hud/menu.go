@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -59,14 +59,14 @@ func newMenu(hud *HUD) *Menu {
 	if err == nil {
 		m.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_menu:bg_texture_not_found:%v", err)
+		log.Err.Printf("hud menu: bg texture not found: %v", err)
 	}
 	// Title.
 	titleParams := mtk.Params{
 		FontSize: mtk.SizeSmall,
 	}
 	m.titleText = mtk.NewText(titleParams)
-	m.titleText.SetText(lang.Text("gui", "hud_menu_title"))
+	m.titleText.SetText(lang.Text("hud_menu_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -79,7 +79,7 @@ func newMenu(hud *HUD) *Menu {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		m.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_menu:fail_to_retrieve_exit_button_texture:%v", err)
+		log.Err.Printf("hud menu: fail to retrieve exit button texture: %v", err)
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
 	// Menu buttons.
@@ -91,19 +91,19 @@ func newMenu(hud *HUD) *Menu {
 	}
 	greenButtonBG, err := data.PictureUI("button_green.png")
 	if err != nil {
-		log.Err.Printf("hud_menu:fail_to_retrieve_green_button_texture:%v", err)
+		log.Err.Printf("hud menu: fail to retrieve green button texture: %v", err)
 	}
 	m.saveButton = mtk.NewButton(menuButtonParams)
-	m.saveButton.SetLabel(lang.Text("gui", "savegame_b_label"))
-	m.saveButton.SetInfo(lang.Text("gui", "savegame_b_info"))
+	m.saveButton.SetLabel(lang.Text("savegame_b_label"))
+	m.saveButton.SetInfo(lang.Text("savegame_b_info"))
 	if greenButtonBG != nil {
 		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
 		m.saveButton.SetBackground(bg)
 	}
 	m.saveButton.SetOnClickFunc(m.onSaveButtonClicked)
 	m.exitButton = mtk.NewButton(menuButtonParams)
-	m.exitButton.SetLabel(lang.Text("gui", "exit_b_label"))
-	m.exitButton.SetInfo(lang.Text("gui", "exit_hud_b_info"))
+	m.exitButton.SetLabel(lang.Text("exit_b_label"))
+	m.exitButton.SetInfo(lang.Text("exit_hud_b_info"))
 	if greenButtonBG != nil {
 		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
 		m.exitButton.SetBackground(bg)

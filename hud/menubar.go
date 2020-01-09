@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,12 @@ package hud
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/serial"
 
@@ -67,7 +65,6 @@ var (
 func newMenuBar(hud *HUD) *MenuBar {
 	mb := new(MenuBar)
 	mb.hud = hud
-	guiLang := filepath.FromSlash(flameconf.LangPath() + "/gui")
 	// Background.
 	mb.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("menubar.png")
@@ -82,59 +79,59 @@ func newMenuBar(hud *HUD) *MenuBar {
 	}
 	// Menu Button.
 	mb.menuButton = mtk.NewButton(buttonParams)
-	mb.menuButton.SetInfo(lang.Text("gui", "hud_bar_menu_open_info"))
+	mb.menuButton.SetInfo(lang.Text("hud_bar_menu_open_info"))
 	menuButtonBG, err := data.PictureUI("menubutton.png")
 	if err == nil {
 		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
 		mb.menuButton.SetBackground(menuButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve menu button texture: %v", err)
+		log.Err.Printf("hud menubar: fail to retrieve menu button texture: %v", err)
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
 	mb.invButton = mtk.NewButton(buttonParams)
-	mb.invButton.SetInfo(lang.Text("gui", "hud_bar_inv_open_info"))
+	mb.invButton.SetInfo(lang.Text("hud_bar_inv_open_info"))
 	invButtonBG, err := data.PictureUI("inventorybutton.png")
 	if err == nil {
 		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
 		mb.invButton.SetBackground(invButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve inv button texture: %v", err)
+		log.Err.Printf("hud menubar: fail to retrieve inv button texture: %v", err)
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
 	mb.skillsButton = mtk.NewButton(buttonParams)
-	mb.skillsButton.SetInfo(lang.Text("gui", "hud_bar_skills_open_info"))
+	mb.skillsButton.SetInfo(lang.Text("hud_bar_skills_open_info"))
 	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
 	if err == nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
 		mb.skillsButton.SetBackground(skillsButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve skills button texture: %v", err)
+		log.Err.Printf("hud menubar: fail to retrieve skills button texture: %v", err)
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
 	// Journal button.
 	mb.journalButton = mtk.NewButton(buttonParams)
-	journalInfo := lang.AllText(guiLang, "hud_bar_journal_open_info")[0]
+	journalInfo := lang.Text("hud_bar_journal_open_info")
 	mb.journalButton.SetInfo(journalInfo)
 	journalButtonBG, err := data.PictureUI("questsbutton.png")
 	if err == nil {
 		journalButtonSpr := pixel.NewSprite(journalButtonBG, journalButtonBG.Bounds())
 		mb.journalButton.SetBackground(journalButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve quests button texture: %v", err)
+		log.Err.Printf("hud menubar: fail to retrieve quests button texture: %v", err)
 	}
 	mb.journalButton.SetOnClickFunc(mb.onJournalButtonClicked)
 	// Character button.
 	mb.charButton = mtk.NewButton(buttonParams)
-	charInfo := lang.AllText(guiLang, "hud_bar_char_open_info")[0]
+	charInfo := lang.Text("hud_bar_char_open_info")
 	mb.charButton.SetInfo(charInfo)
 	charButtonBG, err := data.PictureUI("charbutton.png")
 	if err == nil {
 		charButtonSpr := pixel.NewSprite(charButtonBG, charButtonBG.Bounds())
 		mb.charButton.SetBackground(charButtonSpr)
 	} else {
-		log.Err.Printf("hud_menubar: fail to retrieve char button texture: %v", err)
+		log.Err.Printf("hud menubar: fail to retrieve char button texture: %v", err)
 	}
 	mb.charButton.SetOnClickFunc(mb.onCharButtonClicked)
 	// Slots.

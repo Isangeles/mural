@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 )
@@ -64,24 +64,24 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		MainColor: accentColor,
 	}
 	m.newgameB = mtk.NewButton(buttonParams)
-	m.newgameB.SetLabel(lang.Text("gui", "newgame_b_label"))
-	m.newgameB.SetInfo(lang.Text("gui", "newgame_b_info"))
+	m.newgameB.SetLabel(lang.Text("newgame_b_label"))
+	m.newgameB.SetInfo(lang.Text("newgame_b_info"))
 	m.newgameB.SetOnClickFunc(m.onNewGameButtonClicked)
 	m.newcharB = mtk.NewButton(buttonParams)
-	m.newcharB.SetLabel(lang.Text("gui", "newchar_b_label"))
-	m.newcharB.SetInfo(lang.Text("gui", "newchar_b_info"))
+	m.newcharB.SetLabel(lang.Text("newchar_b_label"))
+	m.newcharB.SetInfo(lang.Text("newchar_b_info"))
 	m.newcharB.SetOnClickFunc(m.onNewCharButtonClicked)
 	m.loadgameB = mtk.NewButton(buttonParams)
-	m.loadgameB.SetLabel(lang.Text("gui", "loadgame_b_label"))
-	m.loadgameB.SetInfo(lang.Text("gui", "loadgame_b_info"))
+	m.loadgameB.SetLabel(lang.Text("loadgame_b_label"))
+	m.loadgameB.SetInfo(lang.Text("loadgame_b_info"))
 	m.loadgameB.SetOnClickFunc(m.onLoadGameButtonClicked)
 	m.settingsB = mtk.NewButton(buttonParams)
-	m.settingsB.SetLabel(lang.Text("gui", "settings_b_label"))
-	m.settingsB.SetInfo(lang.Text("gui", "settings_b_info"))
+	m.settingsB.SetLabel(lang.Text("settings_b_label"))
+	m.settingsB.SetInfo(lang.Text("settings_b_info"))
 	m.settingsB.SetOnClickFunc(m.onSettingsButtonClicked)
 	m.exitB = mtk.NewButton(buttonParams)
-	m.exitB.SetLabel(lang.Text("gui", "exit_b_label"))
-	m.exitB.SetInfo(lang.Text("gui", "exit_b_info"))
+	m.exitB.SetLabel(lang.Text("exit_b_label"))
+	m.exitB.SetInfo(lang.Text("exit_b_info"))
 	m.exitB.SetOnClickFunc(m.onExitButtonClicked)
 	return m
 }

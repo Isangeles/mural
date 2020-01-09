@@ -1,7 +1,7 @@
 /*
  * objectframe.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -69,24 +69,24 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	bg, err := data.PictureUI("charframe.png")
 	if err != nil { // fallback
 		of.bgDraw = imdraw.New(nil)
-		log.Err.Printf("hud_char_frame:bg_texture_not_found:%v", err)
+		log.Err.Printf("hud object frame: bg texture not found: %v", err)
 	} else {
 		of.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Bars.
 	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
-	of.hpBar.SetLabel(lang.Text("gui", "char_frame_hp_bar_label"))
+	of.hpBar.SetLabel(lang.Text("char_frame_hp_bar_label"))
 	hpBarPic, err := data.PictureUI("bar_red.png")
 	if err != nil {
-		log.Err.Printf("hud_char_frame:hp_bar_texture_not_found:%v", err)
+		log.Err.Printf("hud object frame: hp bar texture not found: %v", err)
 	} else {
 		of.hpBar.SetBackground(hpBarPic)
 	}
 	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
-	of.manaBar.SetLabel(lang.Text("gui", "char_frame_mana_bar_label"))
+	of.manaBar.SetLabel(lang.Text("char_frame_mana_bar_label"))
 	manaBarPic, err := data.PictureUI("bar_blue.png")
 	if err != nil {
-		log.Err.Printf("hud_char_frame:mana_bar_texture_not_found:%v", err)
+		log.Err.Printf("hud object frame: mana bar texture not found: %v", err)
 	} else {
 		of.manaBar.SetBackground(manaBarPic)
 	}

@@ -1,7 +1,7 @@
 /*
  * craftingmenu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,12 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/craft"
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data" 
 	"github.com/isangeles/mural/log"
 )
 
@@ -73,8 +72,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		FontSize: mtk.SizeSmall,
 	}
 	cm.titleText = mtk.NewText(titleParams)
-	cm.titleText.SetText(lang.TextDir(flameconf.LangPath(),
-		"hud_crafting_title"))
+	cm.titleText.SetText(lang.Text("hud_crafting_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{
 		Size: mtk.SizeMedium,
@@ -108,7 +106,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		log.Err.Printf("hud_inventory:fail_to_retrieve_make_button_texture:%v", err)
 	}
 	cm.makeButton.SetOnClickFunc(cm.onMakeButtonClicked)
-	cm.makeButton.SetLabel(lang.TextDir(flameconf.LangPath(), "hud_crafting_make"))
+	cm.makeButton.SetLabel(lang.Text("hud_crafting_make"))
 	// Recipe info.
 	infoSize := pixel.V(cm.Size().X-mtk.ConvSize(20),
 		cm.Size().Y/2-mtk.ConvSize(10))
@@ -217,11 +215,9 @@ func (cm *CraftingMenu) Size() pixel.Vec {
 // insertRecipes adds all specified recipes to crafting
 // recipes list.
 func (cm *CraftingMenu) insertRecipes(recipes ...*craft.Recipe) {
-	mod := cm.hud.game.Module()
-	recipesLang := mod.Conf().RecipesLangPath()
 	for _, r := range recipes {
-		recipeText := lang.AllText(recipesLang, r.ID())
-		cm.recipesList.AddItem(recipeText[0], r)
+		recipeText := lang.Text(r.ID())
+		cm.recipesList.AddItem(recipeText, r)
 	}
 }
 
@@ -240,9 +236,7 @@ func (cm *CraftingMenu) onRecipeSelected(cs *mtk.CheckSlot) {
 	}
 	cm.makeButton.Active(true)
 	// Show recipe info.
-	mod := cm.hud.game.Module()
-	recipesLang := mod.Conf().RecipesLangPath()
-	recipeInfo := lang.AllText(recipesLang, recipe.ID())
+	recipeInfo := lang.Texts(recipe.ID())
 	info := recipeInfo[0]
 	if len(recipeInfo) > 1 {
 		info = fmt.Sprintf("%s\n%s\n", info, recipeInfo[1])

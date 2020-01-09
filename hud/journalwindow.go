@@ -1,7 +1,7 @@
 /*
  * journalwindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/quest"
 
 	"github.com/isangeles/mtk"
@@ -64,7 +63,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	if err == nil {
 		jw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_journal:fail_to_retrieve_bg_tex:%v",
+		log.Err.Printf("hud journal: fail to retrieve bg tex: %v",
 			err)
 	}
 	// Title.
@@ -72,8 +71,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		FontSize: mtk.SizeSmall,
 	}
 	jw.titleText = mtk.NewText(titleParams)
-	jw.titleText.SetText(lang.TextDir(flameconf.LangPath(),
-		"hud_journal_title"))
+	jw.titleText.SetText(lang.Text("hud_journal_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -192,11 +190,9 @@ func (jw *JournalWindow) Size() pixel.Vec {
 // insertQuests adds all specified quests to journal
 // quests list.
 func (jw *JournalWindow) insertQuests(quests ...*quest.Quest) {
-	mod := jw.hud.game.Module()
-	questsLang := mod.Chapter().Conf().QuestsLangPath()
 	for _, q := range quests {
-		questText := lang.AllText(questsLang, q.ID())
-		jw.questsList.AddItem(questText[0], q)
+		questText := lang.Text(q.ID())
+		jw.questsList.AddItem(questText, q)
 	}
 }
 
@@ -210,13 +206,11 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 	// Retrive quest from slot.
 	quest, ok := cs.Value().(*quest.Quest)
 	if !ok {
-		log.Err.Printf("hud_journal:fail to retrive quest from list")
+		log.Err.Printf("hud journal: fail to retrive quest from list")
 		return
 	}
 	// Show quest info.
-	mod := jw.hud.game.Module()
-	questsLang := mod.Chapter().Conf().QuestsLangPath()
-	questInfo := lang.AllText(questsLang, quest.ID())
+	questInfo := lang.Texts(quest.ID())
 	info := questInfo[0]
 	if len(questInfo) > 1 {
 		info = fmt.Sprintf("%s\n%s", info, questInfo[1])
@@ -224,11 +218,11 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 	stage := quest.ActiveStage()
 	if stage != nil {
 		if stage.Completed() {
-			completeInfo := lang.TextDir(flameconf.LangPath(), "hud_journal_quest_complete")
+			completeInfo := lang.Text("hud_journal_quest_complete")
 			info = fmt.Sprintf("%s\n%s", info, completeInfo)
 		} else {
-			stageInfo := lang.AllText(questsLang, stage.ID())
-			info = fmt.Sprintf("%s\n%s", info, stageInfo[0])
+			stageInfo := lang.Text(stage.ID())
+			info = fmt.Sprintf("%s\n%s", info, stageInfo)
 		}
 	}
 	jw.questInfo.SetText(info)

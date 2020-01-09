@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
@@ -76,7 +75,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		FontSize: mtk.SizeSmall,
 	}
 	im.titleText = mtk.NewText(titleParams)
-	im.titleText.SetText(lang.Text("gui", "hud_inv_title"))
+	im.titleText.SetText(lang.Text("hud_inv_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -315,8 +314,7 @@ func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
 // from inventory slot after warning dialog accepted.
 func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	s.Drag(false)
-	langPath := flameconf.LangPath()
-	msg := lang.TextDir(langPath, "hud_inv_remove_item_warn")
+	msg := lang.Text("hud_inv_remove_item_warn")
 	dlgParams := mtk.Params{
 		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
@@ -325,8 +323,8 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 		Info:      msg,
 	}
 	dlg := mtk.NewDialogWindow(dlgParams)
-	dlg.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
-	dlg.SetCancelLabel(lang.TextDir(langPath, "cancel_b_label"))
+	dlg.SetAcceptLabel(lang.Text("accept_b_label"))
+	dlg.SetCancelLabel(lang.Text("cancel_b_label"))
 	rmFunc := func(mw *mtk.MessageWindow) {
 		im.removeSlotItem(s)
 	}

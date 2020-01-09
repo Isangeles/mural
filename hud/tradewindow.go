@@ -1,7 +1,7 @@
 /*
  * tradewindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
@@ -77,21 +76,20 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 	tw.hud = hud
 	tw.sellItems = make(map[string]item.Item)
 	tw.buyItems = make(map[string]item.Item)
-	langPath := flameconf.LangPath()
 	// Background.
 	tw.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("menubg.png")
 	if err == nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_trade:fail_to_retrieve_background_tex:%v", err)
+		log.Err.Printf("hud trade: fail to retrieve background tex: %v", err)
 	}
 	// Title.
 	titleParams := mtk.Params{
 		FontSize: mtk.SizeSmall,
 	}
 	tw.titleText = mtk.NewText(titleParams)
-	tw.titleText.SetText(lang.TextDir(langPath, "hud_trade_title"))
+	tw.titleText.SetText(lang.Text("hud_trade_title"))
 	// Trade value text.
 	valueTextParams := mtk.Params{
 		FontSize: mtk.SizeMini,
@@ -110,7 +108,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 			closeButtonBG.Bounds())
 		tw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_trade:fail_to_retrieve_close_button_tex:%v", err)
+		log.Err.Printf("hud trade: fail to retrieve close button tex: %v", err)
 	}
 	tw.closeButton.SetOnClickFunc(tw.onCloseButtonClicked)
 	// Trade button.
@@ -126,10 +124,10 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		bg := pixel.NewSprite(tradeButtonBG, tradeButtonBG.Bounds())
 		tw.tradeButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud_trade:fail_to_retrieve_trade_button_texture:%v", err)
+		log.Err.Printf("hud trade: fail to retrieve trade button texture: %v", err)
 	}
 	tw.tradeButton.SetOnClickFunc(tw.onTradeButtonClicked)
-	tw.tradeButton.SetLabel(lang.TextDir(langPath, "hud_trade_accept"))
+	tw.tradeButton.SetLabel(lang.Text("hud_trade_accept"))
 	// Buy slot list.
 	tw.buySlots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 150)),
 		tradeSlotColor, tradeSlotSize)
@@ -151,7 +149,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		tw.buySlots.SetUpButtonBackground(upBG)
 		tw.sellSlots.SetUpButtonBackground(upBG)
 	} else {
-		log.Err.Printf("hud_trade:fail_to_retrieve_slot_list_up_button_texture:%v",
+		log.Err.Printf("hud trade: fail to retrieve slot list up button texture: %v",
 			err)
 	}
 	downButtonBG, err := data.PictureUI("scrolldown.png")
@@ -263,7 +261,7 @@ func (tw *TradeWindow) tradeValue() (v int) {
 	for _, it := range tw.buyItems {
 		ti, ok := it.(*item.TradeItem)
 		if !ok {
-			log.Err.Printf("trade:item_not_tradable:%s#%s",
+			log.Err.Printf("hud trade: item a trade item: %s#%s",
 				it.ID(), it.Serial())
 			continue
 		}
@@ -278,9 +276,8 @@ func (tw *TradeWindow) tradeValue() (v int) {
 // updateTradeValue updates trade value.
 func (tw *TradeWindow) updateTradeValue() {
 	// Trade value label.
-	langPath := flameconf.LangPath()
 	value := tw.tradeValue()
-	label := lang.TextDir(langPath, "hud_trade_value")
+	label := lang.Text("hud_trade_value")
 	tw.valueText.SetText(fmt.Sprintf("%s:%d", label, value))
 }
 
@@ -291,11 +288,11 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 		// Retrieve item graphic.
 		igd := res.Item(it.ID())
 		if igd == nil { // if icon was found
-			log.Err.Printf("hud_trade:item_graphic_not_found:%s", it.ID())
+			log.Err.Printf("hud trade: item graphic not found: %s", it.ID())
 			// Get error icon.
 			errData, err := data.ErrorItemGraphic()
 			if err != nil {
-				log.Err.Printf("hud_trade:fail_to_retrieve_error_graphic:%v", err)
+				log.Err.Printf("hud trade: fail to retrieve error graphic: %v", err)
 				continue
 			}
 			errData.ItemID = it.ID()
@@ -319,7 +316,7 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 			}
 		}
 		if slot == nil {
-			log.Err.Printf("hud_trade:no empty buy slots")
+			log.Err.Printf("hud trade: no empty buy slots")
 			return
 		}
 		// Insert item to slot.
@@ -334,11 +331,11 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 		// Retrieve item graphic.
 		igd := res.Item(it.ID())
 		if igd == nil { // if icon was found
-			log.Err.Printf("hud_trade:item_graphic_not_found:%s", it.ID())
+			log.Err.Printf("hud trade: item graphic not found: %s", it.ID())
 			// Get error icon.
 			errData, err := data.ErrorItemGraphic()
 			if err != nil {
-				log.Err.Printf("hud_trade:fail_to_retrieve_error_graphic:%v", err)
+				log.Err.Printf("hud trade: fail to retrieve error graphic: %v", err)
 				continue
 			}
 			errData.ItemID = it.ID()
@@ -362,7 +359,7 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 			}
 		}
 		if slot == nil {
-			log.Err.Printf("hud_trade:no empty sell slots")
+			log.Err.Printf("hud trade: no empty sell slots")
 			return
 		}
 		// Insert item to slot.
@@ -409,10 +406,9 @@ func (tw *TradeWindow) onCloseButtonClicked(b *mtk.Button) {
 
 // triggered after trade button clicked.
 func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
-	langPath := flameconf.LangPath()
 	// Check trade value.
 	if tw.tradeValue() < 0 {
-		msg := lang.TextDir(langPath, "hud_trade_low_value_msg")
+		msg := lang.Text("hud_trade_low_value_msg")
 		tw.hud.ActivePlayer().SendPrivate(msg)
 		return
 	}
@@ -437,7 +433,7 @@ func (tw *TradeWindow) onBuySlotRightClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		delete(tw.buyItems, itg.ID()+itg.Serial())
@@ -455,7 +451,7 @@ func (tw *TradeWindow) onBuySlotLeftClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		tw.buyItems[itg.ID()+itg.Serial()] = itg.Item
@@ -473,7 +469,7 @@ func (tw *TradeWindow) onBuySlotSpecialLeftClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		if tw.buyItems[itg.ID()+itg.Serial()] == nil {
@@ -500,7 +496,7 @@ func (tw *TradeWindow) onSellSlotRightClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		delete(tw.sellItems, itg.ID()+itg.Serial())
@@ -518,7 +514,7 @@ func (tw *TradeWindow) onSellSlotLeftClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		tw.sellItems[itg.ID()+itg.Serial()] = itg.Item
@@ -536,7 +532,7 @@ func (tw *TradeWindow) onSellSlotSpecialLeftClicked(s *mtk.Slot) {
 	for _, v := range s.Values() {
 		itg, ok := v.(*object.ItemGraphic)
 		if !ok {
-			log.Err.Printf("hud_trade:invalid_slot_value:%v", v)
+			log.Err.Printf("hud trade: invalid slot value: %v", v)
 			return
 		}
 		if tw.sellItems[itg.ID()+itg.Serial()] == nil {

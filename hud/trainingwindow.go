@@ -1,7 +1,7 @@
 /*
  * trainingwindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/train"
 	"github.com/isangeles/flame/core/module/req"
 
@@ -59,7 +58,6 @@ type TrainingWindow struct {
 // newTrainingWindow creates new training
 // window for HUD.
 func newTrainingWindow(hud *HUD) *TrainingWindow {
-	langPath := flameconf.LangPath()
 	tw := new(TrainingWindow)
 	tw.hud = hud
 	// Background.
@@ -68,14 +66,14 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 	if err == nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_training: fail to retrieve background tex: %v", err)
+		log.Err.Printf("hud training: fail to retrieve background tex: %v", err)
 	}
 	// Title.
 	titleParams := mtk.Params{
 		FontSize: mtk.SizeSmall,
 	}
 	tw.titleText = mtk.NewText(titleParams)
-	tw.titleText.SetText(lang.TextDir(langPath, "hud_training_title"))
+	tw.titleText.SetText(lang.Text("hud_training_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -89,7 +87,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 			closeButtonBG.Bounds())
 		tw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_training: fail to retrieve close button tex: %v", err)
+		log.Err.Printf("hud training: fail to retrieve close button tex: %v", err)
 	}
 	tw.closeButton.SetOnClickFunc(tw.onCloseButtonClicked)
 	// Train button.
@@ -105,10 +103,10 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		bg := pixel.NewSprite(trainButtonBG, trainButtonBG.Bounds())
 		tw.trainButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud_training: fail to retrieve train button tex: %v", err)
+		log.Err.Printf("hud training: fail to retrieve train button tex: %v", err)
 	}
 	tw.trainButton.SetOnClickFunc(tw.onTrainButtonClicked)
-	tw.trainButton.SetLabel(lang.TextDir(flameconf.LangPath(), "hud_training_train"))
+	tw.trainButton.SetLabel(lang.Text("hud_training_train"))
 	// Training info.
 	infoSize := pixel.V(tw.Size().X-mtk.ConvSize(20),
 		tw.Size().Y/2-mtk.ConvSize(10))
@@ -235,7 +233,7 @@ func (tw *TrainingWindow) onTrainingSelected(cs *mtk.CheckSlot) {
 	// Retrieve training from slot.
 	training, ok := cs.Value().(train.Training)
 	if !ok {
-		log.Err.Printf("hud_training:fail to retrieve training from list")
+		log.Err.Printf("hud training: fail to retrieve training from list")
 		return
 	}
 	tw.trainButton.Active(true)
@@ -256,46 +254,45 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 	}
 	training, ok := val.(train.Training)
 	if !ok {
-		log.Err.Printf("hud_training:fail to retrieve training from list")
+		log.Err.Printf("hud training: fail to retrieve training from list")
 		return
 	}
 	pc := tw.hud.ActivePlayer()
 	err := pc.Train(training)
 	if err != nil {
-		log.Err.Printf(lang.TextDir(flameconf.LangPath(), "train_fail"))
+		log.Err.Printf(lang.Text("train_fail"))
 	}
 }
 
 // trainingName returns name for specified
 // training to display.
 func trainingName(t train.Training) string {
-	langPath := flameconf.LangPath()
 	switch t := t.(type) {
 	case *train.AttrsTraining:
 		name := ""
 		if t.Strenght() > 0 {
-			strLabel := lang.TextDir(langPath, "attr_str")
+			strLabel := lang.Text("attr_str")
 			name = fmt.Sprintf("%s(%d)", strLabel, t.Strenght())
 		}
 		if t.Constitution() > 0 {
-			conLabel := lang.TextDir(langPath, "attr_con")
+			conLabel := lang.Text("attr_con")
 			name = fmt.Sprintf("%s(%d)", conLabel, t.Constitution())
 		}
 		if t.Dexterity() > 0 {
-			dexLabel := lang.TextDir(langPath, "attr_dex")
+			dexLabel := lang.Text("attr_dex")
 			name = fmt.Sprintf("%s(%d)", dexLabel, t.Dexterity())
 		}
 		if t.Wisdom() > 0 {
-			wisLabel := lang.TextDir(langPath, "attr_wis")
+			wisLabel := lang.Text("attr_wis")
 			name = fmt.Sprintf("%s(%d)", wisLabel, t.Wisdom())
 		}
 		if t.Intelligence() > 0 {
-			intLabel := lang.TextDir(langPath, "attr_int")
+			intLabel := lang.Text("attr_int")
 			name = fmt.Sprintf("%s(%d)", intLabel, t.Intelligence())
 		}
 		return name
 	default:
-		name := lang.TextDir(langPath, "unknown")
+		name := lang.Text("unknown")
 		return name
 	}
 }
@@ -303,18 +300,17 @@ func trainingName(t train.Training) string {
 // reqInfo returns information about specified
 // requirement.
 func reqInfo(r req.Requirement) string {
-	langPath := flameconf.LangPath()
 	info := ""
 	switch r := r.(type) {
 	case *req.ItemReq:
-		reqLabel := lang.TextDir(langPath, "req_item")
+		reqLabel := lang.Text("req_item")
 		info = fmt.Sprintf("%s: %s x%d", reqLabel, r.ItemID(),
 			r.ItemAmount())
 	case *req.CurrencyReq:
-		reqLabel := lang.TextDir(langPath, "req_currency")
+		reqLabel := lang.Text("req_currency")
 		info = fmt.Sprintf("%s: %d", reqLabel, r.Amount())
 	default:
-		return lang.TextDir(langPath, "unknown")
+		return lang.Text("unknown")
 	}
 	return info
 }

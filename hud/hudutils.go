@@ -1,7 +1,7 @@
 /*
  * hudutils.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ package hud
 import (
 	"fmt"
 
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
@@ -46,8 +46,7 @@ func (hud *HUD) insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 // informations about specified item.
 func (hud *HUD) itemInfo(it item.Item) string {
 	// Retrieve translated item name and info.
-	langPath := hud.game.Module().Conf().ItemsLangPath()
-	nameInfo := lang.AllText(langPath, it.ID())
+	nameInfo := lang.Texts(it.ID())
 	// Compose info for item type.
 	info := ""
 	switch i := it.(type) {

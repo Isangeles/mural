@@ -1,7 +1,7 @@
 /*
  * characterwindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -54,7 +53,6 @@ type CharacterWindow struct {
 // newCharacterWindow creates new character
 // window for HUD.
 func newCharacterWindow(hud *HUD) *CharacterWindow {
-	langPath := flameconf.LangPath()
 	cw := new(CharacterWindow)
 	cw.hud = hud
 	// Background.
@@ -70,7 +68,7 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 		FontSize: mtk.SizeSmall,
 	}
 	cw.titleText = mtk.NewText(titleParams)
-	cw.titleText.SetText(lang.TextDir(langPath, "hud_charwin_title"))
+	cw.titleText.SetText(lang.Text("hud_charwin_title"))
 	// Close button.
 	closeButtonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -157,7 +155,6 @@ func (cw *CharacterWindow) Size() pixel.Vec {
 // updateInfo updates info textbox with
 // information about active player.
 func (cw *CharacterWindow) updateInfo() {
-	langPath := flameconf.LangPath()
 	infoForm := `
 Name:       %s
 Level:      %d
@@ -166,8 +163,8 @@ Race:       %s
 Alignment   %s
 Attributes: %s`
 	pc := cw.hud.ActivePlayer()
-  info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.TextDir(langPath, pc.Gender().ID()),
-		lang.TextDir(langPath, pc.Race().ID()), lang.TextDir(langPath, pc.Alignment().ID()),
+	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.Text(pc.Gender().ID()),
+		lang.Text(pc.Race().ID()), lang.Text(pc.Alignment().ID()),
 		pc.Attributes())
 	cw.charInfo.SetText(info)
 }

@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,9 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -229,7 +228,6 @@ func (mm *MainMenu) ShowMessageWindow(m *mtk.MessageWindow) {
 // ShowMessage creates new message window with specified message
 // and adds it to messages queue.
 func (mm *MainMenu) ShowMessage(msg string) {
-	langPath := flameconf.LangPath()
 	params := mtk.Params{
 		Size:      mtk.SizeBig,
 		FontSize:  mtk.SizeMedium,
@@ -238,7 +236,7 @@ func (mm *MainMenu) ShowMessage(msg string) {
 		Info:      msg,
 	}
 	mw := mtk.NewMessageWindow(params)
-	mw.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
+	mw.SetAcceptLabel(lang.Text("accept_b_label"))
 	mw.Show(true)
 	mm.msgs.Append(mw)
 }

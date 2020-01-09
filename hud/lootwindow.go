@@ -1,7 +1,7 @@
 /*
  * lootwindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
@@ -79,7 +79,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 		FontSize: mtk.SizeSmall,
 	}
 	lw.titleText = mtk.NewText(titleParams)
-	lw.titleText.SetText(lang.Text("gui", "hud_loot_title"))
+	lw.titleText.SetText(lang.Text("hud_loot_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,

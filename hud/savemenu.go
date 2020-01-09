@@ -1,7 +1,7 @@
 /*
  * savemenu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -71,7 +71,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		FontSize: mtk.SizeSmall,
 	}
 	sm.titleText = mtk.NewText(titleParams)
-	sm.titleText.SetText(lang.Text("gui", "hud_save_menu_title"))
+	sm.titleText.SetText(lang.Text("hud_save_menu_title"))
 	// Saves list.
 	bgSize := sm.Size()
 	savesListSize := pixel.V(bgSize.X-mtk.ConvSize(50),
@@ -107,7 +107,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	sm.saveButton = mtk.NewButton(saveButtonParams)
-	sm.saveButton.SetLabel(lang.Text("gui", "save_b_label"))
+	sm.saveButton.SetLabel(lang.Text("save_b_label"))
 	saveButtonBG, err := data.PictureUI("button_green.png")
 	if err == nil {
 		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())

@@ -1,7 +1,7 @@
 /*
  * newcharactermenu.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,8 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameconf "github.com/isangeles/flame/config"
 	flameres "github.com/isangeles/flame/core/data/res"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/character"
 	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/skill"
@@ -90,13 +89,13 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		FontSize: mtk.SizeBig,
 	}
 	ncm.title = mtk.NewText(titleParams)
-	ncm.title.SetText(lang.Text("gui", "newchar_menu_title"))
+	ncm.title.SetText(lang.Text("newchar_menu_title"))
 	// Name Edit.
 	labelParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
 	}
 	ncm.nameLabel = mtk.NewText(labelParams)
-	nameLabelText := lang.TextDir(flameconf.LangPath(), "newchar_name_edit_label")
+	nameLabelText := lang.Text("newchar_name_edit_label")
 	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
 	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
 	// Points box.
@@ -112,7 +111,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		MainColor: mainColor,
 	}
 	ncm.faceSwitch = mtk.NewSwitch(faceSwitchParams)
-	ncm.faceSwitch.SetLabel(lang.Text("gui", "newchar_face_switch_label"))
+	ncm.faceSwitch.SetLabel(lang.Text("newchar_face_switch_label"))
 	faces, err := data.PlayablePortraits()
 	if err != nil {
 		log.Err.Printf("new_char_menu:fail_to_retrieve_player_portraits:%v", err)
@@ -126,63 +125,58 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		MainColor: mainColor,
 	}
 	ncm.strSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.strSwitch.SetLabel(lang.Text("gui", "newchar_str_switch_label"))
+	ncm.strSwitch.SetLabel(lang.Text("newchar_str_switch_label"))
 	ncm.strSwitch.SetIntValues(0, 90)
 	ncm.strSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.conSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.conSwitch.SetLabel(lang.Text("gui", "newchar_con_switch_label"))
+	ncm.conSwitch.SetLabel(lang.Text("newchar_con_switch_label"))
 	ncm.conSwitch.SetIntValues(0, 90)
 	ncm.conSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.dexSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.dexSwitch.SetLabel(lang.Text("gui", "newchar_dex_switch_label"))
+	ncm.dexSwitch.SetLabel(lang.Text("newchar_dex_switch_label"))
 	ncm.dexSwitch.SetIntValues(0, 90)
 	ncm.dexSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.intSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.intSwitch.SetLabel(lang.Text("gui", "newchar_int_switch_label"))
+	ncm.intSwitch.SetLabel(lang.Text("newchar_int_switch_label"))
 	ncm.intSwitch.SetIntValues(0, 90)
 	ncm.intSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	ncm.wisSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.wisSwitch.SetLabel(lang.Text("gui", "newchar_wis_switch_label"))
+	ncm.wisSwitch.SetLabel(lang.Text("newchar_wis_switch_label"))
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
-	maleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_male"),
+	maleSwitchVal := mtk.SwitchValue{lang.Text("gender_male"),
 		character.Male}
-	femaleSwitchVal := mtk.SwitchValue{lang.Text("ui", "gender_female"),
+	femaleSwitchVal := mtk.SwitchValue{lang.Text("gender_female"),
 		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.sexSwitch.SetLabel(lang.Text("gui", "newchar_sex_switch_label"))
+	ncm.sexSwitch.SetLabel(lang.Text("newchar_sex_switch_label"))
 	ncm.sexSwitch.SetValues(gens)
 	// Race switch.
-	raceNames := lang.Texts("ui", "race_human", "race_elf", "race_dwarf",
-		"race_gnome")
 	races := []mtk.SwitchValue{
-		mtk.SwitchValue{raceNames["race_human"], character.Human},
-		mtk.SwitchValue{raceNames["race_elf"], character.Elf},
-		mtk.SwitchValue{raceNames["race_dwarf"], character.Dwarf},
-		mtk.SwitchValue{raceNames["race_gnome"], character.Gnome},
+		mtk.SwitchValue{lang.Text("race_human"), character.Human},
+		mtk.SwitchValue{lang.Text("race_elf"), character.Elf},
+		mtk.SwitchValue{lang.Text("race_dwarf"), character.Dwarf},
+		mtk.SwitchValue{lang.Text("race_gnome"), character.Gnome},
 	}
 	ncm.raceSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.raceSwitch.SetLabel(lang.Text("gui", "newchar_race_switch_label"))
+	ncm.raceSwitch.SetLabel(lang.Text("newchar_race_switch_label"))
 	ncm.raceSwitch.SetValues(races)
 	// Alignment switch.
-	aliNames := lang.Texts("ui", "ali_law_good", "ali_neu_good", "ali_cha_good",
-		"ali_law_neutral", "ali_tru_neutral", "ali_cha_neutral",
-		"ali_law_evil", "ali_neu_evil", "ali_cha_evil")
 	alis := []mtk.SwitchValue{
-		mtk.SwitchValue{aliNames["ali_law_good"], character.Lawful_good},
-		mtk.SwitchValue{aliNames["ali_neu_good"], character.Neutral_good},
-		mtk.SwitchValue{aliNames["ali_cha_good"], character.Chaotic_good},
-		mtk.SwitchValue{aliNames["ali_law_neutral"], character.Lawful_neutral},
-		mtk.SwitchValue{aliNames["ali_tru_neutral"], character.True_neutral},
-		mtk.SwitchValue{aliNames["ali_cha_neutral"], character.Chaotic_neutral},
-		mtk.SwitchValue{aliNames["ali_law_evil"], character.Lawful_evil},
-		mtk.SwitchValue{aliNames["ali_neu_evil"], character.Neutral_evil},
-		mtk.SwitchValue{aliNames["ali_cha_evil"], character.Chaotic_evil},
+		mtk.SwitchValue{lang.Text("ali_law_good"), character.Lawful_good},
+		mtk.SwitchValue{lang.Text("ali_neu_good"), character.Neutral_good},
+		mtk.SwitchValue{lang.Text("ali_cha_good"), character.Chaotic_good},
+		mtk.SwitchValue{lang.Text("ali_law_neutral"), character.Lawful_neutral},
+		mtk.SwitchValue{lang.Text("ali_tru_neutral"), character.True_neutral},
+		mtk.SwitchValue{lang.Text("ali_cha_neutral"), character.Chaotic_neutral},
+		mtk.SwitchValue{lang.Text("ali_law_evil"), character.Lawful_evil},
+		mtk.SwitchValue{lang.Text("ali_neu_evil"), character.Neutral_evil},
+		mtk.SwitchValue{lang.Text("ali_cha_evil"), character.Chaotic_evil},
 	}
 	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
-	ncm.aliSwitch.SetLabel(lang.Text("gui", "newchar_ali_switch_label"))
+	ncm.aliSwitch.SetLabel(lang.Text("newchar_ali_switch_label"))
 	ncm.aliSwitch.SetValues(alis)
 	// Buttons.
 	buttonParams := mtk.Params{
@@ -192,14 +186,14 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		MainColor: accentColor,
 	}
 	ncm.doneButton = mtk.NewButton(buttonParams)
-	ncm.doneButton.SetLabel(lang.Text("gui", "done_b_label"))
+	ncm.doneButton.SetLabel(lang.Text("done_b_label"))
 	ncm.doneButton.SetOnClickFunc(ncm.onDoneButtonClicked)
 	ncm.backButton = mtk.NewButton(buttonParams)
-	ncm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
+	ncm.backButton.SetLabel(lang.Text("back_b_label"))
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
 	ncm.rollButton = mtk.NewButton(buttonParams)
-	ncm.rollButton.SetLabel(lang.Text("gui", "newchar_roll_b_label"))
-	ncm.rollButton.SetInfo(lang.Text("gui", "newchar_roll_b_info"))
+	ncm.rollButton.SetLabel(lang.Text("newchar_roll_b_label"))
+	ncm.rollButton.SetInfo(lang.Text("newchar_roll_b_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	return ncm
 }
@@ -439,7 +433,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	av := object.NewAvatar(char, &avData)
 	ncm.mainmenu.AddPlayableChar(av)
-	msg := lang.Text("gui", "newchar_create_msg")
+	msg := lang.Text("newchar_create_msg")
 	ncm.mainmenu.ShowMessage(msg)
 	ncm.mainmenu.OpenMenu()
 }

@@ -1,7 +1,7 @@
 /*
  * dialogwindow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,14 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/dialog"
 	"github.com/isangeles/flame/core/module/effect"
 	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/train"
 
 	"github.com/isangeles/mtk"
-
+ 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
 )
@@ -73,7 +72,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		FontSize: mtk.SizeSmall,
 	}
 	dw.titleText = mtk.NewText(titleParams)
-	dw.titleText.SetText(lang.TextDir(flameconf.LangPath(), "hud_dialog_title"))
+	dw.titleText.SetText(lang.Text("hud_dialog_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -213,9 +212,8 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Print phase text to chat box.
-	chapter := dw.hud.game.Module().Chapter()
-	dialogLine := lang.AllText(chapter.Conf().DialogsLangPath(), phase.ID())
-	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine[0])
+	dialogLine := lang.Text(phase.ID())
+	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine)
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Apply phase modifiers.
@@ -236,7 +234,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range answers {
-		answerText := lang.AllText(chapter.Conf().DialogsLangPath(), a.ID())[0]
+		answerText := lang.Text(a.ID())
 		answerText = fmt.Sprintf("%d)%s", i, answerText)
 		dw.answersList.AddItem(answerText, a)
 	}
@@ -259,8 +257,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Print answer to chat box.
-	chapter := dw.hud.game.Module().Chapter()
-	answerText := lang.AllText(chapter.Conf().DialogsLangPath(), answer.ID())[0]
+	answerText := lang.Text(answer.ID())
 	dw.chatBox.AddText(fmt.Sprintf("[%s]:%s\n", dw.hud.ActivePlayer().Name(), answerText))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.

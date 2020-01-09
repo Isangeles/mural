@@ -1,7 +1,7 @@
 /*
  * skillmenu.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/skill"
 
 	"github.com/isangeles/mtk"
@@ -74,7 +74,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		FontSize: mtk.SizeSmall,
 	}
 	sm.titleText = mtk.NewText(titleParams)
-	sm.titleText.SetText(lang.Text("gui", "hud_skills_title"))
+	sm.titleText.SetText(lang.Text("hud_skills_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -84,7 +84,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG, err := data.PictureUI("closebutton1.png")
 	if err != nil {
-		log.Err.Printf("hud_skills:fail_to_retrieve_background_tex:%v", err)
+		log.Err.Printf("hud skills: fail to retrieve background tex: %v", err)
 	} else {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeButtonSpr)
@@ -95,7 +95,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		skillsSlotColor, skillsSlotSize)
 	upButtonBG, err := data.PictureUI("scrollup.png")
 	if err != nil {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_buttons_texture:%v",
+		log.Err.Printf("hud skills: fail to retrieve slot list up button texture: %v",
 			err)
 	} else {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
@@ -103,7 +103,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	}
 	downButtonBG, err := data.PictureUI("scrolldown.png")
 	if err != nil {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_buttons_texture:%v",
+		log.Err.Printf("hud skills: fail to retrieve slot list down buttons texture: %v",
 			err)
 	} else {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())

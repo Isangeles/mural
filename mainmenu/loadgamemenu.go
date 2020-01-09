@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import (
 
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -58,7 +58,7 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 		FontSize: mtk.SizeBig,
 	}
 	lgm.title = mtk.NewText(titleParams)
-	lgm.title.SetText(lang.Text("gui", "loadgame_menu_title"))
+	lgm.title.SetText(lang.Text("loadgame_menu_title"))
 	// Saves list.
 	listSize := mtk.SizeBig.ListSize()
 	listParams := mtk.Params{
@@ -70,16 +70,16 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 	lgm.savesList = mtk.NewList(listParams)
 	// Buttons.
 	buttonParams := mtk.Params{
-		Size: mtk.SizeMedium,
+		Size:      mtk.SizeMedium,
 		FontSize:  mtk.SizeMedium,
-		Shape: mtk.ShapeRectangle,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
 	lgm.backButton = mtk.NewButton(buttonParams)
-	lgm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
+	lgm.backButton.SetLabel(lang.Text("back_b_label"))
 	lgm.backButton.SetOnClickFunc(lgm.onBackButtonClicked)
 	lgm.loadButton = mtk.NewButton(buttonParams)
-	lgm.loadButton.SetLabel(lang.Text("gui", "load_b_label"))
+	lgm.loadButton.SetLabel(lang.Text("load_b_label"))
 	lgm.loadButton.SetOnClickFunc(lgm.onLoadButtonClicked)
 	return lgm
 }
@@ -88,7 +88,7 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 func (lgm *LoadGameMenu) Draw(win *mtk.Window) {
 	// Title.
 	titlePos := pixel.V(win.Bounds().Center().X,
-		win.Bounds().H() - lgm.title.Size().Y)
+		win.Bounds().H()-lgm.title.Size().Y)
 	lgm.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Saves list.
 	savesListPos := win.Bounds().Center()

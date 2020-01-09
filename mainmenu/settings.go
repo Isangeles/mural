@@ -1,7 +1,7 @@
 /*
  * settings.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -55,7 +55,6 @@ type Settings struct {
 
 // newSettings returns new settings screen instance.
 func newSettings(mainmenu *MainMenu) *Settings {
-	langPath := flameconf.LangPath()
 	s := new(Settings)
 	s.mainmenu = mainmenu
 	// Title.
@@ -64,7 +63,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		FontSize: mtk.SizeBig,
 	}
 	s.title = mtk.NewText(titleParams)
-	s.title.SetText(lang.Text("gui", "settings_menu_title"))
+	s.title.SetText(lang.Text("settings_menu_title"))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -73,7 +72,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		MainColor: accentColor,
 	}
 	s.backButton = mtk.NewButton(buttonParams)
-	s.backButton.SetLabel(lang.TextDir(langPath, "back_b_label"))
+	s.backButton.SetLabel(lang.Text("back_b_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
 	switchParams := mtk.Params{
@@ -82,15 +81,15 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	}
 	// Fullscreen.
 	s.fullscrSwitch = mtk.NewSwitch(switchParams)
-	s.fullscrSwitch.SetLabel(lang.TextDir(langPath, "settings_fullscr_switch_label"))
-	fullscrTrue := mtk.SwitchValue{lang.TextDir(langPath, "com_yes"), true}
-	fullscrFalse := mtk.SwitchValue{lang.TextDir(langPath, "com_no"), false}
+	s.fullscrSwitch.SetLabel(lang.Text("settings_fullscr_switch_label"))
+	fullscrTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
+	fullscrFalse := mtk.SwitchValue{lang.Text("com_no"), false}
 	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
 	s.fullscrSwitch.SetValues(fullscrValues)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Resolution.
 	s.resSwitch = mtk.NewSwitch(switchParams)
-	s.resSwitch.SetLabel(lang.TextDir(langPath, "resolution_s_label"))
+	s.resSwitch.SetLabel(lang.Text("resolution_s_label"))
 	var resValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		v := mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res}
@@ -100,24 +99,24 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.resSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Language.
 	s.langSwitch = mtk.NewSwitch(switchParams)
-	s.langSwitch.SetLabel(lang.TextDir(langPath, "lang_s_label"))
+	s.langSwitch.SetLabel(lang.Text("lang_s_label"))
 	s.langSwitch.SetTextValues(config.SupportedLangs())
 	s.langSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Music volume.
 	s.musicVolumeSwitch = mtk.NewSwitch(switchParams)
-	s.musicVolumeSwitch.SetLabel(lang.TextDir(langPath, "settings_vol_switch_label"))
+	s.musicVolumeSwitch.SetLabel(lang.Text("settings_vol_switch_label"))
 	volValues := []mtk.SwitchValue{
 		mtk.SwitchValue{"-1", -1.0},
-		mtk.SwitchValue{lang.TextDir(langPath, "settings_vol_sys"), 0.0},
+		mtk.SwitchValue{lang.Text("settings_vol_sys"), 0.0},
 		mtk.SwitchValue{"+1", 1.0},
 	}
 	s.musicVolumeSwitch.SetValues(volValues)
 	s.musicVolumeSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Music mute.
 	s.musicMuteSwitch = mtk.NewSwitch(switchParams)
-	s.musicMuteSwitch.SetLabel(lang.TextDir(langPath, "settings_mute_switch_label"))
-	muteTrue := mtk.SwitchValue{lang.TextDir(langPath, "com_yes"), true}
-	muteFalse := mtk.SwitchValue{lang.TextDir(langPath, "com_no"), false}
+	s.musicMuteSwitch.SetLabel(lang.Text("settings_mute_switch_label"))
+	muteTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
+	muteFalse := mtk.SwitchValue{lang.Text("com_no"), false}
 	muteValues := []mtk.SwitchValue{muteTrue, muteFalse}
 	s.musicMuteSwitch.SetValues(muteValues)
 	s.musicMuteSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
@@ -228,7 +227,7 @@ func (s *Settings) updateValues() {
 // about required game restart if settings was changed.
 func (s *Settings) close() {
 	if s.Changed() {
-		msg := lang.Text("gui", "settings_reset_msg")
+		msg := lang.Text("settings_reset_msg")
 		s.mainmenu.ShowMessage(msg)
 		s.Apply()
 	}
@@ -239,17 +238,16 @@ func (s *Settings) close() {
 // main menu messages list.
 func (s *Settings) closeWithDialog() {
 	if s.Changed() {
-		langPath := flameconf.LangPath()
 		dlgParams := mtk.Params{
 			Size:      mtk.SizeBig,
 			FontSize:  mtk.SizeMedium,
 			MainColor: mainColor,
 			SecColor:  accentColor,
-			Info:      lang.Text("gui", "settings_save_msg"),
+			Info:      lang.Text("settings_save_msg"),
 		}
 		dlg := mtk.NewDialogWindow(dlgParams)
-		dlg.SetAcceptLabel(lang.TextDir(langPath, "accept_b_label"))
-		dlg.SetCancelLabel(lang.TextDir(langPath, "cancel_b_label"))
+		dlg.SetAcceptLabel(lang.Text("accept_b_label"))
+		dlg.SetCancelLabel(lang.Text("cancel_b_label"))
 		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
 		s.mainmenu.ShowMessageWindow(dlg)

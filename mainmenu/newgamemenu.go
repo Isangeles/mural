@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import (
 
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/text/lang"
+	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
@@ -62,14 +62,14 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 		FontSize: mtk.SizeBig,
 	}
 	ngm.title = mtk.NewText(titleParams)
-	ngm.title.SetText(lang.Text("gui", "newgame_menu_title"))
+	ngm.title.SetText(lang.Text("newgame_menu_title"))
 	// Swtches & text.
 	charSwitchParams := mtk.Params{
 		Size:      mtk.SizeBig,
 		MainColor: mainColor,
 	}
 	ngm.charSwitch = mtk.NewSwitch(charSwitchParams)
-	ngm.charSwitch.SetLabel(lang.Text("gui", "newgame_char_switch_label"))
+	ngm.charSwitch.SetLabel(lang.Text("newgame_char_switch_label"))
 	ngm.charSwitch.SetOnChangeFunc(ngm.onCharSwitchChanged)
 	charInfoParams := mtk.Params{
 		FontSize:    mtk.SizeBig,
@@ -85,13 +85,13 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 		MainColor: accentColor,
 	}
 	ngm.startButton = mtk.NewButton(buttonParams)
-	ngm.startButton.SetLabel(lang.Text("gui", "newgame_start_button_label"))
+	ngm.startButton.SetLabel(lang.Text("newgame_start_button_label"))
 	ngm.startButton.SetOnClickFunc(ngm.onStartButtonClicked)
 	ngm.exportButton = mtk.NewButton(buttonParams)
-	ngm.exportButton.SetLabel(lang.Text("gui", "newgame_export_button_label"))
+	ngm.exportButton.SetLabel(lang.Text("newgame_export_button_label"))
 	ngm.exportButton.SetOnClickFunc(ngm.onExportButtonClicked)
 	ngm.backButton = mtk.NewButton(buttonParams)
-	ngm.backButton.SetLabel(lang.Text("gui", "back_b_label"))
+	ngm.backButton.SetLabel(lang.Text("back_b_label"))
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
 	return ngm
 }
@@ -168,8 +168,8 @@ Race:       %s
 Alignment   %s
 Attributes: %s`
 	info := fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
-		lang.Text("ui", c.Gender().ID()), lang.Text("ui", c.Race().ID()),
-		lang.Text("ui", c.Alignment().ID()), c.Attributes().String())
+		lang.Text(c.Gender().ID()), lang.Text(c.Race().ID()),
+		lang.Text(c.Alignment().ID()), c.Attributes().String())
 	ngm.charInfo.SetText(info)
 	return nil
 }
@@ -204,7 +204,7 @@ func (ngm *NewGameMenu) exportChar() error {
 // startGame starts new game.
 func (ngm *NewGameMenu) startGame() {
 	// Show loading screen.
-	ngm.mainmenu.OpenLoadingScreen(lang.Text("gui", "newgame_start_info"))
+	ngm.mainmenu.OpenLoadingScreen(lang.Text("newgame_start_info"))
 	defer ngm.mainmenu.CloseLoadingScreen()
 	// Retrive character from character switch.
 	switchVal := ngm.charSwitch.Value()
@@ -250,7 +250,7 @@ func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 		log.Err.Printf("main menu: new game: fail to export character: %v", err)
 		return
 	}
-	msg := lang.Text("gui", "newgame_export_msg")
+	msg := lang.Text("newgame_export_msg")
 	ngm.mainmenu.ShowMessage(msg)
 }
 

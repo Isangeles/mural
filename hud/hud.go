@@ -226,10 +226,10 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if win.JustPressed(chatKey) {
 		// Toggle chat activity.
 		if !hud.chat.Activated() {
-			hud.chat.Active(true)
+			hud.chat.Activate(true)
 			hud.camera.Lock(true)
 		} else {
-			hud.chat.Active(false)
+			hud.chat.Activate(false)
 			hud.camera.Lock(false)
 		}
 	}

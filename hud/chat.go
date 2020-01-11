@@ -24,12 +24,14 @@
 package hud
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/core/enginelog"
+	"github.com/isangeles/flame/core/module/objects"
 
 	"github.com/isangeles/mtk"
 
@@ -101,7 +103,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
-	// Content update.
+	// Print log messages.
 	for _, msg := range enginelog.Messages() {
 		if c.msgs[msg.ID()] != nil {
 			continue
@@ -109,9 +111,40 @@ func (c *Chat) Update(win *mtk.Window) {
 		c.msgs[msg.ID()] = &msg
 		c.textbox.AddText(msg.String())
 	}
+	// Print messages from players and nearby objects.
+	game := c.hud.Game()
+	for _, pc := range game.Players() {
+		select {
+		case msg := <-pc.PrivateLog():
+			c.textbox.AddText(fmt.Sprintf("%s\n", msg))
+		default:
+		}
+		// Near objects.
+		area := game.Module().Chapter().CharacterArea(pc)
+		if area == nil {
+			continue
+		}
+		for _, tar := range area.NearTargets(pc, pc.SightRange()) {
+			tar, ok := tar.(objects.Logger)
+			if !ok {
+				continue
+			}
+			select {
+			case msg := <-tar.CombatLog():
+				c.textbox.AddText(fmt.Sprintf("%s\n", msg))
+			case msg := <-tar.ChatLog():
+				c.textbox.AddText(fmt.Sprintf("%s: %s\n", tar.Name(), msg))
+			case msg := <-tar.PrivateLog():
+				if tar == pc {
+					c.textbox.AddText(fmt.Sprintf("%s\n", msg))
+				}
+			default:
+			}
+		}
+	}
 	// Elements update.
 	c.textbox.Update(win)
-	c.Active(c.textedit.Focused())
+	c.Activate(c.textedit.Focused())
 	if c.Activated() {
 		c.textedit.Update(win)
 	}
@@ -138,7 +171,7 @@ func (c *Chat) Activated() bool {
 }
 
 // Active toggles chat intput activity.
-func (c *Chat) Active(active bool) {
+func (c *Chat) Activate(active bool) {
 	c.activated = active
 	c.textedit.Focus(c.Activated())
 }

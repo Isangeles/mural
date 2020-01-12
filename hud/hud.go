@@ -224,7 +224,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.MouseButtonRight) {
 		hud.onMouseRightPressed(win.MousePosition())
 	}
-	// PC target.
+	// Put PC target into target frame.
 	if hud.ActivePlayer().Targets()[0] != nil {
 		for _, av := range hud.camera.Avatars() {
 			if flameobject.Equals(hud.ActivePlayer().Targets()[0], av.Character) {
@@ -271,7 +271,7 @@ func (hud *HUD) ActivePlayer() *object.Avatar {
 	return hud.activePC
 }
 
-// AddAvatar adds specified character to HUD
+// AddPlayer adds specified character to
 // player characters list.
 func (hud *HUD) AddPlayer(char *character.Character) error {
 	avData := res.Avatar(char.ID())

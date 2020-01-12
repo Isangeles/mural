@@ -40,7 +40,7 @@ import (
 // health/mana bars and effects icons.
 type ObjectFrame struct {
 	hud      *HUD
-	object   Target
+	object   FrameTarget
 	portrait *pixel.Sprite
 	bgSpr    *pixel.Sprite
 	bgDraw   *imdraw.IMDraw
@@ -50,7 +50,7 @@ type ObjectFrame struct {
 }
 
 // Interface for HUD frame object.
-type Target interface {
+type FrameTarget interface {
 	Name() string
 	Health() int
 	MaxHealth() int
@@ -160,7 +160,7 @@ func (of *ObjectFrame) DrawArea() pixel.Rect {
 
 // SetObject sets specified object as object to
 // display in frame.
-func (of *ObjectFrame) SetObject(ob Target) {
+func (of *ObjectFrame) SetObject(ob FrameTarget) {
 	of.object = ob
 	if ob.Portrait() != nil {
 		of.portrait = pixel.NewSprite(ob.Portrait(),

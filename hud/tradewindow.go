@@ -198,10 +198,12 @@ func (tw *TradeWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates window.
 func (tw *TradeWindow) Update(win *mtk.Window) {
 	// Elements.
-	tw.closeButton.Update(win)
-	tw.tradeButton.Update(win)
-	tw.buySlots.Update(win)
-	tw.sellSlots.Update(win)
+	if tw.Opened() {
+		tw.closeButton.Update(win)
+		tw.tradeButton.Update(win)
+		tw.buySlots.Update(win)
+		tw.sellSlots.Update(win)
+	}
 }
 
 // Show toggles window visibility.

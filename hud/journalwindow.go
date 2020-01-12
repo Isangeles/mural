@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/quest"
@@ -36,6 +37,10 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
+)
+
+var (
+	journalKey = pixelgl.KeyL
 )
 
 // Struct for HUD journal window.
@@ -151,10 +156,16 @@ func (jw *JournalWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (jw *JournalWindow) Update(win *mtk.Window) {
+	// Key events.
+	if !jw.hud.Chat().Activated() && win.JustPressed(journalKey) {
+		jw.Show(!jw.Opened())
+	}
 	// Elements.
-	jw.closeButton.Update(win)
-	jw.questsList.Update(win)
-	jw.questInfo.Update(win)
+	if jw.Opened() {
+		jw.closeButton.Update(win)
+		jw.questsList.Update(win)
+		jw.questInfo.Update(win)
+	}
 }
 
 // Show toggles window visibility.

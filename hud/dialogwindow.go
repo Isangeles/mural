@@ -149,9 +149,11 @@ func (dw *DialogWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Updates updates window.
 func (dw *DialogWindow) Update(win *mtk.Window) {
 	// Elements.
-	dw.closeButton.Update(win)
-	dw.chatBox.Update(win)
-	dw.answersList.Update(win)
+	if dw.Opened() {
+		dw.closeButton.Update(win)
+		dw.chatBox.Update(win)
+		dw.answersList.Update(win)
+	}
 	// Dialog.
 	if dw.dialog != nil {
 		if dw.dialog.Finished() {

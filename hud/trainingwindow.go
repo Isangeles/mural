@@ -175,9 +175,11 @@ func (tw *TrainingWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates window.
 func (tw *TrainingWindow) Update(win *mtk.Window) {
 	// Elements.
-	tw.closeButton.Update(win)
-	tw.trainButton.Update(win)
-	tw.trainingsList.Update(win)
+	if tw.Opened() {
+		tw.closeButton.Update(win)
+		tw.trainButton.Update(win)
+		tw.trainingsList.Update(win)
+	}
 }
 
 // Show toggles window visibility.

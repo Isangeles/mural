@@ -29,6 +29,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/enginelog"
 	"github.com/isangeles/flame/core/module/objects"
@@ -40,6 +41,7 @@ import (
 )
 
 var (
+	chatKey           = pixelgl.KeyGraveAccent
 	chatCommandPrefix = "$"
 	chatScriptPrefix  = "%"
 )
@@ -103,6 +105,11 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates chat window.
 func (c *Chat) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(chatKey) {
+		// Toggle chat activity.
+		c.Activate(!c.Activated())
+	}
 	// Print log messages.
 	for _, msg := range enginelog.Messages() {
 		if c.msgs[msg.ID()] != nil {
@@ -174,6 +181,7 @@ func (c *Chat) Activated() bool {
 func (c *Chat) Activate(active bool) {
 	c.activated = active
 	c.textedit.Focus(c.Activated())
+	c.hud.Camera().Lock(c.Activated())
 }
 
 // SetOnCommandFunc sets specified function as

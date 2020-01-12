@@ -26,6 +26,7 @@ package hud
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/res/lang"
 
@@ -33,6 +34,10 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
+)
+
+var (
+	menuKey = pixelgl.KeyEscape
 )
 
 // Struct for HUD menu.
@@ -137,10 +142,17 @@ func (m *Menu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu.
 func (m *Menu) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(menuKey) {
+		// Show menu.
+		m.Show(!m.Opened())
+	}
 	// Elements.
-	m.closeButton.Update(win)
-	m.saveButton.Update(win)
-	m.exitButton.Update(win)
+	if m.Opened() {
+		m.closeButton.Update(win)
+		m.saveButton.Update(win)
+		m.exitButton.Update(win)
+	}
 }
 
 // DrawArea returns current draw area of

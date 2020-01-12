@@ -147,10 +147,12 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates menu.
 func (sm *SaveMenu) Update(win *mtk.Window) {
 	// Elements.
-	sm.closeButton.Update(win)
-	sm.saveButton.Update(win)
-	sm.saveNameEdit.Update(win)
-	sm.savesList.Update(win)
+	if sm.Opened() {
+		sm.closeButton.Update(win)
+		sm.saveButton.Update(win)
+		sm.saveNameEdit.Update(win)
+		sm.savesList.Update(win)
+	}
 }
 
 // Size returns menu background size.

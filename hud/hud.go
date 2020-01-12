@@ -53,13 +53,6 @@ var (
 	accentColor = colornames.Red
 	// Keys.
 	pauseKey    = pixelgl.KeySpace
-	menuKey     = pixelgl.KeyEscape
-	chatKey     = pixelgl.KeyGraveAccent
-	invKey      = pixelgl.KeyB
-	skillsKey   = pixelgl.KeyK
-	journalKey  = pixelgl.KeyL
-	craftingKey = pixelgl.KeyV
-	charinfoKey = pixelgl.KeyC
 )
 
 // Struct for 'head-up display'.
@@ -212,84 +205,18 @@ func (hud *HUD) Draw(win *mtk.Window) {
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
-	if hud.loading {
-		if hud.loaderr != nil { // on loading error
-			log.Err.Printf("hud loading fail: %v", hud.loaderr)
-			hud.Exit()
-		}
+	if hud.loading && hud.loaderr != nil { // on loading error
+		log.Err.Printf("hud loading fail: %v", hud.loaderr)
+		hud.Exit()
 	}
 	if hud.ActivePlayer() == nil { // no active pc, don't update
 		return
 	}
+	// Handle area change.
 	hud.updateCurrentArea()
-	// Key events.
-	if win.JustPressed(chatKey) {
-		// Toggle chat activity.
-		if !hud.chat.Activated() {
-			hud.chat.Activate(true)
-			hud.camera.Lock(true)
-		} else {
-			hud.chat.Activate(false)
-			hud.camera.Lock(false)
-		}
-	}
-	if !hud.chat.Activated() { // block rest of key events if chat is active
-		if win.JustPressed(pauseKey) {
-			// Pause game.
-			if !hud.game.Paused() {
-				hud.game.Pause(true)
-			} else {
-				hud.game.Pause(false)
-			}
-		}
-		if win.JustPressed(menuKey) {
-			// Show menu.
-			if !hud.menu.Opened() {
-				hud.menu.Show(true)
-			} else {
-				hud.menu.Show(false)
-			}
-		}
-		if win.JustPressed(invKey) {
-			// Show inventory.
-			if !hud.inv.Opened() {
-				hud.inv.Show(true)
-			} else {
-				hud.inv.Show(false)
-			}
-		}
-		if win.JustPressed(skillsKey) {
-			// Show skills.
-			if !hud.skills.Opened() {
-				hud.skills.Show(true)
-			} else {
-				hud.skills.Show(false)
-			}
-		}
-		if win.JustPressed(journalKey) {
-			// Show journal.
-			if !hud.journal.Opened() {
-				hud.journal.Show(true)
-			} else {
-				hud.journal.Show(false)
-			}
-		}
-		if win.JustPressed(craftingKey) {
-			// Show crafting menu.
-			if !hud.crafting.Opened() {
-				hud.crafting.Show(true)
-			} else {
-				hud.crafting.Show(false)
-			}
-		}
-		if win.JustPressed(charinfoKey) {
-			// Show character window.
-			if !hud.charinfo.Opened() {
-				hud.charinfo.Show(true)
-			} else {
-				hud.charinfo.Show(false)
-			}
-		}
+	// Toggle game pause.
+	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
+		hud.Game().Pause(!hud.Game().Paused())
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.onMouseLeftPressed(win.MousePosition())
@@ -319,39 +246,17 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.tarFrame.Update(win)
 	hud.castBar.Update(win)
 	hud.objectInfo.Update(win)
-	if hud.menu.Opened() {
-		hud.menu.Update(win)
-	}
-	if hud.savemenu.Opened() {
-		hud.savemenu.Update(win)
-	}
-	if hud.inv.Opened() {
-		hud.inv.Update(win)
-	}
-	if hud.skills.Opened() {
-		hud.skills.Update(win)
-	}
-	if hud.loot.Opened() {
-		hud.loot.Update(win)
-	}
-	if hud.dialog.Opened() {
-		hud.dialog.Update(win)
-	}
-	if hud.journal.Opened() {
-		hud.journal.Update(win)
-	}
-	if hud.crafting.Opened() {
-		hud.crafting.Update(win)
-	}
-	if hud.charinfo.Opened() {
-		hud.charinfo.Update(win)
-	}
-	if hud.trade.Opened() {
-		hud.trade.Update(win)
-	}
-	if hud.training.Opened() {
-		hud.training.Update(win)
-	}
+	hud.menu.Update(win)
+	hud.savemenu.Update(win)
+	hud.inv.Update(win)
+	hud.skills.Update(win)
+	hud.loot.Update(win)
+	hud.dialog.Update(win)
+	hud.journal.Update(win)
+	hud.crafting.Update(win)
+	hud.charinfo.Update(win)
+	hud.trade.Update(win)
+	hud.training.Update(win)
 	hud.msgs.Update(win)
 }
 

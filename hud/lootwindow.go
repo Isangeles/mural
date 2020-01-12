@@ -138,8 +138,10 @@ func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 // Update updates window.
 func (lw *LootWindow) Update(win *mtk.Window) {
 	// Elements.
-	lw.slots.Update(win)
-	lw.closeButton.Update(win)
+	if lw.Opened() {
+		lw.slots.Update(win)
+		lw.closeButton.Update(win)
+	}
 }
 
 // Show toggles window visibility.

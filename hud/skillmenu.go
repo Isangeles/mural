@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/skill"
@@ -38,6 +39,13 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
+)
+
+var (
+	skillsKey       = pixelgl.KeyK
+	skillsSlots     = 50
+	skillsSlotSize  = mtk.SizeBig
+	skillsSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // Struct for skills menu.
@@ -52,12 +60,6 @@ type SkillMenu struct {
 	opened      bool
 	focused     bool
 }
-
-var (
-	skillsSlots     = 50
-	skillsSlotSize  = mtk.SizeBig
-	skillsSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-)
 
 // newSkillsMenu creates new skills menu for HUD.
 func newSkillMenu(hud *HUD) *SkillMenu {
@@ -141,9 +143,15 @@ func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (sm *SkillMenu) Update(win *mtk.Window) {
+	// Key events.
+	if !sm.hud.Chat().Activated() && win.JustPressed(skillsKey) {
+		sm.Show(!sm.Opened())
+	}
 	// Elements update.
-	sm.closeButton.Update(win)
-	sm.slots.Update(win)
+	if sm.Opened() {
+		sm.closeButton.Update(win)
+		sm.slots.Update(win)
+	}
 }
 
 // Opened checks whether menu is open.

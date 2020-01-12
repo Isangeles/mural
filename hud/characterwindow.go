@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/res/lang"
 
@@ -35,6 +36,10 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/log"
+)
+
+var (
+	charinfoKey = pixelgl.KeyC
 )
 
 // Struct for HUD character window.
@@ -122,8 +127,15 @@ func (cw *CharacterWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (cw *CharacterWindow) Update(win *mtk.Window) {
-	cw.closeButton.Update(win)
-	cw.charInfo.Update(win)
+	// Key events.
+	if !cw.hud.Chat().Activated() && win.JustPressed(charinfoKey) {
+		cw.Show(!cw.Opened())
+	}
+	// Elements.
+	if cw.Opened() {
+		cw.closeButton.Update(win)
+		cw.charInfo.Update(win)
+	}
 }
 
 // Show toggles window visibility.

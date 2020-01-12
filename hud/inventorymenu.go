@@ -39,6 +39,15 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
+var (
+	invKey         = pixelgl.KeyB
+	invSlots       = 90
+	invSlotSize    = mtk.SizeBig
+	invSlotColor   = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	invSlotEqColor = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
+	invSpecialKey  = pixelgl.KeyLeftShift
+)
+
 // Struct for inventory menu.
 type InventoryMenu struct {
 	hud         *HUD
@@ -51,14 +60,6 @@ type InventoryMenu struct {
 	opened      bool
 	focused     bool
 }
-
-var (
-	invSlots       = 90
-	invSlotSize    = mtk.SizeBig
-	invSlotColor   = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
-	invSlotEqColor = pixel.RGBA{0.3, 0.3, 0.3, 0.5}
-	invSpecialKey  = pixelgl.KeyLeftShift
-)
 
 // newInventoryMenu creates new inventory menu for HUD.
 func newInventoryMenu(hud *HUD) *InventoryMenu {
@@ -149,9 +150,14 @@ func (im *InventoryMenu) Update(win *mtk.Window) {
 			im.confirmRemove(dragSlot)
 		}
 	}
+	if !im.hud.Chat().Activated() && win.JustPressed(invKey) {
+		im.Show(!im.Opened())
+	}
 	// Elements update.
-	im.slots.Update(win)
-	im.closeButton.Update(win)
+	if im.Opened() {
+		im.slots.Update(win)
+		im.closeButton.Update(win)
+	}
 }
 
 // Opened checks whether menu is open.

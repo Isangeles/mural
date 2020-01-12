@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/craft"
@@ -36,6 +37,10 @@ import (
 
 	"github.com/isangeles/mural/core/data" 
 	"github.com/isangeles/mural/log"
+)
+
+var (
+	craftingKey = pixelgl.KeyV
 )
 
 // Struct for HUD crafting menu.
@@ -174,11 +179,17 @@ func (cm *CraftingMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu.
 func (cm *CraftingMenu) Update(win *mtk.Window) {
+	// Key events.
+	if !cm.hud.Chat().Activated() && win.JustPressed(craftingKey) {
+		cm.Show(!cm.Opened())
+	}
 	// Elements.
-	cm.closeButton.Update(win)
-	cm.makeButton.Update(win)
-	cm.recipesList.Update(win)
-	cm.recipeInfo.Update(win)
+	if cm.Opened() {
+		cm.closeButton.Update(win)
+		cm.makeButton.Update(win)
+		cm.recipesList.Update(win)
+		cm.recipeInfo.Update(win)
+	}
 }
 
 // Show toggles menu visibility.

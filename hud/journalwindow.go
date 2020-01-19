@@ -221,19 +221,14 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Show quest info.
-	questInfo := lang.Texts(quest.ID())
-	info := questInfo[0]
-	if len(questInfo) > 1 {
-		info = fmt.Sprintf("%s\n%s", info, questInfo[1])
-	}
+	info := fmt.Sprintf("%s\n%s", quest.Name(), quest.Info()) 
 	stage := quest.ActiveStage()
 	if stage != nil {
 		if stage.Completed() {
 			completeInfo := lang.Text("hud_journal_quest_complete")
 			info = fmt.Sprintf("%s\n%s", info, completeInfo)
 		} else {
-			stageInfo := lang.Text(stage.ID())
-			info = fmt.Sprintf("%s\n%s", info, stageInfo)
+			info = fmt.Sprintf("%s\n%s", info, stage.Info())
 		}
 	}
 	jw.questInfo.SetText(info)

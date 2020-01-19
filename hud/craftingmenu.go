@@ -227,8 +227,7 @@ func (cm *CraftingMenu) Size() pixel.Vec {
 // recipes list.
 func (cm *CraftingMenu) insertRecipes(recipes ...*craft.Recipe) {
 	for _, r := range recipes {
-		recipeText := lang.Text(r.ID())
-		cm.recipesList.AddItem(recipeText, r)
+		cm.recipesList.AddItem(r.Name(), r)
 	}
 }
 
@@ -242,16 +241,12 @@ func (cm *CraftingMenu) onRecipeSelected(cs *mtk.CheckSlot) {
 	// Retrieve recipe from slot.
 	recipe, ok := cs.Value().(*craft.Recipe)
 	if !ok {
-		log.Err.Printf("hud_crafting:fail to retrieve recipe from list")
+		log.Err.Printf("hud crafting: fail to retrieve recipe from list")
 		return
 	}
 	cm.makeButton.Active(true)
 	// Show recipe info.
-	recipeInfo := lang.Texts(recipe.ID())
-	info := recipeInfo[0]
-	if len(recipeInfo) > 1 {
-		info = fmt.Sprintf("%s\n%s\n", info, recipeInfo[1])
-	}
+	info := fmt.Sprintf("%s\n%s\n", recipe.Name(), recipe.Info()) 
 	cm.recipeInfo.SetText(info)
 }
 

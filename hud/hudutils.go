@@ -26,7 +26,6 @@ package hud
 import (
 	"fmt"
 
-	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/item"
 
 	"github.com/isangeles/mtk"
@@ -45,19 +44,17 @@ func (hud *HUD) insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 // itemInfo returns formated string with
 // informations about specified item.
 func (hud *HUD) itemInfo(it item.Item) string {
-	// Retrieve translated item name and info.
-	nameInfo := lang.Texts(it.ID())
 	// Compose info for item type.
 	info := ""
 	switch i := it.(type) {
 	case *item.Weapon:
 		infoForm := "%s\n%d-%d"
 		dmgMin, dmgMax := i.Damage()
-		info = fmt.Sprintf(infoForm, nameInfo[0],
+		info = fmt.Sprintf(infoForm, i.Name(), 
 			dmgMin, dmgMax)
 	case *item.Misc:
 		infoForm := "%s"
-		info = fmt.Sprintf(infoForm, nameInfo[0])
+		info = fmt.Sprintf(infoForm, i.Name())
 	}
 	if config.Debug() { // add serial ID info
 		info = fmt.Sprintf("%s\n[%s_%s]", info,

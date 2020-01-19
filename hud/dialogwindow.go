@@ -214,8 +214,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Print phase text to chat box.
-	dialogLine := lang.Text(phase.ID())
-	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dialogLine)
+	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), phase)
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Apply phase modifiers.
@@ -236,8 +235,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range answers {
-		answerText := lang.Text(a.ID())
-		answerText = fmt.Sprintf("%d)%s", i, answerText)
+		answerText := fmt.Sprintf("%d)%s", i, a)
 		dw.answersList.AddItem(answerText, a)
 	}
 }

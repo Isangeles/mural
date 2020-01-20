@@ -38,9 +38,12 @@ import (
 	"github.com/isangeles/flame/core/module/character"
 	flameobject "github.com/isangeles/flame/core/module/objects"
 
+	"github.com/isangeles/burn/ash"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -86,6 +89,7 @@ type HUD struct {
 	exiting       bool
 	loaderr       error
 	onAreaChanged func(a *area.Area)
+	areaScripts   []*ash.Script
 }
 
 // New creates new HUD instance.
@@ -397,6 +401,11 @@ func (hud *HUD) SetGame(g *flamecore.Game) error {
 
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *area.Area) error {
+	// Stop previous area scripts.
+	for _, s := range hud.areaScripts {
+		s.Stop(true)
+	}
+	hud.areaScripts = make([]*ash.Script, 0)
 	// Map.
 	hud.OpenLoadingScreen(lang.Text("load_map_info"))
 	defer hud.CloseLoadingScreen()
@@ -407,9 +416,7 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 	}
 	// Reload HUD.
 	hud.Reload()
-	if hud.onAreaChanged != nil {
-		hud.onAreaChanged(area)
-	}
+	hud.runAreaScripts(area)
 	return nil
 }
 
@@ -454,6 +461,26 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 // SetOnAreaChangedFunc sets function triggered on area change.
 func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 	hud.onAreaChanged = f
+}
+
+// runAreaScripts executes all scripts for specified area
+// placed in gui/chapters/[chapter]/areas/scripts/[area].
+func (hud *HUD) runAreaScripts(a *area.Area) {
+	// Retrive scripts.
+	mod := hud.Game().Module()
+	path := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/scripts",
+		mod.Conf().Path, mod.Chapter().ID(), a.ID())
+	scripts, err := data.ScriptsDir(path)
+	if err != nil {
+		log.Err.Printf("hud: run area scripts: fail to retrieve scripts: %v", err)
+		return
+	}
+	// Run scripts in background.
+	for _, s := range scripts {
+		go hud.RunScript(s)
+		hud.areaScripts = append(hud.areaScripts, s)
+		log.Dbg.Printf("script started: %s\n", s.Name())
+	}
 }
 
 // updateCurrentArea updates HUD area to active player area.

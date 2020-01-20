@@ -28,10 +28,13 @@ import (
 
 	"github.com/isangeles/flame/core/module/item"
 
+	"github.com/isangeles/burn/ash"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 // insertSlotItem inserts specified item to specified slot.
@@ -50,7 +53,7 @@ func (hud *HUD) itemInfo(it item.Item) string {
 	case *item.Weapon:
 		infoForm := "%s\n%d-%d"
 		dmgMin, dmgMax := i.Damage()
-		info = fmt.Sprintf(infoForm, i.Name(), 
+		info = fmt.Sprintf(infoForm, i.Name(),
 			dmgMin, dmgMax)
 	case *item.Misc:
 		infoForm := "%s"
@@ -61,4 +64,14 @@ func (hud *HUD) itemInfo(it item.Item) string {
 			it.ID(), it.Serial())
 	}
 	return info
+}
+
+// RunScript executes specified script, in case
+// of error sends err message to Mural error log.
+func (hud *HUD) RunScript(s *ash.Script) {
+	err := ash.Run(s)
+	if err != nil {
+		log.Err.Printf("ci: fail to run script: %v", err)
+		return
+	}
 }

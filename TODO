@@ -9,6 +9,7 @@ MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window
 * Displaying messages about game pause, damage taken, item gain, etc.
+* Loading script along with module and chapter data
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

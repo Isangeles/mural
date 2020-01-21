@@ -26,7 +26,6 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -40,9 +39,6 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/res/lang"
-
-	"github.com/isangeles/burn"
-	"github.com/isangeles/burn/syntax"
 
 	"github.com/isangeles/mtk"
 
@@ -178,7 +174,6 @@ func run() {
 			err)
 	}
 	ci.SetMainMenu(mainMenu)
-	mainMenu.Console().SetOnCommandFunc(ExecuteCommand)
 	// Debug mode.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
@@ -292,37 +287,9 @@ func LoadSavedGame(saveName string) {
 	}
 }
 
-// ExecuteCommand handles specified text line
-// as CI command.
-// Returns result code and output text, or error if
-// specified line is not valid command.
-func ExecuteCommand(line string) (int, string, error) {
-	cmd, err := syntax.NewSTDExpression(line)
-	if err != nil {
-		return -1, "", fmt.Errorf("invalid input: %s", line)
-	}
-	res, out := burn.HandleExpression(cmd)
-	return res, out, nil
-}
-
-// ExecuteScriptFile executes Ash script from file
-// with specified name in background.
-func ExecuteScriptFile(name string, args ...string) error {
-	modpath := game.Module().Conf().Path
-	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
-	script, err := data.Script(path)
-	if err != nil {
-		return fmt.Errorf("fail to retrieve script: %v", err)
-	}
-	go ci.RunScript(script)
-	return nil
-}
-
 // setHUD sets specified HUD instance as current
 // GUI player HUD.
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)
-	pcHUD.Chat().SetOnCommandFunc(ExecuteCommand)
-	pcHUD.Chat().SetOnScriptNameFunc(ExecuteScriptFile)
 }

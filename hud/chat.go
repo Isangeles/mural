@@ -25,6 +25,7 @@ package hud
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/faiface/pixel"
@@ -33,6 +34,9 @@ import (
 
 	"github.com/isangeles/flame/core/enginelog"
 	"github.com/isangeles/flame/core/module/objects"
+
+	"github.com/isangeles/burn"
+	"github.com/isangeles/burn/syntax"
 
 	"github.com/isangeles/mtk"
 
@@ -184,18 +188,6 @@ func (c *Chat) Activate(active bool) {
 	c.hud.Camera().Lock(c.Activated())
 }
 
-// SetOnCommandFunc sets specified function as
-// function triggered on command input.
-func (c *Chat) SetOnCommandFunc(f func(line string) (int, string, error)) {
-	c.onCommand = f
-}
-
-// SetOnScriptNameFunc sets specified function as
-// function triggered after script name input.
-func (c *Chat) SetOnScriptNameFunc(f func(name string, args ...string) error) {
-	c.onScriptName = f
-}
-
 // Echo displays specified text in chat log.
 func (c *Chat) Echo(text string) {
 	log.Inf.Printf("%s", text)
@@ -210,7 +202,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	// Execute command.
 	if strings.HasPrefix(input, chatCommandPrefix) && c.onCommand != nil {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
-		res, out, err := c.onCommand(cmdInput)
+		res, out, err := executeCommand(cmdInput)
 		if err != nil {
 			log.Err.Printf("fail_to_execute_command:%v", err)
 		}
@@ -222,7 +214,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	if strings.HasPrefix(input, chatScriptPrefix) && c.onScriptName != nil {
 		input = strings.TrimPrefix(input, chatScriptPrefix)
 		args := strings.Split(input, " ")
-		err := c.onScriptName(args[0], args...)
+		err := c.executeScriptFile(args[0], args...)
 		if err != nil {
 			log.Err.Printf("fail_to_execute_script:%v", err)
 		}
@@ -230,4 +222,30 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	}
 	// Echo chat.
 	c.hud.ActivePlayer().SendChat(input)
+}
+
+// executeScriptFile executes Ash script from file
+// with specified name in background.
+func (c *Chat) executeScriptFile(name string, args ...string) error {
+	modpath := c.hud.Game().Module().Conf().Path
+	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
+	script, err := data.Script(path)
+	if err != nil {
+		return fmt.Errorf("fail to retrieve script: %v", err)
+	}
+	go c.hud.RunScript(script)
+	return nil
+}
+
+// executeCommand handles specified text line
+// as CI command.
+// Returns result code and output text, or error if
+// specified line is not valid command.
+func executeCommand(line string) (int, string, error) {
+	cmd, err := syntax.NewSTDExpression(line)
+	if err != nil {
+		return -1, "", fmt.Errorf("invalid input: %s", line)
+	}
+	res, out := burn.HandleExpression(cmd)
+	return res, out, nil
 }

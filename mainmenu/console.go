@@ -1,7 +1,7 @@
 /*
  * console.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,16 @@
 package mainmenu
 
 import (
+	"fmt"
+	
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame/core/enginelog"
+
+	"github.com/isangeles/burn"
+	"github.com/isangeles/burn/syntax"
 
 	"github.com/isangeles/mtk"
 
@@ -119,15 +124,9 @@ func (c *Console) Opened() bool {
 	return c.opened
 }
 
-// SetOnCommandFunc sets specified function as
-// function triggered on command input.
-func (c *Console) SetOnCommandFunc(f func(cmd string) (int, string, error)) {
-	c.onCommand = f
-}
-
 // Echo prints specified text to console.
 func (c *Console) Echo(text string) {
-	log.Cli.Printf(">%s", text)
+	log.Cli.Printf("%s", text)
 }
 
 // Triggered after accepting input in text edit.
@@ -138,13 +137,23 @@ func (c *Console) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
-	if c.onCommand == nil {
-		return
-	}
-	res, out, err := c.onCommand(input)
+	res, out, err := executeCommand(input) 
 	if err != nil {
 		log.Err.Printf("fail to execute command: '%s'", input)
 	}
 	// Echo command result to log.
-	log.Cli.Printf("[%d]:%s", res, out)
+	log.Cli.Printf("[%d]: %s", res, out)
+}
+
+// executeCommand handles specified text line
+// as CI command.
+// Returns result code and output text, or error if
+// specified line is not valid command.
+func executeCommand(line string) (int, string, error) {
+	cmd, err := syntax.NewSTDExpression(line)
+	if err != nil {
+		return -1, "", fmt.Errorf("invalid input: %s", line)
+	}
+	res, out := burn.HandleExpression(cmd)
+	return res, out, nil
 }

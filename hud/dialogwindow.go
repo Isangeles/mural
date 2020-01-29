@@ -197,37 +197,37 @@ func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 }
 
 // dialogUpdate updates window components to
-// current dialog phase.
+// current dialog stage.
 func (dw *DialogWindow) dialogUpdate() {
 	if dw.dialog == nil || dw.dialog.Finished() {
 		return
 	}
-	// Search for proper dialog phase.
-	var phase *dialog.Phase
-	for _, p := range dw.dialog.Phases() {
-		if dw.hud.ActivePlayer().MeetReqs(p.Requirements()...) {
-			phase = p
+	// Search for proper dialog stage.
+	var stage *dialog.Stage
+	for _, s := range dw.dialog.Stages() {
+		if dw.hud.ActivePlayer().MeetReqs(s.Requirements()...) {
+			stage = s
 		}
 	}
-	if phase == nil {
+	if stage == nil {
 		log.Err.Printf("hud_dialog: no suitable dialog phase found")
 		return
 	}
-	// Print phase text to chat box.
-	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), phase)
+	// Print stage text to chat box.
+	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), stage)
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Apply phase modifiers.
 	pc := dw.hud.ActivePlayer()
 	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
-		tar.TakeModifiers(pc.Character, phase.OwnerModifiers()...)
-		pc.TakeModifiers(tar, phase.TalkerModifiers()...)
+		tar.TakeModifiers(pc.Character, stage.OwnerModifiers()...)
+		pc.TakeModifiers(tar, stage.TalkerModifiers()...)
 	} else {
-		pc.TakeModifiers(tar, phase.TalkerModifiers()...)
+		pc.TakeModifiers(tar, stage.TalkerModifiers()...)
 	}
 	// Select answers.
 	answers := make([]*dialog.Answer, 0)
-	for _, a := range phase.Answers() {
+	for _, a := range stage.Answers() {
 		if dw.hud.ActivePlayer().MeetReqs(a.Requirements()...) {
 			answers = append(answers, a)
 		}

@@ -31,7 +31,6 @@ import (
 
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/dialog"
-	"github.com/isangeles/flame/core/module/effect"
 	"github.com/isangeles/flame/core/module/item"
 	"github.com/isangeles/flame/core/module/train"
 
@@ -193,6 +192,7 @@ func (dw *DialogWindow) DrawArea() pixel.Rect {
 func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 	dw.dialog = d
 	dw.dialog.Restart()
+	dw.dialog.SetTarget(dw.hud.ActivePlayer())
 	dw.dialogUpdate()
 }
 
@@ -202,32 +202,17 @@ func (dw *DialogWindow) dialogUpdate() {
 	if dw.dialog == nil || dw.dialog.Finished() {
 		return
 	}
-	// Search for proper dialog stage.
-	var stage *dialog.Stage
-	for _, s := range dw.dialog.Stages() {
-		if dw.hud.ActivePlayer().MeetReqs(s.Requirements()...) {
-			stage = s
-		}
-	}
-	if stage == nil {
+	if dw.dialog.Stage() == nil {
 		log.Err.Printf("hud_dialog: no suitable dialog phase found")
 		return
 	}
 	// Print stage text to chat box.
-	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), stage)
+	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dw.dialog.Stage())
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
-	// Apply phase modifiers.
-	pc := dw.hud.ActivePlayer()
-	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
-		tar.TakeModifiers(pc.Character, stage.OwnerModifiers()...)
-		pc.TakeModifiers(tar, stage.TalkerModifiers()...)
-	} else {
-		pc.TakeModifiers(tar, stage.TalkerModifiers()...)
-	}
 	// Select answers.
 	answers := make([]*dialog.Answer, 0)
-	for _, a := range stage.Answers() {
+	for _, a := range dw.dialog.Stage().Answers() {
 		if dw.hud.ActivePlayer().MeetReqs(a.Requirements()...) {
 			answers = append(answers, a)
 		}
@@ -258,18 +243,10 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	}
 	// Print answer to chat box.
 	answerText := lang.Text(answer.ID())
-	dw.chatBox.AddText(fmt.Sprintf("[%s]:%s\n", dw.hud.ActivePlayer().Name(), answerText))
+	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.ActivePlayer().Name(), answerText))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.
 	dw.dialog.Next(answer)
-	// Apply answer modifiers.
-	pc := dw.hud.ActivePlayer()
-	if tar, ok := dw.dialog.Owner().(effect.Target); ok {
-		tar.TakeModifiers(pc.Character, answer.OwnerModifiers()...)
-		pc.TakeModifiers(tar, answer.TalkerModifiers()...)
-	} else {
-		pc.TakeModifiers(tar, answer.TalkerModifiers()...)
-	}
 	// On trade.
 	if dw.dialog.Trading() {
 		con, ok := dw.dialog.Owner().(item.Container)

@@ -61,7 +61,6 @@ type Chat struct {
 	msgs         map[string]*enginelog.Message
 	activated    bool
 	lastInput    string
-	onCommand    func(line string) (int, string, error)
 	onScriptName func(name string, args ...string) error
 }
 
@@ -200,11 +199,11 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
-	if strings.HasPrefix(input, chatCommandPrefix) && c.onCommand != nil {
+	if strings.HasPrefix(input, chatCommandPrefix) {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
 		res, out, err := executeCommand(cmdInput)
 		if err != nil {
-			log.Err.Printf("fail_to_execute_command:%v", err)
+			log.Err.Printf("fail to execute command: %v", err)
 		}
 		// Echo command result to log.
 		log.Cli.Printf("[%d]:%s", res, out)
@@ -216,7 +215,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		args := strings.Split(input, " ")
 		err := c.executeScriptFile(args[0], args...)
 		if err != nil {
-			log.Err.Printf("fail_to_execute_script:%v", err)
+			log.Err.Printf("fail to execute script: %v", err)
 		}
 		return
 	}

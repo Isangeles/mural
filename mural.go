@@ -265,9 +265,6 @@ func LoadSavedGame(saveName string) {
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	flame.SetGame(game)
-	// Enter game.
-	EnterGame(game)
 	// Import saved HUD state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
@@ -278,6 +275,9 @@ func LoadSavedGame(saveName string) {
 	for _, pcd := range guisav.PlayersData {
 		res.AddAvatarData(pcd.Avatar)
 	}
+	// Enter game.
+	flame.SetGame(game)
+	EnterGame(game)
 	// Load HUD state.
 	err = pcHUD.LoadGUISave(guisav)
 	if err != nil {

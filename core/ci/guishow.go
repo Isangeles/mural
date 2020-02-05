@@ -1,7 +1,7 @@
 /*
  * guishow.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ func guishow(cmd burn.Command) (int, string) {
 		}
 		out := ""
 		for _, c := range guiMenu.PlayableChars() {
-			out = fmt.Sprintf("%s%s#%s ", c.Name(), c.SerialID())
+			out = fmt.Sprintf("%s%s#%s ", c.CharData.BasicData.Name,
+				c.CharData.BasicData.ID, c.CharData.BasicData.Serial)
 		}
 		out = strings.TrimSpace(out)
 		return 0, out

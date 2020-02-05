@@ -40,7 +40,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -298,7 +297,7 @@ func (ncm *NewCharacterMenu) updatePoints() {
 }
 
 // createChar creates new game character.
-func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
+func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	// Name.
 	name := ncm.nameEdit.Text()
 	// Attributes.
@@ -368,8 +367,7 @@ func (ncm *NewCharacterMenu) createChar() (*character.Character, error) {
 		}
 		charData.Inventory.Items = append(charData.Inventory.Items, items)
 	}
-	char := character.New(charData)
-	return char, nil
+	return &charData, nil
 }
 
 // Triggered after back button clicked.
@@ -379,14 +377,14 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 
 // Triggered after done button clicked.
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
-	char, err := ncm.createChar()
+	charData, err := ncm.createCharData()
 	if err != nil {
 		log.Err.Printf("newchar menu: fail to create character: %v", err)
 		return
 	}
 	ssHeadName := "m-head-black-1222211-80x90.png"
 	ssTorsoName := "m-cloth-1222211-80x90.png"
-	if char.Gender() == character.Female {
+	if character.Gender(charData.BasicData.Sex) == character.Female {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
@@ -410,8 +408,8 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	avData := res.AvatarData{
-		ID:           char.ID(),
-		Serial:       char.Serial(),
+		ID:           charData.BasicData.ID,
+		Serial:       charData.BasicData.Serial,
 		PortraitName: portraitName,
 		SSHeadName:   ssHeadName,
 		SSTorsoName:  ssTorsoName,
@@ -419,8 +417,8 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		SSHeadPic:    ssHeadPic,
 		SSTorsoPic:   ssTorsoPic,
 	}
-	av := object.NewAvatar(char, &avData)
-	ncm.mainmenu.AddPlayableChar(av)
+	pc := PlayableCharData{charData, &avData}
+	ncm.mainmenu.AddPlayableChar(pc)
 	msg := lang.Text("newchar_create_msg")
 	ncm.mainmenu.ShowMessage(msg)
 	ncm.mainmenu.OpenMenu()

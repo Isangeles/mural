@@ -31,6 +31,7 @@ import (
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/res/lang"
+	"github.com/isangeles/flame/core/module/character"
 
 	"github.com/isangeles/mtk"
 
@@ -143,35 +144,39 @@ func (ngm *NewGameMenu) Opened() bool {
 
 // SetCharacters sets specified avatars as playable characters
 // fo new game start.
-func (ngm *NewGameMenu) SetCharacters(chars []*object.Avatar) {
+func (ngm *NewGameMenu) SetCharacters(chars []PlayableCharData) {
 	values := make([]mtk.SwitchValue, len(chars))
 	for i, c := range chars {
-		values[i] = mtk.SwitchValue{c.Portrait(), c}
+		values[i] = mtk.SwitchValue{c.AvatarData.PortraitPic, c}
 	}
 	ngm.charSwitch.SetValues(values)
 }
 
 // updateCharInfo updates textbox with character informations.
-func (ngm *NewGameMenu) updateCharInfo() error {
+func (ngm *NewGameMenu) updateCharInfo() {
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
-		return nil
+		return
 	}
-	c, ok := switchVal.Value.(*object.Avatar)
+	c, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		return fmt.Errorf("fail to retrieve avatar from switch")
+		log.Err.Printf("fail to retrieve character data from switch")
+		return
 	}
+	charData := c.CharData.BasicData
 	charInfoForm := `Name:       %s
 Level:      %d
 Gender:     %s
 Race:       %s
 Alignment   %s
-Attributes: %s`
-	info := fmt.Sprintf(charInfoForm, c.Name(), c.Level(),
-		lang.Text(c.Gender().ID()), lang.Text(c.Race().ID()),
-		lang.Text(c.Alignment().ID()), c.Attributes().String())
+Attributes: %d, %d, %d, %d, %d`
+	info := fmt.Sprintf(charInfoForm, charData.Name, charData.Level,
+		lang.Text(character.Gender(charData.Sex).ID()),
+		lang.Text(character.Race(charData.Race).ID()),
+		lang.Text(character.Alignment(charData.Alignment).ID()),
+		charData.Str, charData.Con, charData.Dex, charData.Int, charData.Wis)
 	ngm.charInfo.SetText(info)
-	return nil
+	return
 }
 
 // updateCharSwitch updates menu character switch.
@@ -212,15 +217,16 @@ func (ngm *NewGameMenu) startGame() {
 		log.Err.Printf("main menu: new game: no char switch value")
 		return
 	}
-	c, ok := switchVal.Value.(*object.Avatar)
+	pcd, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
 		log.Err.Printf("main menu: new game: fail to retrieve avatar from switch")
 		return
 	}
 	// Add avatar data to resources base.
-	res.AddAvatarData(c.Data())
+	res.AddAvatarData(pcd.AvatarData)
 	// Create game.
-	g, err := flame.StartGame(c.Character)
+	c := character.New(*pcd.CharData)
+	g, err := flame.StartGame(c)
 	if err != nil {
 		log.Err.Printf("main menu: new game: fail to start game: %v", err)
 		return
@@ -257,8 +263,5 @@ func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 // Triggered after character switch change.
 func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
 	old, new *mtk.SwitchValue) {
-	err := ngm.updateCharInfo()
-	if err != nil {
-		log.Err.Printf("main menu: new game: fail to update char info: %v\n", err)
-	}
+	ngm.updateCharInfo()
 }

@@ -33,12 +33,13 @@ import (
 
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
+	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/imp"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/core/data/res"
 )
 
 var (
@@ -61,11 +62,18 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
-	playableChars []*object.Avatar
+	playableChars []PlayableCharData
 	onGameCreated func(g *flamecore.Game)
 	onSaveLoad    func(savename string)
 	loading       bool
 	exiting       bool
+}
+
+// Struct with character and avatar data
+// for playable characters.
+type PlayableCharData struct {
+	CharData   *flameres.CharacterData
+	AvatarData *res.AvatarData
 }
 
 // New creates new main menu
@@ -247,20 +255,20 @@ func (mm *MainMenu) Console() *Console {
 }
 
 // PlayableChars returns all playable characters.
-func (mm *MainMenu) PlayableChars() []*object.Avatar {
+func (mm *MainMenu) PlayableChars() []PlayableCharData {
 	return mm.playableChars
 }
 
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
-func (mm *MainMenu) AddPlayableChar(c *object.Avatar) {
+func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 	mm.playableChars = append(mm.playableChars, c)
 }
 
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
-	chars, err := flamedata.ImportCharactersDir(path)
+	charsData, err := flamedata.ImportCharactersDataDir(path)
 	if err != nil {
 		return fmt.Errorf("fail to import characters: %v", err)
 	}
@@ -269,12 +277,12 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 		return fmt.Errorf("fail to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
-		for _, char := range chars {
-			if avData.ID != char.ID() {
+		for _, charData := range charsData {
+			if avData.ID != charData.BasicData.ID {
 				continue
 			}
-			av := object.NewAvatar(char, avData)
-			mm.playableChars = append(mm.playableChars, av)
+			pc := PlayableCharData{charData, avData}
+			mm.playableChars = append(mm.playableChars, pc)
 		}
 	}
 	mm.newgamemenu.SetCharacters(mm.playableChars)

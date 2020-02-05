@@ -94,7 +94,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	}
 	ncm.nameLabel = mtk.NewText(labelParams)
 	nameLabelText := lang.Text("newchar_name_edit_label")
-	ncm.nameLabel.SetText(fmt.Sprintf("%s:", nameLabelText))
+	ncm.nameLabel.SetText(fmt.Sprintf("%s", nameLabelText))
 	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
 	// Points box.
 	pointsBoxSize := mtk.SizeMedium.ButtonSize(mtk.ShapeRectangle)
@@ -257,11 +257,7 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	ncm.raceSwitch.Update(win)
 	ncm.aliSwitch.Update(win)
 	ncm.updatePoints()
-	if ncm.canCreate() {
-		ncm.doneButton.Active(false)
-	} else {
-		ncm.doneButton.Active(true)
-	}
+	ncm.doneButton.Active(ncm.canCreate())
 }
 
 // rollPoints draws random amount of attribute points for new character
@@ -293,7 +289,7 @@ func (ncm *NewCharacterMenu) Opened() bool {
 
 // canCreate checks whether its possible to create new character.
 func (ncm *NewCharacterMenu) canCreate() bool {
-	return ncm.nameEdit.Text() == "" || ncm.attrPoints > 0
+	return len(ncm.nameEdit.Text()) > 0 && ncm.attrPoints < 1
 }
 
 // updatePoints updates points box value.

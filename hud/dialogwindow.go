@@ -242,8 +242,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Print answer to chat box.
-	answerText := lang.Text(answer.ID())
-	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.ActivePlayer().Name(), answerText))
+	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.ActivePlayer().Name(), answer))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.
 	dw.dialog.Next(answer)

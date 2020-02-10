@@ -191,15 +191,17 @@ func (ngm *NewGameMenu) exportChar() error {
 	if switchVal == nil {
 		return nil
 	}
-	c, ok := switchVal.Value.(*object.Avatar)
+	data, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		return fmt.Errorf("fail to retrieve avatar from switch")
+		return fmt.Errorf("fail to retrieve character data from switch")
 	}
-	err := flamedata.ExportCharacter(c.Character, flame.Mod().Conf().CharactersPath())
+	c := character.New(*data.CharData)
+	err := flamedata.ExportCharacter(c, flame.Mod().Conf().CharactersPath())
 	if err != nil {
-		return err
+		return fmt.Errorf("fail to export character: %v", err)
 	}
-	err = exp.ExportAvatar(c, flame.Mod().Conf().CharactersPath())
+	av := object.NewAvatar(c, data.AvatarData)
+	err = exp.ExportAvatar(av, flame.Mod().Conf().CharactersPath())
 	if err != nil {
 		return fmt.Errorf("fail to export avatar: %v", err)
 	}

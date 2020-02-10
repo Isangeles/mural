@@ -5,6 +5,7 @@ MAJOR:
 * Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation
+* HUD: zoom/unzoom for camera
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window

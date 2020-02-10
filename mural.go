@@ -46,7 +46,7 @@ import (
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
@@ -64,24 +64,24 @@ func init() {
 	// Load flame config.
 	err := flameconf.LoadConfig()
 	if err != nil {
-		log.Err.Printf("fail to load flame config file: %v", err)
+		log.Err.Printf("unable to load flame config file: %v", err)
 		flameconf.SaveConfig() // override 'corrupted' config file with default configuration
 	}
 	// Load UI translation files.
 	err = flamedata.LoadTranslationData(flameconf.LangPath())
 	if err != nil {
-		log.Err.Printf("fail to load ui translation files: %v", err)
+		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Load module.
 	m, err := flamedata.Module(flameconf.ModulePath(), flameconf.LangID())
 	if err != nil {
-		log.Err.Printf("fail to load config module: %v", err)
+		log.Err.Printf("unable to load config module: %v", err)
 	}
 	flame.SetModule(m)
 	// Load GUI config.
 	err = config.LoadConfig()
 	if err != nil {
-		log.Err.Printf("fail to load config file: %v", err)
+		log.Err.Printf("unable to load config file: %v", err)
 	}
 }
 
@@ -94,22 +94,22 @@ func main() {
 	// Load UI graphic.
 	err := data.LoadUIData(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail to load gui data: %v", err))
+		panic(fmt.Errorf("unable to load gui data: %v", err))
 	}
 	// Load game graphic.
 	err = data.LoadModuleData(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail to load game graphic data: %v", err))
+		panic(fmt.Errorf("unable to load game graphic data: %v", err))
 	}
 	// Load module data.
 	err = flamedata.LoadModuleData(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail to load module data: %v", err))
+		panic(fmt.Errorf("unable to load module data: %v", err))
 	}
 	// Load module graphic data.
 	err = imp.LoadModuleResources(flame.Mod())
 	if err != nil {
-		panic(fmt.Errorf("fail to load module resources: %v", err))
+		panic(fmt.Errorf("unable to load module resources: %v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -120,7 +120,7 @@ func main() {
 			pl := []beep.Streamer{m.Streamer(0, m.Len())}
 			mtk.Audio().SetPlaylist(pl)
 		} else {
-			log.Err.Printf("fail to load main theme audio data: %v", err)
+			log.Err.Printf("unable to load main theme audio data: %v", err)
 		}
 		mtk.Audio().SetVolume(config.MusicVolume)
 		mtk.Audio().SetMute(config.MusicMute)
@@ -150,7 +150,7 @@ func run() {
 	}
 	win, err := mtk.NewWindow(cfg)
 	if err != nil {
-		panic(fmt.Errorf("fail to create mtk window: %v", err))
+		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
 	// UI Font.
 	uiFont, err := data.Font(config.MainFont)
@@ -160,7 +160,7 @@ func run() {
 	// Audio effects.
 	bClickSound, err := data.AudioEffect(config.ButtonClickSound)
 	if err != nil {
-		log.Err.Printf("init run: fail to retrieve button click audio data: %v",
+		log.Err.Printf("init run: unable to retrieve button click audio data: %v",
 			err)
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
@@ -170,7 +170,7 @@ func run() {
 	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
 	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
 	if err != nil {
-		log.Err.Printf("init run: fail to import playable characters: %v",
+		log.Err.Printf("init run: unable to import playable characters: %v",
 			err)
 	}
 	ci.SetMainMenu(mainMenu)
@@ -221,7 +221,7 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *flamecore.Game) {
+func EnterGame(g *flamecore.Game, pcs ...*object.Avatar) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	game = g
@@ -232,22 +232,20 @@ func EnterGame(g *flamecore.Game) {
 	// Set game for HUD.
 	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
-		log.Err.Printf("enter game: fail to load chapter resources: %v", err)
+		log.Err.Printf("enter game: unable to load chapter resources: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	err = hud.SetGame(game)
-	if err != nil {
-		log.Err.Printf("enter game: fail to set hud game: %v", err)
-		mainMenu.ShowMessage(lang.Text("load_game_err"))
-		return
+	for _, pc := range pcs {
+		hud.AddPlayer(pc)
 	}
+	hud.SetGame(game)
 	inGame = true
 	// Run module scripts.
 	modpath := game.Module().Conf().Path
 	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
 	if err != nil {
-		log.Err.Printf("enter saved game: fail to retrieve module scripts: %v", err)
+		log.Err.Printf("enter saved game: unable to retrieve module scripts: %v", err)
 	}
 	for _, s := range scripts {
 		go ci.RunScript(s)
@@ -261,27 +259,35 @@ func LoadSavedGame(saveName string) {
 	// Import saved game.
 	game, err := flamedata.ImportGame(flame.Mod(), flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
-		log.Err.Printf("load saved game: fail to import game: %v", err)
+		log.Err.Printf("load saved game: unable to import game: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	// Import saved HUD state.
 	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
-		log.Err.Printf("load saved game: fail load gui save: %v", err)
+		log.Err.Printf("load saved game: unable to load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
+	pcs := make([]*object.Avatar, 0)
 	for _, pcd := range guisav.PlayersData {
-		res.AddAvatarData(pcd.Avatar)
+		char := game.Module().Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
+		if char == nil {
+			log.Err.Printf("load saved game: unable to retrieve pc character: %s#%s",
+				pcd.Avatar.ID, pcd.Avatar.Serial)
+			continue
+		}
+		av := object.NewAvatar(char, pcd.Avatar)
+		pcs = append(pcs, av)
 	}
 	// Enter game.
 	flame.SetGame(game)
-	EnterGame(game)
+	EnterGame(game, pcs...)
 	// Load HUD state.
 	err = pcHUD.LoadGUISave(guisav)
 	if err != nil {
-		log.Err.Printf("load saved game: fail to set hud layout: %v", err)
+		log.Err.Printf("load saved game: unable to set hud layout: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}

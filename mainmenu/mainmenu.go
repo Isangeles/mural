@@ -40,6 +40,7 @@ import (
 
 	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
 )
 
 var (
@@ -63,7 +64,7 @@ type MainMenu struct {
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	playableChars []PlayableCharData
-	onGameCreated func(g *flamecore.Game)
+	onGameCreated func(g *flamecore.Game, pcs ...*object.Avatar)
 	onSaveLoad    func(savename string)
 	loading       bool
 	exiting       bool
@@ -165,7 +166,7 @@ func (mm *MainMenu) Exit() {
 
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
-func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game)) {
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flamecore.Game, pcs ...*object.Avatar)) {
 	mm.onGameCreated = f
 }
 

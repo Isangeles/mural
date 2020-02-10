@@ -123,18 +123,18 @@ func (c *Chat) Update(win *mtk.Window) {
 	}
 	// Print messages from players and nearby objects.
 	game := c.hud.Game()
-	for _, pc := range game.Players() {
+	for _, pc := range c.hud.Players() {
 		select {
 		case msg := <-pc.PrivateLog():
 			c.textbox.AddText(fmt.Sprintf("%s\n", msg))
 		default:
 		}
 		// Near objects.
-		area := game.Module().Chapter().CharacterArea(pc)
+		area := game.Module().Chapter().CharacterArea(pc.Character)
 		if area == nil {
 			continue
 		}
-		for _, tar := range area.NearTargets(pc, pc.SightRange()) {
+		for _, tar := range area.NearTargets(pc.Character, pc.SightRange()) {
 			tar, ok := tar.(objects.Logger)
 			if !ok {
 				continue

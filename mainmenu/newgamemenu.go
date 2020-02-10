@@ -36,7 +36,6 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/exp"
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -224,8 +223,6 @@ func (ngm *NewGameMenu) startGame() {
 		log.Err.Printf("main menu: new game: fail to retrieve avatar from switch")
 		return
 	}
-	// Add avatar data to resources base.
-	res.AddAvatarData(pcd.AvatarData)
 	// Create game.
 	c := character.New(*pcd.CharData)
 	g, err := flame.StartGame(c)
@@ -233,11 +230,13 @@ func (ngm *NewGameMenu) startGame() {
 		log.Err.Printf("main menu: new game: fail to start game: %v", err)
 		return
 	}
+	// Create pc avatar.
+	av := object.NewAvatar(c, pcd.AvatarData)
 	// Pass new game.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(g)
+	ngm.mainmenu.onGameCreated(g, av)
 }
 
 // Triggered after start button clicked.

@@ -35,7 +35,6 @@ import (
 	flamecore "github.com/isangeles/flame/core"
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/area"
-	"github.com/isangeles/flame/core/module/character"
 	flameobject "github.com/isangeles/flame/core/module/objects"
 
 	"github.com/isangeles/burn/ash"
@@ -275,19 +274,14 @@ func (hud *HUD) ActivePlayer() *object.Avatar {
 	return hud.activePC
 }
 
-// AddPlayer adds specified character to
-// player characters list.
-func (hud *HUD) AddPlayer(char *character.Character) error {
-	avData := res.Avatar(char.ID())
-	if avData == nil {
-		return fmt.Errorf("fail to find avatar data: %s", char.ID())
-	}
-	av := object.NewAvatar(char, avData)
-	hud.pcs = append(hud.pcs, av)
+// AddPlayer adds specified avatar as player to
+// HUD players list .
+func (hud *HUD) AddPlayer(pc *object.Avatar) {
+	hud.pcs = append(hud.pcs, pc)
 	if hud.ActivePlayer() == nil {
-		hud.SetActivePlayer(av)
+		hud.SetActivePlayer(pc)
 	}
-	return nil
+	return
 }
 
 // SetActivePlayer sets specified avatar as active
@@ -297,6 +291,20 @@ func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
 	hud.camera.CenterAt(hud.ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.ActivePlayer())
 	hud.Reload()
+	// Setup active player area.
+	if hud.game == nil {
+		return
+	}
+	chapter := hud.game.Module().Chapter()
+	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
+	if pcArea == nil {
+		log.Err.Printf("hud: set active pc: no pc area")
+		return
+	}
+	err := hud.ChangeArea(pcArea)
+	if err != nil {
+		log.Err.Printf("hud: set active pc: fail to change area: %v", err)
+	}
 }
 
 // Exit sends exit request to HUD.
@@ -340,7 +348,6 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 // specified loading information.
 func (hud *HUD) OpenLoadingScreen(info string) {
 	hud.loading = true
-	// TODO: sometimes SetLoadInfo causes panic on text draw.
 	hud.loadScreen.SetLoadInfo(info)
 }
 
@@ -372,31 +379,8 @@ func (hud *HUD) Reload() {
 }
 
 // SetGame sets HUD game.
-func (hud *HUD) SetGame(g *flamecore.Game) error {
+func (hud *HUD) SetGame(g *flamecore.Game) {
 	hud.game = g
-	// Players.
-	if len(hud.game.Players()) < 1 {
-		return fmt.Errorf("no player characters")
-	}
-	for _, pc := range hud.game.Players() {
-		err := hud.AddPlayer(pc)
-		if err != nil {
-			return fmt.Errorf("fail to add player: %v", err)
-		}
-	}
-	// Setup active player area.
-	chapter := hud.game.Module().Chapter()
-	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
-	if pcArea == nil {
-		hud.loaderr = fmt.Errorf("no pc area")
-		return hud.loaderr
-	}
-	err := hud.ChangeArea(pcArea)
-	if err != nil {
-		hud.loaderr = fmt.Errorf("fail to change area: %v", err)
-		return hud.loaderr
-	}
-	return nil
 }
 
 // ChangeArea changes current HUD area.

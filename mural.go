@@ -53,10 +53,10 @@ import (
 )
 
 var (
-	mainMenu    *mainmenu.MainMenu
-	pcHUD       *hud.HUD
-	game        *flamecore.Game
-	inGame      bool
+	mainMenu *mainmenu.MainMenu
+	pcHUD    *hud.HUD
+	game     *flamecore.Game
+	inGame   bool
 )
 
 // On init.
@@ -73,7 +73,7 @@ func init() {
 		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Load module.
-	m, err := flamedata.Module(flameconf.ModulePath(), flameconf.LangID())
+	m, err := flamedata.ImportModule(flameconf.ModulePath(), flameconf.LangID())
 	if err != nil {
 		log.Err.Printf("unable to load config module: %v", err)
 	}

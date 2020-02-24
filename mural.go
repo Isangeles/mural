@@ -40,6 +40,8 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/res/lang"
 
+	"github.com/isangeles/burn"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -78,6 +80,7 @@ func init() {
 		log.Err.Printf("unable to load config module: %v", err)
 	}
 	flame.SetModule(m)
+	burn.Module = m
 	// Load GUI config.
 	err = config.LoadConfig()
 	if err != nil {
@@ -240,6 +243,7 @@ func EnterGame(g *flamecore.Game, pcs ...*object.Avatar) {
 		hud.AddPlayer(pc)
 	}
 	hud.SetGame(game)
+	burn.Game = game
 	inGame = true
 	// Run module scripts.
 	modpath := game.Module().Conf().Path

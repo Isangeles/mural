@@ -56,6 +56,8 @@ var (
 	CharAttrsMax     = 10
 	CharSkills       []string
 	CharItems        []string
+	CharArea         string
+	CharPos          pixel.Vec
 )
 
 // LoadConfig loads configuration file.
@@ -72,9 +74,12 @@ func LoadConfig() error {
 	// Resolution.
 	if len(conf["resolution"]) > 1 {
 		Resolution.X, err = strconv.ParseFloat(conf["resolution"][0], 64)
+		if err != nil {
+			log.Err.Printf("config: unable to set resolution x: %v", err)
+		}
 		Resolution.Y, err = strconv.ParseFloat(conf["resolution"][1], 64)
 		if err != nil {
-			log.Err.Printf("config: unable to set resolution: %v", err)
+			log.Err.Printf("config: unable to set resolution y: %v", err)
 		}
 	}
 	// Graphic effects.
@@ -116,6 +121,20 @@ func LoadConfig() error {
 	// New char items & skills.
 	CharSkills = conf["newchar-skills"]
 	CharItems = conf["newchar-items"]
+	// New char area & position.
+	if len(conf["newchar-area"]) > 0 {
+		CharArea = conf["newchar-area"][0]
+	}
+	if len(conf["newchar-pos"]) > 1 {
+		CharPos.X, err = strconv.ParseFloat(conf["newchar-pos"][0], 64)
+		if err != nil {
+			log.Err.Printf("conf: unable to set new char position x: %v", err)
+		}
+		CharPos.Y, err = strconv.ParseFloat(conf["newchar-pos"][1], 64)
+		if err != nil {
+			log.Err.Printf("conf: unable to set new char position y: %v", err)
+		}
+	}
 	log.Dbg.Print("config file loaded")
 	return nil
 }
@@ -145,6 +164,11 @@ func SaveConfig() error {
 	conf["newchar-attrs-max"] = []string{fmt.Sprintf("%d", CharAttrsMax)}
 	conf["newchar-skills"] = CharSkills
 	conf["newchar-items"] = CharItems
+	conf["newchar-area"] = []string{CharArea}
+	conf["newchar-pos"] = []string{
+		fmt.Sprintf("%f", CharPos.X),
+		fmt.Sprintf("%f", CharPos.Y),
+	}
 	confText := parsetxt.MarshalConfig(conf)
 	// Write config values.
 	w := bufio.NewWriter(file)

@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,13 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/mural/log"
 
 	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/text"
+	"github.com/isangeles/flame/core/data/parsetxt"
 )
 
 const (
@@ -61,52 +60,62 @@ var (
 
 // LoadConfig loads configuration file.
 func LoadConfig() error {
-	values, err := text.ReadValue(ConfFileName, "fullscreen", "resolution",
-		"map-fow", "main-font", "menu-music", "button-click-sound",
-		"newchar-skills", "newchar-items", "music-volume", "music-mute")
+	file, err := os.Open(ConfFileName)
 	if err != nil {
-		return fmt.Errorf("config_load: fail to retrieve config value: %v", err)
+		return fmt.Errorf("unable to open config file: %v", err)
 	}
-	intValues, err := text.ReadInt(ConfFileName, "newchar-attrs-min", "newchar-attrs-max")
-	if err != nil {
-		return fmt.Errorf("config_load: fail to retrieve config value: %v", err)
-	}
+	conf := parsetxt.UnmarshalConfig(file)
 	// Fullscreen.
-	Fullscreen = values["fullscreen"] == "true"
+	if len(conf["fullscreen"]) > 0 {
+		Fullscreen = conf["fullscreen"][0] == "true"
+	}
 	// Resolution.
-	resValue := values["resolution"]
-	Resolution.X, err = strconv.ParseFloat(strings.Split(resValue, "x")[0], 64)
-	Resolution.Y, err = strconv.ParseFloat(strings.Split(resValue, "x")[1], 64)
-	if err != nil {
-		log.Err.Printf("config_load: fail to set resolution: %v", err)
+	if len(conf["resolution"]) > 1 {
+		Resolution.X, err = strconv.ParseFloat(conf["resolution"][0], 64)
+		Resolution.Y, err = strconv.ParseFloat(conf["resolution"][1], 64)
+		if err != nil {
+			log.Err.Printf("config: unable to set resolution: %v", err)
+		}
 	}
 	// Graphic effects.
-	MapFOW = values["map-fow"] == "true"
-	MainFont = values["main-font"]
+	if len(conf["map-fow"]) > 0 {
+		MapFOW = conf["map-fow"][0] == "true"
+	}
+	if len(conf["main-font"]) > 0 {
+		MainFont = conf["main-font"][0]
+	}
 	// Audio effects.
-	MenuMusic = values["menu-music"]
-	ButtonClickSound = values["button-click-sound"]
-	MusicVolume, err = strconv.ParseFloat(values["music-volume"], 64)
-	if err != nil {
-		log.Err.Printf("config_load: fail to set music volume: %v", err)
+	if len(conf["menu-music"]) > 0 {
+		MenuMusic = conf["menu-music"][0]
 	}
-	MusicMute = values["music-mute"] == "true"
+	if len(conf["button-click-sound"]) > 0 {
+		ButtonClickSound = conf["button-click-sound"][0]
+	}
+	if len(conf["music-volume"]) > 0 {
+		MusicVolume, err = strconv.ParseFloat(conf["music-volume"][0], 64)
+		if err != nil {
+			log.Err.Printf("config: unable to set music volume: %v", err)
+		}
+	}
+	if len(conf["music-mute"]) > 0 {
+		MusicMute = conf["music-mute"][0] == "true"
+	}
 	// New char attributes points.
-	CharAttrsMin = intValues["newchar-attrs-min"]
-	CharAttrsMax = intValues["newchar-attrs-max"]
+	if len(conf["newchar-attrs-min"]) > 0 {
+		CharAttrsMin, err = strconv.Atoi(conf["newchar-attrs-min"][0])
+		if err != nil {
+			log.Err.Printf("config: unable to set char attrs min value: %v", err)
+		}
+	}
+	if len(conf["newchar-attrs-max"]) > 0 {
+		CharAttrsMax, err = strconv.Atoi(conf["newchar-attrs-max"][0])
+		if err != nil {
+			log.Err.Printf("config: unable to set char attrs max value: %v", err)
+		}
+	}
 	// New char items & skills.
-	for _, v := range strings.Split(values["newchar-skills"], ";") {
-		if len(v) < 1 {
-			continue
-		}
-		CharSkills = append(CharSkills, v)
-	}
-	for _, v := range strings.Split(values["newchar-items"], ";") {
-		if len(v) < 1 {
-			continue
-		}
-		CharItems = append(CharItems, v)
-	}
+	CharSkills = conf["newchar-skills"]
+	CharItems = conf["newchar-items"]
 	log.Dbg.Print("config file loaded")
 	return nil
 }
@@ -114,36 +123,34 @@ func LoadConfig() error {
 // SaveConfig saves current configuration to file.
 func SaveConfig() error {
 	// Create file.
-	f, err := os.Create(ConfFileName)
+	file, err := os.Create(ConfFileName)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer file.Close()
+	// Create config text.
+	conf := make(map[string][]string)
+	conf["fullscreen"] = []string{fmt.Sprintf("%v", Fullscreen)}
+	conf["resolution"] = []string{
+		fmt.Sprintf("%f", Resolution.X),
+		fmt.Sprintf("%f", Resolution.Y),
+	}
+	conf["map-fow"] = []string{fmt.Sprintf("%v", MapFOW)}
+	conf["main-font"] = []string{MainFont}
+	conf["menu-music"] = []string{MenuMusic}
+	conf["button-click-sound"] = []string{ButtonClickSound}
+	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
+	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
+	conf["newchar-attrs-min"] = []string{fmt.Sprintf("%d", CharAttrsMin)}
+	conf["newchar-attrs-max"] = []string{fmt.Sprintf("%d", CharAttrsMax)}
+	conf["newchar-skills"] = CharSkills
+	conf["newchar-items"] = CharItems
+	confText := parsetxt.MarshalConfig(conf)
 	// Write config values.
-	w := bufio.NewWriter(f)
-	w.WriteString(fmt.Sprintf("%s\n", "# Mural GUI configuration file.")) // default header
-	w.WriteString(fmt.Sprintf("fullscreen:%v\n", Fullscreen))
-	w.WriteString(fmt.Sprintf("resolution:%fx%f\n", Resolution.X, Resolution.Y))
-	w.WriteString(fmt.Sprintf("map-fow:%v\n", MapFOW))
-	w.WriteString(fmt.Sprintf("main-font:%s\n", MainFont))
-	w.WriteString(fmt.Sprintf("menu-music:%s\n", MenuMusic))
-	w.WriteString(fmt.Sprintf("button-click-sound:%s\n", ButtonClickSound))
-	w.WriteString(fmt.Sprintf("music-volume:%f\n", MusicVolume))
-	w.WriteString(fmt.Sprintf("music-mute:%v\n", MusicMute))
-	w.WriteString(fmt.Sprintf("newchar-attrs-min:%d\n", CharAttrsMin))
-	w.WriteString(fmt.Sprintf("newchar-attrs-max:%d\n", CharAttrsMax))
-	w.WriteString("newchar-skills:")
-	for _, sid := range CharSkills {
-		w.WriteString(sid + ";")
-	}
-	w.WriteString("\n")
-	w.WriteString("newchar-items:")
-	for _, iid := range CharItems {
-		w.WriteString(iid + ";")
-	}
-	w.WriteString("\n")
+	w := bufio.NewWriter(file)
+	w.WriteString(confText)
 	w.Flush()
-	log.Dbg.Print("config file saved")
+	log.Dbg.Print("Config file saved")
 	return nil
 }
 

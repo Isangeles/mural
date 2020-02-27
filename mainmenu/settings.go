@@ -187,7 +187,7 @@ func (s *Settings) Apply() {
 		log.Err.Printf("settings menu: fail to retrive lang switch value")
 		return
 	}
-	flameconf.SetLang(lang)
+	flameconf.Lang = lang
 	// Music volume.
 	mVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
 	if !ok {
@@ -215,7 +215,7 @@ func (s *Settings) updateValues() {
 	s.fullscrSwitch.SetIndex(fullscrIndex)
 	resIndex := s.resSwitch.Find(config.Resolution)
 	s.resSwitch.SetIndex(resIndex)
-	langIndex := s.langSwitch.Find(flameconf.LangID())
+	langIndex := s.langSwitch.Find(flameconf.Lang)
 	s.langSwitch.SetIndex(langIndex)
 	mVolIndex := s.musicVolumeSwitch.Find(config.MusicVolume)
 	s.musicVolumeSwitch.SetIndex(mVolIndex)

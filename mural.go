@@ -75,7 +75,7 @@ func init() {
 		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Load module.
-	m, err := flamedata.ImportModule(flameconf.ModulePath(), flameconf.LangID())
+	m, err := flamedata.ImportModule(flameconf.ModulePath, flameconf.Lang)
 	if err != nil {
 		log.Err.Printf("unable to load config module: %v", err)
 	}

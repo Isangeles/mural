@@ -180,12 +180,12 @@ func SaveConfig() error {
 
 // Debug checks whether debug mode is enabled.
 func Debug() bool {
-	return flameconf.Debug()
+	return flameconf.Debug
 }
 
 // Lang returns ID of current language.
 func Lang() string {
-	return flameconf.LangID()
+	return flameconf.Lang
 }
 
 // SupportedResolutions returns all resolutions

@@ -25,6 +25,7 @@ package mainmenu
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 
@@ -159,7 +160,7 @@ func (ngm *NewGameMenu) updateCharInfo() {
 	}
 	c, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		log.Err.Printf("fail to retrieve character data from switch")
+		log.Err.Printf("unable to retrieve character data from switch")
 		return
 	}
 	charData := c.CharData.BasicData
@@ -192,17 +193,18 @@ func (ngm *NewGameMenu) exportChar() error {
 	}
 	data, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		return fmt.Errorf("fail to retrieve character data from switch")
+		return fmt.Errorf("unable to retrieve character data from switch")
 	}
 	c := character.New(*data.CharData)
-	err := flamedata.ExportCharacter(c, flame.Mod().Conf().CharactersPath())
+	path := filepath.Join(flame.Mod().Conf().CharactersPath(), c.Name())
+	err := flamedata.ExportCharacters(path, c)
 	if err != nil {
-		return fmt.Errorf("fail to export character: %v", err)
+		return fmt.Errorf("unable to export characters: %v", err)
 	}
 	av := object.NewAvatar(c, data.AvatarData)
 	err = exp.ExportAvatar(av, flame.Mod().Conf().CharactersPath())
 	if err != nil {
-		return fmt.Errorf("fail to export avatar: %v", err)
+		return fmt.Errorf("unable to export avatar: %v", err)
 	}
 	return nil
 }
@@ -220,14 +222,14 @@ func (ngm *NewGameMenu) startGame() {
 	}
 	pcd, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		log.Err.Printf("main menu: new game: fail to retrieve avatar from switch")
+		log.Err.Printf("main menu: new game: unable to retrieve avatar from switch")
 		return
 	}
 	// Create game.
 	c := character.New(*pcd.CharData)
 	g, err := flame.StartGame(c)
 	if err != nil {
-		log.Err.Printf("main menu: new game: fail to start game: %v", err)
+		log.Err.Printf("main menu: new game: unable to start game: %v", err)
 		return
 	}
 	// Create pc avatar.
@@ -254,7 +256,7 @@ func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 	err := ngm.exportChar()
 	if err != nil {
-		log.Err.Printf("main menu: new game: fail to export character: %v", err)
+		log.Err.Printf("main menu: new game: unable to export character: %v", err)
 		return
 	}
 	msg := lang.Text("newgame_export_msg")

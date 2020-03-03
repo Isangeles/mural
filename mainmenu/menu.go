@@ -26,7 +26,6 @@ package mainmenu
 import (
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/mtk"
@@ -55,7 +54,7 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		SizeRaw:  mtk.ConvVec(pixel.V(900, 0)),
 	}
 	m.title = mtk.NewText(titleParams)
-	m.title.SetText(flame.Mod().Conf().ID)
+	m.title.SetText(m.mainmenu.mod.Conf().ID)
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,

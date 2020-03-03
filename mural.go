@@ -38,6 +38,7 @@ import (
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
+	"github.com/isangeles/flame/core/module"
 	"github.com/isangeles/flame/core/data/res/lang"
 
 	"github.com/isangeles/burn"
@@ -57,6 +58,7 @@ import (
 var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
+	mod      *module.Module
 	game     *flamecore.Game
 	inGame   bool
 )
@@ -80,6 +82,7 @@ func init() {
 		log.Err.Printf("unable to load config module: %v", err)
 	}
 	flame.SetModule(m)
+	mod = m
 	burn.Module = m
 	// Load GUI config.
 	err = config.LoadConfig()
@@ -91,26 +94,26 @@ func init() {
 // Main function.
 func main() {
 	// Check if Flame module is loaded.
-	if flame.Mod() == nil {
+	if mod == nil {
 		panic(fmt.Sprintf("%s\n", lang.Text("no_mod_loaded_err")))
 	}
 	// Load UI graphic.
-	err := data.LoadUIData(flame.Mod())
+	err := data.LoadUIData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load gui data: %v", err))
 	}
 	// Load game graphic.
-	err = data.LoadModuleData(flame.Mod())
+	err = data.LoadModuleData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
 	}
 	// Load module data.
-	err = flamedata.LoadModuleData(flame.Mod())
+	err = flamedata.LoadModuleData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load module data: %v", err))
 	}
 	// Load module graphic data.
-	err = imp.LoadModuleResources(flame.Mod())
+	err = imp.LoadModuleResources(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load module resources: %v", err))
 	}
@@ -168,10 +171,10 @@ func run() {
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
 	// Create main menu.
-	mainMenu = mainmenu.New()
+	mainMenu = mainmenu.New(mod)
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
-	err = mainMenu.ImportPlayableChars(flame.Mod().Conf().CharactersPath())
+	err = mainMenu.ImportPlayableChars(mod.Conf().CharactersPath())
 	if err != nil {
 		log.Err.Printf("init run: unable to import playable characters: %v",
 			err)
@@ -261,7 +264,7 @@ func LoadSavedGame(saveName string) {
 	mainMenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
-	game, err := flamedata.ImportGame(flame.Mod(), flameconf.ModuleSavegamesPath(), saveName)
+	game, err := flamedata.ImportGame(mod, flameconf.ModuleSavegamesPath(), saveName)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to import game: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))

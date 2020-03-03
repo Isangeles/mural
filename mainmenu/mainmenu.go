@@ -35,6 +35,7 @@ import (
 	flamedata "github.com/isangeles/flame/core/data"
 	flameres "github.com/isangeles/flame/core/data/res"
 	"github.com/isangeles/flame/core/data/res/lang"
+	"github.com/isangeles/flame/core/module"
 
 	"github.com/isangeles/mtk"
 
@@ -63,6 +64,7 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
+	mod           *module.Module
 	playableChars []PlayableCharData
 	onGameCreated func(g *flamecore.Game, pcs ...*object.Avatar)
 	onSaveLoad    func(savename string)
@@ -78,8 +80,9 @@ type PlayableCharData struct {
 }
 
 // New creates new main menu
-func New() *MainMenu {
+func New(mod *module.Module) *MainMenu {
 	mm := new(MainMenu)
+	mm.mod = mod
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.newgamemenu = newNewGameMenu(mm)

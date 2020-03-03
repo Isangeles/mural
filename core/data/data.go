@@ -1,7 +1,7 @@
 /*
  * data.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/core/module"
 	
 	"github.com/isangeles/burn/ash"
@@ -50,13 +49,12 @@ import (
 )
 
 var (
+	mod *module.Module
 	// Paths.
 	modAudioDirPath     string
 	modGraphicDirPath   string
 	modGraphicArchPath  string
 	modAudioArchPath    string
-	mainGraphicArchPath = "data/gui/gdata.zip"
-	mainAudioArchPath   = "data/gui/adata.zip"
 	// Scritps.
 	ashScriptExt = ".ash"
 	// Textures & fonts.
@@ -66,6 +64,7 @@ var (
 	itemsTexs   map[string]pixel.Picture
 	icons       map[string]pixel.Picture
 	portraits   map[string]pixel.Picture
+	pcPortraits map[string]pixel.Picture
 	music       map[string]*beep.Buffer
 	fonts       map[string]*truetype.Font
 )
@@ -78,6 +77,7 @@ func init() {
 	itemsTexs = make(map[string]pixel.Picture)
 	icons = make(map[string]pixel.Picture)
 	portraits = make(map[string]pixel.Picture)
+	pcPortraits = make(map[string]pixel.Picture)
 	music = make(map[string]*beep.Buffer)
 	fonts = make(map[string]*truetype.Font)
 }
@@ -89,24 +89,24 @@ func LoadModuleData(mod *module.Module) error {
 	// Load data resource paths.
 	loadPaths(mod)
 	// Portraits.
-	avsPortraits, err := loadPicturesFromArch(modGraphicArchPath, "avatar/portrait")
+	portraits, err := loadPicturesFromArch(modGraphicArchPath, "avatar/portrait")
 	if err != nil {
-		return fmt.Errorf("fail to load avatars portraits: %v", err)
+		return fmt.Errorf("unable to load avatars portraits: %v", err)
 	}
-	for n, p := range avsPortraits {
+	for n, p := range portraits {
 		portraits[n] = p
 	}
-	obPortraits, err := loadPicturesFromArch(modGraphicArchPath, "object/portrait")
+	portraits, err = loadPicturesFromArch(modGraphicArchPath, "object/portrait")
 	if err != nil {
-		return fmt.Errorf("fail to load objects portraits: %v", err)
+		return fmt.Errorf("unable to load objects portraits: %v", err)
 	}
-	for n, p := range obPortraits {
+	for n, p := range portraits {
 		portraits[n] = p
 	}
 	// Avatars spritesheets.
 	avTexs, err := loadPicturesFromArch(modGraphicArchPath, "avatar/spritesheet")
 	if err != nil {
-		return fmt.Errorf("fail to load avatars spritesheets: %v", err)
+		return fmt.Errorf("unable to load avatars spritesheets: %v", err)
 	}
 	for n, t := range avTexs {
 		avatarsTexs[n] = t
@@ -114,7 +114,7 @@ func LoadModuleData(mod *module.Module) error {
 	// Objects spritesheets.
 	obTexs, err := loadPicturesFromArch(modGraphicArchPath, "object/spritesheet")
 	if err != nil {
-		return fmt.Errorf("fail to load objects spritesheets: %v", err)
+		return fmt.Errorf("unable to load objects spritesheets: %v", err)
 	}
 	for n, t := range obTexs {
 		objectsTexs[n] = t
@@ -122,7 +122,7 @@ func LoadModuleData(mod *module.Module) error {
 	// Items spritesheets.
 	itTexs, err := loadPicturesFromArch(modGraphicArchPath, "item/spritesheet")
 	if err != nil {
-		return fmt.Errorf("fail to load items spritesheets: %v", err)
+		return fmt.Errorf("unable to load items spritesheets: %v", err)
 	}
 	for n, t := range itTexs {
 		itemsTexs[n] = t
@@ -130,21 +130,21 @@ func LoadModuleData(mod *module.Module) error {
 	// Icons.
 	itemIcons, err := loadPicturesFromArch(modGraphicArchPath, "item/icon")
 	if err != nil {
-		return fmt.Errorf("fail to load items icons: %v", err)
+		return fmt.Errorf("unable to load items icons: %v", err)
 	}
 	for name, i := range itemIcons {
 		icons[name] = i
 	}
 	effectIcons, err := loadPicturesFromArch(modGraphicArchPath, "effect/icon")
 	if err != nil {
-		return fmt.Errorf("fail to load effects icons: %v", err)
+		return fmt.Errorf("unable to load effects icons: %v", err)
 	}
 	for name, i := range effectIcons {
 		icons[name] = i
 	}
 	skillIcons, err := loadPicturesFromArch(modGraphicArchPath, "skill/icon")
 	if err != nil {
-		return fmt.Errorf("fail to load skills icons: %v", err)
+		return fmt.Errorf("unable to load skills icons: %v", err)
 	}
 	for name, i := range skillIcons {
 		icons[name] = i
@@ -161,13 +161,13 @@ func LoadUIData(mod *module.Module) error {
 	// GUI elements textures.
 	texs, err := loadPicturesFromArch(modGraphicArchPath, "ui")
 	if err != nil {
-		return fmt.Errorf("fail to load ui textures: %v", err)
+		return fmt.Errorf("unable to load ui textures: %v", err)
 	}
 	uiTexs = texs
 	// Fonts.
 	ttfs, err := loadFontsFromArch(modGraphicArchPath, "font")
 	if err != nil {
-		return fmt.Errorf("fail to load fonts: %v", err)
+		return fmt.Errorf("unable to load fonts: %v", err)
 	}
 	fonts = ttfs
 	return nil
@@ -181,7 +181,7 @@ func PictureUI(fileName string) (pixel.Picture, error) {
 		return pic, nil
 	}
 	// Fallback, load picture 'by hand'.
-	log.Dbg.Printf("data picture ui fallback load: %s", fileName)
+	log.Dbg.Printf("data: picture ui fallback load: %s", fileName)
 	return loadPictureFromArch(modGraphicArchPath, "ui/"+fileName)
 }
 
@@ -196,8 +196,7 @@ func AvatarPortrait(fileName string) (pixel.Picture, error) {
 	if portrait != nil {
 		return portrait, nil
 	}
-	path := filepath.FromSlash(flame.Mod().Conf().Path +
-		"/gui/portraits/" + fileName)
+	path := filepath.Join(modGraphicDirPath, "portraits", fileName)
 	return loadPictureFromDir(path)
 }
 
@@ -207,8 +206,7 @@ func Portrait(fileName string) (pixel.Picture, error) {
 	if portrait != nil {
 		return portrait, nil
 	}
-	path := filepath.FromSlash(flame.Mod().Conf().Path +
-		"/gui/portraits/" + fileName)
+	path := filepath.Join(modGraphicDirPath, "portraits", fileName)
 	return loadPictureFromDir(path)
 }
 
@@ -220,7 +218,7 @@ func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
 		return spritesheet, nil
 	}
 	// Fallback.
-	log.Dbg.Printf("data avatar spritesheet fallback load: %s",
+	log.Dbg.Printf("data: avatar spritesheet fallback load: %s",
 		fileName)
 	path := filepath.FromSlash("avatar/spritesheet/" + fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
@@ -234,7 +232,7 @@ func ItemSpritesheet(fileName string) (pixel.Picture, error) {
 		return spritesheet, nil
 	}
 	// Fallback.
-	log.Dbg.Printf("data items spritesheet fallback load: %s",
+	log.Dbg.Printf("data: items spritesheet fallback load: %s",
 		fileName)
 	path := filepath.FromSlash("item/spritesheet/" + fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
@@ -261,7 +259,7 @@ func Icon(fileName string) (pixel.Picture, error) {
 		return icon, nil
 	}
 	// Fallback.
-	log.Dbg.Printf("data items icon fallback load: %s",
+	log.Dbg.Printf("data: items icon fallback load: %s",
 		fileName)
 	path := filepath.FromSlash("item/icon/" + fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
@@ -270,10 +268,10 @@ func Icon(fileName string) (pixel.Picture, error) {
 // PlayablePortraits returns map with names of portraits as keys
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {
-	path := flame.Mod().Conf().Path + "/gui/portraits"
+	path := filepath.Join(modGraphicDirPath, "portraits")
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	portraits := make(map[string]pixel.Picture)
 	for _, f := range files {
@@ -297,7 +295,7 @@ func Font(fileName string) (*truetype.Font, error) {
 		return font, nil
 	}
 	// Fallback.
-	log.Dbg.Printf("data font fallback load: %s", fileName)
+	log.Dbg.Printf("data: font fallback load: %s", fileName)
 	fullpath := fmt.Sprintf("%s/%s/%s", modGraphicDirPath, "font", fileName)
 	return loadFontFromDir(filepath.FromSlash(fullpath))
 }
@@ -307,11 +305,11 @@ func Font(fileName string) (*truetype.Font, error) {
 func Map(areaDir string) (*tmx.Map, error) {
 	tmxFile, err := os.Open(areaDir + "/map.tmx")
 	if err != nil {
-		return nil, fmt.Errorf("fail to open tmx file: %v", err)
+		return nil, fmt.Errorf("unable to open tmx file: %v", err)
 	}
 	tmxMap, err := tmx.Read(tmxFile)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read tmx file: %v", err)
+		return nil, fmt.Errorf("unable to read tmx file: %v", err)
 	}
 	return tmxMap, nil
 }
@@ -334,7 +332,7 @@ func AudioEffect(fileName string) (*beep.Buffer, error) {
 func ErrorItemGraphic() (*res.ItemGraphicData, error) {
 	icon, err := Icon("unknown.png")
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve error icon: %v", err)
+		return nil, fmt.Errorf("unable to retrieve error icon: %v", err)
 	}
 	igd := res.ItemGraphicData{
 		IconPic:  icon,
@@ -348,7 +346,7 @@ func ErrorItemGraphic() (*res.ItemGraphicData, error) {
 func ScriptsDir(path string) ([]*ash.Script, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	scripts := make([]*ash.Script, 0)
 	for _, info := range files {
@@ -358,7 +356,7 @@ func ScriptsDir(path string) ([]*ash.Script, error) {
 		scriptPath := filepath.FromSlash(path + "/" + info.Name())
 		s, err := Script(scriptPath)
 		if err != nil {
-			log.Err.Printf("data scripts dir: %s: fail to retrieve script: %v",
+			log.Err.Printf("data scripts dir: %s: unable to retrieve script: %v",
 				path, err)
 			continue
 		}
@@ -372,16 +370,16 @@ func ScriptsDir(path string) ([]*ash.Script, error) {
 func Script(path string) (*ash.Script, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail to open file: %v", err)
+		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
 	text, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read file: %v", err)
+		return nil, fmt.Errorf("unable to read file: %v", err)
 	}
 	scriptName := filepath.Base(path)
 	script, err := ash.NewScript(scriptName, fmt.Sprintf("%s", text))
 	if err != nil {
-		return nil, fmt.Errorf("fail to parse script text: %v", err)
+		return nil, fmt.Errorf("unable to parse script text: %v", err)
 	}
 	return script, nil
 }

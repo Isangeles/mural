@@ -1,7 +1,7 @@
 /*
  * avatarxml.go
  *
- * Copyright 2018 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ func MarshalAvatars(avs []*object.Avatar) (string, error) {
 	}
 	out, err := xml.Marshal(xmlAvatarsBase)
 	if err != nil {
-		return "", fmt.Errorf("fail to marshal avatars base: %v", err)
+		return "", fmt.Errorf("unable to marshal avatars base: %v", err)
 	}
 	return string(out[:]), nil
 }
@@ -88,13 +88,13 @@ func UnmarshalAvatars(data io.Reader) ([]*res.AvatarData, error) {
 	xmlBase := new(Avatars)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal xml data: %v", err)
 	}
 	avatars := make([]*res.AvatarData, 0)
 	for _, xmlData := range xmlBase.Avatars {
 		ad, err := buildAvatarData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml: unmarshal avatar: %s: fail to build data: %v",
+			log.Err.Printf("xml: unmarshal avatar: %s: unable to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -134,17 +134,17 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	ssHeadName := avXML.Spritesheet.Head
 	ssTorsoName := avXML.Spritesheet.Torso
 	portraitName := avXML.Portrait
-	portraitPic, err := data.AvatarPortrait(portraitName)
+	portraitPic, err := data.Portrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:           avXML.ID,
@@ -164,13 +164,13 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	ssFullBodyName := avXML.Spritesheet.FullBody
 	portraitName := avXML.Portrait
-	portraitPic, err := data.AvatarPortrait(portraitName)
+	portraitPic, err := data.Portrait(portraitName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
 	}
 	ssFullBodyPic, err := data.AvatarSpritesheet(ssFullBodyName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:             avXML.ID,

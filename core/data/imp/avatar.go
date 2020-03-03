@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v",
 			err)
 	}
-	portraitPic, err := data.AvatarPortrait(portraitName)
+	portraitPic, err := data.Portrait(portraitName)
 	if err != nil {
 		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
 	}

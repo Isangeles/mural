@@ -111,7 +111,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.faceSwitch.SetLabel(lang.Text("newchar_face_switch_label"))
 	faces, err := data.PlayablePortraits()
 	if err != nil {
-		log.Err.Printf("new_char_menu:fail_to_retrieve_player_portraits:%v", err)
+		log.Err.Printf("new char menu: unable to retrieve player portraits: %v", err)
 	}
 	if faces != nil {
 		ncm.faceSwitch.SetPictureValues(faces)
@@ -324,17 +324,17 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	// Gender.
 	gender, ok := ncm.sexSwitch.Value().Value.(character.Gender)
 	if !ok {
-		return nil, fmt.Errorf("fail_to_retrive_gender")
+		return nil, fmt.Errorf("unable to retrive gender")
 	}
 	// Race.
 	race, ok := ncm.raceSwitch.Value().Value.(character.Race)
 	if !ok {
-		return nil, fmt.Errorf("fail_to_retrieve_race")
+		return nil, fmt.Errorf("unable to retrieve race")
 	}
 	// Alignment.
 	alignment, ok := ncm.aliSwitch.Value().Value.(character.Alignment)
 	if !ok {
-		return nil, fmt.Errorf("fail_to_retrieve_alignment")
+		return nil, fmt.Errorf("unable to retrieve alignment")
 	}
 	// ID.
 	name = strings.ReplaceAll(name, " ", "_")
@@ -379,7 +379,7 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	charData, err := ncm.createCharData()
 	if err != nil {
-		log.Err.Printf("newchar menu: fail to create character: %v", err)
+		log.Err.Printf("newchar menu: unable to create character: %v", err)
 		return
 	}
 	ssHeadName := "m-head-black-1222211-80x90.png"
@@ -390,20 +390,20 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		log.Err.Printf("newchar menu: fail to retrieve head spritesheet picture: %v",
+		log.Err.Printf("newchar menu: unable to retrieve head spritesheet picture: %v",
 			err)
 		return
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		log.Err.Printf("newchar menu: fail to retrieve torso spritesheet picture: %v",
+		log.Err.Printf("newchar menu: unable to retrieve torso spritesheet picture: %v",
 			err)
 		return
 	}
 	portraitName, err := ncm.faceSwitch.Value().TextValue()
-	portraitPic, err := data.AvatarPortrait(portraitName)
+	portraitPic, err := data.Portrait(portraitName)
 	if err != nil {
-		log.Err.Printf("newchar menu: fail to retrieve portrait picture: %v",
+		log.Err.Printf("newchar menu: unable to retrieve portrait picture: %v",
 			err)
 		return
 	}
@@ -434,27 +434,27 @@ func (ncm *NewCharacterMenu) onAttrSwitchChange(s *mtk.Switch,
 	old, new *mtk.SwitchValue) {
 	str, ok := ncm.strSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new char menu: fail to retrieve str switch value")
+		log.Err.Print("new char menu: unable to retrieve str switch value")
 		return
 	}
 	con, ok := ncm.conSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new char menu: fail to retrieve con switch value")
+		log.Err.Print("new char menu: unable to retrieve con switch value")
 		return
 	}
 	dex, ok := ncm.dexSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new char menu: fail to retrieve con switch value")
+		log.Err.Print("new char menu: unable to retrieve con switch value")
 		return
 	}
 	inte, ok := ncm.intSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new char menu: fail to retrieve int switch value")
+		log.Err.Print("new char menu: unable to retrieve int switch value")
 		return
 	}
 	wis, ok := ncm.wisSwitch.Value().Value.(int)
 	if !ok {
-		log.Err.Print("new char menu: fail to retrieve wis switch value")
+		log.Err.Print("new char menu: unable to retrieve wis switch value")
 		return
 	}
 	pts := ncm.attrPointsMax

@@ -190,16 +190,6 @@ func PictureFromDir(path string) (pixel.Picture, error) {
 	return loadPictureFromDir(path)
 }
 
-// AvatarPortrait returns portrait with specified name.
-func AvatarPortrait(fileName string) (pixel.Picture, error) {
-	portrait := portraits[fileName]
-	if portrait != nil {
-		return portrait, nil
-	}
-	path := filepath.Join(modGraphicDirPath, "portraits", fileName)
-	return loadPictureFromDir(path)
-}
-
 // Portrait returns portrait with specified name.
 func Portrait(fileName string) (pixel.Picture, error) {
 	portrait := portraits[fileName]

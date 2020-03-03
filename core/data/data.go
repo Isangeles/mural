@@ -49,7 +49,6 @@ import (
 )
 
 var (
-	mod *module.Module
 	// Paths.
 	modAudioDirPath     string
 	modGraphicDirPath   string
@@ -183,11 +182,6 @@ func PictureUI(fileName string) (pixel.Picture, error) {
 	// Fallback, load picture 'by hand'.
 	log.Dbg.Printf("data: picture ui fallback load: %s", fileName)
 	return loadPictureFromArch(modGraphicArchPath, "ui/"+fileName)
-}
-
-// PictureFromDir loads image from specified system path.
-func PictureFromDir(path string) (pixel.Picture, error) {
-	return loadPictureFromDir(path)
 }
 
 // Portrait returns portrait with specified name.

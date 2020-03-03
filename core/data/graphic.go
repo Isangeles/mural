@@ -1,7 +1,7 @@
 /*
  * graphic.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ import (
 func loadPicturesFromArch(archPath, dir string) (map[string]pixel.Picture, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
 	pics := make(map[string]pixel.Picture, 0)
@@ -53,12 +53,12 @@ func loadPicturesFromArch(archPath, dir string) (map[string]pixel.Picture, error
 			fName := fPath[len(fPath)-1]
 			rc, err := f.Open()
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_open_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to open arch file: %v", err)
 			}
 			defer rc.Close()
 			img, _, err := image.Decode(rc)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_decode_img:%v", err)
+				return nil, fmt.Errorf("unable to decode img: %v", err)
 			}
 			pics[fName] = pixel.PictureDataFromImage(img)
 		}
@@ -71,7 +71,7 @@ func loadPicturesFromArch(archPath, dir string) (map[string]pixel.Picture, error
 func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
 	fonts := make(map[string]*truetype.Font, 0)
@@ -81,16 +81,16 @@ func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) 
 			fName := fPath[len(fPath)-1]
 			rc, err := f.Open()
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_open_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to open arch file: %v", err)
 			}
 			defer rc.Close()
 			bytes, err := ioutil.ReadAll(rc)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_read_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to read arch file: %v", err)
 			}
 			font, err := truetype.Parse(bytes)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_parse_font:%v", err)
+				return nil, fmt.Errorf("unable to parse font: %v", err)
 			}
 			fonts[fName] = font
 		}
@@ -104,24 +104,24 @@ func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) 
 func loadPictureFromArch(archPath, filePath string) (pixel.Picture, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
 	for _, f := range r.File {
 		if f.Name == filePath {
 			rc, err := f.Open()
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_open_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to open arch file: %v", err)
 			}
 			defer rc.Close()
 			img, _, err := image.Decode(rc)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_decode_img:%v", err)
+				return nil, fmt.Errorf("unable to decode img: %v", err)
 			}
 			return pixel.PictureDataFromImage(img), nil
 		}
 	}
-	return nil, fmt.Errorf("file_not_found:%s", filePath)
+	return nil, fmt.Errorf("file not found: %s", filePath)
 }
 
 // loadFontFromArch Returns font with specified path in archive in
@@ -129,41 +129,41 @@ func loadPictureFromArch(archPath, filePath string) (pixel.Picture, error) {
 func loadFontFromArch(archPath, filePath string) (*truetype.Font, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
 	for _, f := range r.File {
 		if f.Name == filePath {
 			rc, err := f.Open()
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_open_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to open arch file: %v", err)
 			}
 			defer rc.Close()
 			bytes, err := ioutil.ReadAll(rc)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_read_arch_file:%v", err)
+				return nil, fmt.Errorf("unable to read arch file: %v", err)
 			}
 			font, err := truetype.Parse(bytes)
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_parse_font:%v", err)
+				return nil, fmt.Errorf("unable to parse font: %v", err)
 			}
 			return font, nil
 		}
 	}
-	return nil, fmt.Errorf("file_not_found:%s", filePath)
+	return nil, fmt.Errorf("file not found: %s", filePath)
 }
 
-// loadPictureFromDir loads picture from specified system path and
-// returns picture object.
+// LoadPictureFromDir loads picture from specified system path and
+// returns picture struct.
 func loadPictureFromDir(path string) (pixel.Picture, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_file:%v", err)
+		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
 	defer file.Close()
 	img, _, err := image.Decode(file)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_decode_img:%v", err)
+		return nil, fmt.Errorf("unable to decode img: %v", err)
 	}
 	return pixel.PictureDataFromImage(img), nil
 }
@@ -173,7 +173,7 @@ func loadPictureFromDir(path string) (pixel.Picture, error) {
 func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_dir:%v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	var pics []pixel.Picture
 	for _, f := range files {
@@ -193,17 +193,17 @@ func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
 func loadFontFromDir(path string) (*truetype.Font, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_file:%v", err)
+		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
 	defer file.Close()
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_read_file:%v", err)
+		return nil, fmt.Errorf("unable to read file: %v", err)
 	}
 
 	font, err := truetype.Parse(bytes)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_parse_font:%v", err)
+		return nil, fmt.Errorf("unable to parse font: %v", err)
 	}
 	return font, nil
 }

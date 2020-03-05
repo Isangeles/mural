@@ -69,7 +69,6 @@ func init() {
 	err := flameconf.LoadConfig()
 	if err != nil {
 		log.Err.Printf("unable to load flame config file: %v", err)
-		flameconf.SaveConfig() // override 'corrupted' config file with default configuration
 	}
 	// Load UI translation files.
 	err = flamedata.LoadTranslationData(flameconf.LangPath())
@@ -77,10 +76,11 @@ func init() {
 		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Load module.
-	m, err := flamedata.ImportModule(flameconf.ModulePath, flameconf.Lang)
+	m, err := flamedata.ImportModule(flameconf.ModulePath())
 	if err != nil {
-		log.Err.Printf("unable to load config module: %v", err)
+		log.Err.Printf("unable to load module: %v", err)
 	}
+	m.Conf().Lang = flameconf.Lang
 	flame.SetModule(m)
 	mod = m
 	burn.Module = m
@@ -188,7 +188,7 @@ func run() {
 	fpsInfo.Align(mtk.AlignRight)
 	verInfo := mtk.NewText(textParams)
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
-		flame.Name, flame.Version))
+		flameconf.Name, flameconf.Version))
 	verInfo.Align(mtk.AlignRight)
 	// Main loop.
 	for !win.Closed() {

@@ -145,16 +145,15 @@ func run() {
 	if winRes.X == 0 || winRes.Y == 0 {
 		winRes.X, winRes.Y = monitor.Size()
 	}
-	cfg := pixelgl.WindowConfig{
+	winConfig := pixelgl.WindowConfig{
 		Title:  config.Name + " " + config.Version,
 		Bounds: pixel.R(winPosX, winPosY, winRes.X, winRes.Y),
 		VSync:  true,
 	}
 	if config.Fullscreen {
-		monitor := pixelgl.PrimaryMonitor()
-		cfg.Monitor = monitor
+		winConfig.Monitor = pixelgl.PrimaryMonitor()
 	}
-	win, err := mtk.NewWindow(cfg)
+	win, err := mtk.NewWindow(winConfig)
 	if err != nil {
 		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
@@ -235,16 +234,17 @@ func EnterGame(g *flamecore.Game, pcs ...*object.Avatar) {
 	hud := hud.New()
 	// Set HUD.
 	setHUD(hud)
-	// Set game for HUD.
+	// Load GUI data.
 	err := imp.LoadChapterResources(game.Module().Chapter())
 	if err != nil {
-		log.Err.Printf("enter game: unable to load chapter resources: %v", err)
+		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	for _, pc := range pcs {
 		hud.AddPlayer(pc)
 	}
+	// Set game for HUD.
 	hud.SetGame(game)
 	burn.Game = game
 	inGame = true
@@ -252,7 +252,7 @@ func EnterGame(g *flamecore.Game, pcs ...*object.Avatar) {
 	modpath := game.Module().Conf().Path
 	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
 	if err != nil {
-		log.Err.Printf("enter saved game: unable to retrieve module scripts: %v", err)
+		log.Err.Printf("enter game: unable to retrieve module scripts: %v", err)
 	}
 	for _, s := range scripts {
 		go ci.RunScript(s)
@@ -289,7 +289,6 @@ func LoadSavedGame(saveName string) {
 		pcs = append(pcs, av)
 	}
 	// Enter game.
-	flame.SetGame(game)
 	EnterGame(game, pcs...)
 	// Load HUD state.
 	err = pcHUD.LoadGUISave(guisav)

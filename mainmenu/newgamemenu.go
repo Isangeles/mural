@@ -29,7 +29,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
 	"github.com/isangeles/flame/core/data/res/lang"
 	"github.com/isangeles/flame/core/module/character"
@@ -215,7 +215,19 @@ func (ngm *NewGameMenu) startGame() {
 	// Show loading screen.
 	ngm.mainmenu.OpenLoadingScreen(lang.Text("newgame_start_info"))
 	defer ngm.mainmenu.CloseLoadingScreen()
-	// Retrive character from character switch.
+	// Load chapter.
+	mod := ngm.mainmenu.mod
+	err := flamedata.LoadChapter(mod, mod.Conf().Chapter)
+	if err != nil {
+		log.Err.Printf("main menu: new game: unable to load chapter: %v", err)
+		return
+	}
+	err = flamedata.LoadChapterData(mod.Chapter())
+	if err != nil {
+		log.Err.Printf("main menu: new game: unable to load chapter data: %v", err)
+		return
+	}
+	// Retrive character data from character switch.
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
 		log.Err.Printf("main menu: new game: no char switch value")
@@ -226,20 +238,28 @@ func (ngm *NewGameMenu) startGame() {
 		log.Err.Printf("main menu: new game: unable to retrieve avatar from switch")
 		return
 	}
-	// Create game.
-	c := character.New(*pcd.CharData)
-	g, err := flame.StartGame(c)
-	if err != nil {
-		log.Err.Printf("main menu: new game: unable to start game: %v", err)
+	// Create PC and avatar.
+	pc := character.New(*pcd.CharData)
+	av := object.NewAvatar(pc, pcd.AvatarData)
+	// Set start position.
+	chapterConf := mod.Chapter().Conf()
+	startPos := pixel.V(chapterConf.StartPosX, chapterConf.StartPosY)
+	av.SetPosition(startPos)
+	// PC to start area.
+	startArea := mod.Chapter().Area(chapterConf.StartArea)
+	if startArea == nil {
+		log.Err.Printf("main menu: new game: start area not found: %s",
+			chapterConf.StartArea)
 		return
 	}
-	// Create pc avatar.
-	av := object.NewAvatar(c, pcd.AvatarData)
-	// Pass new game.
+	startArea.AddCharacter(pc)
+	// Create game.
+	game := core.NewGame(mod)
+	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(g, av)
+	ngm.mainmenu.onGameCreated(game, av)
 }
 
 // Triggered after start button clicked.

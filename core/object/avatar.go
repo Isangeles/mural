@@ -166,10 +166,15 @@ func (av *Avatar) Portrait() pixel.Picture {
 	return av.data.PortraitPic
 }
 
-// Position return current position of avatar.
+// Position returns current position of avatar.
 func (av *Avatar) Position() pixel.Vec {
 	x, y := av.Character.Position()
 	return pixel.V(x, y)
+}
+
+// SetPosition sets current position of avatar.
+func (av *Avatar) SetPosition(p pixel.Vec) {
+	av.Character.SetPosition(p.X, p.Y)
 }
 
 // DestPoint returns current destination point of

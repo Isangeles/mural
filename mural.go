@@ -34,7 +34,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamecore "github.com/isangeles/flame/core"
 	flamedata "github.com/isangeles/flame/core/data"
@@ -75,15 +74,6 @@ func init() {
 	if err != nil {
 		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
-	// Load module.
-	m, err := flamedata.ImportModule(flameconf.ModulePath())
-	if err != nil {
-		log.Err.Printf("unable to load module: %v", err)
-	}
-	m.Conf().Lang = flameconf.Lang
-	flame.SetModule(m)
-	mod = m
-	burn.Module = m
 	// Load GUI config.
 	err = config.LoadConfig()
 	if err != nil {
@@ -93,12 +83,20 @@ func init() {
 
 // Main function.
 func main() {
-	// Check if Flame module is loaded.
-	if mod == nil {
-		panic(fmt.Sprintf("%s\n", lang.Text("no_mod_loaded_err")))
+	// Import module.
+	m, err := flamedata.ImportModule(flameconf.ModulePath())
+	if err != nil {
+		panic(fmt.Errorf("unable to import module: %v", err))
+	}
+	mod = m
+	burn.Module = mod
+	// Load module translation data.
+	err = flamedata.LoadModuleLang(mod, flameconf.Lang)
+	if err != nil {
+		panic(fmt.Errorf("unable to load module translation data: %v", err))
 	}
 	// Load UI graphic.
-	err := data.LoadUIData(mod)
+	err = data.LoadUIData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load gui data: %v", err))
 	}
@@ -106,11 +104,6 @@ func main() {
 	err = data.LoadModuleData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
-	}
-	// Load module data.
-	err = flamedata.LoadModuleData(mod)
-	if err != nil {
-		panic(fmt.Errorf("unable to load module data: %v", err))
 	}
 	// Load module graphic data.
 	err = imp.LoadModuleResources(mod)

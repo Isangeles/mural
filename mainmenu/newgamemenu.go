@@ -215,18 +215,6 @@ func (ngm *NewGameMenu) startGame() {
 	// Show loading screen.
 	ngm.mainmenu.OpenLoadingScreen(lang.Text("newgame_start_info"))
 	defer ngm.mainmenu.CloseLoadingScreen()
-	// Load chapter.
-	mod := ngm.mainmenu.mod
-	err := flamedata.LoadChapter(mod, mod.Conf().Chapter)
-	if err != nil {
-		log.Err.Printf("main menu: new game: unable to load chapter: %v", err)
-		return
-	}
-	err = flamedata.LoadChapterData(mod.Chapter())
-	if err != nil {
-		log.Err.Printf("main menu: new game: unable to load chapter data: %v", err)
-		return
-	}
 	// Retrive character data from character switch.
 	switchVal := ngm.charSwitch.Value()
 	if switchVal == nil {
@@ -242,6 +230,7 @@ func (ngm *NewGameMenu) startGame() {
 	pc := character.New(*pcd.CharData)
 	av := object.NewAvatar(pc, pcd.AvatarData)
 	// Set start position.
+	mod := ngm.mainmenu.mod
 	chapterConf := mod.Chapter().Conf()
 	startPos := pixel.V(chapterConf.StartPosX, chapterConf.StartPosY)
 	av.SetPosition(startPos)

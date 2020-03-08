@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
 
-	"github.com/isangeles/flame/core/enginelog"
+	flamelog "github.com/isangeles/flame/log"
 
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
@@ -44,7 +44,7 @@ import (
 type Console struct {
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
-	msgs      map[string]*enginelog.Message
+	msgs      map[string]*flamelog.Message
 	drawArea  pixel.Rect
 	opened    bool
 	lastInput string
@@ -54,7 +54,7 @@ type Console struct {
 // newConsole creates game console.
 func newConsole() *Console {
 	c := new(Console)
-	c.msgs = make(map[string]*enginelog.Message)
+	c.msgs = make(map[string]*flamelog.Message)
 	// Text box.
 	textboxParams := mtk.Params{
 		FontSize:    mtk.SizeMedium,
@@ -99,7 +99,7 @@ func (c *Console) Update(win *mtk.Window) {
 	c.textbox.SetSize(boxSize)
 	c.textbox.SetMaxTextWidth(win.Bounds().W())
 	// Messages.
-	for _, msg := range enginelog.Messages() {
+	for _, msg := range flamelog.Messages() {
 		if c.msgs[msg.ID()] != nil {
 			continue
 		}

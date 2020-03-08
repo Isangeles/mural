@@ -32,8 +32,8 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/core/enginelog"
 	"github.com/isangeles/flame/core/module/objects"
+	flamelog "github.com/isangeles/flame/log"
 
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
@@ -58,7 +58,7 @@ type Chat struct {
 	drawArea     pixel.Rect
 	textbox      *mtk.Textbox
 	textedit     *mtk.Textedit
-	msgs         map[string]*enginelog.Message
+	msgs         map[string]*flamelog.Message
 	activated    bool
 	lastInput    string
 	onScriptName func(name string, args ...string) error
@@ -68,7 +68,7 @@ type Chat struct {
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
-	c.msgs = make(map[string]*enginelog.Message)
+	c.msgs = make(map[string]*flamelog.Message)
 	// Background.
 	c.bgDraw = imdraw.New(nil)
 	bg, err := data.PictureUI("chatbg.png")
@@ -114,7 +114,7 @@ func (c *Chat) Update(win *mtk.Window) {
 		c.Activate(!c.Activated())
 	}
 	// Print log messages.
-	for _, msg := range enginelog.Messages() {
+	for _, msg := range flamelog.Messages() {
 		if c.msgs[msg.ID()] != nil {
 			continue
 		}

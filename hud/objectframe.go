@@ -27,7 +27,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/res/lang"
+	"github.com/isangeles/flame/data/res/lang"
 
 	"github.com/isangeles/mtk"
 

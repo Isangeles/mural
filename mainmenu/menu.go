@@ -26,7 +26,7 @@ package mainmenu
 import (
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/data/res/lang"
+	"github.com/isangeles/flame/data/res/lang"
 
 	"github.com/isangeles/mtk"
 )

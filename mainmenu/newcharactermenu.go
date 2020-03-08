@@ -31,9 +31,9 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameres "github.com/isangeles/flame/core/data/res"
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/character"
+	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/mtk"
 

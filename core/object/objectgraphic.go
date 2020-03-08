@@ -26,8 +26,8 @@ package object
 import (
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/module/objects"
-	flameobject "github.com/isangeles/flame/core/module/object"
+	"github.com/isangeles/flame/module/objects"
+	flameobject "github.com/isangeles/flame/module/object"
 
 	"github.com/isangeles/mtk"
 

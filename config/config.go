@@ -35,7 +35,7 @@ import (
 	"github.com/isangeles/mural/log"
 
 	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/core/data/parsetxt"
+	"github.com/isangeles/flame/data/parsetxt"
 )
 
 const (

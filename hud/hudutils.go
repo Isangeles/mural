@@ -26,7 +26,7 @@ package hud
 import (
 	"fmt"
 
-	"github.com/isangeles/flame/core/module/item"
+	"github.com/isangeles/flame/module/item"
 
 	"github.com/isangeles/burn/ash"
 

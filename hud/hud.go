@@ -32,10 +32,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	flamecore "github.com/isangeles/flame/core"
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/area"
-	flameobject "github.com/isangeles/flame/core/module/objects"
+	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/area"
+	flameobject "github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/burn/ash"
 
@@ -54,7 +54,7 @@ var (
 	secColor    = colornames.Blue
 	accentColor = colornames.Red
 	// Keys.
-	pauseKey    = pixelgl.KeySpace
+	pauseKey = pixelgl.KeySpace
 )
 
 // Struct for 'head-up display'.
@@ -78,7 +78,7 @@ type HUD struct {
 	charinfo      *CharacterWindow
 	trade         *TradeWindow
 	training      *TrainingWindow
-	game          *flamecore.Game
+	game          *flame.Game
 	pcs           []*object.Avatar
 	activePC      *object.Avatar
 	userFocus     *mtk.Focus
@@ -328,7 +328,7 @@ func (hud *HUD) Camera() *Camera {
 }
 
 // Game returns HUD current game.
-func (hud *HUD) Game() *flamecore.Game {
+func (hud *HUD) Game() *flame.Game {
 	return hud.game
 }
 
@@ -379,7 +379,7 @@ func (hud *HUD) Reload() {
 }
 
 // SetGame sets HUD game.
-func (hud *HUD) SetGame(g *flamecore.Game) {
+func (hud *HUD) SetGame(g *flame.Game) {
 	hud.game = g
 }
 

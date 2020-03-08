@@ -34,11 +34,11 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
-	flamecore "github.com/isangeles/flame/core"
-	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/module"
-	"github.com/isangeles/flame/core/data/res/lang"
+	flamedata "github.com/isangeles/flame/data"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module"
 
 	"github.com/isangeles/burn"
 
@@ -58,7 +58,7 @@ var (
 	mainMenu *mainmenu.MainMenu
 	pcHUD    *hud.HUD
 	mod      *module.Module
-	game     *flamecore.Game
+	game     *flame.Game
 	inGame   bool
 )
 
@@ -219,7 +219,7 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *flamecore.Game, pcs ...*object.Avatar) {
+func EnterGame(g *flame.Game, pcs ...*object.Avatar) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	game = g

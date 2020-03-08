@@ -1,7 +1,7 @@
 /*
  * itemgraphic.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ package object
 import (
 	"github.com/faiface/pixel"
 	
-	"github.com/isangeles/flame/core/module/item"
+	"github.com/isangeles/flame/module/item"
 	
 	"github.com/isangeles/mural/core/data/res"
 )

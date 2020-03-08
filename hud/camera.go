@@ -31,9 +31,9 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/area"
-	"github.com/isangeles/flame/core/module/character"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/area"
+	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/stone"
 

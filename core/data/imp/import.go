@@ -1,7 +1,7 @@
 /*
  * import.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/isangeles/flame/core/module"
+	"github.com/isangeles/flame/module"
 
 	"github.com/isangeles/mural/core/data/res"
 )

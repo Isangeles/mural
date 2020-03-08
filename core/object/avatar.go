@@ -28,10 +28,10 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/module/item"
-	flameobject "github.com/isangeles/flame/core/module/objects"
-	"github.com/isangeles/flame/core/module/character"
-	"github.com/isangeles/flame/core/module/skill"
+	"github.com/isangeles/flame/module/item"
+	flameobject "github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/module/character"
+	"github.com/isangeles/flame/module/skill"
 
 	"github.com/isangeles/mtk"
 

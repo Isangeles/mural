@@ -32,7 +32,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/core/module/objects"
+	"github.com/isangeles/flame/module/objects"
 	flamelog "github.com/isangeles/flame/log"
 
 	"github.com/isangeles/burn"

@@ -29,10 +29,10 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/dialog"
-	"github.com/isangeles/flame/core/module/item"
-	"github.com/isangeles/flame/core/module/train"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/dialog"
+	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/module/train"
 
 	"github.com/isangeles/mtk"
  

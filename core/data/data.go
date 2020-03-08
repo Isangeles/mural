@@ -40,7 +40,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core/module"
+	"github.com/isangeles/flame/module"
 	
 	"github.com/isangeles/burn/ash"
 

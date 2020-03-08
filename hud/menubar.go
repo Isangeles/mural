@@ -30,9 +30,9 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/item"
-	"github.com/isangeles/flame/core/module/serial"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/mtk"
 

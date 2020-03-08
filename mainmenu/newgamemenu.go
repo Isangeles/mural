@@ -29,10 +29,10 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/core"
-	flamedata "github.com/isangeles/flame/core/data"
-	"github.com/isangeles/flame/core/data/res/lang"
-	"github.com/isangeles/flame/core/module/character"
+	"github.com/isangeles/flame"
+	flamedata "github.com/isangeles/flame/data"
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/mtk"
 
@@ -243,7 +243,7 @@ func (ngm *NewGameMenu) startGame() {
 	}
 	startArea.AddCharacter(pc)
 	// Create game.
-	game := core.NewGame(mod)
+	game := flame.NewGame(mod)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return

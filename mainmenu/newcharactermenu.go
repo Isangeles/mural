@@ -162,15 +162,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.raceSwitch.SetValues(races)
 	// Alignment switch.
 	alis := []mtk.SwitchValue{
-		mtk.SwitchValue{lang.Text("ali_law_good"), character.Lawful_good},
-		mtk.SwitchValue{lang.Text("ali_neu_good"), character.Neutral_good},
-		mtk.SwitchValue{lang.Text("ali_cha_good"), character.Chaotic_good},
-		mtk.SwitchValue{lang.Text("ali_law_neutral"), character.Lawful_neutral},
-		mtk.SwitchValue{lang.Text("ali_tru_neutral"), character.True_neutral},
-		mtk.SwitchValue{lang.Text("ali_cha_neutral"), character.Chaotic_neutral},
-		mtk.SwitchValue{lang.Text("ali_law_evil"), character.Lawful_evil},
-		mtk.SwitchValue{lang.Text("ali_neu_evil"), character.Neutral_evil},
-		mtk.SwitchValue{lang.Text("ali_cha_evil"), character.Chaotic_evil},
+		mtk.SwitchValue{lang.Text("ali_law_good"), character.LawfulGood},
+		mtk.SwitchValue{lang.Text("ali_neu_good"), character.NeutralGood},
+		mtk.SwitchValue{lang.Text("ali_cha_good"), character.ChaoticGood},
+		mtk.SwitchValue{lang.Text("ali_law_neutral"), character.LawfulNeutral},
+		mtk.SwitchValue{lang.Text("ali_tru_neutral"), character.TrueNeutral},
+		mtk.SwitchValue{lang.Text("ali_cha_neutral"), character.ChaoticNeutral},
+		mtk.SwitchValue{lang.Text("ali_law_evil"), character.LawfulEvil},
+		mtk.SwitchValue{lang.Text("ali_neu_evil"), character.NeutralEvil},
+		mtk.SwitchValue{lang.Text("ali_cha_evil"), character.ChaoticEvil},
 	}
 	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.aliSwitch.SetLabel(lang.Text("newchar_ali_switch_label"))

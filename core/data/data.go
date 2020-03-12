@@ -57,23 +57,21 @@ var (
 	// Scritps.
 	ashScriptExt = ".ash"
 	// Textures & fonts.
-	uiTexs      map[string]pixel.Picture
-	avatarsTexs map[string]pixel.Picture
-	objectsTexs map[string]pixel.Picture
-	itemsTexs   map[string]pixel.Picture
-	icons       map[string]pixel.Picture
-	portraits   map[string]pixel.Picture
-	pcPortraits map[string]pixel.Picture
-	music       map[string]*beep.Buffer
-	fonts       map[string]*truetype.Font
+	textures       map[string]pixel.Picture
+	avSpritesheets map[string]pixel.Picture
+	obSpritesheets map[string]pixel.Picture
+	icons          map[string]pixel.Picture
+	portraits      map[string]pixel.Picture
+	pcPortraits    map[string]pixel.Picture
+	music          map[string]*beep.Buffer
+	fonts          map[string]*truetype.Font
 )
 
 // Init function.
 func init() {
-	uiTexs = make(map[string]pixel.Picture)
-	avatarsTexs = make(map[string]pixel.Picture)
-	objectsTexs = make(map[string]pixel.Picture)
-	itemsTexs = make(map[string]pixel.Picture)
+	textures = make(map[string]pixel.Picture)
+	avSpritesheets = make(map[string]pixel.Picture)
+	obSpritesheets = make(map[string]pixel.Picture)
 	icons = make(map[string]pixel.Picture)
 	portraits = make(map[string]pixel.Picture)
 	pcPortraits = make(map[string]pixel.Picture)
@@ -88,65 +86,36 @@ func LoadModuleData(mod *module.Module) error {
 	// Load data resource paths.
 	loadPaths(mod)
 	// Portraits.
-	portraits, err := loadPicturesFromArch(modGraphicArchPath, "avatar/portrait")
+	portraitsImp, err := loadPicturesFromArch(modGraphicArchPath, "portrait")
 	if err != nil {
 		return fmt.Errorf("unable to load avatars portraits: %v", err)
 	}
-	for n, p := range portraits {
+	for n, p := range portraitsImp {
 		portraits[n] = p
 	}
-	portraits, err = loadPicturesFromArch(modGraphicArchPath, "object/portrait")
-	if err != nil {
-		return fmt.Errorf("unable to load objects portraits: %v", err)
-	}
-	for n, p := range portraits {
-		portraits[n] = p
-	}
-	// Avatars spritesheets.
-	avTexs, err := loadPicturesFromArch(modGraphicArchPath, "avatar/spritesheet")
+	// Avatar spritesheets.
+	spritesheets, err := loadPicturesFromArch(modGraphicArchPath, "spritesheet/avatar")
 	if err != nil {
 		return fmt.Errorf("unable to load avatars spritesheets: %v", err)
 	}
-	for n, t := range avTexs {
-		avatarsTexs[n] = t
+	for n, s := range spritesheets {
+		avSpritesheets[n] = s
 	}
-	// Objects spritesheets.
-	obTexs, err := loadPicturesFromArch(modGraphicArchPath, "object/spritesheet")
+	// Object spritesheets.
+	spritesheets, err = loadPicturesFromArch(modGraphicArchPath, "spritesheet/object")
 	if err != nil {
 		return fmt.Errorf("unable to load objects spritesheets: %v", err)
 	}
-	for n, t := range obTexs {
-		objectsTexs[n] = t
-	}
-	// Items spritesheets.
-	itTexs, err := loadPicturesFromArch(modGraphicArchPath, "item/spritesheet")
-	if err != nil {
-		return fmt.Errorf("unable to load items spritesheets: %v", err)
-	}
-	for n, t := range itTexs {
-		itemsTexs[n] = t
+	for n, s := range spritesheets {
+		obSpritesheets[n] = s
 	}
 	// Icons.
-	itemIcons, err := loadPicturesFromArch(modGraphicArchPath, "item/icon")
+	iconsImp, err := loadPicturesFromArch(modGraphicArchPath, "icon")
 	if err != nil {
-		return fmt.Errorf("unable to load items icons: %v", err)
+		return fmt.Errorf("unable to load icons: %v", err)
 	}
-	for name, i := range itemIcons {
-		icons[name] = i
-	}
-	effectIcons, err := loadPicturesFromArch(modGraphicArchPath, "effect/icon")
-	if err != nil {
-		return fmt.Errorf("unable to load effects icons: %v", err)
-	}
-	for name, i := range effectIcons {
-		icons[name] = i
-	}
-	skillIcons, err := loadPicturesFromArch(modGraphicArchPath, "skill/icon")
-	if err != nil {
-		return fmt.Errorf("unable to load skills icons: %v", err)
-	}
-	for name, i := range skillIcons {
-		icons[name] = i
+	for n, i := range iconsImp {
+		icons[n] = i
 	}
 	return nil
 }
@@ -158,11 +127,11 @@ func LoadUIData(mod *module.Module) error {
 	// Load data sources paths.
 	loadPaths(mod)
 	// GUI elements textures.
-	texs, err := loadPicturesFromArch(modGraphicArchPath, "ui")
+	texs, err := loadPicturesFromArch(modGraphicArchPath, "texture")
 	if err != nil {
-		return fmt.Errorf("unable to load ui textures: %v", err)
+		return fmt.Errorf("unable to load textures: %v", err)
 	}
-	uiTexs = texs
+	textures = texs
 	// Fonts.
 	ttfs, err := loadFontsFromArch(modGraphicArchPath, "font")
 	if err != nil {
@@ -175,13 +144,13 @@ func LoadUIData(mod *module.Module) error {
 // PictureUI loads image with specified name from UI data
 // in gdata archive.
 func PictureUI(fileName string) (pixel.Picture, error) {
-	pic := uiTexs[fileName]
+	pic := textures[fileName]
 	if pic != nil {
 		return pic, nil
 	}
 	// Fallback, load picture 'by hand'.
 	log.Dbg.Printf("data: picture ui fallback load: %s", fileName)
-	return loadPictureFromArch(modGraphicArchPath, "ui/"+fileName)
+	return loadPictureFromArch(modGraphicArchPath, "texture/"+fileName)
 }
 
 // Portrait returns portrait with specified name.
@@ -197,42 +166,42 @@ func Portrait(fileName string) (pixel.Picture, error) {
 // AvatarSpritesheet returns picture with specified name
 // for avatar sprite.
 func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
-	spritesheet := avatarsTexs[fileName]
+	spritesheet := avSpritesheets[fileName]
 	if spritesheet != nil {
 		return spritesheet, nil
 	}
 	// Fallback.
 	log.Dbg.Printf("data: avatar spritesheet fallback load: %s",
 		fileName)
-	path := filepath.FromSlash("avatar/spritesheet/" + fileName)
+	path := filepath.Join("spritesheet/avatar", fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
 }
 
 // ItemSpritesheet returns picture with specified name
 // for item sprite.
 func ItemSpritesheet(fileName string) (pixel.Picture, error) {
-	spritesheet := itemsTexs[fileName]
+	spritesheet := avSpritesheets[fileName]
 	if spritesheet != nil {
 		return spritesheet, nil
 	}
 	// Fallback.
 	log.Dbg.Printf("data: items spritesheet fallback load: %s",
 		fileName)
-	path := filepath.FromSlash("item/spritesheet/" + fileName)
+	path := filepath.Join("spritesheet/avatar", fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
 }
 
 // ObjectSpritesheet returns picture with specified name
 // for object sprite.
 func ObjectSpritesheet(fileName string) (pixel.Picture, error) {
-	spritesheet := objectsTexs[fileName]
+	spritesheet := obSpritesheets[fileName]
 	if spritesheet != nil {
 		return spritesheet, nil
 	}
 	// Fallback.
 	log.Dbg.Printf("data objects spritesheet fallback load: %s",
 		fileName)
-	path := filepath.FromSlash("object/spritesheet/" + fileName)
+	path := filepath.Join("spritesheet/object", fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
 }
 
@@ -245,7 +214,7 @@ func Icon(fileName string) (pixel.Picture, error) {
 	// Fallback.
 	log.Dbg.Printf("data: items icon fallback load: %s",
 		fileName)
-	path := filepath.FromSlash("item/icon/" + fileName)
+	path := filepath.Join("icon", fileName)
 	return loadPictureFromArch(modGraphicArchPath, path)
 }
 
@@ -370,12 +339,8 @@ func Script(path string) (*ash.Script, error) {
 
 // Load loads grpahic directories.
 func loadPaths(mod *module.Module) {
-	modGraphicDirPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		mod.Conf().ID))
-	modAudioDirPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui",
-		mod.Conf().ID))
-	modGraphicArchPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/gdata.zip",
-		mod.Conf().ID))
-	modAudioArchPath = filepath.FromSlash(fmt.Sprintf("data/modules/%s/gui/adata.zip",
-		mod.Conf().ID))
+	modGraphicDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
+	modAudioDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
+	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/gdata.zip")
+	modAudioArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/adata.zip")
 }

@@ -78,11 +78,11 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 	tw.buyItems = make(map[string]item.Item)
 	// Background.
 	tw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud trade: fail to retrieve background tex: %v", err)
+		log.Err.Printf("hud trade: unable to retrieve background texure")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -102,13 +102,13 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		MainColor: accentColor,
 	}
 	tw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
 		tw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud trade: fail to retrieve close button tex: %v", err)
+		log.Err.Printf("hud trade: unable to retrieve close button texture")
 	}
 	tw.closeButton.SetOnClickFunc(tw.onCloseButtonClicked)
 	// Trade button.
@@ -119,12 +119,12 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		MainColor: accentColor,
 	}
 	tw.tradeButton = mtk.NewButton(tradeButtonParams)
-	tradeButtonBG, err := data.PictureUI("button_green.png")
-	if err == nil {
+	tradeButtonBG := data.Texture("button_green.png")
+	if tradeButtonBG != nil {
 		bg := pixel.NewSprite(tradeButtonBG, tradeButtonBG.Bounds())
 		tw.tradeButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud trade: fail to retrieve trade button texture: %v", err)
+		log.Err.Printf("hud trade: unable to retrieve trade button texture")
 	}
 	tw.tradeButton.SetOnClickFunc(tw.onTradeButtonClicked)
 	tw.tradeButton.SetLabel(lang.Text("hud_trade_accept"))
@@ -143,23 +143,21 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		tw.sellSlots.Add(s)
 	}
 	// Slot lists scroll buttons.
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		tw.buySlots.SetUpButtonBackground(upBG)
 		tw.sellSlots.SetUpButtonBackground(upBG)
 	} else {
-		log.Err.Printf("hud trade: fail to retrieve slot list up button texture: %v",
-			err)
+		log.Err.Printf("hud trade: unable to retrieve slot list up button texture")
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		tw.buySlots.SetDownButtonBackground(downBG)
 		tw.sellSlots.SetDownButtonBackground(downBG)
 	} else {
-		log.Err.Printf("hud_trade:fail_to_retrieve_slot_list_down_button_texture:%v",
-			err)
+		log.Err.Printf("hud trade: unable to retrieve slot list down button texture")
 	}
 	tw.updateTradeValue()
 	return tw
@@ -294,7 +292,7 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 			// Get error icon.
 			errData, err := data.ErrorItemGraphic()
 			if err != nil {
-				log.Err.Printf("hud trade: fail to retrieve error graphic: %v", err)
+				log.Err.Printf("hud trade: unable to retrieve error graphic: %v", err)
 				continue
 			}
 			errData.ItemID = it.ID()
@@ -337,7 +335,7 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 			// Get error icon.
 			errData, err := data.ErrorItemGraphic()
 			if err != nil {
-				log.Err.Printf("hud trade: fail to retrieve error graphic: %v", err)
+				log.Err.Printf("hud trade: unable to retrieve error graphic: %v", err)
 				continue
 			}
 			errData.ItemID = it.ID()

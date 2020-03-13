@@ -65,12 +65,11 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	cm.hud = hud
 	// Background.
 	cm.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		cm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_crafting:fail_to_retrieve_bg_tex:%v",
-			err)
+		log.Err.Printf("hud: crafting menu: unable to retrieve bg texture")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -85,14 +84,12 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		MainColor: accentColor,
 	}
 	cm.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
-		closeBG := pixel.NewSprite(closeButtonBG,
-			closeButtonBG.Bounds())
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
+		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		cm.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_crafting:fail_to_retrieve_close_button_tex:%v",
-			err)
+		log.Err.Printf("hud: crafting menu: unable to retrieve close button texture")
 	}
 	cm.closeButton.SetOnClickFunc(cm.onCloseButtonClicked)
 	// Make button.
@@ -103,12 +100,12 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		MainColor: accentColor,
 	}
 	cm.makeButton = mtk.NewButton(makeButtonParams)
-	makeButtonBG, err := data.PictureUI("button_green.png")
-	if err == nil {
+	makeButtonBG := data.Texture("button_green.png")
+	if makeButtonBG != nil {
 		bg := pixel.NewSprite(makeButtonBG, makeButtonBG.Bounds())
 		cm.makeButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud_inventory:fail_to_retrieve_make_button_texture:%v", err)
+		log.Err.Printf("hud: crafting menu: unable to retrieve make button texture")
 	}
 	cm.makeButton.SetOnClickFunc(cm.onMakeButtonClicked)
 	cm.makeButton.SetLabel(lang.Text("hud_crafting_make"))
@@ -132,16 +129,14 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		AccentColor: accentColor,
 	}
 	cm.recipesList = mtk.NewList(recipesParams)
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
-		upBG := pixel.NewSprite(upButtonBG,
-			upButtonBG.Bounds())
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
+		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		cm.recipesList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
-		downBG := pixel.NewSprite(downButtonBG,
-			downButtonBG.Bounds())
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
+		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		cm.recipesList.SetDownButtonBackground(downBG)
 	}
 	cm.recipesList.SetOnItemSelectFunc(cm.onRecipeSelected)
@@ -241,7 +236,7 @@ func (cm *CraftingMenu) onRecipeSelected(cs *mtk.CheckSlot) {
 	// Retrieve recipe from slot.
 	recipe, ok := cs.Value().(*craft.Recipe)
 	if !ok {
-		log.Err.Printf("hud crafting: fail to retrieve recipe from list")
+		log.Err.Printf("hud: crafting menu: unable to retrieve recipe from list")
 		return
 	}
 	cm.makeButton.Active(true)

@@ -62,11 +62,11 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 	tw.hud = hud
 	// Background.
 	tw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud training: fail to retrieve background tex: %v", err)
+		log.Err.Printf("hud training: unable to retrieve background texture")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -81,13 +81,13 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		MainColor: accentColor,
 	}
 	tw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
 		tw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud training: fail to retrieve close button tex: %v", err)
+		log.Err.Printf("hud training: unable to retrieve close button texture")
 	}
 	tw.closeButton.SetOnClickFunc(tw.onCloseButtonClicked)
 	// Train button.
@@ -98,12 +98,12 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		MainColor: accentColor,
 	}
 	tw.trainButton = mtk.NewButton(trainButtonParams)
-	trainButtonBG, err := data.PictureUI("button_green.png")
-	if err == nil {
+	trainButtonBG := data.Texture("button_green.png")
+	if trainButtonBG != nil {
 		bg := pixel.NewSprite(trainButtonBG, trainButtonBG.Bounds())
 		tw.trainButton.SetBackground(bg)
 	} else {
-		log.Err.Printf("hud training: fail to retrieve train button tex: %v", err)
+		log.Err.Printf("hud training: unable to retrieve train button texture")
 	}
 	tw.trainButton.SetOnClickFunc(tw.onTrainButtonClicked)
 	tw.trainButton.SetLabel(lang.Text("hud_training_train"))
@@ -127,14 +127,14 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		AccentColor: accentColor,
 	}
 	tw.trainingsList = mtk.NewList(trainingsParams)
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
 		tw.trainingsList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())
 		tw.trainingsList.SetDownButtonBackground(downBG)
@@ -235,7 +235,7 @@ func (tw *TrainingWindow) onTrainingSelected(cs *mtk.CheckSlot) {
 	// Retrieve training from slot.
 	training, ok := cs.Value().(train.Training)
 	if !ok {
-		log.Err.Printf("hud training: fail to retrieve training from list")
+		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
 	tw.trainButton.Active(true)
@@ -256,7 +256,7 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 	}
 	training, ok := val.(train.Training)
 	if !ok {
-		log.Err.Printf("hud training: fail to retrieve training from list")
+		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
 	pc := tw.hud.ActivePlayer()

@@ -64,12 +64,11 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	jw.hud = hud
 	// Background.
 	jw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		jw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud journal: fail to retrieve bg tex: %v",
-			err)
+		log.Err.Printf("hud journal: unable to retrieve bg texture")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -84,8 +83,8 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		MainColor: accentColor,
 	}
 	jw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
 		jw.closeButton.SetBackground(closeBG)
@@ -111,14 +110,14 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		AccentColor: accentColor,
 	}
 	jw.questsList = mtk.NewList(questsParams)
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
 		jw.questsList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())
 		jw.questsList.SetDownButtonBackground(downBG)
@@ -217,7 +216,7 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 	// Retrive quest from slot.
 	quest, ok := cs.Value().(*quest.Quest)
 	if !ok {
-		log.Err.Printf("hud journal: fail to retrive quest from list")
+		log.Err.Printf("hud journal: unable to retrive quest from list")
 		return
 	}
 	// Show quest info.

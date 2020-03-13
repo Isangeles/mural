@@ -62,8 +62,8 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.hud = hud
 	// Background.
 	sm.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
@@ -100,16 +100,16 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeBG)
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	sm.saveButton = mtk.NewButton(saveButtonParams)
 	sm.saveButton.SetLabel(lang.Text("save_b_label"))
-	saveButtonBG, err := data.PictureUI("button_green.png")
-	if err == nil {
+	saveButtonBG := data.Texture("button_green.png")
+	if saveButtonBG != nil {
 		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())
 		sm.saveButton.SetBackground(bg)
 	}
@@ -146,13 +146,14 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu.
 func (sm *SaveMenu) Update(win *mtk.Window) {
-	// Elements.
 	if sm.Opened() {
-		sm.closeButton.Update(win)
-		sm.saveButton.Update(win)
-		sm.saveNameEdit.Update(win)
-		sm.savesList.Update(win)
+		return
 	}
+	// Elements.
+	sm.closeButton.Update(win)
+	sm.saveButton.Update(win)
+	sm.saveNameEdit.Update(win)
+	sm.savesList.Update(win)
 }
 
 // Size returns menu background size.
@@ -180,7 +181,7 @@ func (sm *SaveMenu) Show(show bool) {
 	sm.hud.Camera().Lock(sm.Opened())
 	err := sm.loadSaves()
 	if err != nil {
-		log.Err.Printf("hud save menu: fail to load saves: %e", err)
+		log.Err.Printf("hud: savegame menu: unable to load saves: %v", err)
 	}
 }
 
@@ -204,7 +205,7 @@ func (sm *SaveMenu) loadSaves() error {
 	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
 		pattern)
 	if err != nil {
-		return fmt.Errorf("fail to read saved games dir: %v", err)
+		return fmt.Errorf("unable to read saved games dir: %v", err)
 	}
 	for _, s := range saves {
 		sm.savesList.AddItem(s, s)
@@ -216,7 +217,7 @@ func (sm *SaveMenu) loadSaves() error {
 func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
 	saveName, ok := cs.Value().(string)
 	if !ok {
-		log.Err.Printf("hud savegame:fail to retireve save name")
+		log.Err.Printf("hud savegame menu: unable to retireve save name")
 		return
 	}
 	sm.saveNameEdit.SetText(saveName)
@@ -233,7 +234,7 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 	saveName := strings.Split(saveFileName, ".")[0]
 	err := sm.save(saveName)
 	if err != nil {
-		log.Err.Printf("hud savegame: fail to save: %v")
+		log.Err.Printf("hud: savegame menu: unable to save: %v", err)
 	}
 }
 
@@ -245,13 +246,13 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Save current game.
 	err := flamedata.ExportGame(sm.hud.Game(), savesPath, saveName)
 	if err != nil {
-		return fmt.Errorf("fail to save game: %v", err)
+		return fmt.Errorf("unable to save game: %v", err)
 	}
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()
 	err = exp.ExportGUISave(guisav, savesPath, saveName)
 	if err != nil {
-		return fmt.Errorf("fail to save gui: %v", err)
+		return fmt.Errorf("unable to save gui: %v", err)
 	}
 	return nil
 }

@@ -129,10 +129,10 @@ func LoadUIData(mod *module.Module) error {
 	return nil
 }
 
-// PictureUI loads image with specified name from UI data
-// in gdata archive.
-func PictureUI(fileName string) (pixel.Picture, error) {
-	return textures[fileName], nil
+// Texture returns image with specified name from
+// loaded textures.
+func Texture(fileName string) pixel.Picture {
+	return textures[fileName]
 }
 
 // Portrait returns portrait with specified name.

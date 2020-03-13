@@ -67,8 +67,8 @@ func newMenuBar(hud *HUD) *MenuBar {
 	mb.hud = hud
 	// Background.
 	mb.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubar.png")
-	if err == nil {
+	bg := data.Texture("menubar.png")
+	if bg != nil {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Buttons.
@@ -80,58 +80,58 @@ func newMenuBar(hud *HUD) *MenuBar {
 	// Menu Button.
 	mb.menuButton = mtk.NewButton(buttonParams)
 	mb.menuButton.SetInfo(lang.Text("hud_bar_menu_open_info"))
-	menuButtonBG, err := data.PictureUI("menubutton.png")
-	if err == nil {
+	menuButtonBG := data.Texture("menubutton.png")
+	if menuButtonBG != nil {
 		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
 		mb.menuButton.SetBackground(menuButtonSpr)
 	} else {
-		log.Err.Printf("hud menubar: fail to retrieve menu button texture: %v", err)
+		log.Err.Printf("hud: menu bar: unable to retrieve menu button texture")
 	}
 	mb.menuButton.SetOnClickFunc(mb.onMenuButtonClicked)
 	// Inventory button.
 	mb.invButton = mtk.NewButton(buttonParams)
 	mb.invButton.SetInfo(lang.Text("hud_bar_inv_open_info"))
-	invButtonBG, err := data.PictureUI("inventorybutton.png")
-	if err == nil {
+	invButtonBG := data.Texture("inventorybutton.png")
+	if invButtonBG != nil {
 		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
 		mb.invButton.SetBackground(invButtonSpr)
 	} else {
-		log.Err.Printf("hud menubar: fail to retrieve inv button texture: %v", err)
+		log.Err.Printf("hud: menu bar: unable to retrieve inv button texture")
 	}
 	mb.invButton.SetOnClickFunc(mb.onInvButtonClicked)
 	// Skills button.
 	mb.skillsButton = mtk.NewButton(buttonParams)
 	mb.skillsButton.SetInfo(lang.Text("hud_bar_skills_open_info"))
-	skillsButtonBG, err := data.PictureUI("skillsbutton.png")
-	if err == nil {
+	skillsButtonBG := data.Texture("skillsbutton.png")
+	if skillsButtonBG != nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
 		mb.skillsButton.SetBackground(skillsButtonSpr)
 	} else {
-		log.Err.Printf("hud menubar: fail to retrieve skills button texture: %v", err)
+		log.Err.Printf("hud: menu bar: unable to retrieve skills button texture")
 	}
 	mb.skillsButton.SetOnClickFunc(mb.onSkillsButtonClicked)
 	// Journal button.
 	mb.journalButton = mtk.NewButton(buttonParams)
 	journalInfo := lang.Text("hud_bar_journal_open_info")
 	mb.journalButton.SetInfo(journalInfo)
-	journalButtonBG, err := data.PictureUI("questsbutton.png")
-	if err == nil {
+	journalButtonBG := data.Texture("questsbutton.png")
+	if journalButtonBG != nil {
 		journalButtonSpr := pixel.NewSprite(journalButtonBG, journalButtonBG.Bounds())
 		mb.journalButton.SetBackground(journalButtonSpr)
 	} else {
-		log.Err.Printf("hud menubar: fail to retrieve quests button texture: %v", err)
+		log.Err.Printf("hud: menu bar: unable to retrieve quests button texture")
 	}
 	mb.journalButton.SetOnClickFunc(mb.onJournalButtonClicked)
 	// Character button.
 	mb.charButton = mtk.NewButton(buttonParams)
 	charInfo := lang.Text("hud_bar_char_open_info")
 	mb.charButton.SetInfo(charInfo)
-	charButtonBG, err := data.PictureUI("charbutton.png")
-	if err == nil {
+	charButtonBG := data.Texture("charbutton.png")
+	if charButtonBG != nil {
 		charButtonSpr := pixel.NewSprite(charButtonBG, charButtonBG.Bounds())
 		mb.charButton.SetBackground(charButtonSpr)
 	} else {
-		log.Err.Printf("hud menubar: fail to retrieve char button texture: %v", err)
+		log.Err.Printf("hud: menu bar: unable to retrieve char button texture")
 	}
 	mb.charButton.SetOnClickFunc(mb.onCharButtonClicked)
 	// Slots.
@@ -302,7 +302,7 @@ func (mb *MenuBar) updateLayout() {
 		for _, v := range s.Values() {
 			ob, ok := v.(serial.Serialer)
 			if !ok {
-				log.Err.Printf("hud_skills:update_layout:fail to retrieve slot value")
+				log.Err.Printf("hud: menu bar: update layout: unable to retrieve slot value")
 				continue
 			}
 			layout.SaveBarSlot(ob, i)
@@ -322,7 +322,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		}
 		slot := mb.slots[slotID]
 		if slot == nil {
-			log.Err.Printf("hud_bar:set_layout:fail_to_find_slot:%d",
+			log.Err.Printf("hud: menu bar: set layout: unable to find slot: %d",
 				slotID)
 			continue
 		}
@@ -336,7 +336,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		}
 		slot := mb.slots[slotID]
 		if slot == nil {
-			log.Err.Printf("hud_bar:set_layout:fail_to_find_slot:%d",
+			log.Err.Printf("hud: menu bar: set layout: unable to find slot: %d",
 				slotID)
 			continue
 		}

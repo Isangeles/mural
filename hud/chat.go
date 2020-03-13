@@ -71,8 +71,8 @@ func newChat(hud *HUD) *Chat {
 	c.msgs = make(map[string]*flamelog.Message)
 	// Background.
 	c.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("chatbg.png")
-	if err == nil { // fallback
+	bg := data.Texture("chatbg.png")
+	if bg != nil {
 		c.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Textbox.
@@ -203,7 +203,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
 		res, out, err := executeCommand(cmdInput)
 		if err != nil {
-			log.Err.Printf("fail to execute command: %v", err)
+			log.Err.Printf("unable to execute command: %v", err)
 		}
 		// Echo command result to log.
 		log.Cli.Printf("[%d]:%s", res, out)
@@ -215,7 +215,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		args := strings.Split(input, " ")
 		err := c.executeScriptFile(args[0], args...)
 		if err != nil {
-			log.Err.Printf("fail to execute script: %v", err)
+			log.Err.Printf("unable to execute script: %v", err)
 		}
 		return
 	}
@@ -230,7 +230,7 @@ func (c *Chat) executeScriptFile(name string, args ...string) error {
 	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
 	script, err := data.Script(path)
 	if err != nil {
-		return fmt.Errorf("fail to retrieve script: %v", err)
+		return fmt.Errorf("unable to retrieve script: %v", err)
 	}
 	go c.hud.RunScript(script)
 	return nil

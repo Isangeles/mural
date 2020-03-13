@@ -67,8 +67,8 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im.hud = hud
 	// Background.
 	im.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("invbg.png")
-	if err == nil {
+	bg := data.Texture("invbg.png")
+	if bg != nil {
 		im.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
@@ -84,12 +84,12 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		MainColor: accentColor,
 	}
 	im.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		im.closeButton.SetBackground(closeButtonSpr)
 	} else {
-		log.Err.Printf("hud_inventory:fail_to_retrieve_background_tex:%v", err)
+		log.Err.Printf("hud: inventory menu: unable to retrieve background texture")
 	}
 	im.closeButton.SetOnClickFunc(im.onCloseButtonClicked)
 	// Slots list.
@@ -101,21 +101,19 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.slots.Add(s)
 	}
 	// Slot list scroll buttons.
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		im.slots.SetUpButtonBackground(upBG)
 	} else {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_up_button_texture:%v",
-			err)
+		log.Err.Printf("hud: inventory menu: unable to retrieve slot list up button texture")
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		im.slots.SetDownButtonBackground(downBG)
 	} else {
-		log.Err.Printf("hud_inv:fail_to_retrieve_slot_list_down_button_texture:%v",
-			err)
+		log.Err.Printf("hud: inventory menu: unable to retrieve slot list down button texture")
 	}
 	return im
 }
@@ -208,11 +206,11 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 		// Retrieve item graphic.
 		igd := res.Item(it.ID())
 		if igd == nil { // if icon was found
-			log.Err.Printf("hud_inv:item_graphic_not_found:%s", it.ID())
+			log.Err.Printf("hud: inventory menu: item graphic not found: %s", it.ID())
 			// Get error icon.
 			errData, err := data.ErrorItemGraphic()
 			if err != nil {
-				log.Err.Printf("hud_inv:fail_to_retrieve_error_graphic:%v", err)
+				log.Err.Printf("hud: inventory menu: unable to retrieve error graphic: %v", err)
 				continue
 			}
 			errData.ItemID = it.ID()
@@ -243,7 +241,7 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 			}
 		}
 		if slot == nil {
-			log.Err.Printf("hud_inv:no empty slots")
+			log.Err.Printf("hud: inventory menu: no empty slots")
 			return
 		}
 		// Insert item to slot.
@@ -268,7 +266,7 @@ func (im *InventoryMenu) updateLayout() {
 		for _, v := range s.Values() {
 			it, ok := v.(*object.ItemGraphic)
 			if !ok {
-				log.Err.Printf("hud_inv:update_layout:fail to retrieve slot value")
+				log.Err.Printf("hud: inventory menu: update layout: unable to retrieve slot value")
 				continue
 			}
 			layout.SaveInvSlot(it, i)

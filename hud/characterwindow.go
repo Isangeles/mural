@@ -62,11 +62,11 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 	cw.hud = hud
 	// Background.
 	cw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		cw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud_char: fail to retrieve background tex: %v", err)
+		log.Err.Printf("hud_char: unable to retrieve background texture")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -81,13 +81,12 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 		MainColor: accentColor,
 	}
 	cw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
-		closeBG := pixel.NewSprite(closeButtonBG,
-			closeButtonBG.Bounds())
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
+		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		cw.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud_char: fail to retrieve close button tex: %v", err)
+		log.Err.Printf("hud_char: unable to retrieve close button texture")
 	}
 	cw.closeButton.SetOnClickFunc(cw.onCloseButtonClicked)
 	// Char info.

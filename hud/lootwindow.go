@@ -70,8 +70,8 @@ func newLootWindow(hud *HUD) *LootWindow {
 	lw.hud = hud
 	// Background.
 	lw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("invbg.png")
-	if err == nil {
+	bg := data.Texture("invbg.png")
+	if bg != nil {
 		lw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
@@ -87,8 +87,8 @@ func newLootWindow(hud *HUD) *LootWindow {
 		MainColor: accentColor,
 	}
 	lw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG == nil {
 		spr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		lw.closeButton.SetBackground(spr)
 	}
@@ -101,13 +101,13 @@ func newLootWindow(hud *HUD) *LootWindow {
 		lw.slots.Add(s)
 	}
 	// Slot list scroll buttons.
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		spr := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		lw.slots.SetUpButtonBackground(spr)
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		spr := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		lw.slots.SetDownButtonBackground(spr)
 	}
@@ -209,7 +209,8 @@ func (lw *LootWindow) insertItems(items ...item.Item) {
 		// Retrieve item graphic.
 		data := res.Item(it.ID())
 		if data == nil {
-			log.Err.Printf("hud_loot:item_graphic_not_found:%s\n", it.ID())
+			log.Err.Printf("hud loot window: item graphic not found: %s",
+				it.ID())
 			continue
 		}
 		ig := object.NewItemGraphic(it, data)
@@ -255,7 +256,8 @@ func (lw *LootWindow) onSlotLeftClicked(s *mtk.Slot) {
 		}
 		err := lw.hud.ActivePlayer().Inventory().AddItem(ig.Item)
 		if err != nil {
-			log.Err.Printf("hud_loot:fail_to_transfer_item:%v", err)
+			log.Err.Printf("hud: loot window: unable to transfer item: %v",
+				err)
 			continue
 		}
 		lw.target.Inventory().RemoveItem(ig.Item)

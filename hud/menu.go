@@ -60,11 +60,11 @@ func newMenu(hud *HUD) *Menu {
 	m.hud = hud
 	// Background.
 	m.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		m.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
-		log.Err.Printf("hud menu: bg texture not found: %v", err)
+		log.Err.Printf("hud menu: bg texture not found")
 	}
 	// Title.
 	titleParams := mtk.Params{
@@ -79,12 +79,12 @@ func newMenu(hud *HUD) *Menu {
 		MainColor: accentColor,
 	}
 	m.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		m.closeButton.SetBackground(closeBG)
 	} else {
-		log.Err.Printf("hud menu: fail to retrieve exit button texture: %v", err)
+		log.Err.Printf("hud menu: unable to retrieve exit button texture")
 	}
 	m.closeButton.SetOnClickFunc(m.onCloseButtonClicked)
 	// Menu buttons.
@@ -94,9 +94,9 @@ func newMenu(hud *HUD) *Menu {
 		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
-	greenButtonBG, err := data.PictureUI("button_green.png")
-	if err != nil {
-		log.Err.Printf("hud menu: fail to retrieve green button texture: %v", err)
+	greenButtonBG := data.Texture("button_green.png")
+	if greenButtonBG == nil {
+		log.Err.Printf("hud menu: unable to retrieve green button texture")
 	}
 	m.saveButton = mtk.NewButton(menuButtonParams)
 	m.saveButton.SetLabel(lang.Text("savegame_b_label"))

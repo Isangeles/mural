@@ -67,8 +67,8 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.hud = hud
 	// Background.
 	sm.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("skillsbg.png")
-	if err == nil {
+	bg := data.Texture("skillsbg.png")
+	if bg != nil {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
@@ -84,32 +84,30 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err != nil {
-		log.Err.Printf("hud skills: fail to retrieve background tex: %v", err)
-	} else {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeButtonSpr)
+	} else {
+		log.Err.Printf("hud: skills menu: unable to retrieve background texture")
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	// Slots.
 	sm.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 350)),
 		skillsSlotColor, skillsSlotSize)
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err != nil {
-		log.Err.Printf("hud skills: fail to retrieve slot list up button texture: %v",
-			err)
-	} else {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		sm.slots.SetUpButtonBackground(upBG)
-	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err != nil {
-		log.Err.Printf("hud skills: fail to retrieve slot list down buttons texture: %v",
-			err)
 	} else {
+		log.Err.Printf("hud: skills menu: unable to retrieve slot list up button texture")
+	}
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		sm.slots.SetDownButtonBackground(downBG)
+	} else {
+		log.Err.Printf("hud: skills menu: unable to retrieve slot list down buttons texture")
 	}
 	// Create empty slots.
 	for i := 0; i < skillsSlots; i++ {
@@ -200,7 +198,7 @@ func (sm *SkillMenu) insert(skills ...*object.SkillGraphic) {
 	for _, s := range skills {
 		slot := sm.slots.EmptySlot()
 		if slot == nil {
-			log.Err.Printf("hud_skills:no empty slots")
+			log.Err.Printf("hud: skills menu: no empty slots")
 			return
 		}
 		// Insert skill to slot.
@@ -245,7 +243,7 @@ func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	skill, ok := s.Values()[0].(*object.SkillGraphic)
 	if !ok {
-		log.Err.Printf("hud_skills_menu:%v:is not skill", s.Values()[0])
+		log.Err.Printf("hud: skills menu: %v: is not skill", s.Values()[0])
 	}
 	sm.hud.ActivePlayer().UseSkill(skill.Skill)
 }

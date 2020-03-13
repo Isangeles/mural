@@ -135,7 +135,7 @@ func LoadConfig() error {
 			log.Err.Printf("conf: unable to set new char position y: %v", err)
 		}
 	}
-	log.Dbg.Print("config file loaded")
+	log.Dbg.Print("Config file loaded")
 	return nil
 }
 

@@ -66,29 +66,29 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	of := new(ObjectFrame)
 	of.hud = hud
 	// Background.
-	bg, err := data.PictureUI("charframe.png")
-	if err != nil { // fallback
-		of.bgDraw = imdraw.New(nil)
-		log.Err.Printf("hud object frame: bg texture not found: %v", err)
-	} else {
+	bg := data.Texture("charframe.png")
+	if bg != nil {
 		of.bgSpr = pixel.NewSprite(bg, bg.Bounds())
+	} else { // fallback
+		of.bgDraw = imdraw.New(nil)
+		log.Err.Printf("hud object frame: bg texture not found")
 	}
 	// Bars.
 	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.hpBar.SetLabel(lang.Text("char_frame_hp_bar_label"))
-	hpBarPic, err := data.PictureUI("bar_red.png")
-	if err != nil {
-		log.Err.Printf("hud object frame: hp bar texture not found: %v", err)
-	} else {
+	hpBarPic := data.Texture("bar_red.png")
+	if hpBarPic != nil {
 		of.hpBar.SetBackground(hpBarPic)
+	} else {
+		log.Err.Printf("hud object frame: hp bar texture not found")
 	}
 	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.manaBar.SetLabel(lang.Text("char_frame_mana_bar_label"))
-	manaBarPic, err := data.PictureUI("bar_blue.png")
-	if err != nil {
-		log.Err.Printf("hud object frame: mana bar texture not found: %v", err)
-	} else {
+	manaBarPic := data.Texture("bar_blue.png")
+	if manaBarPic != nil {
 		of.manaBar.SetBackground(manaBarPic)
+	} else {
+		log.Err.Printf("hud object frame: mana bar texture not found")
 	}
 	return of
 }

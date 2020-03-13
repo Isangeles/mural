@@ -62,8 +62,8 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	dw.hud = hud
 	// Background.
 	dw.bgDraw = imdraw.New(nil)
-	bg, err := data.PictureUI("menubg.png")
-	if err == nil {
+	bg := data.Texture("menubg.png")
+	if bg != nil {
 		dw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
 	// Title.
@@ -79,8 +79,8 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		MainColor: accentColor,
 	}
 	dw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG, err := data.PictureUI("closebutton1.png")
-	if err == nil {
+	closeButtonBG := data.Texture("closebutton1.png")
+	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		dw.closeButton.SetBackground(closeBG)
 	}
@@ -105,13 +105,13 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		AccentColor: accentColor,
 	}
 	dw.answersList = mtk.NewList(answersParams)
-	upButtonBG, err := data.PictureUI("scrollup.png")
-	if err == nil {
+	upButtonBG := data.Texture("scrollup.png")
+	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		dw.answersList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG, err := data.PictureUI("scrolldown.png")
-	if err == nil {
+	downButtonBG := data.Texture("scrolldown.png")
+	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		dw.answersList.SetDownButtonBackground(downBG)
 	}
@@ -203,7 +203,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	if dw.dialog.Stage() == nil {
-		log.Err.Printf("hud_dialog: no suitable dialog phase found")
+		log.Err.Printf("hud: dialog window: no suitable dialog phase found")
 		return
 	}
 	// Print stage text to chat box.
@@ -238,7 +238,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	// Retrieve answer from slot.
 	answer, ok := cs.Value().(*dialog.Answer)
 	if !ok {
-		log.Err.Printf("hud_dialog: fail to retrieve answer from list")
+		log.Err.Printf("hud: dialog window: unable to retrieve answer from list")
 		return
 	}
 	// Print answer to chat box.
@@ -250,7 +250,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	if dw.dialog.Trading() {
 		con, ok := dw.dialog.Owner().(item.Container)
 		if !ok {
-			log.Err.Printf("hud_dialog: dialog onwer has no inventory")
+			log.Err.Printf("hud: dialog window: dialog onwer has no inventory")
 			return
 		}
 		dw.Show(false)
@@ -262,7 +262,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	if dw.dialog.Training() {
 		tra, ok := dw.dialog.Owner().(train.Trainer)
 		if !ok {
-			log.Err.Printf("hud_dialog: dialog onwer is not a trainer")
+			log.Err.Printf("hud: dialog window: dialog onwer is not a trainer")
 			return
 		}
 		dw.Show(false)

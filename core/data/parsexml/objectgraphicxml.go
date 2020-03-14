@@ -1,7 +1,7 @@
 /*
  * objectgraphicxml.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,13 +67,13 @@ func UnmarshalObjectsGraphics(data io.Reader) ([]*res.ObjectGraphicData, error) 
 	xmlBase := new(ObjectGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal xml data: %v", err)
 	}
 	objects := make([]*res.ObjectGraphicData, 0)
 	for _, xmlData := range xmlBase.ObjectGraphics {
 		ogd, err := buildObjectGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml: unmarshal object graphic: %s: fail to build data: %v",
+			log.Err.Printf("xml: unmarshal object graphic: %s: unable to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -87,9 +87,9 @@ func UnmarshalObjectsGraphics(data io.Reader) ([]*res.ObjectGraphicData, error) 
 func buildObjectGraphicData(xmlObject *ObjectGraphic) (*res.ObjectGraphicData, error) {
 	sprite, err := data.ObjectSpritesheet(xmlObject.Sprite.Picture)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retireve object spritesheet: %v", err)
+		return nil, fmt.Errorf("unable to retireve object spritesheet: %v", err)
 	}
-	portrait, _ := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
+	portrait := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
 	data := res.ObjectGraphicData{
 		ID:          xmlObject.ID,
 		PortraitPic: portrait,

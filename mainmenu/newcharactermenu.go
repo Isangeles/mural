@@ -112,6 +112,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	faces, err := data.PlayablePortraits()
 	if err != nil {
 		log.Err.Printf("new char menu: unable to retrieve player portraits: %v", err)
+
 	}
 	if faces != nil {
 		ncm.faceSwitch.SetPictureValues(faces)
@@ -401,10 +402,10 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	portraitName, err := ncm.faceSwitch.Value().TextValue()
-	portraitPic, err := data.Portrait(portraitName)
-	if err != nil {
-		log.Err.Printf("newchar menu: unable to retrieve portrait picture: %v",
-			err)
+	portraitPic := data.Portrait(portraitName)
+	if portraitPic == nil {
+		log.Err.Printf("newchar menu: unable to retrieve portrait picture: %s",
+			portraitName)
 		return
 	}
 	avData := res.AvatarData{

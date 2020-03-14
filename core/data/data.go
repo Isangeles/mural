@@ -136,8 +136,8 @@ func Texture(fileName string) pixel.Picture {
 }
 
 // Portrait returns portrait with specified name.
-func Portrait(fileName string) (pixel.Picture, error) {
-	return portraits[fileName], nil
+func Portrait(fileName string) pixel.Picture {
+	return portraits[fileName]
 }
 
 // AvatarSpritesheet returns picture with specified name

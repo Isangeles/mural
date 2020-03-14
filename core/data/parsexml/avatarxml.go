@@ -131,27 +131,24 @@ func buildAvatarDataXML(avData *res.AvatarData) Avatar {
 
 // buildAvatarData build data avatar from specified XML data.
 func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	ssHeadName := avXML.Spritesheet.Head
-	ssTorsoName := avXML.Spritesheet.Torso
-	portraitName := avXML.Portrait
-	portraitPic, err := data.Portrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
+	portraitPic := data.Portrait(avXML.Portrait)
+	if portraitPic == nil {
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %s", avXML.Portrait)
 	}
-	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
+	ssHeadPic, err := data.AvatarSpritesheet(avXML.Spritesheet.Head)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
 	}
-	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
+	ssTorsoPic, err := data.AvatarSpritesheet(avXML.Spritesheet.Torso)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:           avXML.ID,
 		Serial:       avXML.Serial,
-		PortraitName: portraitName,
-		SSHeadName:   ssHeadName,
-		SSTorsoName:  ssTorsoName,
+		PortraitName: avXML.Portrait,
+		SSHeadName:   avXML.Spritesheet.Head,
+		SSTorsoName:  avXML.Spritesheet.Torso,
 		PortraitPic:  portraitPic,
 		SSHeadPic:    ssHeadPic,
 		SSTorsoPic:   ssTorsoPic,
@@ -162,21 +159,19 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 // buildStaticAvatarData build new static avatar data for specified
 // character from specified XML data.
 func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	ssFullBodyName := avXML.Spritesheet.FullBody
-	portraitName := avXML.Portrait
-	portraitPic, err := data.Portrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
+	portraitPic := data.Portrait(avXML.Portrait)
+	if portraitPic == nil {
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %s", avXML.Portrait)
 	}
-	ssFullBodyPic, err := data.AvatarSpritesheet(ssFullBodyName)
+	ssFullBodyPic, err := data.AvatarSpritesheet(avXML.Spritesheet.FullBody)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:             avXML.ID,
 		Serial:         avXML.Serial,
-		PortraitName:   portraitName,
-		SSFullBodyName: ssFullBodyName,
+		PortraitName:   avXML.Portrait,
+		SSFullBodyName: avXML.Spritesheet.FullBody,
 		PortraitPic:    portraitPic,
 		SSFullBodyPic:  ssFullBodyPic,
 	}

@@ -47,12 +47,12 @@ var (
 func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("xml: %s: fail to open avatars file: %v",
+		return nil, fmt.Errorf("xml: %s: unable to open avatars file: %v",
 			path, err)
 	}
 	avatars, err := parsexml.UnmarshalAvatars(f)
 	if err != nil {
-		return nil, fmt.Errorf("xml: %s: fail to parse xml: %v",
+		return nil, fmt.Errorf("xml: %s: unable to parse xml: %v",
 			path, err)
 	}
 	return avatars, nil
@@ -63,7 +63,7 @@ func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
 func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	avsData := make([]*res.AvatarData, 0)
 	for _, fInfo := range files {
@@ -73,7 +73,7 @@ func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impAvs, err := ImportAvatarsData(avFilePath)
 		if err != nil {
-			log.Err.Printf("data avatar import: %s: fail to parse char file: %v",
+			log.Err.Printf("data avatar import: %s: unable to parse char file: %v",
 				avFilePath, err)
 			continue
 		}
@@ -97,17 +97,17 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 	}
 	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve head spritesheet picture: %v",
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v",
 			err)
 	}
 	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve torso spritesheet picture: %v",
+		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v",
 			err)
 	}
-	portraitPic, err := data.Portrait(portraitName)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve portrait picture: %v", err)
+	portraitPic := data.Portrait(portraitName)
+	if portraitPic == nil {
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
 	}
 	avData := res.AvatarData{
 		ID:           char.ID(),

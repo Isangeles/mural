@@ -133,15 +133,18 @@ func buildAvatarDataXML(avData *res.AvatarData) Avatar {
 func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	portraitPic := data.Portrait(avXML.Portrait)
 	if portraitPic == nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %s", avXML.Portrait)
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
+			avXML.Portrait)
 	}
-	ssHeadPic, err := data.AvatarSpritesheet(avXML.Spritesheet.Head)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
+	ssHeadPic := data.AvatarSpritesheet(avXML.Spritesheet.Head)
+	if ssHeadPic == nil {
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
+			avXML.Spritesheet.Head)
 	}
-	ssTorsoPic, err := data.AvatarSpritesheet(avXML.Spritesheet.Torso)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v", err)
+	ssTorsoPic := data.AvatarSpritesheet(avXML.Spritesheet.Torso)
+	if ssTorsoPic == nil {
+		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v",
+			avXML.Spritesheet.Torso)
 	}
 	avData := res.AvatarData{
 		ID:           avXML.ID,
@@ -161,11 +164,13 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 	portraitPic := data.Portrait(avXML.Portrait)
 	if portraitPic == nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %s", avXML.Portrait)
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
+			avXML.Portrait)
 	}
-	ssFullBodyPic, err := data.AvatarSpritesheet(avXML.Spritesheet.FullBody)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v", err)
+	ssFullBodyPic := data.AvatarSpritesheet(avXML.Spritesheet.FullBody)
+	if ssFullBodyPic == nil {
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
+			avXML.Spritesheet.FullBody)
 	}
 	avData := res.AvatarData{
 		ID:             avXML.ID,

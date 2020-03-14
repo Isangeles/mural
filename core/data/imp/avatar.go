@@ -95,19 +95,20 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		portraitName = "female01.png"
 	}
-	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %v",
-			err)
+	ssHeadPic := data.AvatarSpritesheet(ssHeadName)
+	if ssHeadPic == nil {
+		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
+			ssHeadName)
 	}
-	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v",
-			err)
+	ssTorsoPic := data.AvatarSpritesheet(ssTorsoName)
+	if ssTorsoPic == nil {
+		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %s",
+			ssTorsoPic)
 	}
 	portraitPic := data.Portrait(portraitName)
 	if portraitPic == nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %v", err)
+		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
+			portraitName)
 	}
 	avData := res.AvatarData{
 		ID:           char.ID(),

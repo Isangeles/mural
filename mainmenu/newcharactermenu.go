@@ -387,16 +387,16 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
-	ssHeadPic, err := data.AvatarSpritesheet(ssHeadName)
-	if err != nil {
-		log.Err.Printf("newchar menu: unable to retrieve head spritesheet picture: %v",
-			err)
+	ssHeadPic := data.AvatarSpritesheet(ssHeadName)
+	if ssHeadPic == nil {
+		log.Err.Printf("newchar menu: unable to retrieve head spritesheet picture: %s",
+			ssHeadName)
 		return
 	}
-	ssTorsoPic, err := data.AvatarSpritesheet(ssTorsoName)
-	if err != nil {
-		log.Err.Printf("newchar menu: unable to retrieve torso spritesheet picture: %v",
-			err)
+	ssTorsoPic := data.AvatarSpritesheet(ssTorsoName)
+	if ssTorsoPic == nil {
+		log.Err.Printf("newchar menu: unable to retrieve torso spritesheet picture: %s",
+			ssTorsoName)
 		return
 	}
 	portraitName, ok := ncm.faceSwitch.Value().Value.(string)

@@ -142,8 +142,8 @@ func Portrait(fileName string) pixel.Picture {
 
 // AvatarSpritesheet returns picture with specified name
 // for avatar sprite.
-func AvatarSpritesheet(fileName string) (pixel.Picture, error) {
-	return avSpritesheets[fileName], nil
+func AvatarSpritesheet(fileName string) pixel.Picture {
+	return avSpritesheets[fileName]
 }
 
 // ItemSpritesheet returns picture with specified name

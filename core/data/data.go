@@ -153,8 +153,14 @@ func ObjectSpritesheet(fileName string) pixel.Picture {
 }
 
 // Icon returns picture with specified name for icon.
-func Icon(fileName string) (pixel.Picture, error) {
-	return icons[fileName], nil
+func Icon(fileName string) pixel.Picture {
+	return icons[fileName]
+}
+
+// Font loads font with specified name from gdata
+// directory.
+func Font(fileName string) *truetype.Font {
+	return fonts[fileName]
 }
 
 // PlayablePortraits returns map with names of portraits as keys
@@ -177,12 +183,6 @@ func PlayablePortraits() (map[string]pixel.Picture, error) {
 		}
 	}
 	return portraits, nil
-}
-
-// Font loads font with specified name from gdata
-// directory.
-func Font(fileName string) (*truetype.Font, error) {
-	return fonts[fileName], nil
 }
 
 // Map loads TMX map from file with specified
@@ -215,9 +215,9 @@ func AudioEffect(fileName string) (*beep.Buffer, error) {
 
 // ErrorItemGraphic returns error graphic for item.
 func ErrorItemGraphic() (*res.ItemGraphicData, error) {
-	icon, err := Icon("unknown.png")
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve error icon: %v", err)
+	icon := Icon("unknown.png")
+	if icon == nil {
+		return nil, fmt.Errorf("unable to retrieve error icon")
 	}
 	igd := res.ItemGraphicData{
 		IconPic:  icon,

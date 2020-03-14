@@ -1,7 +1,7 @@
 /*
  * effectgraphicxml.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,13 +54,13 @@ func UnmarshalEffectGraphics(data io.Reader) ([]*res.EffectGraphicData, error) {
 	xmlBase := new(EffectGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal xml data: %v", err)
 	}
 	effects := make([]*res.EffectGraphicData, 0)
 	for _, xmlData := range xmlBase.Graphics {
 		egd, err := buildEffectGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml: unmarshal effect graphic: %s: fail to build data: %v",
+			log.Err.Printf("xml: unmarshal effect graphic: %s: unable to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -72,13 +72,14 @@ func UnmarshalEffectGraphics(data io.Reader) ([]*res.EffectGraphicData, error) {
 // buildEffectGraphicData creates effect graphic data from specified
 // effect XML data.
 func buildEffectGraphicData(xmlEffect *EffectGraphic) (*res.EffectGraphicData, error) {
-	effIcon, err := data.Icon(xmlEffect.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve effect icon: %v", err)
+	icon := data.Icon(xmlEffect.Icon)
+	if icon == nil {
+		return nil, fmt.Errorf("unable to retrieve effect icon: %s",
+			xmlEffect.Icon)
 	}
-	effData := res.EffectGraphicData{
+	data := res.EffectGraphicData{
 		EffectID: xmlEffect.ID,
-		IconPic:  effIcon,
+		IconPic:  icon,
 	}
-	return &effData, nil
+	return &data, nil
 }

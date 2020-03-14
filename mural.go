@@ -151,8 +151,8 @@ func run() {
 		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
 	// UI Font.
-	uiFont, err := data.Font(config.MainFont)
-	if err == nil { // if font from config was found
+	uiFont := data.Font(config.MainFont)
+	if uiFont != nil {
 		mtk.SetMainFont(uiFont)
 	}
 	// Audio effects.

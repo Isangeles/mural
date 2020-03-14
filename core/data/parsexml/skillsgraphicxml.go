@@ -1,7 +1,7 @@
 /*
  * skillgraphicxml.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,13 +70,13 @@ func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 	xmlBase := new(SkillGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal xml data: %v", err)
 	}
 	skills := make([]*res.SkillGraphicData, 0)
 	for _, xmlData := range xmlBase.Graphics {
 		sgd, err := buildSkillGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml: unmarshal skill graphic: %s: fail to build data: %v",
+			log.Err.Printf("xml: unmarshal skill graphic: %s: unable to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -88,20 +88,21 @@ func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 // buildSkillGraphicData creates skill graphic data from specified
 // skill XML data.
 func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error) {
-	skillIcon, err := data.Icon(xmlSkill.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve skill icon: %v", err)
+	icon := data.Icon(xmlSkill.Icon)
+	if icon == nil {
+		return nil, fmt.Errorf("unable to retrieve skill icon: %s",
+			xmlSkill.Icon)
 	}
 	activationAnim := UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
 	skillData := res.SkillGraphicData{
 		SkillID:        xmlSkill.ID,
-		IconPic:        skillIcon,
+		IconPic:        icon,
 		ActivationAnim: int(activationAnim),
 	}
 	if xmlSkill.Audio.Activation != "" {
 		activeAudio, err := data.AudioEffect(xmlSkill.Audio.Activation)
 		if err != nil {
-			return nil, fmt.Errorf("fail to retrieve skill audio: %v", err)
+			return nil, fmt.Errorf("unable to retrieve skill audio: %v", err)
 		}
 		skillData.ActivationAudio = activeAudio
 	}

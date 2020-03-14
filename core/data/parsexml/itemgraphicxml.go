@@ -90,11 +90,10 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 		MaxStack: xmlItem.Stack,
 	}
 	// Icon.
-	icon, err := data.Icon(xmlItem.Icon)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retrieve item icon: %v", err)
+	d.IconPic = data.Icon(xmlItem.Icon)
+	if d.IconPic == nil {
+		return nil, fmt.Errorf("unable to retrieve item icon: %s", xmlItem.Icon)
 	}
-	d.IconPic = icon
 	// Spritesheets.
 	d.Spritesheets = make([]*res.SpritesheetData, 0)
 	for _, xmlSpritesheet := range xmlItem.Spritesheets {

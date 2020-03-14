@@ -146,16 +146,10 @@ func AvatarSpritesheet(fileName string) pixel.Picture {
 	return avSpritesheets[fileName]
 }
 
-// ItemSpritesheet returns picture with specified name
-// for item sprite.
-func ItemSpritesheet(fileName string) (pixel.Picture, error) {
-	return avSpritesheets[fileName], nil
-}
-
 // ObjectSpritesheet returns picture with specified name
 // for object sprite.
-func ObjectSpritesheet(fileName string) (pixel.Picture, error) {
-	return obSpritesheets[fileName], nil
+func ObjectSpritesheet(fileName string) pixel.Picture {
+	return obSpritesheets[fileName]
 }
 
 // Icon returns picture with specified name for icon.

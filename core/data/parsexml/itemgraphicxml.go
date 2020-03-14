@@ -67,13 +67,13 @@ func UnmarshalItemGraphics(data io.Reader) ([]*res.ItemGraphicData, error) {
 	xmlBase := new(ItemGraphics)
 	err := xml.Unmarshal(doc, xmlBase)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal xml data: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal xml data: %v", err)
 	}
 	items := make([]*res.ItemGraphicData, 0)
 	for _, xmlData := range xmlBase.ItemGraphics {
 		igd, err := buildItemGraphicData(&xmlData)
 		if err != nil {
-			log.Err.Printf("xml: unmarshal item graphic: %s: fail to build data: %v",
+			log.Err.Printf("xml: unmarshal item graphic: %s: unable to build data: %v",
 				xmlData.ID, err)
 			continue
 		}
@@ -92,7 +92,7 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 	// Icon.
 	icon, err := data.Icon(xmlItem.Icon)
 	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve item icon: %v", err)
+		return nil, fmt.Errorf("unable to retrieve item icon: %v", err)
 	}
 	d.IconPic = icon
 	// Spritesheets.
@@ -100,7 +100,7 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 	for _, xmlSpritesheet := range xmlItem.Spritesheets {
 		s, err := buildSpritesheetData(&xmlSpritesheet)
 		if err != nil {
-			return nil, fmt.Errorf("fail to build spritesheet data: %v", err)
+			return nil, fmt.Errorf("unable to build spritesheet data: %v", err)
 		}
 		d.Spritesheets = append(d.Spritesheets, s)
 	}
@@ -110,17 +110,18 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 // buildSpritesheetData creates spriteseheet data from specified XML
 // spritesheet node.
 func buildSpritesheetData(xmlSpritesheet *Spritesheet) (*res.SpritesheetData, error) {
-	tex, err := data.ItemSpritesheet(xmlSpritesheet.Texture)
-	if err != nil {
-		return nil, fmt.Errorf("fail to retrieve texture: %v", err)
+	tex := data.AvatarSpritesheet(xmlSpritesheet.Texture)
+	if tex == nil {
+		return nil, fmt.Errorf("unable to retrieve texture: %s",
+			xmlSpritesheet.Texture)
 	}
 	race, err := flamexml.UnmarshalRace(xmlSpritesheet.Race)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal race: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal race: %v", err)
 	}
 	gender, err := flamexml.UnmarshalGender(xmlSpritesheet.Gender)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal gender: %v", err)
+		return nil, fmt.Errorf("unable to unmarshal gender: %v", err)
 	}
 	d := res.SpritesheetData{
 		Texture: tex,

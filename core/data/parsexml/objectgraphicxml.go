@@ -85,9 +85,10 @@ func UnmarshalObjectsGraphics(data io.Reader) ([]*res.ObjectGraphicData, error) 
 // buildObjectGraphicData creates object graphic data from specified XML object
 // node.
 func buildObjectGraphicData(xmlObject *ObjectGraphic) (*res.ObjectGraphicData, error) {
-	sprite, err := data.ObjectSpritesheet(xmlObject.Sprite.Picture)
-	if err != nil {
-		return nil, fmt.Errorf("unable to retireve object spritesheet: %v", err)
+	sprite := data.ObjectSpritesheet(xmlObject.Sprite.Picture)
+	if sprite == nil {
+		return nil, fmt.Errorf("unable to retireve object spritesheet: %s",
+			xmlObject.Sprite.Picture)
 	}
 	portrait := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
 	data := res.ObjectGraphicData{

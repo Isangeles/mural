@@ -279,6 +279,6 @@ func Script(path string) (*ash.Script, error) {
 func loadPaths(mod *module.Module) {
 	modGraphicDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
 	modAudioDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
-	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/gdata.zip")
-	modAudioArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/adata.zip")
+	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/graphic.zip")
+	modAudioArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/audio.zip")
 }

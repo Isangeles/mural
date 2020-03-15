@@ -94,7 +94,11 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 func (c *Camera) Draw(win *mtk.Window) {
 	// Map.
 	if c.areaMap != nil {
-		c.areaMap.DrawPart(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
+		if config.MapFull {
+			c.areaMap.Draw(win.Window, mtk.Matrix().Moved(c.Position()))
+		} else {
+			c.areaMap.DrawPart(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
+		}
 	}
 	// Avatars.
 	for _, av := range c.avatars {

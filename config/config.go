@@ -46,6 +46,7 @@ const (
 var (
 	Fullscreen       = false
 	MapFOW           = true
+	MapFull          = true
 	Resolution       pixel.Vec
 	MainFont         = ""
 	MenuMusic        = ""
@@ -83,6 +84,9 @@ func LoadConfig() error {
 	// Graphic effects.
 	if len(conf["map-fow"]) > 0 {
 		MapFOW = conf["map-fow"][0] == "true"
+	}
+	if len(conf["map-full"]) > 0 {
+		MapFull = conf["map-full"][0] == "true"
 	}
 	if len(conf["main-font"]) > 0 {
 		MainFont = conf["main-font"][0]
@@ -140,6 +144,7 @@ func SaveConfig() error {
 		fmt.Sprintf("%f", Resolution.Y),
 	}
 	conf["map-fow"] = []string{fmt.Sprintf("%v", MapFOW)}
+	conf["map-full"] = []string{fmt.Sprintf("%v", MapFull)}
 	conf["main-font"] = []string{MainFont}
 	conf["menu-music"] = []string{MenuMusic}
 	conf["button-click-sound"] = []string{ButtonClickSound}

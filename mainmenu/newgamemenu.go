@@ -149,7 +149,7 @@ func (ngm *NewGameMenu) SetCharacters(chars []PlayableCharData) {
 	for i, c := range chars {
 		values[i] = mtk.SwitchValue{c.AvatarData.PortraitPic, c}
 	}
-	ngm.charSwitch.SetValues(values)
+	ngm.charSwitch.SetValues(values...)
 }
 
 // updateCharInfo updates textbox with character informations.
@@ -181,7 +181,7 @@ Attributes: %d, %d, %d, %d, %d`
 
 // updateCharSwitch updates menu character switch.
 func (ngm *NewGameMenu) updateCharSwitch() {
-	ngm.charSwitch.SetValues(make([]mtk.SwitchValue, 0))
+	ngm.charSwitch.SetValues(make([]mtk.SwitchValue, 0)...)
 	ngm.SetCharacters(ngm.mainmenu.PlayableChars())
 }
 

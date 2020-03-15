@@ -114,7 +114,12 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		log.Err.Printf("new char menu: unable to retrieve player portraits: %v", err)
 
 	}
-	ncm.faceSwitch.SetPictureValues(faces)
+	faceValues := make([]mtk.SwitchValue, 0)
+	for p, n := range faces {
+		value := mtk.SwitchValue{p, n}
+		faceValues = append(faceValues, value)
+	}
+	ncm.faceSwitch.SetValues(faceValues...)
 	// Attributes switches.
 	attrSwitchParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -148,7 +153,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.sexSwitch.SetLabel(lang.Text("newchar_sex_switch_label"))
-	ncm.sexSwitch.SetValues(gens)
+	ncm.sexSwitch.SetValues(gens...)
 	// Race switch.
 	races := []mtk.SwitchValue{
 		mtk.SwitchValue{lang.Text("race_human"), character.Human},
@@ -158,7 +163,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	}
 	ncm.raceSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.raceSwitch.SetLabel(lang.Text("newchar_race_switch_label"))
-	ncm.raceSwitch.SetValues(races)
+	ncm.raceSwitch.SetValues(races...)
 	// Alignment switch.
 	alis := []mtk.SwitchValue{
 		mtk.SwitchValue{lang.Text("ali_law_good"), character.LawfulGood},
@@ -173,7 +178,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	}
 	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.aliSwitch.SetLabel(lang.Text("newchar_ali_switch_label"))
-	ncm.aliSwitch.SetValues(alis)
+	ncm.aliSwitch.SetValues(alis...)
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,
@@ -300,25 +305,25 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	// Name.
 	name := ncm.nameEdit.Text()
 	// Attributes.
-	str, err := ncm.strSwitch.Value().IntValue()
-	if err != nil {
-		return nil, err
+	str, ok := ncm.strSwitch.Value().Value.(int)
+	if !ok {
+		return nil, fmt.Errorf("unable to retrieve strenght switch value")
 	}
-	con, err := ncm.conSwitch.Value().IntValue()
-	if err != nil {
-		return nil, err
+	con, ok := ncm.conSwitch.Value().Value.(int)
+	if !ok {
+		return nil, fmt.Errorf("unable to retrieve constitution switch value")
 	}
-	dex, err := ncm.dexSwitch.Value().IntValue()
-	if err != nil {
-		return nil, err
+	dex, ok := ncm.dexSwitch.Value().Value.(int)
+	if !ok {
+		return nil, fmt.Errorf("unable to retireve dexterity switch value")
 	}
-	inte, err := ncm.intSwitch.Value().IntValue()
-	if err != nil {
-		return nil, err
+	inte, ok := ncm.intSwitch.Value().Value.(int)
+	if !ok {
+		return nil, fmt.Errorf("unable to retrieve inteligence switch value")
 	}
-	wis, err := ncm.wisSwitch.Value().IntValue()
-	if err != nil {
-		return nil, err
+	wis, ok := ncm.wisSwitch.Value().Value.(int)
+	if !ok {
+		return nil, fmt.Errorf("unable to retrieve wisdom switch value")
 	}
 	// Gender.
 	gender, ok := ncm.sexSwitch.Value().Value.(character.Gender)

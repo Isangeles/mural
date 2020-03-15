@@ -85,7 +85,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	fullscrTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
 	fullscrFalse := mtk.SwitchValue{lang.Text("com_no"), false}
 	fullscrValues := []mtk.SwitchValue{fullscrFalse, fullscrTrue}
-	s.fullscrSwitch.SetValues(fullscrValues)
+	s.fullscrSwitch.SetValues(fullscrValues...)
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Resolution.
 	s.resSwitch = mtk.NewSwitch(switchParams)
@@ -95,12 +95,16 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		v := mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res}
 		resValues = append(resValues, v)
 	}
-	s.resSwitch.SetValues(resValues)
+	s.resSwitch.SetValues(resValues...)
 	s.resSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Language.
 	s.langSwitch = mtk.NewSwitch(switchParams)
 	s.langSwitch.SetLabel(lang.Text("lang_s_label"))
-	s.langSwitch.SetTextValues(config.SupportedLangs())
+	langValues := make([]mtk.SwitchValue, len(config.SupportedLangs()))
+	for i, l := range config.SupportedLangs() {
+		langValues[i] = mtk.SwitchValue{l, l}
+	}
+	s.langSwitch.SetValues(langValues...)
 	s.langSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Music volume.
 	s.musicVolumeSwitch = mtk.NewSwitch(switchParams)
@@ -110,7 +114,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		mtk.SwitchValue{lang.Text("settings_vol_sys"), 0.0},
 		mtk.SwitchValue{"+1", 1.0},
 	}
-	s.musicVolumeSwitch.SetValues(volValues)
+	s.musicVolumeSwitch.SetValues(volValues...)
 	s.musicVolumeSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Music mute.
 	s.musicMuteSwitch = mtk.NewSwitch(switchParams)
@@ -118,7 +122,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	muteTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
 	muteFalse := mtk.SwitchValue{lang.Text("com_no"), false}
 	muteValues := []mtk.SwitchValue{muteTrue, muteFalse}
-	s.musicMuteSwitch.SetValues(muteValues)
+	s.musicMuteSwitch.SetValues(muteValues...)
 	s.musicMuteSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	return s
 }

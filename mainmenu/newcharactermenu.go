@@ -115,7 +115,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 
 	}
 	faceValues := make([]mtk.SwitchValue, 0)
-	for p, n := range faces {
+	for n, p := range faces {
 		value := mtk.SwitchValue{p, n}
 		faceValues = append(faceValues, value)
 	}
@@ -155,11 +155,13 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.sexSwitch.SetLabel(lang.Text("newchar_sex_switch_label"))
 	ncm.sexSwitch.SetValues(gens...)
 	// Race switch.
-	races := []mtk.SwitchValue{
-		mtk.SwitchValue{lang.Text("race_human"), character.Human},
-		mtk.SwitchValue{lang.Text("race_elf"), character.Elf},
-		mtk.SwitchValue{lang.Text("race_dwarf"), character.Dwarf},
-		mtk.SwitchValue{lang.Text("race_gnome"), character.Gnome},
+	races := []mtk.SwitchValue{}
+	for _, r := range flameres.Races() {
+		if !r.Playable {
+			continue
+		}
+		val := mtk.SwitchValue{lang.Text(r.ID), r.ID}
+		races = append(races, val)
 	}
 	ncm.raceSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.raceSwitch.SetLabel(lang.Text("newchar_race_switch_label"))
@@ -331,7 +333,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		return nil, fmt.Errorf("unable to retrive gender")
 	}
 	// Race.
-	race, ok := ncm.raceSwitch.Value().Value.(character.Race)
+	race, ok := ncm.raceSwitch.Value().Value.(string)
 	if !ok {
 		return nil, fmt.Errorf("unable to retrieve race")
 	}
@@ -349,7 +351,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		Name:      name,
 		Level:     1,
 		Sex:       int(gender),
-		Race:      int(race),
+		Race:      race,
 		Alignment: int(alignment),
 		Attitude:  int(character.Friendly),
 		Str:       str,

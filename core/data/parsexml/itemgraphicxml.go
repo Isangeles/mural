@@ -114,17 +114,13 @@ func buildSpritesheetData(xmlSpritesheet *Spritesheet) (*res.SpritesheetData, er
 		return nil, fmt.Errorf("unable to retrieve texture: %s",
 			xmlSpritesheet.Texture)
 	}
-	race, err := flamexml.UnmarshalRace(xmlSpritesheet.Race)
-	if err != nil {
-		return nil, fmt.Errorf("unable to unmarshal race: %v", err)
-	}
 	gender, err := flamexml.UnmarshalGender(xmlSpritesheet.Gender)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal gender: %v", err)
 	}
 	d := res.SpritesheetData{
 		Texture: tex,
-		Race:    int(race),
+		Race:    xmlSpritesheet.Race,
 		Gender:  int(gender),
 	}
 	return &d, nil

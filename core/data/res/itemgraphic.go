@@ -38,7 +38,7 @@ type ItemGraphicData struct {
 // Struct for avatar spritesheet data.
 type SpritesheetData struct {
 	Texture pixel.Picture
-	Race    int
+	Race    string
 	Gender  int
 }
 

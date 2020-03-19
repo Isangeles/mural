@@ -28,6 +28,7 @@ import (
 
 	"github.com/faiface/pixel"
 
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/module/item"
 	flameobject "github.com/isangeles/flame/module/objects"
 	"github.com/isangeles/flame/module/character"
@@ -425,9 +426,9 @@ func (av *Avatar) castingSpell() bool {
 // specified slice and returns its texture.
 func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
 	for _, s := range sprs {
-		race := character.Race(s.Race)
+		race := flameres.Race(s.Race)
 		gender := character.Gender(s.Gender)
-		if race != character.UnknownRace && av.Race() != race {
+		if race != nil && av.Race().ID() != race.ID {
 			continue
 		}
 		if gender != character.UnknownGender && av.Gender() != gender {

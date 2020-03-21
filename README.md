@@ -9,7 +9,7 @@ Currently in a early development stage.
 ### Arena
 Description: simple demo game based on [Arena](https://github.com/isangeles/arena) module with [Mural GUI](https://github.com/isangeles/mural) support.
 
-Download: [Linux](https://drive.google.com/open?id=1CAUiHdGq8sxrrNWkRwF1QSaNSVWLKDVg), [Windows](https://drive.google.com/open?id=1rR_k_39o-hqTywUZO628ggA3iN7ZBZTJ)
+Download: [Linux](https://my.opendesktop.org/s/xmxszBXyMQCK5xB), [Windows](https://my.opendesktop.org/s/gcKQmFRdTj8sBdp)
 
 ## Build
 Get [Pixel](https://github.com/faiface/pixel), [MTK](https://github.com/Isangeles/mtk), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
@@ -71,34 +71,50 @@ Configuration values are loaded from `.mural` file in Mural executable directory
 
 ### Configuration values:
 ```
-  fullscreen:[true/false];
+  fullscreen:[true/false]
 ```
 Description: enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
 
 ```
-  resolution:[width]x[height];
+  resolution:[width];[height]
 ```
 Description: specifies current resolution.
 
 ```
-  map_fow:[true/false];
+  map-fow:[true/false]
 ```
 Description: enables 'Fog of War' effect for area map, 'true' enables FOW, everything else sets FOW disabled.
 
 ```
-  main_font:[file name];
+  main-font:[file name]
 ```
 Description: specifies name of font file(located in graphic archive) for main UI font.
+```
+  music-volume:[int]
+```
+Description: specifies game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
 
 ```
-  menu_music:[file name];
+  menu-music:[file name]
 ```
 Description: specifies name of audio file(located in audio archive) for main menu music theme.
 
 ```
-  button_click_sound:[file name];
+  button-click-sound:[file name]
 ```
 Description: specifies name of audio file(located in audio archive) for button click sound.
+```
+  newchar-skills:[skill ID];[skill ID];[...]
+```
+Description: specifies skills for character created with new character menu.
+```
+  newchar-items:[item ID];[item ID];[...]
+```
+Description: specifies items for character created with new character menu.
+```
+  newchar-attrs:[>0 int]
+```
+Description: specifies amount of attribute points available in new character menu.
 
 ## Module directory
 All GUI-related files must be stored in `data/modules/[module name]/gui` directory.

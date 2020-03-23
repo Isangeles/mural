@@ -178,7 +178,7 @@ Attributes: %s`
 	if pc.Race() != nil {
 		race = lang.Text(pc.Race().ID())
 	}
-	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.Text(pc.Gender().ID()),
+	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.Text(string(pc.Gender())),
 		race, lang.Text(pc.Alignment().ID()),
 		pc.Attributes())
 	cw.charInfo.SetText(info)

@@ -29,8 +29,6 @@ import (
 	"io"
 	"io/ioutil"
 
-	flamexml "github.com/isangeles/flame/data/parsexml"
-
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -114,14 +112,10 @@ func buildSpritesheetData(xmlSpritesheet *Spritesheet) (*res.SpritesheetData, er
 		return nil, fmt.Errorf("unable to retrieve texture: %s",
 			xmlSpritesheet.Texture)
 	}
-	gender, err := flamexml.UnmarshalGender(xmlSpritesheet.Gender)
-	if err != nil {
-		return nil, fmt.Errorf("unable to unmarshal gender: %v", err)
-	}
 	d := res.SpritesheetData{
 		Texture: tex,
 		Race:    xmlSpritesheet.Race,
-		Gender:  int(gender),
+		Gender:  xmlSpritesheet.Gender,
 	}
 	return &d, nil
 }

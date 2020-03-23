@@ -171,7 +171,7 @@ Race:       %s
 Alignment   %s
 Attributes: %d, %d, %d, %d, %d`
 	info := fmt.Sprintf(charInfoForm, charData.Name, charData.Level,
-		lang.Text(character.Gender(charData.Sex).ID()),
+		lang.Text(charData.Sex),
 		lang.Text(charData.Race),
 		lang.Text(character.Alignment(charData.Alignment).ID()),
 		charData.Str, charData.Con, charData.Dex, charData.Int, charData.Wis)

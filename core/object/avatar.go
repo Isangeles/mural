@@ -431,7 +431,7 @@ func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
 		if race != nil && av.Race().ID() != race.ID {
 			continue
 		}
-		if gender != character.UnknownGender && av.Gender() != gender {
+		if av.Gender() != gender {
 			continue
 		}
 		return s.Texture

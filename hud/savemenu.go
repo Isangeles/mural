@@ -146,7 +146,7 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu.
 func (sm *SaveMenu) Update(win *mtk.Window) {
-	if sm.Opened() {
+	if !sm.Opened() {
 		return
 	}
 	// Elements.

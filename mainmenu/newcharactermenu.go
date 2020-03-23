@@ -350,7 +350,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		ID:        id,
 		Name:      name,
 		Level:     1,
-		Sex:       int(gender),
+		Sex:       string(gender),
 		Race:      race,
 		Alignment: int(alignment),
 		Attitude:  int(character.Friendly),

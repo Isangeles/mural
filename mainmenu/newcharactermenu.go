@@ -146,9 +146,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
-	maleSwitchVal := mtk.SwitchValue{lang.Text("gender_male"),
+	maleSwitchVal := mtk.SwitchValue{lang.Text("genderMale"),
 		character.Male}
-	femaleSwitchVal := mtk.SwitchValue{lang.Text("gender_female"),
+	femaleSwitchVal := mtk.SwitchValue{lang.Text("genderFemale"),
 		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)

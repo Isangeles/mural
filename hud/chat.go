@@ -154,7 +154,6 @@ func (c *Chat) Update(win *mtk.Window) {
 	}
 	// Elements update.
 	c.textbox.Update(win)
-	c.Activate(c.textedit.Focused())
 	if c.Activated() {
 		c.textedit.Update(win)
 	}

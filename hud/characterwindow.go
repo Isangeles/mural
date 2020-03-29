@@ -179,7 +179,7 @@ Attributes: %s`
 		race = lang.Text(pc.Race().ID())
 	}
 	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.Text(string(pc.Gender())),
-		race, lang.Text(pc.Alignment().ID()),
+		race, lang.Text(string(pc.Alignment())),
 		pc.Attributes())
 	cw.charInfo.SetText(info)
 }

@@ -86,3 +86,15 @@ reqs_not_meet:Requirements not meet
 tar_too_far:Target is too far
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file
 load_game_err:Fail to load game
+attNeutral:Neutral
+attFriendly:Friendly
+attHostile:Hostile
+aliLawfulGood:Lawful good
+aliNeutralGood:Neutral good
+aliChaoticGood:Chaotic good
+aliLawfulNeutral:Lawful neutral
+aliTrueNeutral:True neutral
+aliChaoticNeutral:Chaotic neutral
+aliLawfulEvil:Lawful evil
+aliNeutralEvil:Neutral evil
+aliChaoticEvil:Chaotic evil

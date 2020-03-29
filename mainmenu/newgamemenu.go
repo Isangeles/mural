@@ -173,7 +173,7 @@ Attributes: %d, %d, %d, %d, %d`
 	info := fmt.Sprintf(charInfoForm, charData.Name, charData.Level,
 		lang.Text(charData.Sex),
 		lang.Text(charData.Race),
-		lang.Text(character.Alignment(charData.Alignment).ID()),
+		lang.Text(charData.Alignment),
 		charData.Str, charData.Con, charData.Dex, charData.Int, charData.Wis)
 	ngm.charInfo.SetText(info)
 	return

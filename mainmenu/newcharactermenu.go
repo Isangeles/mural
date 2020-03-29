@@ -146,9 +146,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.wisSwitch.SetIntValues(0, 90)
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
-	maleSwitchVal := mtk.SwitchValue{lang.Text("genderMale"),
+	maleSwitchVal := mtk.SwitchValue{lang.Text(string(character.Male)),
 		character.Male}
-	femaleSwitchVal := mtk.SwitchValue{lang.Text("genderFemale"),
+	femaleSwitchVal := mtk.SwitchValue{lang.Text(string(character.Female)),
 		character.Female}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)
@@ -168,15 +168,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.raceSwitch.SetValues(races...)
 	// Alignment switch.
 	alis := []mtk.SwitchValue{
-		mtk.SwitchValue{lang.Text("ali_law_good"), character.LawfulGood},
-		mtk.SwitchValue{lang.Text("ali_neu_good"), character.NeutralGood},
-		mtk.SwitchValue{lang.Text("ali_cha_good"), character.ChaoticGood},
-		mtk.SwitchValue{lang.Text("ali_law_neutral"), character.LawfulNeutral},
-		mtk.SwitchValue{lang.Text("ali_tru_neutral"), character.TrueNeutral},
-		mtk.SwitchValue{lang.Text("ali_cha_neutral"), character.ChaoticNeutral},
-		mtk.SwitchValue{lang.Text("ali_law_evil"), character.LawfulEvil},
-		mtk.SwitchValue{lang.Text("ali_neu_evil"), character.NeutralEvil},
-		mtk.SwitchValue{lang.Text("ali_cha_evil"), character.ChaoticEvil},
+		mtk.SwitchValue{lang.Text(string(character.LawfulGood)), character.LawfulGood},
+		mtk.SwitchValue{lang.Text(string(character.NeutralGood)), character.NeutralGood},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticGood)), character.ChaoticGood},
+		mtk.SwitchValue{lang.Text(string(character.LawfulNeutral)), character.LawfulNeutral},
+		mtk.SwitchValue{lang.Text(string(character.TrueNeutral)), character.TrueNeutral},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticNeutral)), character.ChaoticNeutral},
+		mtk.SwitchValue{lang.Text(string(character.LawfulEvil)), character.LawfulEvil},
+		mtk.SwitchValue{lang.Text(string(character.NeutralEvil)), character.NeutralEvil},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticEvil)), character.ChaoticEvil},
 	}
 	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.aliSwitch.SetLabel(lang.Text("newchar_ali_switch_label"))
@@ -352,8 +352,8 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		Level:     1,
 		Sex:       string(gender),
 		Race:      race,
-		Alignment: int(alignment),
-		Attitude:  int(character.Friendly),
+		Alignment: string(alignment),
+		Attitude:  string(character.Friendly),
 		Str:       str,
 		Con:       con,
 		Dex:       dex,

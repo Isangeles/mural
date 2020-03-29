@@ -26,14 +26,14 @@ Copy `data` directory from `res` to directory with `mural` executable(it contain
 ```
 $ cp -r ~/go/src/github.com/isangeles/mural/res/data .
 ```
-Now, specify the path to a valid Flame module in Flame configuration file:
+Now, specify ID of a valid Flame module in Flame configuration file:
 
 Create file `.flame` in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
-  module:[module name];[module path](optional);
+module:[module ID]
 ```
-If no path provided, the engine will search default modules directory(`data/modules`).
+The engine will search default modules directory(`data/modules`) for module with specified ID.
 
 Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 

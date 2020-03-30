@@ -11,6 +11,7 @@ MINOR:
 * Display portrait in character window
 * Displaying messages about game pause, damage taken, item gain, etc.
 * Loading scripts along with module and chapter data
+* Stop old scripts while leaving a game
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

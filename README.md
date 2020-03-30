@@ -165,6 +165,9 @@ Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts p
 
 Area scripts are stored in `chapters/[chapter id]/areas/[area id]/scripts` directory and started after area change.
 
+## Documentation
+Source code documentation can be easily browsed with `go doc` command.
+
 ## Contributing
 You are welcome to contribute to project development.
 

@@ -88,8 +88,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
-	mod = m
-	burn.Module = mod
+	setModule(m)
 	// Load module translation data.
 	err = flamedata.LoadModuleLang(mod, flameconf.Lang)
 	if err != nil {
@@ -197,19 +196,25 @@ func run() {
 			fpsInfo.Draw(win, mtk.Matrix().Moved(fpsPos))
 			verPos := mtk.LeftOf(fpsInfo.DrawArea(), verInfo.Size(), 5)
 			verInfo.Draw(win, mtk.Matrix().Moved(verPos))
+			fpsInfo.SetText(fmt.Sprintf("FPS: %d", win.FPS()))
 		}
 		// Update.
 		win.Update()
-		if inGame {
-			pcHUD.Update(win)
-			game.Update(win.Delta()) // game update
-			if pcHUD.Exiting() {
-				inGame = false
-			}
-		} else {
+		if !inGame {
 			mainMenu.Update(win)
+			continue
 		}
-		fpsInfo.SetText(fmt.Sprintf("FPS:%d", win.FPS()))
+		pcHUD.Update(win)
+		game.Update(win.Delta())
+		if pcHUD.Exiting() {
+			inGame = false
+			// Reimport module.
+			m, err := flamedata.ImportModule(flameconf.ModulePath())
+			if err != nil {
+				log.Err.Printf("unable to reimport module: %v", err)
+			}
+			setModule(m)
+		}
 	}
 	// On exit.
 	if win.Closed() {
@@ -297,4 +302,13 @@ func LoadSavedGame(saveName string) {
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)
+}
+
+// setModule sets specified module for UI.
+func setModule(m *module.Module) {
+	mod = m
+	burn.Module = m
+	if mainMenu != nil {
+		mainMenu.SetModule(m)
+	}
 }

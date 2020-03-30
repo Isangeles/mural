@@ -162,6 +162,11 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.msgs.Update(win)
 }
 
+// SetMod sets module for main menu.
+func (mm *MainMenu) SetModule(mod *module.Module) {
+	mm.mod = mod
+}
+
 // Exit sends exit request to main menu.
 func (mm *MainMenu) Exit() {
 	mm.exiting = true

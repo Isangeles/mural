@@ -29,8 +29,6 @@ import (
 	"io"
 	"io/ioutil"
 
-	flamexml "github.com/isangeles/flame/data/parsexml"
-
 	"github.com/isangeles/mural/core/data/res"
 )
 
@@ -53,7 +51,8 @@ type Player struct {
 // Struct for GUI camera XML node.
 type Camera struct {
 	XMLName  xml.Name `xml:"camera"`
-	Position string   `xml:"position,attr"`
+	X        float64  `xml:"x,attr"`
+	Y        float64  `xml:"y,attr"`
 }
 
 // Struct for inventory node of avatar node.
@@ -103,7 +102,7 @@ func MarshalGUISave(save *res.GUISave) (string, error) {
 		}
 		xmlGUI.Players = append(xmlGUI.Players, *xmlPC)
 	}
-	xmlGUI.Camera.Position = fmt.Sprintf("%fx%f", save.CameraPosX, save.CameraPosY)
+	xmlGUI.Camera.X, xmlGUI.Camera.Y = save.CameraPosX, save.CameraPosY
 	out, err := xml.Marshal(xmlGUI)
 	if err != nil {
 		return "", fmt.Errorf("fail to marshal xml data: %v", err)
@@ -154,10 +153,6 @@ func buildGUISave(xmlSave *Save) (*res.GUISave, error) {
 		}
 	}
 	// Camera position.
-	camX, camY, err := flamexml.UnmarshalPosition(xmlSave.Camera.Position)
-	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal camera position: %v", err)
-	}
-	save.CameraPosX, save.CameraPosY = camX, camY
+	save.CameraPosX, save.CameraPosY = xmlSave.Camera.X, xmlSave.Camera.Y
 	return save, nil
 }

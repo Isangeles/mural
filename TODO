@@ -12,6 +12,7 @@ MINOR:
 * Displaying messages about game pause, damage taken, item gain, etc.
 * Loading scripts along with module and chapter data
 * Stop old scripts while leaving a game
+* Fix close button in loot window
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

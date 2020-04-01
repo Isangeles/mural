@@ -88,7 +88,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 	}
 	lw.closeButton = mtk.NewButton(buttonParams)
 	closeButtonBG := data.Texture("closebutton1.png")
-	if closeButtonBG == nil {
+	if closeButtonBG != nil {
 		spr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		lw.closeButton.SetBackground(spr)
 	}

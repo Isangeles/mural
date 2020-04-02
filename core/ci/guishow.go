@@ -46,8 +46,8 @@ func guishow(cmd burn.Command) (int, string) {
 		}
 		out := ""
 		for _, c := range guiMenu.PlayableChars() {
-			out = fmt.Sprintf("%s%s#%s ", c.CharData.BasicData.Name,
-				c.CharData.BasicData.ID, c.CharData.BasicData.Serial)
+			out = fmt.Sprintf("%s%s#%s ", c.CharData.Name,
+				c.CharData.ID, c.CharData.Serial)
 		}
 		out = strings.TrimSpace(out)
 		return 0, out

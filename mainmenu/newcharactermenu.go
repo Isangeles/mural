@@ -345,8 +345,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	// ID.
 	name = strings.ReplaceAll(name, " ", "_")
 	id := fmt.Sprintf(newCharIDFrom, strings.ToLower(name))
-	charData := flameres.CharacterData{}
-	charData.BasicData = flameres.CharacterBasicData{
+	charData := flameres.CharacterData{
 		ID:        id,
 		Name:      name,
 		Level:     1,
@@ -390,7 +389,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 	}
 	ssHeadName := "m-head-black-1222211-80x90.png"
 	ssTorsoName := "m-cloth-1222211-80x90.png"
-	if character.Gender(charData.BasicData.Sex) == character.Female {
+	if character.Gender(charData.Sex) == character.Female {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
@@ -417,8 +416,8 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	avData := res.AvatarData{
-		ID:           charData.BasicData.ID,
-		Serial:       charData.BasicData.Serial,
+		ID:           charData.ID,
+		Serial:       charData.Serial,
 		PortraitName: portraitName,
 		SSHeadName:   ssHeadName,
 		SSTorsoName:  ssTorsoName,

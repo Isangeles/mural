@@ -163,18 +163,18 @@ func (ngm *NewGameMenu) updateCharInfo() {
 		log.Err.Printf("unable to retrieve character data from switch")
 		return
 	}
-	charData := c.CharData.BasicData
 	charInfoForm := `Name:       %s
 Level:      %d
 Gender:     %s
 Race:       %s
 Alignment   %s
 Attributes: %d, %d, %d, %d, %d`
-	info := fmt.Sprintf(charInfoForm, charData.Name, charData.Level,
-		lang.Text(charData.Sex),
-		lang.Text(charData.Race),
-		lang.Text(charData.Alignment),
-		charData.Str, charData.Con, charData.Dex, charData.Int, charData.Wis)
+	info := fmt.Sprintf(charInfoForm, c.CharData.Name, c.CharData.Level,
+		lang.Text(c.CharData.Sex),
+		lang.Text(c.CharData.Race),
+		lang.Text(c.CharData.Alignment),
+		c.CharData.Str, c.CharData.Con, c.CharData.Dex,
+		c.CharData.Int, c.CharData.Wis)
 	ngm.charInfo.SetText(info)
 	return
 }

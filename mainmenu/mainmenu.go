@@ -287,7 +287,7 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	}
 	for _, avData := range avsData {
 		for _, charData := range charsData {
-			if avData.ID != charData.BasicData.ID {
+			if avData.ID != charData.ID {
 				continue
 			}
 			pc := PlayableCharData{charData, avData}

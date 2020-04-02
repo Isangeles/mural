@@ -426,13 +426,17 @@ func (av *Avatar) castingSpell() bool {
 // specified slice and returns its texture.
 func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
 	for _, s := range sprs {
-		race := flameres.Race(s.Race)
-		gender := character.Gender(s.Gender)
-		if race != nil && av.Race().ID() != race.ID {
-			continue
+		if s.Race != "*" {
+			race := flameres.Race(s.Race)
+			if race != nil && av.Race().ID() != race.ID {
+				continue
+			}
 		}
-		if av.Gender() != gender {
-			continue
+		if s.Gender != "*" {
+			gender := character.Gender(s.Gender)
+			if av.Gender() != gender {
+				continue
+			}
 		}
 		return s.Texture
 	}

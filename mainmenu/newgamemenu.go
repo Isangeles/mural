@@ -173,8 +173,9 @@ Attributes: %d, %d, %d, %d, %d`
 		lang.Text(c.CharData.Sex),
 		lang.Text(c.CharData.Race),
 		lang.Text(c.CharData.Alignment),
-		c.CharData.Str, c.CharData.Con, c.CharData.Dex,
-		c.CharData.Int, c.CharData.Wis)
+		c.CharData.Attributes.Str, c.CharData.Attributes.Con,
+		c.CharData.Attributes.Dex, c.CharData.Attributes.Int,
+		c.CharData.Attributes.Wis)
 	ngm.charInfo.SetText(info)
 	return
 }

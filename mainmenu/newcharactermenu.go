@@ -353,11 +353,13 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		Race:      race,
 		Alignment: string(alignment),
 		Attitude:  string(character.Friendly),
-		Str:       str,
-		Con:       con,
-		Dex:       dex,
-		Int:       inte,
-		Wis:       wis,
+	}
+	charData.Attributes = flameres.AttributesData{
+		Str: str,
+		Con: con,
+		Dex: dex,
+		Int: inte,
+		Wis: wis,
 	}
 	// Player skills & items from interface config.
 	for _, sid := range config.CharSkills {

@@ -239,13 +239,13 @@ func EnterGame(g *flame.Game, pcs ...*object.Avatar) {
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	for _, pc := range pcs {
-		hud.AddPlayer(pc)
-	}
 	// Set game for HUD.
 	hud.SetGame(game)
 	burn.Game = game
 	inGame = true
+	for _, pc := range pcs {
+		hud.AddPlayer(pc)
+	}
 	// Run module scripts.
 	modpath := game.Module().Conf().Path
 	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")

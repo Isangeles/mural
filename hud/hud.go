@@ -395,7 +395,8 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 	defer hud.CloseLoadingScreen()
 	err := hud.camera.SetArea(area)
 	if err != nil {
-		hud.loaderr = err
+		hud.loaderr = fmt.Errorf("unable to set camera area: %v",
+			err)
 		return hud.loaderr
 	}
 	// Reload HUD.

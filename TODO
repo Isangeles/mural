@@ -12,6 +12,9 @@ MINOR:
 * Displaying messages about game pause, damage taken, item gain, etc.
 * Loading scripts along with module and chapter data
 * Stop old scripts while leaving a game
+* Import/export module instead of saving/loading game state
+* Inventory: saving inventory layout
+* Inventory: fix issue that allows placing two different items in same slot
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

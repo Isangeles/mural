@@ -26,6 +26,7 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -262,7 +263,9 @@ func LoadSavedGame(saveName string) {
 	mainMenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
-	game, err := flamedata.ImportGame(mod, flameconf.ModuleSavegamesPath(), saveName)
+	savePath := filepath.Join(flameconf.ModuleSavegamesPath(),
+		saveName + flamedata.SavegameFileExt)
+	game, err := flamedata.ImportGame(mod, savePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to import game: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))

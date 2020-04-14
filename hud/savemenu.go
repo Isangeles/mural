@@ -26,6 +26,7 @@ package hud
 import (
 	"fmt"
 	"strings"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -242,15 +243,17 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 // savegames directory.
 func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
-	savesPath := flameconf.ModuleSavegamesPath()
+	path := filepath.Join(flameconf.ModuleSavegamesPath(),
+		saveName + flamedata.SavegameFileExt)
 	// Save current game.
-	err := flamedata.ExportGame(sm.hud.Game(), savesPath, saveName)
+	err := flamedata.ExportGame(sm.hud.Game(), path)
 	if err != nil {
 		return fmt.Errorf("unable to save game: %v", err)
 	}
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()
-	err = exp.ExportGUISave(guisav, savesPath, saveName)
+	err = exp.ExportGUISave(guisav, flameconf.ModuleSavegamesPath(),
+		saveName)
 	if err != nil {
 		return fmt.Errorf("unable to save gui: %v", err)
 	}

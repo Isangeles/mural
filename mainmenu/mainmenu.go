@@ -290,7 +290,7 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 			if avData.ID != charData.ID {
 				continue
 			}
-			pc := PlayableCharData{charData, avData}
+			pc := PlayableCharData{&charData, avData}
 			mm.playableChars = append(mm.playableChars, pc)
 		}
 	}

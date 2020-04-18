@@ -1,9 +1,9 @@
 ## Introduction
 Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
 
-GUI uses [MTK](https://github.com/Isangeles/mtk), simple toolkit built with [Pixel](https://github.com/faiface/pixel) library.
+GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/faiface/pixel) library.
 
-Currently in a early development stage.
+Currently in an early development stage.
 
 ### Flame games with Mural support:
 ### Arena
@@ -26,14 +26,14 @@ Copy `data` directory from `res` to directory with `mural` executable(it contain
 ```
 $ cp -r ~/go/src/github.com/isangeles/mural/res/data .
 ```
-Now, specify ID of a valid Flame module in Flame configuration file:
+Now, specify the ID of a valid Flame module in Flame configuration file:
 
 Create file `.flame` in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
 module:[module ID]
 ```
-The engine will search default modules directory(`data/modules`) for module with specified ID.
+The engine will search the default modules directory(`data/modules`) for a module with the specified ID.
 
 Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 
@@ -83,7 +83,7 @@ Description: specifies current resolution.
 ```
   map-fow:[true/false]
 ```
-Description: enables 'Fog of War' effect for area map, 'true' enables FOW, everything else sets FOW disabled.
+Description: enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else sets FOW disabled.
 
 ```
   main-font:[file name]
@@ -117,7 +117,12 @@ Description: specifies items for character created with new character menu.
 Description: specifies amount of attribute points available in new character menu.
 
 ## Module directory
-All GUI-related files must be stored in `data/modules/[module name]/gui` directory.
+All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/gui` directory.
+
+UI textures and audio files need to be provided by module, without module graphic archive Mural will fallback to drawing
+simple shapes in place of missing textures.
+
+UI textures and audio files are stored in `gui/graphic.zip` and `gui/audio.zip` respectively.
 
 For example check [Arena](https://github.com/Isangeles/arena) module.
 
@@ -168,13 +173,24 @@ Area scripts are stored in `chapters/[chapter id]/areas/[area id]/scripts` direc
 ## Documentation
 Source code documentation can be easily browsed with `go doc` command.
 
+Documentation for Burn commands in form of Troff pages is available under `doc/command` directory.
+
+You can easily view documentation pages with `man` command.
+
+For example to display documentation page for guiset command:
+```
+$ man doc/command/guiset
+```
+
+Note that documentation of Burn commands is still incomplete.
+
 ## Contributing
 You are welcome to contribute to project development.
 
 If you looking for things to do, then check [TODO file](https://github.com/Isangeles/mural/blob/master/TODO) or contact me(dev@isangeles.pl).
 
-When you find something to do, create new branch for your feature.
-After you finish, open pull request to merge your changes with master branch.
+When you find something to do, create a new branch for your feature.
+After you finish, open a pull request to merge your changes with master branch.
 
 ## Contact
 * Isangeles <<dev@isangeles.pl>>

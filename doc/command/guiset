@@ -1,0 +1,43 @@
+.TH guiset
+.SH NAME
+guiset - command for changing GUI configuration values
+.SH DESCRIPTION
+With guiset you can set configuration values like resolution, FOW, or exit the program.
+.SH OPTIONS
+.P
+* resolution
+.br
+guiset -o resolution -a [width] [hight]
+.br
+Sets specified resolution.
+.br
+The first argument is for width, second is for height.
+.br
+Example:
+.br
+guiset -o resolution -a 1920 1080
+.P
+* fow
+.br
+guiset -o fow -a [on/*]
+.br
+Turns map FOW effect(Fog of War) on/off.
+.br
+First argument needs to be 'on' to enable FOW, everything else disables FOW.
+.br
+Example:
+.br
+guiset -o fow -a on
+.P
+* exit
+.br
+guiset -o exit
+.br
+Exits program.
+.br
+No arguments.
+.br
+Example:
+guiset -o exit
+.SH SEE ALSO
+guishow, guiexport, guiimport, guiaudio

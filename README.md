@@ -119,10 +119,7 @@ Description: specifies amount of attribute points available in new character men
 ## Module directory
 All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/gui` directory.
 
-UI textures and audio files need to be provided by module, without module graphic archive Mural will fallback to drawing
-simple shapes in place of missing textures.
-
-UI textures and audio files are stored in `gui/graphic.zip` and `gui/audio.zip` respectively.
+UI textures and audio files need to be provided by module and stored in `gui/graphic.zip` and `gui/audio.zip` respectively.
 
 For example check [Arena](https://github.com/Isangeles/arena) module.
 
@@ -145,13 +142,13 @@ Description: exits program.
 ```
 guiimport -o gui-state -a [save name]
 ```
-Description: saves current HUD state to file in current /savegames directory(/savegames/[module]).
+Description: saves current HUD state to file in current `/savegames` directory(`/savegames/[module]`).
 
   Load HUD state:
 ```
 guiexport -o gui-state -a [save name]
 ```
-Description: load HUD state from file in current /savegames directory(/savegames/[module]).
+Description: load HUD state from file in current `/savegames` directory(`/savegames/[module]`).
 
 Mute music:
 ```

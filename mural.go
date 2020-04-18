@@ -38,6 +38,7 @@ import (
 	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
+	"github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module"
 
@@ -85,11 +86,11 @@ func init() {
 // Main function.
 func main() {
 	// Import module.
-	m, err := flamedata.ImportModule(flameconf.ModulePath())
+	modData, err := flamedata.ImportModule(flameconf.ModulePath())
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
-	setModule(m)
+	setModule(modData)
 	// Load module translation data.
 	err = flamedata.LoadModuleLang(mod, flameconf.Lang)
 	if err != nil {
@@ -210,11 +211,11 @@ func run() {
 		if pcHUD.Exiting() {
 			inGame = false
 			// Reimport module.
-			m, err := flamedata.ImportModule(flameconf.ModulePath())
+			modData, err := flamedata.ImportModule(flameconf.ModulePath())
 			if err != nil {
 				log.Err.Printf("unable to reimport module: %v", err)
 			}
-			setModule(m)
+			setModule(modData)
 		}
 	}
 	// On exit.
@@ -308,10 +309,10 @@ func setHUD(h *hud.HUD) {
 }
 
 // setModule sets specified module for UI.
-func setModule(m *module.Module) {
-	mod = m
-	burn.Module = m
+func setModule(data res.ModuleData) {
+	mod = module.New(data)
+	burn.Module = mod
 	if mainMenu != nil {
-		mainMenu.SetModule(m)
+		mainMenu.SetModule(mod)
 	}
 }

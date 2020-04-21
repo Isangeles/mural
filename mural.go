@@ -67,7 +67,7 @@ var (
 // On init.
 func init() {
 	// Load flame config.
-	err := flameconf.LoadConfig()
+	err := flameconf.Load()
 	if err != nil {
 		log.Err.Printf("unable to load flame config file: %v", err)
 	}
@@ -221,7 +221,7 @@ func run() {
 	// On exit.
 	if win.Closed() {
 		config.SaveConfig()
-		flameconf.SaveConfig()
+		flameconf.Save()
 	}
 }
 

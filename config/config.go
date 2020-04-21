@@ -35,7 +35,7 @@ import (
 	"github.com/isangeles/mural/log"
 
 	flameconf "github.com/isangeles/flame/config"
-	"github.com/isangeles/flame/data/parsetxt"
+	"github.com/isangeles/flame/data/text"
 )
 
 const (
@@ -65,7 +65,10 @@ func LoadConfig() error {
 	if err != nil {
 		return fmt.Errorf("unable to open config file: %v", err)
 	}
-	conf := parsetxt.UnmarshalConfig(file)
+	conf, err := text.UnmarshalConfig(file)
+	if err != nil {
+		return fmt.Errorf("unable to unmarshal config: %v", err)
+	}
 	// Fullscreen.
 	if len(conf["fullscreen"]) > 0 {
 		Fullscreen = conf["fullscreen"][0] == "true"
@@ -154,7 +157,7 @@ func SaveConfig() error {
 	conf["newchar-attrs-max"] = []string{fmt.Sprintf("%d", CharAttrsMax)}
 	conf["newchar-skills"] = CharSkills
 	conf["newchar-items"] = CharItems
-	confText := parsetxt.MarshalConfig(conf)
+	confText := text.MarshalConfig(conf)
 	// Write config values.
 	w := bufio.NewWriter(file)
 	w.WriteString(confText)

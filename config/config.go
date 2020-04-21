@@ -59,8 +59,8 @@ var (
 	CharItems        []string
 )
 
-// LoadConfig loads configuration file.
-func LoadConfig() error {
+// Load loads configuration file.
+func Load() error {
 	file, err := os.Open(ConfFileName)
 	if err != nil {
 		return fmt.Errorf("unable to open config file: %v", err)
@@ -131,8 +131,8 @@ func LoadConfig() error {
 	return nil
 }
 
-// SaveConfig saves current configuration to file.
-func SaveConfig() error {
+// Save saves current configuration to file.
+func Save() error {
 	// Create file.
 	file, err := os.Create(ConfFileName)
 	if err != nil {

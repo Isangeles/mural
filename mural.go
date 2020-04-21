@@ -77,7 +77,7 @@ func init() {
 		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Load GUI config.
-	err = config.LoadConfig()
+	err = config.Load()
 	if err != nil {
 		log.Err.Printf("unable to load config file: %v", err)
 	}
@@ -220,7 +220,7 @@ func run() {
 	}
 	// On exit.
 	if win.Closed() {
-		config.SaveConfig()
+		config.Save()
 		flameconf.Save()
 	}
 }

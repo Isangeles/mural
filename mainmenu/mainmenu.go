@@ -277,7 +277,7 @@ func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 // ImportPlayableChars import all characters from specified
 // path.
 func (mm *MainMenu) ImportPlayableChars(path string) error {
-	charsData, err := flamedata.ImportCharactersDataDir(path)
+	charsData, err := flamedata.ImportCharactersDir(path)
 	if err != nil {
 		return fmt.Errorf("fail to import characters: %v", err)
 	}

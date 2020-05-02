@@ -28,7 +28,7 @@ $ cp -r ~/go/src/github.com/isangeles/mural/res/data .
 ```
 Now, specify the ID of a valid Flame module in Flame configuration file:
 
-Create file `.flame` in Mural executable directory(or run Mural to create it
+Create file `.mural` in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
 ```
 module:[module ID]
@@ -71,20 +71,29 @@ Configuration values are loaded from `.mural` file in Mural executable directory
 
 ### Configuration values:
 ```
+  lang:[language ID]
+```
+Description: specifies game language, language ID is name of directory with translation files in lang directories.
+```
+  module:[module ID]
+```
+Description: specifies module from `data/modules` directory to load at start, module ID is ID specified in `.module` file inside main module directory.
+```
+  debug:[true/false]
+```
+Description: enables engine debug mode(shows debug messages in engine log), 'true' enables mode, everything else sets mode disabled.
+```
   fullscreen:[true/false]
 ```
 Description: enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
-
 ```
   resolution:[width];[height]
 ```
 Description: specifies current resolution.
-
 ```
   map-fow:[true/false]
 ```
 Description: enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else sets FOW disabled.
-
 ```
   main-font:[file name]
 ```
@@ -93,12 +102,10 @@ Description: specifies name of font file(located in graphic archive) for main UI
   music-volume:[int]
 ```
 Description: specifies game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
-
 ```
   menu-music:[file name]
 ```
 Description: specifies name of audio file(located in audio archive) for main menu music theme.
-
 ```
   button-click-sound:[file name]
 ```

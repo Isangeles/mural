@@ -110,7 +110,7 @@ func (oi *ObjectInfo) SetObject(ob InfoTarget) {
 // object.
 func objectInfo(o InfoTarget) string {
 	info := fmt.Sprintf("%s", o.Name())
-	if config.Debug() {
+	if config.Debug {
 		info = fmt.Sprintf("%s\n%s#%s", info, o.ID(),
 			o.Serial())
 	}

@@ -127,7 +127,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 		c.drawMapFOW(win.Window)
 	}
 	// Debug mode.
-	if config.Debug() {
+	if config.Debug {
 		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
 		c.cameraInfo.Draw(win, mtk.Matrix().Moved(camInfoPos))
 		curInfoPos := mtk.TopOf(c.cameraInfo.DrawArea(), c.cursorInfo.Size(), 10)

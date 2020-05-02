@@ -59,7 +59,7 @@ func (hud *HUD) itemInfo(it item.Item) string {
 		infoForm := "%s"
 		info = fmt.Sprintf(infoForm, i.Name())
 	}
-	if config.Debug() { // add serial ID info
+	if config.Debug { // add serial ID info
 		info = fmt.Sprintf("%s\n[%s_%s]", info,
 			it.ID(), it.Serial())
 	}

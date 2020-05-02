@@ -262,8 +262,8 @@ func (ncm *NewCharacterMenu) Update(win *mtk.Window) {
 	ncm.doneButton.Active(ncm.canCreate())
 }
 
-// rollPoints draws random amount of attribute points for new character
-// from range specified in Flame config.
+// rollPoints rolls random amount of attribute points for new character
+// from range specified in the chapter config of active module.
 func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.strSwitch.Reset()
 	ncm.conSwitch.Reset()

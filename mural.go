@@ -66,33 +66,28 @@ var (
 
 // On init.
 func init() {
-	// Load flame config.
-	err := flameconf.Load()
-	if err != nil {
-		log.Err.Printf("unable to load flame config file: %v", err)
-	}
-	// Load UI translation files.
-	err = flamedata.LoadTranslationData(flameconf.LangPath())
-	if err != nil {
-		log.Err.Printf("unable to load ui translation files: %v", err)
-	}
 	// Load GUI config.
-	err = config.Load()
+	err := config.Load()
 	if err != nil {
 		log.Err.Printf("unable to load config file: %v", err)
+	}
+	// Load UI translation files.
+	err = flamedata.LoadTranslationData(config.LangPath())
+	if err != nil {
+		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 }
 
 // Main function.
 func main() {
 	// Import module.
-	modData, err := flamedata.ImportModule(flameconf.ModulePath())
+	modData, err := flamedata.ImportModule(config.ModulePath())
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
 	setModule(modData)
 	// Load module translation data.
-	err = flamedata.LoadModuleLang(mod, flameconf.Lang)
+	err = flamedata.LoadModuleLang(mod, config.Lang)
 	if err != nil {
 		panic(fmt.Errorf("unable to load module translation data: %v", err))
 	}
@@ -192,7 +187,7 @@ func run() {
 		} else {
 			mainMenu.Draw(win)
 		}
-		if config.Debug() {
+		if config.Debug {
 			fpsPos := mtk.DrawPosTR(win.Bounds(), fpsInfo.Size())
 			fpsPos.Y -= mtk.ConvSize(10)
 			fpsInfo.Draw(win, mtk.Matrix().Moved(fpsPos))
@@ -211,7 +206,7 @@ func run() {
 		if pcHUD.Exiting() {
 			inGame = false
 			// Reimport module.
-			modData, err := flamedata.ImportModule(flameconf.ModulePath())
+			modData, err := flamedata.ImportModule(config.ModulePath())
 			if err != nil {
 				log.Err.Printf("unable to reimport module: %v", err)
 			}
@@ -221,7 +216,6 @@ func run() {
 	// On exit.
 	if win.Closed() {
 		config.Save()
-		flameconf.Save()
 	}
 }
 

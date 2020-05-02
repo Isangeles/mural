@@ -368,7 +368,7 @@ func (av *Avatar) updateGraphic() {
 func (av *Avatar) infoText() string {
 	form := "%s"
 	info := fmt.Sprintf(form, av.Name())
-	if config.Debug() {
+	if config.Debug {
 		info = fmt.Sprintf("%s\n[%s_%s]", info, av.ID(), av.Serial())
 	}
 	return info

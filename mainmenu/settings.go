@@ -29,7 +29,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/data/res/lang"
 
 	"github.com/isangeles/mtk"
@@ -191,7 +190,7 @@ func (s *Settings) Apply() {
 		log.Err.Printf("settings menu: fail to retrive lang switch value")
 		return
 	}
-	flameconf.Lang = lang
+	config.Lang = lang
 	// Music volume.
 	mVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
 	if !ok {
@@ -219,7 +218,7 @@ func (s *Settings) updateValues() {
 	s.fullscrSwitch.SetIndex(fullscrIndex)
 	resIndex := s.resSwitch.Find(config.Resolution)
 	s.resSwitch.SetIndex(resIndex)
-	langIndex := s.langSwitch.Find(flameconf.Lang)
+	langIndex := s.langSwitch.Find(config.Lang)
 	s.langSwitch.SetIndex(langIndex)
 	mVolIndex := s.musicVolumeSwitch.Find(config.MusicVolume)
 	s.musicVolumeSwitch.SetIndex(mVolIndex)

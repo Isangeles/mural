@@ -110,18 +110,6 @@ Description: specifies name of audio file(located in audio archive) for main men
   button-click-sound:[file name]
 ```
 Description: specifies name of audio file(located in audio archive) for button click sound.
-```
-  newchar-skills:[skill ID];[skill ID];[...]
-```
-Description: specifies skills for character created with new character menu.
-```
-  newchar-items:[item ID];[item ID];[...]
-```
-Description: specifies items for character created with new character menu.
-```
-  newchar-attrs:[>0 int]
-```
-Description: specifies amount of attribute points available in new character menu.
 
 ## Module directory
 All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/gui` directory.

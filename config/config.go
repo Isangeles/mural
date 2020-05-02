@@ -53,10 +53,6 @@ var (
 	ButtonClickSound = ""
 	MusicVolume      = 0.0
 	MusicMute        = false
-	CharAttrsMin     = 1
-	CharAttrsMax     = 10
-	CharSkills       []string
-	CharItems        []string
 )
 
 // Load loads configuration file.
@@ -110,22 +106,6 @@ func Load() error {
 	if len(conf["music-mute"]) > 0 {
 		MusicMute = conf["music-mute"][0] == "true"
 	}
-	// New char attributes points.
-	if len(conf["newchar-attrs-min"]) > 0 {
-		CharAttrsMin, err = strconv.Atoi(conf["newchar-attrs-min"][0])
-		if err != nil {
-			log.Err.Printf("config: unable to set char attrs min value: %v", err)
-		}
-	}
-	if len(conf["newchar-attrs-max"]) > 0 {
-		CharAttrsMax, err = strconv.Atoi(conf["newchar-attrs-max"][0])
-		if err != nil {
-			log.Err.Printf("config: unable to set char attrs max value: %v", err)
-		}
-	}
-	// New char items & skills.
-	CharSkills = conf["newchar-skills"]
-	CharItems = conf["newchar-items"]
 	// Debug.
 	log.Dbg.Print("Config file loaded")
 	return nil
@@ -153,10 +133,6 @@ func Save() error {
 	conf["button-click-sound"] = []string{ButtonClickSound}
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
-	conf["newchar-attrs-min"] = []string{fmt.Sprintf("%d", CharAttrsMin)}
-	conf["newchar-attrs-max"] = []string{fmt.Sprintf("%d", CharAttrsMax)}
-	conf["newchar-skills"] = CharSkills
-	conf["newchar-items"] = CharItems
 	confText := text.MarshalConfig(conf)
 	// Write config values.
 	w := bufio.NewWriter(file)

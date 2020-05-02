@@ -37,7 +37,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -45,8 +44,6 @@ import (
 
 var (
 	newCharIDFrom   = `player_%s` // player_[name]
-	newCharAttrsMin = config.CharAttrsMin
-	newCharAttrsMax = config.CharAttrsMax
 )
 
 // NewCharacterMenu struct represents new game character
@@ -273,8 +270,11 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	ncm.attrPointsMax = ncm.rng.Intn(newCharAttrsMax-
-		newCharAttrsMin) + newCharAttrsMin
+	attrsMax := ncm.mainmenu.mod.Chapter().Conf().StartAttrs
+	if attrsMax < 1 {
+		return
+	}
+	ncm.attrPointsMax = ncm.rng.Intn(attrsMax-1) + 1
 	ncm.attrPoints = ncm.attrPointsMax
 	ncm.updatePoints()
 }
@@ -362,13 +362,13 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		Wis: wis,
 	}
 	// Player skills & items from interface config.
-	for _, sid := range config.CharSkills {
+	for _, sid := range ncm.mainmenu.mod.Chapter().Conf().StartSkills {
 		skill := flameres.ObjectSkillData{
 			ID: sid,
 		}
 		charData.Skills = append(charData.Skills, skill)
 	}
-	for _, iid := range config.CharItems {
+	for _, iid := range ncm.mainmenu.mod.Chapter().Conf().StartItems {
 		items := flameres.InventoryItemData{
 			ID: iid,
 		}

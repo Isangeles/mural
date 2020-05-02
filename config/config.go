@@ -28,13 +28,13 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/mural/log"
 
-	flameconf "github.com/isangeles/flame/config"
 	"github.com/isangeles/flame/data/text"
 )
 
@@ -44,6 +44,9 @@ const (
 )
 
 var (
+	Lang             = "english"
+	Module           = ""
+	Debug            = true
 	Fullscreen       = false
 	MapFOW           = true
 	MapFull          = true
@@ -64,6 +67,18 @@ func Load() error {
 	conf, err := text.UnmarshalConfig(file)
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal config: %v", err)
+	}
+	// Language.
+	if len(conf["lang"]) > 0 {
+		Lang = conf["lang"][0]
+	}
+	// Module.
+	if len(conf["module"]) > 0 {
+		Module = conf["module"][0]
+	}
+	// Debug.
+	if len(conf["debug"]) > 0 {
+		Debug = conf["debug"][0] == "true"
 	}
 	// Fullscreen.
 	if len(conf["fullscreen"]) > 0 {
@@ -119,8 +134,11 @@ func Save() error {
 		return err
 	}
 	defer file.Close()
-	// Create config text.
+	// Marshal config.
 	conf := make(map[string][]string)
+	conf["lang"] = []string{Lang}
+	conf["module"] = []string{Module}
+	conf["debug"] = []string{fmt.Sprintf("%v", Debug)}
 	conf["fullscreen"] = []string{fmt.Sprintf("%v", Fullscreen)}
 	conf["resolution"] = []string{
 		fmt.Sprintf("%f", Resolution.X),
@@ -143,23 +161,23 @@ func Save() error {
 	return nil
 }
 
-// Debug checks whether debug mode is enabled.
-func Debug() bool {
-	return flameconf.Debug
+// LangPath returns path to a UI lang directory.
+func LangPath() string {
+	return filepath.Join("data/lang", Lang)
 }
 
-// Lang returns ID of current language.
-func Lang() string {
-	return flameconf.Lang
+// ModulePath returns path to directory of the current module.
+func ModulePath() string {
+	return filepath.Join("data/modules", Module)
 }
 
 // SupportedResolutions returns all resolutions
-// supported by UI.
+// supported by the UI.
 func SupportedResolutions() []pixel.Vec {
 	return []pixel.Vec{pixel.V(1920, 1080), pixel.V(1300, 720)}
 }
 
-// SuportedLangs retruns all languages supported by UI.
+// SuportedLangs retruns all languages supported by the UI.
 func SupportedLangs() []string {
 	return []string{"english"}
 }

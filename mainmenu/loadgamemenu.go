@@ -29,7 +29,6 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
 
@@ -133,7 +132,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	lgm.savesList.Clear()
 	// Insert save names.
 	pattern := fmt.Sprintf(".*%s", flamedata.SavegameFileExt)
-	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
+	saves, err := flamedata.DirFilesNames(lgm.mainmenu.mod.Conf().SavesPath(),
 		pattern)
 	if err != nil {
 		return fmt.Errorf("fail to read saved games dir: %v", err)

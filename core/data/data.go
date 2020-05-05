@@ -48,6 +48,11 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
+const (
+	SavesModulePath = "gui/saves"
+	SaveFileExt     = ".savegui"
+)
+
 var (
 	// Paths.
 	modAudioDirPath     string

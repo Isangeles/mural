@@ -1,7 +1,7 @@
 /*
  * guiimport.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ package ci
 
 import (
 	"fmt"
+	"path/filepath"
 	
 	"github.com/isangeles/burn"
-	
-	flameconf "github.com/isangeles/flame/config"
-	
+
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
 )
 
@@ -47,16 +47,17 @@ func guiimport(cmd burn.Command) (int, string) {
 		if guiHUD == nil {
 			return 3, fmt.Sprintf("%s: no HUD set", GUIImport)
 		}
-		savName := cmd.Args()[0]
-		savDir := flameconf.ModuleSavegamesPath()
-		save, err := imp.ImportGUISave(savDir, savName)
+		saveName := cmd.Args()[0] + data.SaveFileExt
+		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
+			data.SavesModulePath, saveName)
+		save, err := imp.ImportGUISave(savePath)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: fail to load save file: %v",
+			return 3, fmt.Sprintf("%s: unable to load save file: %v",
 				GUIImport, err)
 		}
 		err = guiHUD.LoadGUISave(save)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: fail to load gui state save: %v",
+			return 3, fmt.Sprintf("%s: unable to load gui state save: %v",
 				GUIImport, err)
 		}
 		return 0, ""

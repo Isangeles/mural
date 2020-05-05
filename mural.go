@@ -258,7 +258,7 @@ func LoadSavedGame(saveName string) {
 	mainMenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
-	savePath := filepath.Join(flameconf.ModuleSavegamesPath(),
+	savePath := filepath.Join(mod.Conf().SavesPath(),
 		saveName + flamedata.SavegameFileExt)
 	game, err := flamedata.ImportGame(mod, savePath)
 	if err != nil {
@@ -267,7 +267,9 @@ func LoadSavedGame(saveName string) {
 		return
 	}
 	// Import saved HUD state.
-	guisav, err := imp.ImportGUISave(flameconf.ModuleSavegamesPath(), saveName)
+	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
+		saveName + data.SaveFileExt)
+	guisav, err := imp.ImportGUISave(guiSavePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))

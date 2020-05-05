@@ -1,7 +1,7 @@
 /*
  * save.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,36 +28,35 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	
+
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
-var (
-	SAVEGUI_FILE_EXT = ".savegui"
-)
-
 // ExportGUISave saves GUI state to file with specified name
 // in directory with specified path.
-func ExportGUISave(gui *res.GUISave, dirPath, saveName string) error {
-	gui.Name = saveName
+func ExportGUISave(gui *res.GUISave, path string) error {
+	gui.Name = filepath.Base(path)
 	xml, err := parsexml.MarshalGUISave(gui)
 	if err != nil {
-		return fmt.Errorf("fail_to_marshal_gui_save:%v",
+		return fmt.Errorf("unable to marshal save: %v",
 			err)
 	}
-	filePath := filepath.FromSlash(dirPath + "/" + saveName +
-		SAVEGUI_FILE_EXT)
-	f, err := os.Create(filePath)
+	err = os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
-		return fmt.Errorf("fail_to_create_save_file:%v",
+		return fmt.Errorf("unable to create save directory: %v",
 			err)
 	}
-	defer f.Close()
-	w := bufio.NewWriter(f)
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("unable to create save file: %v",
+			err)
+	}
+	defer file.Close()
+	w := bufio.NewWriter(file)
 	w.WriteString(xml)
 	w.Flush()
-	log.Dbg.Printf("gui_state_saved_in:%s", filePath)
+	log.Dbg.Printf("gui state saved in: %s", path)
 	return nil
 }

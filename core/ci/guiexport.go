@@ -1,7 +1,7 @@
 /*
  * guiexport.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ package ci
 
 import (
 	"fmt"
-	
-	flameconf "github.com/isangeles/flame/config"
+	"path/filepath"
 	
 	"github.com/isangeles/burn"
-	
+
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/exp"
 )
 
@@ -52,7 +52,7 @@ func guiexport(cmd burn.Command) (int, string) {
 				expPath := guiHUD.Game().Module().Conf().CharactersPath()
 				err := exp.ExportAvatar(av, expPath)
 				if err != nil {
-					return 8, fmt.Sprintf("%s: fail to export avatar: %v",
+					return 8, fmt.Sprintf("%s: unable to export avatar: %v",
 						GUIExport, err)
 				}
 				return 0, ""
@@ -68,12 +68,13 @@ func guiexport(cmd burn.Command) (int, string) {
 		if guiHUD == nil {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
-		savName := cmd.Args()[0]
-		savDir := flameconf.ModuleSavegamesPath()
-		sav := guiHUD.NewGUISave()
-		err := exp.ExportGUISave(sav, savDir, savName)
+		saveName := cmd.Args()[0]
+		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
+			data.SavesModulePath, saveName + data.SaveFileExt)
+		save := guiHUD.NewGUISave()
+		err := exp.ExportGUISave(save, savePath)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: fail to save gui state: %v",
+			return 3, fmt.Sprintf("%s: unable to save gui state: %v",
 				GUIExport, err)
 		}
 		return 0, ""

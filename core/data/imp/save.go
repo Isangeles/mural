@@ -1,7 +1,7 @@
 /*
  * save.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,31 +29,24 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-	
+
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
-var (
-	SAVEGUI_FILE_EXT = ".savegui"
-)
-
-// ImportGUISave imports GUI state from file with specified name
-// in directory with specified path.
-func ImportGUISave(dirPath, saveName string) (*res.GUISave, error) {
-	if !strings.HasSuffix(saveName, SAVEGUI_FILE_EXT) {
-		saveName = saveName + SAVEGUI_FILE_EXT
-	}
-	filePath := filepath.FromSlash(dirPath + "/" + saveName)
-	f, err := os.Open(filePath)
+// ImportGUISave imports GUI save file from specified path.
+func ImportGUISave(path string) (*res.GUISave, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail to open save file: %v",
+		return nil, fmt.Errorf("unable to open save file: %v",
 			err)
 	}
-	save, err := parsexml.UnmarshalGUISave(f)
+	defer file.Close()
+	save, err := parsexml.UnmarshalGUISave(file)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal save data: %v",
+		return nil, fmt.Errorf("unable to unmarshal save data: %v",
 			err)
 	}
 	return save, nil
@@ -64,16 +57,17 @@ func ImportGUISave(dirPath, saveName string) (*res.GUISave, error) {
 func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	saves := make([]*res.GUISave, 0)
-	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), SAVEGUI_FILE_EXT) {
+	for _, f := range files {
+		if !strings.HasSuffix(f.Name(), data.SaveFileExt) {
 			continue
 		}
-		sav, err := ImportGUISave(dirPath, fInfo.Name())
+		savePath := filepath.Join(dirPath, f.Name())
+		sav, err := ImportGUISave(savePath)
 		if err != nil {
-			log.Err.Printf("data saves import: fail to load save fail: %v",
+			log.Err.Printf("data saves import: unable to load save: %v",
 				err)
 			continue
 		}

@@ -31,7 +31,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
-	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
 
@@ -202,8 +201,9 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Insert save names.
+	mod := sm.hud.Game().Module()
 	pattern := fmt.Sprintf(".*%s", flamedata.SavegameFileExt)
-	saves, err := flamedata.DirFilesNames(flameconf.ModuleSavegamesPath(),
+	saves, err := flamedata.DirFilesNames(mod.Conf().SavesPath(),
 		pattern)
 	if err != nil {
 		return fmt.Errorf("unable to read saved games dir: %v", err)
@@ -243,7 +243,8 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 // savegames directory.
 func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
-	path := filepath.Join(flameconf.ModuleSavegamesPath(),
+	mod := sm.hud.Game().Module()
+	path := filepath.Join(mod.Conf().SavesPath(),
 		saveName + flamedata.SavegameFileExt)
 	// Save current game.
 	err := flamedata.ExportGame(sm.hud.Game(), path)
@@ -252,8 +253,9 @@ func (sm *SaveMenu) save(saveName string) error {
 	}
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()
-	err = exp.ExportGUISave(guisav, flameconf.ModuleSavegamesPath(),
-		saveName)
+	savePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
+		saveName + data.SaveFileExt)
+	err = exp.ExportGUISave(guisav, savePath)
 	if err != nil {
 		return fmt.Errorf("unable to save gui: %v", err)
 	}

@@ -45,25 +45,25 @@ func LoadModuleResources(mod *module.Module) error {
 	if err != nil {
 		return fmt.Errorf("unable to import objects graphics: %v", err)
 	}
-	res.SetObjectsData(obGraphics)
+	res.SetObjects(obGraphics)
 	// Items graphics.
 	itGraphics, err := ImportItemsGraphicsDir(itPath)
 	if err != nil {
 		return fmt.Errorf("unable to import items graphics: %v", err)
 	}
-	res.SetItemsData(itGraphics)
+	res.SetItems(itGraphics)
 	// Effects graphic.
 	effGraphics, err := ImportEffectsGraphicsDir(effPath)
 	if err != nil {
 		return fmt.Errorf("unable to import effects graphics: %v", err)
 	}
-	res.SetEffectsData(effGraphics)
+	res.SetEffects(effGraphics)
 	// Skills graphic.
 	skillGraphics, err := ImportSkillsGraphicsDir(skillPath)
 	if err != nil {
 		return fmt.Errorf("unable to import skills graphics: %v", err)
 	}
-	res.SetSkillsData(skillGraphics)
+	res.SetSkills(skillGraphics)
 	return nil
 }
 
@@ -80,14 +80,12 @@ func LoadChapterResources(chapter *module.Chapter) error {
 	if err != nil {
 		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}
-	res.SetAvatarData(avs)
+	res.SetAvatars(avs)
 	// Objects graphics.
 	obGraphics, err := ImportObjectsGraphicsDir(obsPath)
 	if err != nil {
 		return fmt.Errorf("unable to import objects graphics: %v", err)
 	}
-	for _, og := range obGraphics {
-		res.AddObjectsData(og)
-	}
+	res.SetObjects(append(res.Objects(), obGraphics...))
 	return nil
 }

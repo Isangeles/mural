@@ -26,158 +26,128 @@
 package res
 
 var (
-	avatarsData map[string]*AvatarData
-	objectsData map[string]*ObjectGraphicData
-	itemsData   map[string]*ItemGraphicData
-	effectsData map[string]*EffectGraphicData
-	skillsData  map[string]*SkillGraphicData
+	avatars map[string]*AvatarData
+	objects map[string]*ObjectGraphicData
+	items   map[string]*ItemGraphicData
+	effects map[string]*EffectGraphicData
+	skills  map[string]*SkillGraphicData
 )
 
 // On init.
 func init() {
-	avatarsData = make(map[string]*AvatarData)
-	objectsData = make(map[string]*ObjectGraphicData)
-	itemsData = make(map[string]*ItemGraphicData)
-	effectsData = make(map[string]*EffectGraphicData)
-	skillsData = make(map[string]*SkillGraphicData)
+	avatars = make(map[string]*AvatarData)
+	objects = make(map[string]*ObjectGraphicData)
+	items = make(map[string]*ItemGraphicData)
+	effects = make(map[string]*EffectGraphicData)
+	skills = make(map[string]*SkillGraphicData)
 }
 
 // Avatar returns avatar data for character
 // with specified ID.
 func Avatar(id string) *AvatarData {
-	return avatarsData[id]
+	return avatars[id]
 }
 
 // Object returns object graphic data for
 // object with specified ID.
 func Object(id string) *ObjectGraphicData {
-	return objectsData[id]
+	return objects[id]
 }
 
 // Item returns graphic data for item
 // with specified ID.
 func Item(itemID string) *ItemGraphicData {
-	return itemsData[itemID]
+	return items[itemID]
 }
 
 // Effect returns graphic data for effect
 // with specified ID.
 func Effect(id string) *EffectGraphicData {
-	return effectsData[id]
+	return effects[id]
 }
 
 // Skill returns graphic data for skill
 // with specified ID.
 func Skill(id string) *SkillGraphicData {
-	return skillsData[id]
+	return skills[id]
 }
 
-// AddObjectsData adds specified data to objects graphic
-// recources data.
-func AddObjectsData(data ...*ObjectGraphicData) {
-	if objectsData == nil {
-		objectsData = make(map[string]*ObjectGraphicData)
+// Avatars returns all avatars resources.
+func Avatars() (data []*AvatarData) {
+	for _, ad := range avatars {
+		data = append(data, ad)
 	}
-	for _, d := range data {
-		objectsData[d.ID] = d
-	}
+	return
 }
 
-// AddItemsData adds specified data to items
-// resources data.
-func AddItemsData(data ...*ItemGraphicData) {
-	if itemsData == nil {
-		itemsData = make(map[string]*ItemGraphicData)
+// Objects returns all object graphic resources.
+func Objects() (data []*ObjectGraphicData) {
+	for _, od := range objects {
+		data = append(data, od)
 	}
-	for _, d := range data {
-		itemsData[d.ItemID] = d
-	}
+	return
 }
 
-// AddEffectsData adds specified data to effects
-// resources data.
-func AddEffectsData(data ...*EffectGraphicData) {
-	if effectsData == nil {
-		effectsData = make(map[string]*EffectGraphicData)
+// Items returns all item resources.
+func Items() (data []*ItemGraphicData) {
+	for _, id := range items {
+		data = append(data, id)
 	}
-	for _, d := range data {
-		effectsData[d.EffectID] = d
-	}
+	return
 }
 
-// AddSkillsData adds specified data to skills
-// resources data.
-func AddSkillsData(data ...*SkillGraphicData) {
-	if skillsData == nil {
-		skillsData = make(map[string]*SkillGraphicData)
+// Effects returns all effect resources.
+func Effects() (data []*EffectGraphicData) {
+	for _, ed := range effects {
+		data = append(data, ed)
 	}
-	for _, d := range data {
-		skillsData[d.SkillID] = d
-	}
+	return
 }
 
-// AddAvatarData adds specified data to
+// Skills returns all skill resources.
+func Skills() (data []*SkillGraphicData) {
+	for _, sd := range skills {
+		data = append(data, sd)
+	}
+	return
+}
+
+// SetAvatars sets specified data as
 // avatars resources.
-func AddAvatarData(data ...*AvatarData) {
-	if avatarsData == nil {
-		avatarsData = make(map[string]*AvatarData)
-	}
+func SetAvatars(data []*AvatarData) {
 	for _, d := range data {
-		avatarsData[d.ID] = d
+		avatars[d.ID] = d
 	}
 }
 
-// SetObjectsData sets specified data as objects graphic
+// SetObjects sets specified data as objects graphic
 // recources data.
-func SetObjectsData(data []*ObjectGraphicData) {
-	if objectsData == nil {
-		objectsData = make(map[string]*ObjectGraphicData)
-	}
+func SetObjects(data []*ObjectGraphicData) {
 	for _, d := range data {
-		objectsData[d.ID] = d
+		objects[d.ID] = d
 	}
 }
 
-// SetItemsData sets specified data as items
+// SetItems sets specified data as items
 // resources data.
-func SetItemsData(data []*ItemGraphicData) {
-	if itemsData == nil {
-		itemsData = make(map[string]*ItemGraphicData)
-	}
+func SetItems(data []*ItemGraphicData) {
 	for _, d := range data {
-		itemsData[d.ItemID] = d
+		items[d.ItemID] = d
 	}
 }
 
-// SetEffectsData sets specified data as effects
+// SetEffects sets specified data as effects
 // resources data.
-func SetEffectsData(data []*EffectGraphicData) {
-	if effectsData == nil {
-		effectsData = make(map[string]*EffectGraphicData)
-	}
+func SetEffects(data []*EffectGraphicData) {
 	for _, d := range data {
-		effectsData[d.EffectID] = d
+		effects[d.EffectID] = d
 	}
 }
 
-// SetSkillsData sets specified data as skills
+// SetSkills sets specified data as skills
 // resources data.
-func SetSkillsData(data []*SkillGraphicData) {
-	if skillsData == nil {
-		skillsData = make(map[string]*SkillGraphicData)
-	}
+func SetSkills(data []*SkillGraphicData) {
 	for _, d := range data {
-		skillsData[d.SkillID] = d
-	}
-}
-
-// SetAvatarData sets specified data as
-// avatars resources.
-func SetAvatarData(data []*AvatarData) {
-	if avatarsData == nil {
-		avatarsData = make(map[string]*AvatarData)
-	}
-	for _, d := range data {
-		avatarsData[d.ID] = d
+		skills[d.SkillID] = d
 	}
 }

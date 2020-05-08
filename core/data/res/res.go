@@ -1,7 +1,7 @@
 /*
- * loadgamemenu.go
+ * res.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  */
 
 // Package with pre-loaded game resources
-// like items data, saves, etc.
+// like item graphic data, textures, etc.
 package res
 
 var (
@@ -32,6 +32,15 @@ var (
 	effectsData map[string]*EffectGraphicData
 	skillsData  map[string]*SkillGraphicData
 )
+
+// On init.
+func init() {
+	avatarsData = make(map[string]*AvatarData)
+	objectsData = make(map[string]*ObjectGraphicData)
+	itemsData = make(map[string]*ItemGraphicData)
+	effectsData = make(map[string]*EffectGraphicData)
+	skillsData = make(map[string]*SkillGraphicData)
+}
 
 // Avatar returns avatar data for character
 // with specified ID.

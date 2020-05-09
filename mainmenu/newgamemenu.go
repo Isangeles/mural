@@ -36,6 +36,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -147,7 +148,8 @@ func (ngm *NewGameMenu) Opened() bool {
 func (ngm *NewGameMenu) SetCharacters(chars []PlayableCharData) {
 	values := make([]mtk.SwitchValue, len(chars))
 	for i, c := range chars {
-		values[i] = mtk.SwitchValue{c.AvatarData.PortraitPic, c}
+		portrait := graphic.Portraits[c.AvatarData.Portrait]
+		values[i] = mtk.SwitchValue{portrait, c}
 	}
 	ngm.charSwitch.SetValues(values...)
 }

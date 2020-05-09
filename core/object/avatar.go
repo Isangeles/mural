@@ -29,15 +29,16 @@ import (
 	"github.com/faiface/pixel"
 
 	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/item"
 	flameobject "github.com/isangeles/flame/module/objects"
-	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/skill"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object/internal"
 	"github.com/isangeles/mural/log"
 )
@@ -46,17 +47,21 @@ import (
 // game character.
 type Avatar struct {
 	*character.Character
-	data      *res.AvatarData
-	sprite    *internal.AvatarSprite
-	chat      *mtk.Text
-	hovered   bool
-	speaking  bool
-	silenced  bool
-	chatTimer int64
-	items     map[string]*ItemGraphic
-	eqItems   map[string]*ItemGraphic
-	effects   map[string]*EffectGraphic
-	skills    map[string]*SkillGraphic
+	portrait     pixel.Picture
+	sprite       *internal.AvatarSprite
+	chat         *mtk.Text
+	hovered      bool
+	speaking     bool
+	silenced     bool
+	chatTimer    int64
+	items        map[string]*ItemGraphic
+	eqItems      map[string]*ItemGraphic
+	effects      map[string]*EffectGraphic
+	skills       map[string]*SkillGraphic
+	portraitName string
+	torsoName    string
+	headName     string
+	fullBodyName string
 }
 
 // Type for avatar animations
@@ -82,13 +87,22 @@ const (
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	av.data = data
+	// Portrait.
+	av.portrait = graphic.Portraits[data.Portrait]
+	av.portraitName = data.Portrait
 	// Sprite.
-	if data.SSFullBodyPic != nil {
-		av.sprite = internal.NewFullBodyAvatarSprite(data.SSFullBodyPic)
-	}
-	if data.SSTorsoPic != nil && data.SSHeadPic != nil {
-		av.sprite = internal.NewAvatarSprite(data.SSTorsoPic, data.SSHeadPic)
+	fullBodyPic := graphic.AvatarSpritesheets[data.FullBody]
+	if fullBodyPic != nil {
+		av.sprite = internal.NewFullBodyAvatarSprite(fullBodyPic)
+		av.fullBodyName = data.FullBody
+	} else {
+		torsoPic := graphic.AvatarSpritesheets[data.Torso]
+		headPic := graphic.AvatarSpritesheets[data.Head]
+		if torsoPic != nil && headPic != nil {
+			av.sprite = internal.NewAvatarSprite(torsoPic, headPic)
+			av.torsoName = data.Torso
+			av.headName = data.Head
+		}
 	}
 	chatParams := mtk.Params{
 		FontSize: mtk.SizeSmall,
@@ -164,7 +178,7 @@ func (av *Avatar) DrawArea() pixel.Rect {
 // Portrait returns avatar portrait
 // picture.
 func (av *Avatar) Portrait() pixel.Picture {
-	return av.data.PortraitPic
+	return av.portrait
 }
 
 // Position returns current position of avatar.
@@ -214,9 +228,15 @@ func (av *Avatar) Skills() (skills []*SkillGraphic) {
 
 // Data returns avatar graphical data.
 func (av *Avatar) Data() *res.AvatarData {
-	av.data.ID = av.ID()
-	av.data.Serial = av.Serial()
-	return av.data
+	data := res.AvatarData{
+		ID:       av.ID(),
+		Serial:   av.Serial(),
+		Portrait: av.portraitName,
+		Torso:    av.torsoName,
+		Head:     av.headName,
+		FullBody: av.fullBodyName,
+	}
+	return &data
 }
 
 // Silenced checks if audio effects are silenced.

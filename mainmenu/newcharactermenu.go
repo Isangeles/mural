@@ -39,12 +39,11 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
 var (
-	newCharIDFrom   = `player_%s` // player_[name]
+	newCharIDForm = `player_%s` // player_[name]
 )
 
 // NewCharacterMenu struct represents new game character
@@ -345,7 +344,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	}
 	// ID.
 	name = strings.ReplaceAll(name, " ", "_")
-	id := fmt.Sprintf(newCharIDFrom, strings.ToLower(name))
+	id := fmt.Sprintf(newCharIDForm, strings.ToLower(name))
 	charData := flameres.CharacterData{
 		ID:        id,
 		Name:      name,
@@ -396,37 +395,17 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
-	ssHeadPic := graphic.AvatarSpritesheets[ssHeadName]
-	if ssHeadPic == nil {
-		log.Err.Printf("newchar menu: unable to retrieve head spritesheet picture: %s",
-			ssHeadName)
-		return
-	}
-	ssTorsoPic := graphic.AvatarSpritesheets[ssTorsoName]
-	if ssTorsoPic == nil {
-		log.Err.Printf("newchar menu: unable to retrieve torso spritesheet picture: %s",
-			ssTorsoName)
-		return
-	}
 	portraitName, ok := ncm.faceSwitch.Value().Value.(string)
 	if !ok {
 		log.Err.Printf("newchar menu: unable to retrieve portrait name from switch")
 		return
 	}
-	portraitPic, ok := ncm.faceSwitch.Value().View.(pixel.Picture)
-	if !ok {
-		log.Err.Printf("newchar menu: unable to retrieve portrait from switch")
-		return
-	}
 	avData := res.AvatarData{
-		ID:           charData.ID,
-		Serial:       charData.Serial,
-		PortraitName: portraitName,
-		SSHeadName:   ssHeadName,
-		SSTorsoName:  ssTorsoName,
-		PortraitPic:  portraitPic,
-		SSHeadPic:    ssHeadPic,
-		SSTorsoPic:   ssTorsoPic,
+		ID:          charData.ID,
+		Serial:      charData.Serial,
+		Portrait:    portraitName,
+		Head:        ssHeadName,
+		Torso:       ssTorsoName,
 	}
 	pc := PlayableCharData{charData, &avData}
 	ncm.mainmenu.AddPlayableChar(pc)

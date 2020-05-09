@@ -30,7 +30,6 @@ import (
 	"io/ioutil"
 
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -109,10 +108,10 @@ func buildAvatarXML(av *object.Avatar) Avatar {
 	xmlAvatar := Avatar{}
 	xmlAvatar.ID = av.ID()
 	xmlAvatar.Serial = av.Serial()
-	xmlAvatar.Portrait = av.Data().PortraitName
-	xmlAvatar.Spritesheet.Head = av.Data().SSHeadName
-	xmlAvatar.Spritesheet.Torso = av.Data().SSTorsoName
-	xmlAvatar.Spritesheet.FullBody = av.Data().SSFullBodyName
+	xmlAvatar.Portrait = av.Data().Portrait
+	xmlAvatar.Spritesheet.Head = av.Data().Head
+	xmlAvatar.Spritesheet.Torso = av.Data().Torso
+	xmlAvatar.Spritesheet.FullBody = av.Data().FullBody
 	return xmlAvatar
 }
 
@@ -122,39 +121,21 @@ func buildAvatarDataXML(avData *res.AvatarData) Avatar {
 	xmlAvatar := Avatar{}
 	xmlAvatar.ID = avData.ID
 	xmlAvatar.Serial = avData.Serial
-	xmlAvatar.Portrait = avData.PortraitName
-	xmlAvatar.Spritesheet.Head = avData.SSHeadName
-	xmlAvatar.Spritesheet.Torso = avData.SSTorsoName
-	xmlAvatar.Spritesheet.FullBody = avData.SSFullBodyName
+	xmlAvatar.Portrait = avData.Portrait
+	xmlAvatar.Spritesheet.Head = avData.Head
+	xmlAvatar.Spritesheet.Torso = avData.Torso
+	xmlAvatar.Spritesheet.FullBody = avData.FullBody
 	return xmlAvatar
 }
 
 // buildAvatarData build data avatar from specified XML data.
 func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	portraitPic := graphic.Portraits[avXML.Portrait]
-	if portraitPic == nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
-			avXML.Portrait)
-	}
-	ssHeadPic := graphic.AvatarSpritesheets[avXML.Spritesheet.Head]
-	if ssHeadPic == nil {
-		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
-			avXML.Spritesheet.Head)
-	}
-	ssTorsoPic := graphic.AvatarSpritesheets[avXML.Spritesheet.Torso]
-	if ssTorsoPic == nil {
-		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v",
-			avXML.Spritesheet.Torso)
-	}
 	avData := res.AvatarData{
-		ID:           avXML.ID,
-		Serial:       avXML.Serial,
-		PortraitName: avXML.Portrait,
-		SSHeadName:   avXML.Spritesheet.Head,
-		SSTorsoName:  avXML.Spritesheet.Torso,
-		PortraitPic:  portraitPic,
-		SSHeadPic:    ssHeadPic,
-		SSTorsoPic:   ssTorsoPic,
+		ID:       avXML.ID,
+		Serial:   avXML.Serial,
+		Portrait: avXML.Portrait,
+		Head:     avXML.Spritesheet.Head,
+		Torso:    avXML.Spritesheet.Torso,
 	}
 	return &avData, nil
 }
@@ -162,23 +143,11 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 // buildStaticAvatarData build new static avatar data for specified
 // character from specified XML data.
 func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	portraitPic := graphic.Portraits[avXML.Portrait]
-	if portraitPic == nil {
-		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
-			avXML.Portrait)
-	}
-	ssFullBodyPic := graphic.AvatarSpritesheets[avXML.Spritesheet.FullBody]
-	if ssFullBodyPic == nil {
-		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
-			avXML.Spritesheet.FullBody)
-	}
 	avData := res.AvatarData{
-		ID:             avXML.ID,
-		Serial:         avXML.Serial,
-		PortraitName:   avXML.Portrait,
-		SSFullBodyName: avXML.Spritesheet.FullBody,
-		PortraitPic:    portraitPic,
-		SSFullBodyPic:  ssFullBodyPic,
+		ID:       avXML.ID,
+		Serial:   avXML.Serial,
+		Portrait: avXML.Portrait,
+		FullBody: avXML.Spritesheet.FullBody,
 	}
 	return &avData, nil
 }

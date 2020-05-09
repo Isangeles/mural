@@ -23,20 +23,12 @@
 
 package res
 
-import (
-	"github.com/faiface/pixel"
-)
-
 // Struct for avatar data.
 type AvatarData struct {
-	ID             string `xml:"id,attr" json:"id"`
-	Serial         string `xml:"serial,attr" json:"serial"`
-	PortraitName   string `xml:"portrait,attr" json:"portrait"`
-	SSHeadName     string `xml:"head,attr" json:"head"`
-	SSTorsoName    string `xml:"torso,attr" json:"torso"`
-	SSFullBodyName string `xml:"full-body,attr" json:"full-body"`
-	PortraitPic    pixel.Picture `xml:"-" json:"-"`
-	SSHeadPic      pixel.Picture `xml:"-" json:"-"`
-	SSTorsoPic     pixel.Picture `xml:"-" json:"-"`
-	SSFullBodyPic  pixel.Picture `xml:"-" json:"-"`
+	ID       string `xml:"id,attr" json:"id"`
+	Serial   string `xml:"serial,attr" json:"serial"`
+	Portrait string `xml:"portrait,attr" json:"portrait"`
+	Head     string `xml:"head,attr" json:"head"`
+	Torso    string `xml:"torso,attr" json:"torso"`
+	FullBody string `xml:"full-body,attr" json:"full-body"`
 }

@@ -32,8 +32,8 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -70,7 +70,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 	lw.hud = hud
 	// Background.
 	lw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("invbg.png")
+	bg := graphic.Textures["invbg.png"]
 	if bg != nil {
 		lw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -87,7 +87,7 @@ func newLootWindow(hud *HUD) *LootWindow {
 		MainColor: accentColor,
 	}
 	lw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		spr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		lw.closeButton.SetBackground(spr)
@@ -101,12 +101,12 @@ func newLootWindow(hud *HUD) *LootWindow {
 		lw.slots.Add(s)
 	}
 	// Slot list scroll buttons.
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		spr := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		lw.slots.SetUpButtonBackground(spr)
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		spr := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		lw.slots.SetDownButtonBackground(spr)

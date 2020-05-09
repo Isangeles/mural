@@ -35,7 +35,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data" 
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -65,7 +65,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 	cm.hud = hud
 	// Background.
 	cm.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		cm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -84,7 +84,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		MainColor: accentColor,
 	}
 	cm.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		cm.closeButton.SetBackground(closeBG)
@@ -100,7 +100,7 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		MainColor: accentColor,
 	}
 	cm.makeButton = mtk.NewButton(makeButtonParams)
-	makeButtonBG := data.Texture("button_green.png")
+	makeButtonBG := graphic.Textures["button_green.png"]
 	if makeButtonBG != nil {
 		bg := pixel.NewSprite(makeButtonBG, makeButtonBG.Bounds())
 		cm.makeButton.SetBackground(bg)
@@ -129,12 +129,12 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		AccentColor: accentColor,
 	}
 	cm.recipesList = mtk.NewList(recipesParams)
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		cm.recipesList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		cm.recipesList.SetDownButtonBackground(downBG)

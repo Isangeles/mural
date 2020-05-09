@@ -50,6 +50,7 @@ import (
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -147,7 +148,7 @@ func run() {
 		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
 	// UI Font.
-	uiFont := data.Font(config.MainFont)
+	uiFont := graphic.Fonts[config.MainFont]
 	if uiFont != nil {
 		mtk.SetMainFont(uiFont)
 	}
@@ -259,7 +260,7 @@ func LoadSavedGame(saveName string) {
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
 	savePath := filepath.Join(mod.Conf().SavesPath(),
-		saveName + flamedata.SavegameFileExt)
+		saveName+flamedata.SavegameFileExt)
 	game, err := flamedata.ImportGame(mod, savePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to import game: %v", err)
@@ -268,7 +269,7 @@ func LoadSavedGame(saveName string) {
 	}
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
-		saveName + data.SaveFileExt)
+		saveName+data.SaveFileExt)
 	guisav, err := imp.ImportGUISave(guiSavePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to load gui save: %v", err)

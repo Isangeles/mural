@@ -31,6 +31,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -88,7 +89,7 @@ func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 // buildSkillGraphicData creates skill graphic data from specified
 // skill XML data.
 func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error) {
-	icon := data.Icon(xmlSkill.Icon)
+	icon := graphic.Icons[xmlSkill.Icon]
 	if icon == nil {
 		return nil, fmt.Errorf("unable to retrieve skill icon: %s",
 			xmlSkill.Icon)

@@ -36,7 +36,7 @@ import (
 
 	"github.com/isangeles/mtk"
  
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -62,7 +62,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	dw.hud = hud
 	// Background.
 	dw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		dw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -79,7 +79,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		MainColor: accentColor,
 	}
 	dw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		dw.closeButton.SetBackground(closeBG)
@@ -105,12 +105,12 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		AccentColor: accentColor,
 	}
 	dw.answersList = mtk.NewList(answersParams)
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		dw.answersList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		dw.answersList.SetDownButtonBackground(downBG)

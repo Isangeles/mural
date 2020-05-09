@@ -37,6 +37,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -78,7 +79,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 	tw.buyItems = make(map[string]item.Item)
 	// Background.
 	tw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -102,7 +103,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		MainColor: accentColor,
 	}
 	tw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
@@ -119,7 +120,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		MainColor: accentColor,
 	}
 	tw.tradeButton = mtk.NewButton(tradeButtonParams)
-	tradeButtonBG := data.Texture("button_green.png")
+	tradeButtonBG := graphic.Textures["button_green.png"]
 	if tradeButtonBG != nil {
 		bg := pixel.NewSprite(tradeButtonBG, tradeButtonBG.Bounds())
 		tw.tradeButton.SetBackground(bg)
@@ -143,7 +144,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 		tw.sellSlots.Add(s)
 	}
 	// Slot lists scroll buttons.
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		tw.buySlots.SetUpButtonBackground(upBG)
@@ -151,7 +152,7 @@ func newTradeWindow(hud *HUD) *TradeWindow {
 	} else {
 		log.Err.Printf("hud trade: unable to retrieve slot list up button texture")
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		tw.buySlots.SetDownButtonBackground(downBG)

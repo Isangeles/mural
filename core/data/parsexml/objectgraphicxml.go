@@ -29,8 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -85,12 +85,12 @@ func UnmarshalObjectsGraphics(data io.Reader) ([]*res.ObjectGraphicData, error) 
 // buildObjectGraphicData creates object graphic data from specified XML object
 // node.
 func buildObjectGraphicData(xmlObject *ObjectGraphic) (*res.ObjectGraphicData, error) {
-	sprite := data.ObjectSpritesheet(xmlObject.Sprite.Picture)
+	sprite := graphic.ObjectSpritesheets[xmlObject.Sprite.Picture]
 	if sprite == nil {
 		return nil, fmt.Errorf("unable to retireve object spritesheet: %s",
 			xmlObject.Sprite.Picture)
 	}
-	portrait := data.Portrait(xmlObject.Portrait.Picture) // no portrait supported
+	portrait := graphic.Portraits[xmlObject.Portrait.Picture] // no portrait supported
 	data := res.ObjectGraphicData{
 		ID:          xmlObject.ID,
 		PortraitPic: portrait,

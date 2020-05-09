@@ -35,6 +35,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -67,7 +68,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 	im.hud = hud
 	// Background.
 	im.bgDraw = imdraw.New(nil)
-	bg := data.Texture("invbg.png")
+	bg := graphic.Textures["invbg.png"]
 	if bg != nil {
 		im.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -84,7 +85,7 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		MainColor: accentColor,
 	}
 	im.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		im.closeButton.SetBackground(closeButtonSpr)
@@ -101,14 +102,14 @@ func newInventoryMenu(hud *HUD) *InventoryMenu {
 		im.slots.Add(s)
 	}
 	// Slot list scroll buttons.
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		im.slots.SetUpButtonBackground(upBG)
 	} else {
 		log.Err.Printf("hud: inventory menu: unable to retrieve slot list up button texture")
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		im.slots.SetDownButtonBackground(downBG)

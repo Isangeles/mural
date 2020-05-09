@@ -29,8 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 	
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -72,7 +72,7 @@ func UnmarshalEffectGraphics(data io.Reader) ([]*res.EffectGraphicData, error) {
 // buildEffectGraphicData creates effect graphic data from specified
 // effect XML data.
 func buildEffectGraphicData(xmlEffect *EffectGraphic) (*res.EffectGraphicData, error) {
-	icon := data.Icon(xmlEffect.Icon)
+	icon := graphic.Icons[xmlEffect.Icon]
 	if icon == nil {
 		return nil, fmt.Errorf("unable to retrieve effect icon: %s",
 			xmlEffect.Icon)

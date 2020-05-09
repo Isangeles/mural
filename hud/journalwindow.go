@@ -35,7 +35,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -64,7 +64,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 	jw.hud = hud
 	// Background.
 	jw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		jw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -83,7 +83,7 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		MainColor: accentColor,
 	}
 	jw.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
@@ -110,13 +110,13 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		AccentColor: accentColor,
 	}
 	jw.questsList = mtk.NewList(questsParams)
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
 		jw.questsList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())

@@ -36,7 +36,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -67,7 +67,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	mb.hud = hud
 	// Background.
 	mb.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubar.png")
+	bg := graphic.Textures["menubar.png"]
 	if bg != nil {
 		mb.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -80,7 +80,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	// Menu Button.
 	mb.menuButton = mtk.NewButton(buttonParams)
 	mb.menuButton.SetInfo(lang.Text("hud_bar_menu_open_info"))
-	menuButtonBG := data.Texture("menubutton.png")
+	menuButtonBG := graphic.Textures["menubutton.png"]
 	if menuButtonBG != nil {
 		menuButtonSpr := pixel.NewSprite(menuButtonBG, menuButtonBG.Bounds())
 		mb.menuButton.SetBackground(menuButtonSpr)
@@ -91,7 +91,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	// Inventory button.
 	mb.invButton = mtk.NewButton(buttonParams)
 	mb.invButton.SetInfo(lang.Text("hud_bar_inv_open_info"))
-	invButtonBG := data.Texture("inventorybutton.png")
+	invButtonBG := graphic.Textures["inventorybutton.png"]
 	if invButtonBG != nil {
 		invButtonSpr := pixel.NewSprite(invButtonBG, invButtonBG.Bounds())
 		mb.invButton.SetBackground(invButtonSpr)
@@ -102,7 +102,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	// Skills button.
 	mb.skillsButton = mtk.NewButton(buttonParams)
 	mb.skillsButton.SetInfo(lang.Text("hud_bar_skills_open_info"))
-	skillsButtonBG := data.Texture("skillsbutton.png")
+	skillsButtonBG := graphic.Textures["skillsbutton.png"]
 	if skillsButtonBG != nil {
 		skillsButtonSpr := pixel.NewSprite(skillsButtonBG, skillsButtonBG.Bounds())
 		mb.skillsButton.SetBackground(skillsButtonSpr)
@@ -114,7 +114,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	mb.journalButton = mtk.NewButton(buttonParams)
 	journalInfo := lang.Text("hud_bar_journal_open_info")
 	mb.journalButton.SetInfo(journalInfo)
-	journalButtonBG := data.Texture("questsbutton.png")
+	journalButtonBG := graphic.Textures["questsbutton.png"]
 	if journalButtonBG != nil {
 		journalButtonSpr := pixel.NewSprite(journalButtonBG, journalButtonBG.Bounds())
 		mb.journalButton.SetBackground(journalButtonSpr)
@@ -126,7 +126,7 @@ func newMenuBar(hud *HUD) *MenuBar {
 	mb.charButton = mtk.NewButton(buttonParams)
 	charInfo := lang.Text("hud_bar_char_open_info")
 	mb.charButton.SetInfo(charInfo)
-	charButtonBG := data.Texture("charbutton.png")
+	charButtonBG := graphic.Textures["charbutton.png"]
 	if charButtonBG != nil {
 		charButtonSpr := pixel.NewSprite(charButtonBG, charButtonBG.Bounds())
 		mb.charButton.SetBackground(charButtonSpr)

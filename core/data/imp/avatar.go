@@ -32,9 +32,9 @@ import (
 
 	"github.com/isangeles/flame/module/character"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -95,17 +95,17 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		portraitName = "female01.png"
 	}
-	ssHeadPic := data.AvatarSpritesheet(ssHeadName)
+	ssHeadPic := graphic.AvatarSpritesheets[ssHeadName]
 	if ssHeadPic == nil {
 		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
 			ssHeadName)
 	}
-	ssTorsoPic := data.AvatarSpritesheet(ssTorsoName)
+	ssTorsoPic := graphic.AvatarSpritesheets[ssTorsoName]
 	if ssTorsoPic == nil {
 		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %s",
 			ssTorsoPic)
 	}
-	portraitPic := data.Portrait(portraitName)
+	portraitPic := graphic.Portraits[portraitName]
 	if portraitPic == nil {
 		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
 			portraitName)

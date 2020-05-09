@@ -26,11 +26,11 @@
 package res
 
 var (
-	avatars map[string]*AvatarData
-	objects map[string]*ObjectGraphicData
-	items   map[string]*ItemGraphicData
-	effects map[string]*EffectGraphicData
-	skills  map[string]*SkillGraphicData
+	avatars        map[string]*AvatarData
+	objects        map[string]*ObjectGraphicData
+	items          map[string]*ItemGraphicData
+	effects        map[string]*EffectGraphicData
+	skills         map[string]*SkillGraphicData
 )
 
 // On init.

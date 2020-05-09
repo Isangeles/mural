@@ -41,6 +41,7 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -71,7 +72,7 @@ func newChat(hud *HUD) *Chat {
 	c.msgs = make(map[string]*flamelog.Message)
 	// Background.
 	c.bgDraw = imdraw.New(nil)
-	bg := data.Texture("chatbg.png")
+	bg := graphic.Textures["chatbg.png"]
 	if bg != nil {
 		c.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}

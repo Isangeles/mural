@@ -36,7 +36,7 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -67,7 +67,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	sm.hud = hud
 	// Background.
 	sm.bgDraw = imdraw.New(nil)
-	bg := data.Texture("skillsbg.png")
+	bg := graphic.Textures["skillsbg.png"]
 	if bg != nil {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -84,7 +84,7 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(buttonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeButtonSpr := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeButtonSpr)
@@ -95,14 +95,14 @@ func newSkillMenu(hud *HUD) *SkillMenu {
 	// Slots.
 	sm.slots = mtk.NewSlotList(mtk.ConvVec(pixel.V(250, 350)),
 		skillsSlotColor, skillsSlotSize)
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		sm.slots.SetUpButtonBackground(upBG)
 	} else {
 		log.Err.Printf("hud: skills menu: unable to retrieve slot list up button texture")
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		sm.slots.SetDownButtonBackground(downBG)

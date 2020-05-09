@@ -39,6 +39,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -395,13 +396,13 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		ssTorsoName = "f-cloth-1222211-80x90.png"
 		ssHeadName = "f-head-black-1222211-80x90.png"
 	}
-	ssHeadPic := data.AvatarSpritesheet(ssHeadName)
+	ssHeadPic := graphic.AvatarSpritesheets[ssHeadName]
 	if ssHeadPic == nil {
 		log.Err.Printf("newchar menu: unable to retrieve head spritesheet picture: %s",
 			ssHeadName)
 		return
 	}
-	ssTorsoPic := data.AvatarSpritesheet(ssTorsoName)
+	ssTorsoPic := graphic.AvatarSpritesheets[ssTorsoName]
 	if ssTorsoPic == nil {
 		log.Err.Printf("newchar menu: unable to retrieve torso spritesheet picture: %s",
 			ssTorsoName)

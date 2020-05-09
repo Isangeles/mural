@@ -32,7 +32,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -60,7 +60,7 @@ func newMenu(hud *HUD) *Menu {
 	m.hud = hud
 	// Background.
 	m.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		m.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -79,7 +79,7 @@ func newMenu(hud *HUD) *Menu {
 		MainColor: accentColor,
 	}
 	m.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		m.closeButton.SetBackground(closeBG)
@@ -94,7 +94,7 @@ func newMenu(hud *HUD) *Menu {
 		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
-	greenButtonBG := data.Texture("button_green.png")
+	greenButtonBG := graphic.Textures["button_green.png"]
 	if greenButtonBG == nil {
 		log.Err.Printf("hud menu: unable to retrieve green button texture")
 	}

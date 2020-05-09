@@ -31,7 +31,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -66,7 +66,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	of := new(ObjectFrame)
 	of.hud = hud
 	// Background.
-	bg := data.Texture("charframe.png")
+	bg := graphic.Textures["charframe.png"]
 	if bg != nil {
 		of.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else { // fallback
@@ -76,7 +76,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	// Bars.
 	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.hpBar.SetLabel(lang.Text("char_frame_hp_bar_label"))
-	hpBarPic := data.Texture("bar_red.png")
+	hpBarPic := graphic.Textures["bar_red.png"]
 	if hpBarPic != nil {
 		of.hpBar.SetBackground(hpBarPic)
 	} else {
@@ -84,7 +84,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	}
 	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
 	of.manaBar.SetLabel(lang.Text("char_frame_mana_bar_label"))
-	manaBarPic := data.Texture("bar_blue.png")
+	manaBarPic := graphic.Textures["bar_blue.png"]
 	if manaBarPic != nil {
 		of.manaBar.SetBackground(manaBarPic)
 	} else {

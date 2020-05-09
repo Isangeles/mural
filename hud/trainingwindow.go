@@ -35,7 +35,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -62,7 +62,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 	tw.hud = hud
 	// Background.
 	tw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		tw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -81,7 +81,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		MainColor: accentColor,
 	}
 	tw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG,
 			closeButtonBG.Bounds())
@@ -98,7 +98,7 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		MainColor: accentColor,
 	}
 	tw.trainButton = mtk.NewButton(trainButtonParams)
-	trainButtonBG := data.Texture("button_green.png")
+	trainButtonBG := graphic.Textures["button_green.png"]
 	if trainButtonBG != nil {
 		bg := pixel.NewSprite(trainButtonBG, trainButtonBG.Bounds())
 		tw.trainButton.SetBackground(bg)
@@ -127,13 +127,13 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		AccentColor: accentColor,
 	}
 	tw.trainingsList = mtk.NewList(trainingsParams)
-	upButtonBG := data.Texture("scrollup.png")
+	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
 		tw.trainingsList.SetUpButtonBackground(upBG)
 	}
-	downButtonBG := data.Texture("scrolldown.png")
+	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())

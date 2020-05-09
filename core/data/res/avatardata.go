@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,14 @@ import (
 
 // Struct for avatar data.
 type AvatarData struct {
-	ID             string
-	Serial         string
-	PortraitName   string
-	SSHeadName     string
-	SSTorsoName    string
-	SSFullBodyName string
-	PortraitPic    pixel.Picture
-	SSHeadPic      pixel.Picture
-	SSTorsoPic     pixel.Picture
-	SSFullBodyPic  pixel.Picture
+	ID             string `xml:"id,attr" json:"id"`
+	Serial         string `xml:"serial,attr" json:"serial"`
+	PortraitName   string `xml:"portrait,attr" json:"portrait"`
+	SSHeadName     string `xml:"head,attr" json:"head"`
+	SSTorsoName    string `xml:"torso,attr" json:"torso"`
+	SSFullBodyName string `xml:"full-body,attr" json:"full-body"`
+	PortraitPic    pixel.Picture `xml:"-" json:"-"`
+	SSHeadPic      pixel.Picture `xml:"-" json:"-"`
+	SSTorsoPic     pixel.Picture `xml:"-" json:"-"`
+	SSFullBodyPic  pixel.Picture `xml:"-" json:"-"`
 }

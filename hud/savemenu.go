@@ -38,6 +38,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/exp"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -62,7 +63,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.hud = hud
 	// Background.
 	sm.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		sm.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	}
@@ -100,7 +101,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		sm.closeButton.SetBackground(closeBG)
@@ -108,7 +109,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	sm.saveButton = mtk.NewButton(saveButtonParams)
 	sm.saveButton.SetLabel(lang.Text("save_b_label"))
-	saveButtonBG := data.Texture("button_green.png")
+	saveButtonBG := graphic.Textures["button_green.png"]
 	if saveButtonBG != nil {
 		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())
 		sm.saveButton.SetBackground(bg)

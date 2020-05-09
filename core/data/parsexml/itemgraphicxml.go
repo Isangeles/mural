@@ -29,8 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -88,7 +88,7 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 		MaxStack: xmlItem.Stack,
 	}
 	// Icon.
-	d.IconPic = data.Icon(xmlItem.Icon)
+	d.IconPic = graphic.Icons[xmlItem.Icon]
 	if d.IconPic == nil {
 		return nil, fmt.Errorf("unable to retrieve item icon: %s", xmlItem.Icon)
 	}
@@ -107,7 +107,7 @@ func buildItemGraphicData(xmlItem *ItemGraphic) (*res.ItemGraphicData, error) {
 // buildSpritesheetData creates spriteseheet data from specified XML
 // spritesheet node.
 func buildSpritesheetData(xmlSpritesheet *Spritesheet) (*res.SpritesheetData, error) {
-	tex := data.AvatarSpritesheet(xmlSpritesheet.Texture)
+	tex := graphic.AvatarSpritesheets[xmlSpritesheet.Texture]
 	if tex == nil {
 		return nil, fmt.Errorf("unable to retrieve texture: %s",
 			xmlSpritesheet.Texture)

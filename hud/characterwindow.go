@@ -34,7 +34,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -62,7 +62,7 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 	cw.hud = hud
 	// Background.
 	cw.bgDraw = imdraw.New(nil)
-	bg := data.Texture("menubg.png")
+	bg := graphic.Textures["menubg.png"]
 	if bg != nil {
 		cw.bgSpr = pixel.NewSprite(bg, bg.Bounds())
 	} else {
@@ -81,7 +81,7 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 		MainColor: accentColor,
 	}
 	cw.closeButton = mtk.NewButton(closeButtonParams)
-	closeButtonBG := data.Texture("closebutton1.png")
+	closeButtonBG := graphic.Textures["closebutton1.png"]
 	if closeButtonBG != nil {
 		closeBG := pixel.NewSprite(closeButtonBG, closeButtonBG.Bounds())
 		cw.closeButton.SetBackground(closeBG)

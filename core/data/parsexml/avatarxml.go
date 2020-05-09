@@ -29,8 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -131,17 +131,17 @@ func buildAvatarDataXML(avData *res.AvatarData) Avatar {
 
 // buildAvatarData build data avatar from specified XML data.
 func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	portraitPic := data.Portrait(avXML.Portrait)
+	portraitPic := graphic.Portraits[avXML.Portrait]
 	if portraitPic == nil {
 		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
 			avXML.Portrait)
 	}
-	ssHeadPic := data.AvatarSpritesheet(avXML.Spritesheet.Head)
+	ssHeadPic := graphic.AvatarSpritesheets[avXML.Spritesheet.Head]
 	if ssHeadPic == nil {
 		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
 			avXML.Spritesheet.Head)
 	}
-	ssTorsoPic := data.AvatarSpritesheet(avXML.Spritesheet.Torso)
+	ssTorsoPic := graphic.AvatarSpritesheets[avXML.Spritesheet.Torso]
 	if ssTorsoPic == nil {
 		return nil, fmt.Errorf("unable to retrieve torso spritesheet picture: %v",
 			avXML.Spritesheet.Torso)
@@ -162,12 +162,12 @@ func buildAvatarData(avXML *Avatar) (*res.AvatarData, error) {
 // buildStaticAvatarData build new static avatar data for specified
 // character from specified XML data.
 func buildStaticAvatarData(avXML *Avatar) (*res.AvatarData, error) {
-	portraitPic := data.Portrait(avXML.Portrait)
+	portraitPic := graphic.Portraits[avXML.Portrait]
 	if portraitPic == nil {
 		return nil, fmt.Errorf("unable to retrieve portrait picture: %s",
 			avXML.Portrait)
 	}
-	ssFullBodyPic := data.AvatarSpritesheet(avXML.Spritesheet.FullBody)
+	ssFullBodyPic := graphic.AvatarSpritesheets[avXML.Spritesheet.FullBody]
 	if ssFullBodyPic == nil {
 		return nil, fmt.Errorf("unable to retrieve head spritesheet picture: %s",
 			avXML.Spritesheet.FullBody)

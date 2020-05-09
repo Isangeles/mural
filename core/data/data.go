@@ -32,8 +32,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/golang/freetype/truetype"
-
 	"github.com/salviati/go-tmx/tmx"
 
 	"github.com/faiface/beep"
@@ -45,6 +43,7 @@ import (
 	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -61,53 +60,31 @@ var (
 	modAudioArchPath    string
 	// Scritps.
 	ashScriptExt = ".ash"
-	// Textures & fonts.
-	textures       map[string]pixel.Picture
-	avSpritesheets map[string]pixel.Picture
-	obSpritesheets map[string]pixel.Picture
-	icons          map[string]pixel.Picture
-	portraits      map[string]pixel.Picture
-	pcPortraits    map[string]pixel.Picture
-	music          map[string]*beep.Buffer
-	fonts          map[string]*truetype.Font
 )
-
-// Init function.
-func init() {
-	textures = make(map[string]pixel.Picture)
-	avSpritesheets = make(map[string]pixel.Picture)
-	obSpritesheets = make(map[string]pixel.Picture)
-	icons = make(map[string]pixel.Picture)
-	portraits = make(map[string]pixel.Picture)
-	pcPortraits = make(map[string]pixel.Picture)
-	music = make(map[string]*beep.Buffer)
-	fonts = make(map[string]*truetype.Font)
-}
 
 // LoadModuleData loads graphic data for specified module.
 // Should be called by GUI before creating any
 // in-game elements.
-func LoadModuleData(mod *module.Module) error {
+func LoadModuleData(mod *module.Module) (err error) {
 	// Load data resource paths.
 	loadPaths(mod)
-	var err error
 	// Portraits.
-	portraits, err = loadPicturesFromArch(modGraphicArchPath, "portrait")
+	graphic.Portraits, err = loadPicturesFromArch(modGraphicArchPath, "portrait")
 	if err != nil {
 		return fmt.Errorf("unable to load portraits: %v", err)
 	}
 	// Avatar spritesheets.
-	avSpritesheets, err = loadPicturesFromArch(modGraphicArchPath, "spritesheet/avatar")
+	graphic.AvatarSpritesheets, err = loadPicturesFromArch(modGraphicArchPath, "spritesheet/avatar")
 	if err != nil {
 		return fmt.Errorf("unable to load avatars spritesheets: %v", err)
 	}
 	// Object spritesheets.
-	obSpritesheets, err = loadPicturesFromArch(modGraphicArchPath, "spritesheet/object")
+	graphic.ObjectSpritesheets, err = loadPicturesFromArch(modGraphicArchPath, "spritesheet/object")
 	if err != nil {
 		return fmt.Errorf("unable to load objects spritesheets: %v", err)
 	}
 	// Icons.
-	icons, err = loadPicturesFromArch(modGraphicArchPath, "icon")
+	graphic.Icons, err = loadPicturesFromArch(modGraphicArchPath, "icon")
 	if err != nil {
 		return fmt.Errorf("unable to load icons: %v", err)
 	}
@@ -117,55 +94,20 @@ func LoadModuleData(mod *module.Module) error {
 // LoadUIData loads UI graphic data for specified module.
 // Should be called by GUI before creating any
 // GUI elements.
-func LoadUIData(mod *module.Module) error {
+func LoadUIData(mod *module.Module) (err error) {
 	// Load data sources paths.
 	loadPaths(mod)
-	var err error
 	// GUI elements textures.
-	textures, err = loadPicturesFromArch(modGraphicArchPath, "texture")
+	graphic.Textures, err = loadPicturesFromArch(modGraphicArchPath, "texture")
 	if err != nil {
 		return fmt.Errorf("unable to load textures: %v", err)
 	}
 	// Fonts.
-	fonts, err = loadFontsFromArch(modGraphicArchPath, "font")
+	graphic.Fonts, err = loadFontsFromArch(modGraphicArchPath, "font")
 	if err != nil {
 		return fmt.Errorf("unable to load fonts: %v", err)
 	}
 	return nil
-}
-
-// Texture returns image with specified name from
-// loaded textures.
-func Texture(fileName string) pixel.Picture {
-	return textures[fileName]
-}
-
-// Portrait returns portrait with specified name.
-func Portrait(fileName string) pixel.Picture {
-	return portraits[fileName]
-}
-
-// AvatarSpritesheet returns picture with specified name
-// for avatar sprite.
-func AvatarSpritesheet(fileName string) pixel.Picture {
-	return avSpritesheets[fileName]
-}
-
-// ObjectSpritesheet returns picture with specified name
-// for object sprite.
-func ObjectSpritesheet(fileName string) pixel.Picture {
-	return obSpritesheets[fileName]
-}
-
-// Icon returns picture with specified name for icon.
-func Icon(fileName string) pixel.Picture {
-	return icons[fileName]
-}
-
-// Font loads font with specified name from gdata
-// directory.
-func Font(fileName string) *truetype.Font {
-	return fonts[fileName]
 }
 
 // PlayablePortraits returns map with names of portraits as keys
@@ -220,7 +162,7 @@ func AudioEffect(fileName string) (*beep.Buffer, error) {
 
 // ErrorItemGraphic returns error graphic for item.
 func ErrorItemGraphic() (*res.ItemGraphicData, error) {
-	icon := Icon("unknown.png")
+	icon := graphic.Icons["unknown.png"]
 	if icon == nil {
 		return nil, fmt.Errorf("unable to retrieve error icon")
 	}

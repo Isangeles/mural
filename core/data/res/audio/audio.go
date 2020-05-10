@@ -30,7 +30,7 @@ import (
 
 var (
 	Music   map[string]*beep.Buffer
-	Effects map[stirng]*beep.Buffer
+	Effects map[string]*beep.Buffer
 )
 
 // On init.

@@ -1,7 +1,7 @@
 /*
  * audio.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@ package data
 import (
 	"archive/zip"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/faiface/beep"
@@ -35,75 +37,58 @@ import (
 	"github.com/faiface/beep/wav"
 )
 
-// loadAudiosFromArch loads all audio files data from specified
-// directory insied ZIP archive with specified path.x
-func loadAudiosFromArch(archPath, path string) (map[string]*beep.Buffer, error) {
+// loadAudiosFromArch open ZIP archive iwth specified path and load all
+// audio files from directory inside archive.
+// Supported formats: vorbis, wav, mp3.
+func loadAudiosFromArch(archPath, dir string) (map[string]*beep.Buffer, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_archive_reader:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
-	return nil, fmt.Errorf("unsupported yet")
+	audio := make(map[string]*beep.Buffer)
+	for _, f := range r.File {
+		if !isAudio(f) || !strings.HasPrefix(f.Name, dir) {
+			continue
+		}
+		data, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		buf, err := decodeAudio(data, filepath.Ext(f.Name))
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode audio: %v",
+				err)
+		}
+		audio[filepath.Base(f.Name)] = buf
+	}
+	return audio, nil
 }
 
-// loadAudioFromArch loads audio file from specified directory
-// in ZIP archive from specified path.
+// loadAudioFromArch opens ZIP archive with specified path and loads audio
+// file with specified path inside ZIP archive.
 // Supported formats: vorbis, wav, mp3.
 func loadAudioFromArch(archPath, filePath string) (*beep.Buffer, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_arch:%v", err)
+		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
 	for _, f := range r.File {
 		if f.Name == filePath {
-			rc, err := f.Open()
+			data, err := f.Open()
 			if err != nil {
-				return nil, fmt.Errorf("fail_to_open_file_inside_arch:%v",
+				return nil, fmt.Errorf("unable to open arch file: %v", err)
+			}
+			buf, err := decodeAudio(data, filepath.Ext(f.Name))
+			if err != nil {
+				return nil, fmt.Errorf("unable to decode audio: %v",
 					err)
 			}
-			defer rc.Close()
-			switch {
-			case strings.HasSuffix(f.Name, ".ogg"): // vorbis
-				//adata, err := ioutil.ReadAll(rc)
-				//if err != nil {
-				//	return nil, fmt.Errorf("fail_to_read_audio_data:%v",
-				//		err)
-				//}
-				//ad := mtk.NewAudioData(adata, mtk.Vorbis_audio)
-				s, f, err := vorbis.Decode(rc)
-				if err != nil {
-					return nil, fmt.Errorf("fail_to_decode_vorbis_data:%v",
-						err)
-				}
-				ab := beep.NewBuffer(f)
-				ab.Append(s)
-				return ab, nil
-			case strings.HasSuffix(f.Name, ".wav"): // wav
-				s, f, err := wav.Decode(rc)
-				if err != nil {
-					return nil, fmt.Errorf("fail_to_decode_wav_data:%v",
-						err)
-				}
-				ab := beep.NewBuffer(f)
-				ab.Append(s)
-				return ab, nil
-			case strings.HasSuffix(f.Name, ".mp3"): // mp3
-				s, f, err := mp3.Decode(rc)
-				if err != nil {
-					return nil, fmt.Errorf("fail_to_decode_mp3_data:%v",
-						err)
-				}
-				ab := beep.NewBuffer(f)
-				ab.Append(s)
-				return ab, nil
-			default:
-				return nil, fmt.Errorf("unsupported format:%s",
-					f.Name)
-			}
+			return buf, nil
 		}
 	}
-	return nil, fmt.Errorf("file_not_found:%s", filePath)
+	return nil, fmt.Errorf("file not found: %s", filePath)
 }
 
 // loadAudioFromDir load audio file with specified path.
@@ -111,39 +96,63 @@ func loadAudioFromArch(archPath, filePath string) (*beep.Buffer, error) {
 func loadAudioFromDir(path string) (*beep.Buffer, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail_to_open_file:%v", err)
+		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
 	defer file.Close()
-	switch {
-	case strings.HasSuffix(path, ".ogg"): // vorbis
-		s, f, err := vorbis.Decode(file)
+	buf, err := decodeAudio(file, filepath.Ext(file.Name()))
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode file: %v", err)
+	}
+	return buf, nil
+}
+
+// decodeAudio decodes specified audio data.
+// Audio format need to be specified as a file extension.
+// Supported extensions: .ogg, .wav, .mp3
+func decodeAudio(buf io.ReadCloser, ext string) (*beep.Buffer, error) {
+	switch ext {
+	case ".ogg":
+		//adata, err := ioutil.ReadAll(rc)
+		//if err != nil {
+		//	return nil, fmt.Errorf("fail_to_read_audio_data:%v",
+		//		err)
+		//}
+		//ad := mtk.NewAudioData(adata, mtk.Vorbis_audio)
+		s, f, err := vorbis.Decode(buf)
 		if err != nil {
-			return nil, fmt.Errorf("fail_to_decode_vorbis_data:%v",
+			return nil, fmt.Errorf("unable to decode vorbis data: %v",
 				err)
 		}
 		ab := beep.NewBuffer(f)
 		ab.Append(s)
 		return ab, nil
-	case strings.HasSuffix(path, ".wav"): // wav
-		s, f, err := wav.Decode(file)
+	case ".wav":
+		s, f, err := wav.Decode(buf)
 		if err != nil {
-			return nil, fmt.Errorf("fail_to_decode_wav_data:%v",
+			return nil, fmt.Errorf("unable to decode wav data: %v",
 				err)
 		}
 		ab := beep.NewBuffer(f)
 		ab.Append(s)
 		return ab, nil
-	case strings.HasSuffix(path, ".mp3"): // mp3
-		s, f, err := mp3.Decode(file)
+	case ".mp3":
+		s, f, err := mp3.Decode(buf)
 		if err != nil {
-			return nil, fmt.Errorf("fail_to_decode_mp3_data:%v",
+			return nil, fmt.Errorf("unable to decode mp3 data: %v",
 				err)
 		}
 		ab := beep.NewBuffer(f)
 		ab.Append(s)
 		return ab, nil
 	default:
-		return nil, fmt.Errorf("unsupported_format:%s",
-			path)
+		return nil, fmt.Errorf("unsupported format: %s",
+			ext)
 	}
+}
+
+// isAudio checks if specified ZIP file is an audio file.
+func isAudio(f *zip.File) bool {
+	return strings.HasSuffix(f.Name, ".ogg") ||
+		strings.HasSuffix(f.Name, ".wav") ||
+		strings.HasSuffix(f.Name, "mp3")
 }

@@ -107,6 +107,8 @@ func LoadUIData(mod *module.Module) (err error) {
 	if err != nil {
 		return fmt.Errorf("unable to load fonts: %v", err)
 	}
+	// TODO: Music.
+	// TODO: Audio effects.
 	return nil
 }
 
@@ -150,14 +152,22 @@ func Map(areaDir string) (*tmx.Map, error) {
 // inside audio archive.
 func Music(fileName string) (*beep.Buffer, error) {
 	path := "music/" + fileName
-	return loadAudioFromArch(modAudioArchPath, path)
+	audio, err := loadAudioFromArch(modAudioArchPath, path)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load audio from arch: %v", err)
+	}
+	return audio, nil
 }
 
 // AudioEffect returns audio stream data from file with specified
 // name inside audio archive.
 func AudioEffect(fileName string) (*beep.Buffer, error) {
 	path := "effect/" + fileName
-	return loadAudioFromArch(modAudioArchPath, path)
+	audio, err := loadAudioFromArch(modAudioArchPath, path)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load audio from arch: %v", err)
+	}
+	return audio, nil
 }
 
 // ErrorItemGraphic returns error graphic for item.

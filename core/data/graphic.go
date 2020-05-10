@@ -40,28 +40,28 @@ import (
 
 // loadPicturesFromArch loads all pictures from specified
 // directory in ZIP archive with specified path.
+// Returns map with names of files as keys and pictures as values.
 func loadPicturesFromArch(archPath, dir string) (map[string]pixel.Picture, error) {
 	r, err := zip.OpenReader(archPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open arch: %v", err)
 	}
 	defer r.Close()
-	pics := make(map[string]pixel.Picture, 0)
+	pics := make(map[string]pixel.Picture)
 	for _, f := range r.File {
-		if isImage(f) && strings.HasPrefix(f.Name, dir) {
-			fPath := strings.Split(f.Name, "/")
-			fName := fPath[len(fPath)-1]
-			rc, err := f.Open()
-			if err != nil {
-				return nil, fmt.Errorf("unable to open arch file: %v", err)
-			}
-			defer rc.Close()
-			img, _, err := image.Decode(rc)
-			if err != nil {
-				return nil, fmt.Errorf("unable to decode img: %v", err)
-			}
-			pics[fName] = pixel.PictureDataFromImage(img)
+		if !isImage(f) || !strings.HasPrefix(f.Name, dir) {
+			continue
 		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		defer rc.Close()
+		img, _, err := image.Decode(rc)
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode img: %v", err)
+		}
+		pics[filepath.Base(f.Name)] = pixel.PictureDataFromImage(img)
 	}
 	return pics, nil
 }
@@ -76,24 +76,25 @@ func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) 
 	defer r.Close()
 	fonts := make(map[string]*truetype.Font, 0)
 	for _, f := range r.File {
-		if isFont(f) && strings.HasPrefix(f.Name, dir) {
-			fPath := strings.Split(f.Name, "/")
-			fName := fPath[len(fPath)-1]
-			rc, err := f.Open()
-			if err != nil {
-				return nil, fmt.Errorf("unable to open arch file: %v", err)
-			}
-			defer rc.Close()
-			bytes, err := ioutil.ReadAll(rc)
-			if err != nil {
-				return nil, fmt.Errorf("unable to read arch file: %v", err)
-			}
-			font, err := truetype.Parse(bytes)
-			if err != nil {
-				return nil, fmt.Errorf("unable to parse font: %v", err)
-			}
-			fonts[fName] = font
+		if !isFont(f) || !strings.HasPrefix(f.Name, dir) {
+			continue
 		}
+		fPath := strings.Split(f.Name, "/")
+		fName := fPath[len(fPath)-1]
+		rc, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		defer rc.Close()
+		bytes, err := ioutil.ReadAll(rc)
+		if err != nil {
+			return nil, fmt.Errorf("unable to read arch file: %v", err)
+		}
+		font, err := truetype.Parse(bytes)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse font: %v", err)
+		}
+		fonts[fName] = font
 	}
 	return fonts, nil
 }
@@ -108,18 +109,19 @@ func loadPictureFromArch(archPath, filePath string) (pixel.Picture, error) {
 	}
 	defer r.Close()
 	for _, f := range r.File {
-		if f.Name == filePath {
-			rc, err := f.Open()
-			if err != nil {
-				return nil, fmt.Errorf("unable to open arch file: %v", err)
-			}
-			defer rc.Close()
-			img, _, err := image.Decode(rc)
-			if err != nil {
-				return nil, fmt.Errorf("unable to decode img: %v", err)
-			}
-			return pixel.PictureDataFromImage(img), nil
+		if f.Name != filePath {
+			continue
 		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		defer rc.Close()
+		img, _, err := image.Decode(rc)
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode img: %v", err)
+		}
+		return pixel.PictureDataFromImage(img), nil
 	}
 	return nil, fmt.Errorf("file not found: %s", filePath)
 }
@@ -133,22 +135,23 @@ func loadFontFromArch(archPath, filePath string) (*truetype.Font, error) {
 	}
 	defer r.Close()
 	for _, f := range r.File {
-		if f.Name == filePath {
-			rc, err := f.Open()
-			if err != nil {
-				return nil, fmt.Errorf("unable to open arch file: %v", err)
-			}
-			defer rc.Close()
-			bytes, err := ioutil.ReadAll(rc)
-			if err != nil {
-				return nil, fmt.Errorf("unable to read arch file: %v", err)
-			}
-			font, err := truetype.Parse(bytes)
-			if err != nil {
-				return nil, fmt.Errorf("unable to parse font: %v", err)
-			}
-			return font, nil
+		if f.Name != filePath {
+			continue
 		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		defer rc.Close()
+		bytes, err := ioutil.ReadAll(rc)
+		if err != nil {
+			return nil, fmt.Errorf("unable to read arch file: %v", err)
+		}
+		font, err := truetype.Parse(bytes)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse font: %v", err)
+		}
+		return font, nil
 	}
 	return nil, fmt.Errorf("file not found: %s", filePath)
 }
@@ -177,14 +180,15 @@ func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
 	}
 	var pics []pixel.Picture
 	for _, f := range files {
-		if !f.IsDir() {
-			img, err := loadPictureFromDir(
-				filepath.FromSlash(path + "/" + f.Name()))
-			if err != nil {
-				continue
-			}
-			pics = append(pics, img)
+		if f.IsDir() {
+			continue
 		}
+		img, err := loadPictureFromDir(
+			filepath.FromSlash(path + "/" + f.Name()))
+		if err != nil {
+			continue
+		}
+		pics = append(pics, img)
 	}
 	return pics, nil
 }

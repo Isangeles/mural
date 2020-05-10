@@ -34,8 +34,6 @@ import (
 
 	"github.com/salviati/go-tmx/tmx"
 
-	"github.com/faiface/beep"
-
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/module"
@@ -43,6 +41,7 @@ import (
 	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
@@ -107,8 +106,16 @@ func LoadUIData(mod *module.Module) (err error) {
 	if err != nil {
 		return fmt.Errorf("unable to load fonts: %v", err)
 	}
-	// TODO: Music.
-	// TODO: Audio effects.
+	// Music.
+	audio.Music, err = loadAudiosFromArch(modAudioArchPath, "music")
+	if err != nil {
+		return fmt.Errorf("unable to load music: %v", err)
+	}
+	// Audio effects.
+	audio.Effects, err = loadAudiosFromArch(modAudioArchPath, "effect")
+	if err != nil {
+		return fmt.Errorf("unable to load audio effects: %v", err)
+	}
 	return nil
 }
 
@@ -146,28 +153,6 @@ func Map(areaDir string) (*tmx.Map, error) {
 		return nil, fmt.Errorf("unable to read tmx file: %v", err)
 	}
 	return tmxMap, nil
-}
-
-// Music returns audio stream data from file with specified name
-// inside audio archive.
-func Music(fileName string) (*beep.Buffer, error) {
-	path := "music/" + fileName
-	audio, err := loadAudioFromArch(modAudioArchPath, path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to load audio from arch: %v", err)
-	}
-	return audio, nil
-}
-
-// AudioEffect returns audio stream data from file with specified
-// name inside audio archive.
-func AudioEffect(fileName string) (*beep.Buffer, error) {
-	path := "effect/" + fileName
-	audio, err := loadAudioFromArch(modAudioArchPath, path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to load audio from arch: %v", err)
-	}
-	return audio, nil
 }
 
 // ErrorItemGraphic returns error graphic for item.

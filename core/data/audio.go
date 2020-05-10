@@ -75,18 +75,19 @@ func loadAudioFromArch(archPath, filePath string) (*beep.Buffer, error) {
 	}
 	defer r.Close()
 	for _, f := range r.File {
-		if f.Name == filePath {
-			data, err := f.Open()
-			if err != nil {
-				return nil, fmt.Errorf("unable to open arch file: %v", err)
-			}
-			buf, err := decodeAudio(data, filepath.Ext(f.Name))
-			if err != nil {
-				return nil, fmt.Errorf("unable to decode audio: %v",
-					err)
-			}
-			return buf, nil
+		if f.Name != filePath {
+			continue
 		}
+		data, err := f.Open()
+		if err != nil {
+			return nil, fmt.Errorf("unable to open arch file: %v", err)
+		}
+		buf, err := decodeAudio(data, filepath.Ext(f.Name))
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode audio: %v",
+				err)
+		}
+		return buf, nil
 	}
 	return nil, fmt.Errorf("file not found: %s", filePath)
 }

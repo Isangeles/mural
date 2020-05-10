@@ -50,6 +50,7 @@ import (
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/hud"
@@ -111,12 +112,13 @@ func main() {
 	mtk.InitAudio(beep.Format{44100, 2, 2})
 	if mtk.Audio() != nil {
 		ci.SetMusicPlayer(mtk.Audio())
-		m, err := data.Music(config.MenuMusic)
-		if err == nil {
+		m := audio.Music[config.MenuMusic]
+		if m != nil {
 			pl := []beep.Streamer{m.Streamer(0, m.Len())}
 			mtk.Audio().SetPlaylist(pl)
 		} else {
-			log.Err.Printf("unable to load main theme audio data: %v", err)
+			log.Err.Printf("main theme audio data not found: %s",
+				config.MenuMusic)
 		}
 		mtk.Audio().SetVolume(config.MusicVolume)
 		mtk.Audio().SetMute(config.MusicMute)
@@ -153,10 +155,10 @@ func run() {
 		mtk.SetMainFont(uiFont)
 	}
 	// Audio effects.
-	bClickSound, err := data.AudioEffect(config.ButtonClickSound)
-	if err != nil {
-		log.Err.Printf("init run: unable to retrieve button click audio data: %v",
-			err)
+	bClickSound := audio.Effects[config.ButtonClickSound]
+	if bClickSound == nil {
+		log.Err.Printf("init run: button click audio data not found: %s",
+			config.ButtonClickSound)
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
 	// Create main menu.

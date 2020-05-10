@@ -29,8 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
@@ -101,9 +101,10 @@ func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error
 		ActivationAnim: int(activationAnim),
 	}
 	if xmlSkill.Audio.Activation != "" {
-		activeAudio, err := data.AudioEffect(xmlSkill.Audio.Activation)
-		if err != nil {
-			return nil, fmt.Errorf("unable to retrieve skill audio: %v", err)
+		activeAudio := audio.Effects[xmlSkill.Audio.Activation]
+		if activeAudio == nil {
+			return nil, fmt.Errorf("skill activation audio not found: %s",
+				xmlSkill.Audio.Activation)
 		}
 		skillData.ActivationAudio = activeAudio
 	}

@@ -22,7 +22,7 @@
  */
 
 // data package contains functions for loading
-// graphics/audio/text data.
+// graphic and audio data.
 package data
 
 import (
@@ -37,7 +37,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/module"
-	
+
 	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/core/data/res"
@@ -47,16 +47,17 @@ import (
 )
 
 const (
-	SavesModulePath = "gui/saves"
+	GUIModulePath   = "gui"
+	SavesModulePath = GUIModulePath + "/saves"
 	SaveFileExt     = ".savegui"
 )
 
 var (
 	// Paths.
-	modAudioDirPath     string
-	modGraphicDirPath   string
-	modGraphicArchPath  string
-	modAudioArchPath    string
+	modAudioDirPath    string
+	modGraphicDirPath  string
+	modGraphicArchPath string
+	modAudioArchPath   string
 	// Scritps.
 	ashScriptExt = ".ash"
 )
@@ -67,6 +68,26 @@ var (
 func LoadModuleData(mod *module.Module) (err error) {
 	// Load data resource paths.
 	loadPaths(mod)
+	// GUI textures.
+	graphic.Textures, err = loadPicturesFromArch(modGraphicArchPath, "texture")
+	if err != nil {
+		return fmt.Errorf("unable to load textures: %v", err)
+	}
+	// Fonts.
+	graphic.Fonts, err = loadFontsFromArch(modGraphicArchPath, "font")
+	if err != nil {
+		return fmt.Errorf("unable to load fonts: %v", err)
+	}
+	// Music.
+	audio.Music, err = loadAudiosFromArch(modAudioArchPath, "music")
+	if err != nil {
+		return fmt.Errorf("unable to load music: %v", err)
+	}
+	// Audio effects.
+	audio.Effects, err = loadAudiosFromArch(modAudioArchPath, "effect")
+	if err != nil {
+		return fmt.Errorf("unable to load audio effects: %v", err)
+	}
 	// Portraits.
 	graphic.Portraits, err = loadPicturesFromArch(modGraphicArchPath, "portrait")
 	if err != nil {
@@ -87,35 +108,55 @@ func LoadModuleData(mod *module.Module) (err error) {
 	if err != nil {
 		return fmt.Errorf("unable to load icons: %v", err)
 	}
+	// Objects graphics.
+	path := filepath.Join(mod.Conf().Path, GUIModulePath, "objects")
+	obGraphics, err := ImportObjectsGraphicsDir(path)
+	if err != nil {
+		return fmt.Errorf("unable to import objects graphics: %v", err)
+	}
+	res.SetObjects(obGraphics)
+	// Items graphics.
+	path = filepath.Join(mod.Conf().Path, GUIModulePath, "items")
+	itGraphics, err := ImportItemsGraphicsDir(path)
+	if err != nil {
+		return fmt.Errorf("unable to import items graphics: %v", err)
+	}
+	res.SetItems(itGraphics)
+	// Effects graphic.
+	path = filepath.Join(mod.Conf().Path, GUIModulePath, "effects")
+	effGraphics, err := ImportEffectsGraphicsDir(path)
+	if err != nil {
+		return fmt.Errorf("unable to import effects graphics: %v", err)
+	}
+	res.SetEffects(effGraphics)
+	// Skills graphic.
+	path = filepath.Join(mod.Conf().Path, GUIModulePath, "skills")
+	skillGraphics, err := ImportSkillsGraphicsDir(path)
+	if err != nil {
+		return fmt.Errorf("unable to import skills graphics: %v", err)
+	}
+	res.SetSkills(skillGraphics)
 	return nil
 }
 
-// LoadUIData loads UI graphic data for specified module.
-// Should be called by GUI before creating any
-// GUI elements.
-func LoadUIData(mod *module.Module) (err error) {
-	// Load data sources paths.
-	loadPaths(mod)
-	// GUI elements textures.
-	graphic.Textures, err = loadPicturesFromArch(modGraphicArchPath, "texture")
+// LoadChapterData loads all graphical data for chapter.
+func LoadChapterData(chapter *module.Chapter) error {
+	// Avatars.
+	path := filepath.Join(chapter.Module().Conf().Path, GUIModulePath, "chapters",
+		chapter.Conf().ID, "npc")
+	avs, err := ImportAvatarsDataDir(path)
 	if err != nil {
-		return fmt.Errorf("unable to load textures: %v", err)
+		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}
-	// Fonts.
-	graphic.Fonts, err = loadFontsFromArch(modGraphicArchPath, "font")
+	res.SetAvatars(avs)
+	// Object graphics.
+	path = filepath.Join(chapter.Module().Conf().Path, GUIModulePath, "chapters",
+		chapter.Conf().ID, "objects")
+	obGraphics, err := ImportObjectsGraphicsDir(path)
 	if err != nil {
-		return fmt.Errorf("unable to load fonts: %v", err)
+		return fmt.Errorf("unable to import objects graphics: %v", err)
 	}
-	// Music.
-	audio.Music, err = loadAudiosFromArch(modAudioArchPath, "music")
-	if err != nil {
-		return fmt.Errorf("unable to load music: %v", err)
-	}
-	// Audio effects.
-	audio.Effects, err = loadAudiosFromArch(modAudioArchPath, "effect")
-	if err != nil {
-		return fmt.Errorf("unable to load audio effects: %v", err)
-	}
+	res.SetObjects(append(res.Objects(), obGraphics...))
 	return nil
 }
 

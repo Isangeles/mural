@@ -37,7 +37,6 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
@@ -256,7 +255,7 @@ func (sm *SaveMenu) save(saveName string) error {
 	guisav := sm.hud.NewGUISave()
 	savePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName + data.SaveFileExt)
-	err = exp.ExportGUISave(guisav, savePath)
+	err = data.ExportGUISave(guisav, savePath)
 	if err != nil {
 		return fmt.Errorf("unable to save gui: %v", err)
 	}

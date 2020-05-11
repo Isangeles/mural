@@ -1,7 +1,7 @@
 /*
  * objectgraphic.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-package imp
+package data
 
 import (
 	"fmt"
@@ -44,11 +44,11 @@ var (
 func ImportObjectsGraphics(path string) ([]*res.ObjectGraphicData, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("fail to open base file: %s", err)
+		return nil, fmt.Errorf("unable to open base file: %s", err)
 	}
 	objects, err := parsexml.UnmarshalObjectsGraphics(f)
 	if err != nil {
-		return nil, fmt.Errorf("fail to parse xml: %v", err)
+		return nil, fmt.Errorf("unable to parse xml: %v", err)
 	}
 	return objects, nil
 }
@@ -58,7 +58,7 @@ func ImportObjectsGraphics(path string) ([]*res.ObjectGraphicData, error) {
 func ImportObjectsGraphicsDir(dirPath string) ([]*res.ObjectGraphicData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("fail to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	objects := make([]*res.ObjectGraphicData, 0)
 	for _, fInfo := range files {
@@ -68,7 +68,7 @@ func ImportObjectsGraphicsDir(dirPath string) ([]*res.ObjectGraphicData, error) 
 		basePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impObjects, err := ImportObjectsGraphics(basePath)
 		if err != nil {
-			log.Err.Printf("data items graphic import: %s: fail to parse file: %v",
+			log.Err.Printf("data items graphic import: %s: unable to parse file: %v",
 				basePath, err)
 			continue
 		}

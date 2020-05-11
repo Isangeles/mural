@@ -39,7 +39,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data/imp"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 )
@@ -281,7 +281,7 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	if err != nil {
 		return fmt.Errorf("fail to import characters: %v", err)
 	}
-	avsData, err := imp.ImportAvatarsDataDir(path)
+	avsData, err := data.ImportAvatarsDataDir(path)
 	if err != nil {
 		return fmt.Errorf("fail to import avatars: %v", err)
 	}

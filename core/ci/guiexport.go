@@ -30,7 +30,6 @@ import (
 	"github.com/isangeles/burn"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/exp"
 )
 
 // guiexport handles guiexport command.
@@ -50,7 +49,7 @@ func guiexport(cmd burn.Command) (int, string) {
 		for _, av := range guiHUD.Camera().Avatars() {
 			if av.ID()+"#"+av.Serial() == cmd.TargetArgs()[0] {
 				expPath := guiHUD.Game().Module().Conf().CharactersPath()
-				err := exp.ExportAvatar(av, expPath)
+				err := data.ExportAvatar(av, expPath)
 				if err != nil {
 					return 8, fmt.Sprintf("%s: unable to export avatar: %v",
 						GUIExport, err)
@@ -72,7 +71,7 @@ func guiexport(cmd burn.Command) (int, string) {
 		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
 			data.SavesModulePath, saveName + data.SaveFileExt)
 		save := guiHUD.NewGUISave()
-		err := exp.ExportGUISave(save, savePath)
+		err := data.ExportGUISave(save, savePath)
 		if err != nil {
 			return 3, fmt.Sprintf("%s: unable to save gui state: %v",
 				GUIExport, err)

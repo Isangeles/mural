@@ -21,18 +21,60 @@
  *
  */
 
-package exp
+package data
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
+
+// ImportGUISave imports GUI save file from specified path.
+func ImportGUISave(path string) (*res.GUISave, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open save file: %v",
+			err)
+	}
+	defer file.Close()
+	save, err := parsexml.UnmarshalGUISave(file)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal save data: %v",
+			err)
+	}
+	return save, nil
+}
+
+// ImportsGUISavesDir imports all saved GUIs from save files in
+// directory with specified path.
+func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
+	files, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read dir: %v", err)
+	}
+	saves := make([]*res.GUISave, 0)
+	for _, f := range files {
+		if !strings.HasSuffix(f.Name(), SaveFileExt) {
+			continue
+		}
+		savePath := filepath.Join(dirPath, f.Name())
+		sav, err := ImportGUISave(savePath)
+		if err != nil {
+			log.Err.Printf("data saves import: unable to load save: %v",
+				err)
+			continue
+		}
+		saves = append(saves, sav)
+	}
+	return saves, nil
+}
 
 // ExportGUISave saves GUI state to file with specified name
 // in directory with specified path.

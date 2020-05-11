@@ -21,9 +21,10 @@
  *
  */
 
-package imp
+package data
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -34,6 +35,7 @@ import (
 
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -102,4 +104,38 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 		Torso:       ssTorsoName,
 	}
 	return &avData, nil
+}
+
+
+// ExportAvatars exports specified avatars to file
+// with specified path.
+func ExportAvatars(avs []*object.Avatar, basePath string) error {
+	// Marshal avatars to base data.
+	xml, err := parsexml.MarshalAvatars(avs)
+	if err != nil {
+		return fmt.Errorf("unable to marshal avatars: %v", err)
+	}
+	// Check whether file path ends with proper extension.
+	if !strings.HasSuffix(basePath, AvatarsFileExt) {
+		basePath = basePath + AvatarsFileExt
+	}
+	// Create base file.
+	f, err := os.Create(filepath.FromSlash(basePath))
+	if err != nil {
+		return fmt.Errorf("unable to create avatars file: %v", err)
+	}
+	defer f.Close()
+	// Write data to base file.
+	w := bufio.NewWriter(f)
+	w.WriteString(xml)
+	w.Flush()
+	return nil
+}
+
+// ExportAvatars exports specified avatar to directory
+// with specified path.
+func ExportAvatar(av *object.Avatar, dirPath string) error {
+	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
+		AvatarsFileExt)
+	return ExportAvatars([]*object.Avatar{av}, filePath)
 }

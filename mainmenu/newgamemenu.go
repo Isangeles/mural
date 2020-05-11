@@ -36,8 +36,8 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res/graphic"
-	"github.com/isangeles/mural/core/data/exp"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -194,19 +194,19 @@ func (ngm *NewGameMenu) exportChar() error {
 	if switchVal == nil {
 		return nil
 	}
-	data, ok := switchVal.Value.(PlayableCharData)
+	pcData, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
 		return fmt.Errorf("unable to retrieve character data from switch")
 	}
-	c := character.New(*data.CharData)
+	c := character.New(*pcData.CharData)
 	conf := ngm.mainmenu.mod.Conf()
 	path := filepath.Join(conf.CharactersPath(), c.Name())
 	err := flamedata.ExportCharacters(path, c)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
-	av := object.NewAvatar(c, data.AvatarData)
-	err = exp.ExportAvatar(av, conf.CharactersPath())
+	av := object.NewAvatar(c, pcData.AvatarData)
+	err = data.ExportAvatar(av, conf.CharactersPath())
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
 	}

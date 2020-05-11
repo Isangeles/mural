@@ -49,7 +49,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/imp"
 	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
@@ -93,20 +92,10 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("unable to load module translation data: %v", err))
 	}
-	// Load UI graphic.
-	err = data.LoadUIData(mod)
-	if err != nil {
-		panic(fmt.Errorf("unable to load gui data: %v", err))
-	}
-	// Load game graphic.
+	// Load GUI graphic data.
 	err = data.LoadModuleData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
-	}
-	// Load module graphic data.
-	err = imp.LoadModuleResources(mod)
-	if err != nil {
-		panic(fmt.Errorf("unable to load module resources: %v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -232,7 +221,7 @@ func EnterGame(g *flame.Game, pcs ...*object.Avatar) {
 	// Set HUD.
 	setHUD(hud)
 	// Load GUI data.
-	err := imp.LoadChapterResources(game.Module().Chapter())
+	err := data.LoadChapterData(game.Module().Chapter())
 	if err != nil {
 		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
@@ -272,7 +261,7 @@ func LoadSavedGame(saveName string) {
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)
-	guisav, err := imp.ImportGUISave(guiSavePath)
+	guisav, err := data.ImportGUISave(guiSavePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to load gui save: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))

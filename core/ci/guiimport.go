@@ -30,7 +30,6 @@ import (
 	"github.com/isangeles/burn"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/imp"
 )
 
 // guiimport handles guiimport command.
@@ -50,7 +49,7 @@ func guiimport(cmd burn.Command) (int, string) {
 		saveName := cmd.Args()[0] + data.SaveFileExt
 		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
 			data.SavesModulePath, saveName)
-		save, err := imp.ImportGUISave(savePath)
+		save, err := data.ImportGUISave(savePath)
 		if err != nil {
 			return 3, fmt.Sprintf("%s: unable to load save file: %v",
 				GUIImport, err)

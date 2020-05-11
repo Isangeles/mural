@@ -1,5 +1,5 @@
 /*
- * save.go
+ * itemgraphic.go
  *
  * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
@@ -21,57 +21,60 @@
  *
  */
 
-package imp
+package data
 
 import (
 	"fmt"
-	"os"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
-// ImportGUISave imports GUI save file from specified path.
-func ImportGUISave(path string) (*res.GUISave, error) {
-	file, err := os.Open(path)
+var (
+	ItemGraphicsFileExt = ".graphic"
+)
+
+// ImportItemsGraphics imports all items grpahics from
+// base file with specified path.
+func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
+	f, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open save file: %v",
-			err)
+		return nil, fmt.Errorf("unable to open base file: %s", err)
 	}
-	defer file.Close()
-	save, err := parsexml.UnmarshalGUISave(file)
+	items, err := parsexml.UnmarshalItemGraphics(f)
 	if err != nil {
-		return nil, fmt.Errorf("unable to unmarshal save data: %v",
-			err)
+		return nil, fmt.Errorf("unable to parse xml: %v", err)
 	}
-	return save, nil
+	return items, nil
 }
 
-// ImportsGUISavesDir imports all saved GUIs from save files in
+// ImportItemsGraphicsDir imports all files with items graphics from
 // directory with specified path.
-func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
+func ImportItemsGraphicsDir(dirPath string) ([]*res.ItemGraphicData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir:%v", err)
 	}
-	saves := make([]*res.GUISave, 0)
-	for _, f := range files {
-		if !strings.HasSuffix(f.Name(), data.SaveFileExt) {
+	items := make([]*res.ItemGraphicData, 0)
+	for _, fInfo := range files {
+		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
 			continue
 		}
-		savePath := filepath.Join(dirPath, f.Name())
-		sav, err := ImportGUISave(savePath)
+		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
+		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
 		if err != nil {
-			log.Err.Printf("data saves import: unable to load save: %v",
-				err)
+			log.Err.Printf("data items graphic import: %s: unable to parse file: %v",
+				itemsGraphicFilePath, err)
 			continue
 		}
-		saves = append(saves, sav)
+		for _, it := range impItems {
+			items = append(items, it)
+		}
 	}
-	return saves, nil
+	return items, nil
 }

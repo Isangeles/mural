@@ -35,6 +35,8 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/log"
 )
 
 var (
@@ -53,7 +55,13 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 	eg := new(EffectGraphic)
 	eg.Effect = effect
 	// Icon.
-	eg.icon = pixel.NewSprite(data.IconPic, data.IconPic.Bounds())
+	iconPic := graphic.Icons[data.Icon]
+	if iconPic != nil {
+		eg.icon = pixel.NewSprite(iconPic, iconPic.Bounds())
+	} else {
+		log.Err.Printf("effect graphic: %s#%s: icon not found: %s", effect.ID(),
+			effect.Serial(), data.Icon)
+	}
 	// Time text.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeBig,

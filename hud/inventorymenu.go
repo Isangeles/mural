@@ -33,7 +33,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
@@ -208,14 +207,8 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 		igd := res.Item(it.ID())
 		if igd == nil { // if icon was found
 			log.Err.Printf("hud: inventory menu: item graphic not found: %s", it.ID())
-			// Get error icon.
-			errData, err := data.ErrorItemGraphic()
-			if err != nil {
-				log.Err.Printf("hud: inventory menu: unable to retrieve error graphic: %v", err)
-				continue
-			}
-			errData.ItemID = it.ID()
-			igd = errData
+			// Get fallback graphic.
+			igd = itemErrorGraphic(it)
 		}
 		ig := object.NewItemGraphic(it, igd)
 		// Find proper slot.

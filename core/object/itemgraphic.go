@@ -29,35 +29,42 @@ import (
 	"github.com/isangeles/flame/module/item"
 	
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
 )
 
 // Struct for graphical wrapper
 // for items.
 type ItemGraphic struct {
 	item.Item
-	data *res.ItemGraphicData
+	icon         pixel.Picture
+	iconName     string
+	spritesheets []*res.SpritesheetData
+	maxStack     int
 }
 
 // NewItemGraphic creates new graphical wrapper for specified item.
 func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	itg := new(ItemGraphic)
 	itg.Item = item
-	itg.data = data
+	itg.icon = graphic.Icons[data.Icon]
+	itg.iconName = data.Icon
+	itg.spritesheets = data.Spritesheets
+	itg.maxStack = data.MaxStack
 	return itg
 }
 
 // Spritesheets returns all spritesheets data.
 func (itg *ItemGraphic) Spritesheets() []*res.SpritesheetData {
-	return itg.data.Spritesheets
+	return itg.spritesheets
 }
 
 // Icon returns item icon.
 func (itg *ItemGraphic) Icon() pixel.Picture {
-	return itg.data.IconPic
+	return itg.icon
 }
 
 // MaxStack returns maximal number of stacked items
 // with same ID.
 func (itg *ItemGraphic) MaxStack() int {
-	return itg.data.MaxStack
+	return itg.maxStack
 }

@@ -258,37 +258,6 @@ func (av *Avatar) Hovered() bool {
 	return av.hovered
 }
 
-// equip adds graphic of specified item to avatar.
-func (av *Avatar) equip(gItem *ItemGraphic) {
-	switch gItem.Item.(type) {
-	case *item.Weapon:
-		av.sprite.SetWeapon(av.spritesheet(gItem.Spritesheets()))
-		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
-	case *item.Armor:
-		av.sprite.SetTorso(av.spritesheet(gItem.Spritesheets()))
-		av.eqItems[gItem.ID()+gItem.Serial()] = gItem
-	default:
-		log.Dbg.Printf("avatar: %s#%s: equip: not equipable item type",
-			av.ID(), av.Serial())
-	}
-}
-
-// unequip removes graphic of specified item from
-// avatar(if equiped).
-func (av *Avatar) unequip(gItem *ItemGraphic) {
-	switch gItem.Item.(type) {
-	case *item.Weapon:
-		av.sprite.SetWeapon(nil)
-		delete(av.eqItems, gItem.ID()+gItem.Serial())
-	case *item.Armor:
-		av.sprite.SetTorso(nil)
-		delete(av.eqItems, gItem.ID()+gItem.Serial())
-	default:
-		log.Dbg.Printf("avatar: %s#%s: equip: not equipable item type",
-			av.ID(), av.Serial())
-	}
-}
-
 // updateGraphic updates avatar grapphical
 // content.
 func (av *Avatar) updateGraphic() {
@@ -309,7 +278,8 @@ func (av *Avatar) updateGraphic() {
 			continue
 		}
 		if !av.Equipment().Equiped(eit) {
-			av.unequip(ig)
+			av.removeItemGraphic(ig)
+			delete(av.eqItems, ig.ID()+ig.Serial())
 		}
 	}
 	// Clear effects.
@@ -358,7 +328,8 @@ func (av *Avatar) updateGraphic() {
 			continue
 		}
 		itemGraphic := NewItemGraphic(it, itemGData)
-		av.equip(itemGraphic)
+		av.addItemGraphic(itemGraphic)
+		av.eqItems[itemGraphic.ID()+itemGraphic.Serial()] = itemGraphic
 	}
 	// Effects.
 	for _, e := range av.Character.Effects() {
@@ -383,6 +354,37 @@ func (av *Avatar) updateGraphic() {
 		}
 		skillGraphic := NewSkillGraphic(s, data)
 		av.skills[s.ID()+s.Serial()] = skillGraphic
+	}
+}
+
+// addItemGraphic adds item graphic to avatar.
+func (av *Avatar) addItemGraphic(gItem *ItemGraphic) {
+	sprite := av.spritesheet(gItem.Spritesheets())
+	if sprite == nil {
+		return
+	}
+	tex := graphic.AvatarSpritesheets[sprite.Texture]
+	if tex == nil {
+		log.Err.Printf("avatar: %s#%s: item texture not found: %s",
+			av.ID(), av.Serial(), sprite.Texture)
+		return
+	}
+	switch gItem.Item.(type) {
+	case *item.Weapon:
+		av.sprite.SetWeapon(tex)
+	case *item.Armor:
+		av.sprite.SetTorso(tex)
+	}
+}
+
+// removeItemGraphic removes item graphic from
+// avatar.
+func (av *Avatar) removeItemGraphic(gItem *ItemGraphic) {
+	switch gItem.Item.(type) {
+	case *item.Weapon:
+		av.sprite.SetWeapon(nil)
+	case *item.Armor:
+		av.sprite.SetTorso(nil)
 	}
 }
 
@@ -447,7 +449,7 @@ func (av *Avatar) castingSpell() bool {
 
 // spritesheet selects proper spritesheet for avatar from
 // specified slice and returns its texture.
-func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
+func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) *res.SpritesheetData {
 	for _, s := range sprs {
 		if s.Race != "*" {
 			race := flameres.Race(s.Race)
@@ -461,7 +463,7 @@ func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) pixel.Picture {
 				continue
 			}
 		}
-		return s.Texture
+		return s
 	}
 	return nil
 }

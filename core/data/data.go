@@ -50,6 +50,7 @@ const (
 	GUIModulePath   = "gui"
 	SavesModulePath = GUIModulePath + "/saves"
 	SaveFileExt     = ".savegui"
+	ErrorIcon       = "unknown.png"
 )
 
 var (
@@ -194,19 +195,6 @@ func Map(areaDir string) (*tmx.Map, error) {
 		return nil, fmt.Errorf("unable to read tmx file: %v", err)
 	}
 	return tmxMap, nil
-}
-
-// ErrorItemGraphic returns error graphic for item.
-func ErrorItemGraphic() (*res.ItemGraphicData, error) {
-	icon := graphic.Icons["unknown.png"]
-	if icon == nil {
-		return nil, fmt.Errorf("unable to retrieve error icon")
-	}
-	igd := res.ItemGraphicData{
-		IconPic:  icon,
-		MaxStack: 100,
-	}
-	return &igd, nil
 }
 
 // ScriptsDir returns all scripts from directory with

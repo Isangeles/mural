@@ -23,23 +23,17 @@
 
 package res
 
-import (
-	"github.com/faiface/pixel"
-)
-
 // Struct for item graphic data.
 type ItemGraphicData struct {
-	ItemID          string
-	IconPic         pixel.Picture
-	MaxStack        int
-	Spritesheets    []*SpritesheetData
+	ItemID       string
+	Icon         string
+	MaxStack     int
+	Spritesheets []*SpritesheetData
 }
 
 // Struct for avatar spritesheet data.
 type SpritesheetData struct {
-	Texture pixel.Picture
+	Texture string
 	Race    string
 	Gender  string
 }
-
-

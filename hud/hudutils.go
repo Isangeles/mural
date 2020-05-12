@@ -33,6 +33,8 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -73,5 +75,14 @@ func (hud *HUD) RunScript(s *ash.Script) {
 	if err != nil {
 		log.Err.Printf("ci: fail to run script: %v", err)
 		return
+	}
+}
+
+// itemErrorGraphic returns error graphic data for specified item.
+func itemErrorGraphic(it item.Item) *res.ItemGraphicData {
+	return &res.ItemGraphicData{
+		ItemID:   it.ID(),
+		Icon:     data.ErrorIcon,
+		MaxStack: 100,
 	}
 }

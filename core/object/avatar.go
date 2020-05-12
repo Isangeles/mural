@@ -102,6 +102,9 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 			av.sprite = internal.NewAvatarSprite(torsoPic, headPic)
 			av.torsoName = data.Torso
 			av.headName = data.Head
+		} else {
+			log.Err.Printf("avatar: %s#%s: sprite textures not found",
+				av.ID(), av.Serial())
 		}
 	}
 	chatParams := mtk.Params{

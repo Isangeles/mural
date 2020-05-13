@@ -66,18 +66,18 @@ type Avatar struct {
 
 // Type for avatar animations
 // types.
-type AvatarAnimType int
+type AvatarAnimType string
 
 const (
 	// Animation types.
-	AvatarIdle AvatarAnimType = iota
-	AvatarMove
-	AvatarSpellCast
-	AvatarCraftCast
-	AvatarMelee
-	AvatarShoot
-	AvatarKneel
-	AvatarLie
+	AvatarIdle      AvatarAnimType = AvatarAnimType("idle")
+	AvatarMove                     = AvatarAnimType("move")
+	AvatarSpellCast                = AvatarAnimType("spell")
+	AvatarCraftCast                = AvatarAnimType("craft")
+	AvatarMelee                    = AvatarAnimType("melee")
+	AvatarShoot                    = AvatarAnimType("shoot")
+	AvatarKneel                    = AvatarAnimType("kneel")
+	AvatarLie                      = AvatarAnimType("lie")
 	// Chat popup visibility time.
 	chatTimeMax = 2000
 )

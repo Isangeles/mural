@@ -28,5 +28,5 @@ type SkillGraphicData struct {
 	SkillID         string
 	Icon            string
 	ActivationAudio string
-	ActivationAnim  int
+	ActivationAnim  string
 }

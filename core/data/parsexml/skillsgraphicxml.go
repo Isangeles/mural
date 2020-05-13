@@ -87,12 +87,11 @@ func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 // buildSkillGraphicData creates skill graphic data from specified
 // skill XML data.
 func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error) {
-	activationAnim := UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
 	skillData := res.SkillGraphicData{
 		SkillID:         xmlSkill.ID,
 		Icon:            xmlSkill.Icon,
 		ActivationAudio: xmlSkill.Audio.Activation,
-		ActivationAnim:  int(activationAnim),
+		ActivationAnim:  xmlSkill.Animations.Activation,
 	}
 	return &skillData, nil
 }

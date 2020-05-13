@@ -26,33 +26,48 @@ package object
 import (
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/module/objects"
 	flameobject "github.com/isangeles/flame/module/object"
+	"github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for graphical representation
 // of area object.
 type ObjectGraphic struct {
 	*flameobject.Object
-	data     *res.ObjectGraphicData
-	sprite   *mtk.Animation
-	hovered  bool
-	silenced bool
-	effects  map[string]*EffectGraphic
-	items    map[string]*ItemGraphic
+	sprite       *mtk.Animation
+	portrait     pixel.Picture
+	spriteName   string
+	portraitName string
+	hovered      bool
+	silenced     bool
+	effects      map[string]*EffectGraphic
+	items        map[string]*ItemGraphic
 }
 
-// NewObject creates new graphical wrapper for specified object.
+// NewObjectGraphic creates new graphical wrapper for specified object.
 func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *ObjectGraphic {
 	og := new(ObjectGraphic)
 	og.Object = ob
-	og.data = data
 	// Sprite.
-	og.sprite = mtk.NewAnimation(buildSpriteFrames(data.SpritePic), 2)
+	spritePic := graphic.ObjectSpritesheets[data.Sprite]
+	if spritePic != nil {
+		og.sprite = mtk.NewAnimation(buildSpriteFrames(spritePic), 2)
+		og.spriteName = data.Sprite
+	} else {
+		log.Err.Printf("object: %s#%s: sprite texture not found: %s", og.ID(),
+			og.Serial(), data.Sprite)
+	}
+	// Portrait.
+	og.portrait = graphic.Portraits[data.Portrait]
+	if og.portrait != nil {
+		og.portraitName = data.Portrait
+	}
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
@@ -82,7 +97,7 @@ func (og *ObjectGraphic) DrawArea() pixel.Rect {
 
 // Portrait returns portrait picture.
 func (og *ObjectGraphic) Portrait() pixel.Picture {
-	return og.data.PortraitPic
+	return og.portrait
 }
 
 // Position return object position in form of

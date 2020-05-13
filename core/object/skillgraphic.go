@@ -31,32 +31,46 @@ import (
 	"github.com/isangeles/flame/module/skill"
 
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/data/res/audio"
+	"github.com/isangeles/mural/core/data/res/graphic"
 )
 
 // Graphical wrapper for skills.
 type SkillGraphic struct {
 	*skill.Skill
-	data           *res.SkillGraphicData
-	activationAnim AvatarAnimType
+	icon                pixel.Picture
+	activationAudio     *beep.Buffer
+	iconName            string
+	activationAudioName string
+	activationAnim      AvatarAnimType
 }
 
 // NewSkillGraphic creates new graphical wrapper for specified skill.
 func NewSkillGraphic(skill *skill.Skill, data *res.SkillGraphicData) *SkillGraphic {
 	sg := new(SkillGraphic)
 	sg.Skill = skill
-	sg.data = data
+	// Icon.
+	sg.icon = graphic.Icons[data.Icon]
+	if sg.icon != nil {
+		sg.iconName = data.Icon
+	}
+	// Activation effect.
+	sg.activationAudio = audio.Effects[data.ActivationAudio]
+	if sg.activationAudio != nil {
+		sg.activationAudioName = data.ActivationAudio
+	}
 	sg.activationAnim = AvatarAnimType(data.ActivationAnim)
 	return sg
 }
 
 // Icon returns skill icon sprite.
 func (sg *SkillGraphic) Icon() pixel.Picture {
-	return sg.data.IconPic
+	return sg.icon
 }
 
 // AudioEffect returns skill audio effect.
 func (sg *SkillGraphic) ActivationAudio() *beep.Buffer {
-	return sg.data.ActivationAudio
+	return sg.activationAudio
 }
 
 // ActivationAnim returns skill activation animation.

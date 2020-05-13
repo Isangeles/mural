@@ -1,7 +1,7 @@
 /*
  * skillgraphic.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,10 @@
 
 package res
 
-import (
-	"github.com/faiface/pixel"
-
-	"github.com/faiface/beep"
-)
-
 // Struct for skill graphical data.
 type SkillGraphicData struct {
 	SkillID         string
-	IconPic         pixel.Picture
-	ActivationAudio *beep.Buffer
+	Icon            string
+	ActivationAudio string
 	ActivationAnim  int
 }

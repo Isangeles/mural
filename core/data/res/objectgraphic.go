@@ -1,7 +1,7 @@
 /*
  * objectgraphic.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,10 @@
 
 package res
 
-import (
-	"github.com/faiface/pixel"
-)
-
 // Struct for object graphic data.
 type ObjectGraphicData struct {
-	ID           string
-	Serial       string
-	PortraitName string
-	SpriteName   string
-	PortraitPic  pixel.Picture
-	SpritePic    pixel.Picture
+	ID       string
+	Serial   string
+	Portrait string
+	Sprite   string
 }

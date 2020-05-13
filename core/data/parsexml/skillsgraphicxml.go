@@ -30,8 +30,6 @@ import (
 	"io/ioutil"
 
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/audio"
-	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 
@@ -89,24 +87,12 @@ func UnmarshalSkillGraphics(data io.Reader) ([]*res.SkillGraphicData, error) {
 // buildSkillGraphicData creates skill graphic data from specified
 // skill XML data.
 func buildSkillGraphicData(xmlSkill *SkillGraphic) (*res.SkillGraphicData, error) {
-	icon := graphic.Icons[xmlSkill.Icon]
-	if icon == nil {
-		return nil, fmt.Errorf("unable to retrieve skill icon: %s",
-			xmlSkill.Icon)
-	}
 	activationAnim := UnmarshalAvatarAnim(xmlSkill.Animations.Activation)
 	skillData := res.SkillGraphicData{
-		SkillID:        xmlSkill.ID,
-		IconPic:        icon,
-		ActivationAnim: int(activationAnim),
-	}
-	if xmlSkill.Audio.Activation != "" {
-		activeAudio := audio.Effects[xmlSkill.Audio.Activation]
-		if activeAudio == nil {
-			return nil, fmt.Errorf("skill activation audio not found: %s",
-				xmlSkill.Audio.Activation)
-		}
-		skillData.ActivationAudio = activeAudio
+		SkillID:         xmlSkill.ID,
+		Icon:            xmlSkill.Icon,
+		ActivationAudio: xmlSkill.Audio.Activation,
+		ActivationAnim:  int(activationAnim),
 	}
 	return &skillData, nil
 }

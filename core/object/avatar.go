@@ -89,7 +89,9 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.Character = char
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]
-	av.portraitName = data.Portrait
+	if av.portrait != nil {
+		av.portraitName = data.Portrait
+	}
 	// Sprite.
 	fullBodyPic := graphic.AvatarSpritesheets[data.FullBody]
 	if fullBodyPic != nil {

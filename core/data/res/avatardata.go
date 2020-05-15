@@ -23,6 +23,16 @@
 
 package res
 
+import (
+	"encoding/xml"
+)
+
+// Struct for avatars data.
+type AvatarsData struct {
+	XMLName xml.Name     `xml:"avatars" json:"-"`
+	Avatars []AvatarData `xml:"avatar" json:"avatars"`
+}
+
 // Struct for avatar data.
 type AvatarData struct {
 	ID       string `xml:"id,attr" json:"id"`
@@ -30,5 +40,5 @@ type AvatarData struct {
 	Portrait string `xml:"portrait,attr" json:"portrait"`
 	Head     string `xml:"head,attr" json:"head"`
 	Torso    string `xml:"torso,attr" json:"torso"`
-	FullBody string `xml:"full-body,attr" json:"full-body"`
+	FullBody string `xml:"fullbody,attr" json:"full-body"`
 }

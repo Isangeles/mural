@@ -114,9 +114,9 @@ func Skills() (data []*SkillGraphicData) {
 
 // SetAvatars sets specified data as
 // avatars resources.
-func SetAvatars(data []*AvatarData) {
-	for _, d := range data {
-		avatars[d.ID] = d
+func SetAvatars(data []AvatarData) {
+	for i, _ := range data {
+		avatars[data[i].ID] = &data[i]
 	}
 }
 

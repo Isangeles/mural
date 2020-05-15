@@ -145,7 +145,7 @@ func LoadChapterData(chapter *module.Chapter) error {
 	// Avatars.
 	path := filepath.Join(chapter.Module().Conf().Path, GUIModulePath, "chapters",
 		chapter.Conf().ID, "npc")
-	avs, err := ImportAvatarsDataDir(path)
+	avs, err := ImportAvatarsDir(path)
 	if err != nil {
 		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}

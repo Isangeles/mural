@@ -25,6 +25,7 @@ package data
 
 import (
 	"bufio"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -33,7 +34,6 @@ import (
 
 	"github.com/isangeles/flame/module/character"
 
-	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -43,36 +43,41 @@ var (
 	AvatarsFileExt = ".avatars"
 )
 
-// ImportAvatarsData imports all avatars data for specified characters
+// ImportAvatars imports all avatars data for specified characters
 // from avatar file with specified path.
-func ImportAvatarsData(path string) ([]*res.AvatarData, error) {
-	f, err := os.Open(path)
+func ImportAvatars(path string) ([]res.AvatarData, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("xml: %s: unable to open avatars file: %v",
-			path, err)
+		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
-	avatars, err := parsexml.UnmarshalAvatars(f)
+	defer file.Close()
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("xml: %s: unable to parse xml: %v",
-			path, err)
+		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	return avatars, nil
+	data := new(res.AvatarsData)
+	err = xml.Unmarshal(buf, data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal XML data: %v",
+			err)
+	}
+	return data.Avatars, nil
 }
 
-// ImportAvatarsDataDir imports all avatars data from avatars files
+// ImportAvatarsDir imports all avatars data from avatars files
 // in directory with specified path.
-func ImportAvatarsDataDir(dirPath string) ([]*res.AvatarData, error) {
+func ImportAvatarsDir(dirPath string) ([]res.AvatarData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	avsData := make([]*res.AvatarData, 0)
+	avsData := make([]res.AvatarData, 0)
 	for _, fInfo := range files {
 		if !strings.HasSuffix(fInfo.Name(), AvatarsFileExt) {
 			continue
 		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
-		impAvs, err := ImportAvatarsData(avFilePath)
+		impAvs, err := ImportAvatars(avFilePath)
 		if err != nil {
 			log.Err.Printf("data avatar import: %s: unable to parse char file: %v",
 				avFilePath, err)
@@ -110,10 +115,14 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 // ExportAvatars exports specified avatars to file
 // with specified path.
 func ExportAvatars(avs []*object.Avatar, basePath string) error {
-	// Marshal avatars to base data.
-	xml, err := parsexml.MarshalAvatars(avs)
+	// Marshal avatars.
+	data := new(res.AvatarsData)
+	for _, av := range avs {
+		data.Avatars = append(data.Avatars, av.Data())
+	}
+	xml, err := xml.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("unable to marshal avatars: %v", err)
+		return fmt.Errorf("unable to marshal XML data: %v", err)
 	}
 	// Check whether file path ends with proper extension.
 	if !strings.HasSuffix(basePath, AvatarsFileExt) {
@@ -127,7 +136,7 @@ func ExportAvatars(avs []*object.Avatar, basePath string) error {
 	defer f.Close()
 	// Write data to base file.
 	w := bufio.NewWriter(f)
-	w.WriteString(xml)
+	w.Write(xml)
 	w.Flush()
 	return nil
 }

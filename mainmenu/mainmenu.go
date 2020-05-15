@@ -281,7 +281,7 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 	if err != nil {
 		return fmt.Errorf("fail to import characters: %v", err)
 	}
-	avsData, err := data.ImportAvatarsDataDir(path)
+	avsData, err := data.ImportAvatarsDir(path)
 	if err != nil {
 		return fmt.Errorf("fail to import avatars: %v", err)
 	}
@@ -290,7 +290,7 @@ func (mm *MainMenu) ImportPlayableChars(path string) error {
 			if avData.ID != charData.ID {
 				continue
 			}
-			pc := PlayableCharData{&charData, avData}
+			pc := PlayableCharData{&charData, &avData}
 			mm.playableChars = append(mm.playableChars, pc)
 		}
 	}

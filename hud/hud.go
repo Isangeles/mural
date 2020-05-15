@@ -411,7 +411,8 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 	// Players.
 	for _, pc := range hud.Players() {
 		pcData := new(res.PlayerSave)
-		pcData.Avatar = pc.Data()
+		pcAvatarData := pc.Data()
+		pcData.Avatar = &pcAvatarData
 		// Layout.
 		layout := hud.layouts[pc.SerialID()]
 		if layout != nil {

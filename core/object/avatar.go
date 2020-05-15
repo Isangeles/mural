@@ -232,7 +232,7 @@ func (av *Avatar) Skills() (skills []*SkillGraphic) {
 }
 
 // Data returns avatar graphical data.
-func (av *Avatar) Data() *res.AvatarData {
+func (av *Avatar) Data() res.AvatarData {
 	data := res.AvatarData{
 		ID:       av.ID(),
 		Serial:   av.Serial(),
@@ -241,7 +241,7 @@ func (av *Avatar) Data() *res.AvatarData {
 		Head:     av.headName,
 		FullBody: av.fullBodyName,
 	}
-	return &data
+	return data
 }
 
 // Silenced checks if audio effects are silenced.

@@ -410,35 +410,47 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 	sav := new(res.GUISave)
 	// Players.
 	for _, pc := range hud.Players() {
-		pcData := new(res.PlayerSave)
-		pcAvatarData := pc.Data()
-		pcData.Avatar = &pcAvatarData
+		pcData := res.PlayerSave{Avatar: pc.Data()}
 		// Layout.
 		layout := hud.layouts[pc.SerialID()]
 		if layout != nil {
-			pcData.InvSlots = layout.InvSlots()
-			pcData.BarSlots = layout.BarSlots()
+			for serialID, slot := range layout.InvSlots() {
+				slotSave := res.SlotSave{slot, serialID}
+				pcData.InvSlots = append(pcData.InvSlots, slotSave)
+			}
+			for serialID, slot := range layout.BarSlots() {
+				slotSave := res.SlotSave{slot, serialID}
+				pcData.BarSlots = append(pcData.BarSlots, slotSave)
+			}
 		}
-		sav.PlayersData = append(sav.PlayersData, pcData)
+		sav.Players = append(sav.Players, pcData)
 	}
 	// Camera XY position.
-	sav.CameraPosX = hud.Camera().Position().X
-	sav.CameraPosY = hud.Camera().Position().Y
+	sav.Camera.X = hud.Camera().Position().X
+	sav.Camera.Y = hud.Camera().Position().Y
 	return sav
 }
 
 // LoadGUISave load specified saved GUI state.
 func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 	// Players.
-	for _, pcd := range save.PlayersData {
+	for _, pcd := range save.Players {
 		layout := NewLayout()
-		layout.SetInvSlots(pcd.InvSlots)
-		layout.SetBarSlots(pcd.BarSlots)
+		slotsLayout := make(map[string]int)
+		for _, s := range pcd.InvSlots {
+			slotsLayout[s.Content] = s.ID
+		}
+		layout.SetInvSlots(slotsLayout)
+		slotsLayout = make(map[string]int)
+		for _, s := range pcd.BarSlots {
+			slotsLayout[s.Content] = s.ID
+		}
+		layout.SetBarSlots(slotsLayout)
 		layoutKey := pcd.Avatar.ID + pcd.Avatar.Serial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.
-	hud.camera.SetPosition(pixel.V(save.CameraPosX, save.CameraPosY))
+	hud.camera.SetPosition(pixel.V(save.Camera.X, save.Camera.Y))
 	// Reload UI.
 	hud.Reload()
 	return nil

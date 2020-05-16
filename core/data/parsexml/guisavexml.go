@@ -81,28 +81,28 @@ func MarshalGUISave(save *res.GUISave) (string, error) {
 	xmlGUI.Name = save.Name
 	xmlGUI.Players = make([]Player, 0)
 	// Players.
-	for _, pcData := range save.PlayersData {
+	for _, pcData := range save.Players {
 		xmlPC := new(Player)
 		// Avatar.
-		xmlPC.Avatar = buildAvatarDataXML(pcData.Avatar)
+		xmlPC.Avatar = buildAvatarDataXML(&pcData.Avatar)
 		// Layouts.
-		for serial, slot := range pcData.InvSlots {
+		for _, s := range pcData.InvSlots {
 			xmlSlot := Slot{
-				ID:      slot,
-				Content: serial,
+				ID:      s.ID,
+				Content: s.Content,
 			}
 			xmlPC.Inventory.Slots = append(xmlPC.Inventory.Slots, xmlSlot)
 		}
-		for serial, slot := range pcData.BarSlots {
+		for _, s := range pcData.BarSlots {
 			xmlSlot := Slot{
-				ID:      slot,
-				Content: serial,
+				ID:      s.ID,
+				Content: s.Content,
 			}
 			xmlPC.MenuBar.Slots = append(xmlPC.MenuBar.Slots, xmlSlot)
 		}
 		xmlGUI.Players = append(xmlGUI.Players, *xmlPC)
 	}
-	xmlGUI.Camera.X, xmlGUI.Camera.Y = save.CameraPosX, save.CameraPosY
+	xmlGUI.Camera.X, xmlGUI.Camera.Y = save.Camera.X, save.Camera.Y
 	out, err := xml.Marshal(xmlGUI)
 	if err != nil {
 		return "", fmt.Errorf("fail to marshal xml data: %v", err)
@@ -132,27 +132,27 @@ func buildGUISave(xmlSave *Save) (*res.GUISave, error) {
 	save.Name = xmlSave.Name
 	// Players.
 	for _, xmlPC := range xmlSave.Players {
-		pcData := new(res.PlayerSave)
+		var pcData res.PlayerSave
 		// Avatar.
 		avData, err := buildAvatarData(&xmlPC.Avatar)
 		if err != nil {
 			return nil, fmt.Errorf("player: %s#%s: fail to load player avatar: %v",
 				pcData.Avatar.ID, pcData.Avatar.Serial, err)
 		}
-		pcData.Avatar = avData
+		pcData.Avatar = *avData
 		// Inventory layout.
-		pcData.InvSlots = make(map[string]int)
 		for _, xmlSlot := range xmlPC.Inventory.Slots {
-			pcData.InvSlots[xmlSlot.Content] = xmlSlot.ID
+			slotSave := res.SlotSave{xmlSlot.ID, xmlSlot.Content}
+			pcData.InvSlots = append(pcData.InvSlots, slotSave)
 		}
-		save.PlayersData = append(save.PlayersData, pcData)
+		save.Players = append(save.Players, pcData)
 		// Menu bar layout.
-		pcData.BarSlots = make(map[string]int)
 		for _, xmlSlot := range xmlPC.MenuBar.Slots {
-			pcData.BarSlots[xmlSlot.Content] = xmlSlot.ID
+			slotSave := res.SlotSave{xmlSlot.ID, xmlSlot.Content}
+			pcData.BarSlots = append(pcData.BarSlots, slotSave)
 		}
 	}
 	// Camera position.
-	save.CameraPosX, save.CameraPosY = xmlSave.Camera.X, xmlSave.Camera.Y
+	save.Camera.X, save.Camera.Y = xmlSave.Camera.X, xmlSave.Camera.Y
 	return save, nil
 }

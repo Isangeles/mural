@@ -268,14 +268,14 @@ func LoadSavedGame(saveName string) {
 		return
 	}
 	pcs := make([]*object.Avatar, 0)
-	for _, pcd := range guisav.PlayersData {
+	for _, pcd := range guisav.Players {
 		char := game.Module().Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
 		if char == nil {
 			log.Err.Printf("load saved game: unable to retrieve pc character: %s#%s",
 				pcd.Avatar.ID, pcd.Avatar.Serial)
 			continue
 		}
-		av := object.NewAvatar(char, pcd.Avatar)
+		av := object.NewAvatar(char, &pcd.Avatar)
 		pcs = append(pcs, av)
 	}
 	// Enter game.

@@ -25,13 +25,13 @@ package data
 
 import (
 	"bufio"
+	"encoding/xml"
 	"fmt"
 	"os"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
@@ -44,12 +44,18 @@ func ImportGUISave(path string) (*res.GUISave, error) {
 			err)
 	}
 	defer file.Close()
-	save, err := parsexml.UnmarshalGUISave(file)
+	buf, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read save file: %v",
+			err)
+	}
+	data := new(res.GUISave)
+	err = xml.Unmarshal(buf, data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal save data: %v",
 			err)
 	}
-	return save, nil
+	return data, nil
 }
 
 // ImportsGUISavesDir imports all saved GUIs from save files in
@@ -79,12 +85,14 @@ func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
 // ExportGUISave saves GUI state to file with specified name
 // in directory with specified path.
 func ExportGUISave(gui *res.GUISave, path string) error {
+	// Marshal GUI.
 	gui.Name = filepath.Base(path)
-	xml, err := parsexml.MarshalGUISave(gui)
+	xml, err := xml.Marshal(gui)
 	if err != nil {
 		return fmt.Errorf("unable to marshal save: %v",
 			err)
 	}
+	// Create save file.
 	err = os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
 		return fmt.Errorf("unable to create save directory: %v",
@@ -96,8 +104,9 @@ func ExportGUISave(gui *res.GUISave, path string) error {
 			err)
 	}
 	defer file.Close()
+	// Write save.
 	w := bufio.NewWriter(file)
-	w.WriteString(xml)
+	w.Write(xml)
 	w.Flush()
 	log.Dbg.Printf("gui state saved in: %s", path)
 	return nil

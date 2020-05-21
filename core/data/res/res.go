@@ -122,9 +122,9 @@ func SetAvatars(data []AvatarData) {
 
 // SetObjects sets specified data as objects graphic
 // recources data.
-func SetObjects(data []*ObjectGraphicData) {
-	for _, d := range data {
-		objects[d.ID] = d
+func SetObjects(data []ObjectGraphicData) {
+	for i, _ := range data {
+		objects[data[i].ID] = &data[i]
 	}
 }
 

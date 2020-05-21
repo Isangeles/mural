@@ -157,7 +157,10 @@ func LoadChapterData(chapter *module.Chapter) error {
 	if err != nil {
 		return fmt.Errorf("unable to import objects graphics: %v", err)
 	}
-	res.SetObjects(append(res.Objects(), obGraphics...))
+	for _, ob := range res.Objects() {
+		obGraphics = append(obGraphics, *ob)
+	}
+	res.SetObjects(obGraphics)
 	return nil
 }
 

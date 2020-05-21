@@ -23,10 +23,20 @@
 
 package res
 
+import (
+	"encoding/xml"
+)
+
+// Struct for objects graphic data.
+type ObjectsGraphicData struct {
+	XMLName xml.Name            `xml:"object-graphics" json:"objects"`
+	Objects []ObjectGraphicData `xml:"object-graphic" json:"objects"`
+}
+
 // Struct for object graphic data.
 type ObjectGraphicData struct {
-	ID       string
-	Serial   string
-	Portrait string
-	Sprite   string
+	ID       string `xml:"id,attr" json:"id"`
+	Serial   string `xml:"serial,attr" json:"serial"`
+	Portrait string `xml:"portrait,attr" json:"portrait"`
+	Sprite   string `xml:"sprite,attr" json:"sprite"`
 }

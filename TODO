@@ -10,8 +10,6 @@ MAJOR:
 * Documentation for gui directories: chapters, effects, font, items, objects, portraits,
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
-* Remove parsexml package, use encoding/xml and structs from res to marshal/unmarshal
-  data files
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window

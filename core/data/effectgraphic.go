@@ -24,13 +24,13 @@
 package data
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
@@ -40,27 +40,33 @@ var (
 )
 
 // ImportEffectsGraphics imports all effects graphics from
-// base file with specified path.
-func ImportEffectsGraphics(path string) ([]*res.EffectGraphicData, error) {
-	f, err := os.Open(path)
+// data file with specified path.
+func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open base file: %v", err)
+		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
-	effects, err := parsexml.UnmarshalEffectGraphics(f)
+	defer file.Close()
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse xml: %v", err)
+		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	return effects, nil
+	data := new(res.EffectGraphicsData)
+	err = xml.Unmarshal(buf, data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
+	}
+	return data.Effects, nil
 }
 
 // ImportEffectsGraphicsDir imports all files with effects graphics from
 // directory with specified path.
-func ImportEffectsGraphicsDir(path string) ([]*res.EffectGraphicData, error) {
+func ImportEffectsGraphicsDir(path string) ([]res.EffectGraphicData, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	effects := make([]*res.EffectGraphicData, 0)
+	effects := make([]res.EffectGraphicData, 0)
 	for _, finfo := range files {
 		if !strings.HasSuffix(finfo.Name(), EffectGraphicsFileExt) {
 			continue

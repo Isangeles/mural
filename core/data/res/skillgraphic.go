@@ -23,10 +23,19 @@
 
 package res
 
+import (
+	"encoding/xml"
+)
+
+type SkillGraphicsData struct {
+	XMLName xml.Name           `xml:"skill-graphics" json:"-"`
+	Skills  []SkillGraphicData `xml:"skill-graphic" json:"skill-graphics"`
+}
+
 // Struct for skill graphical data.
 type SkillGraphicData struct {
-	SkillID         string
-	Icon            string
-	ActivationAudio string
-	ActivationAnim  string
+	SkillID         string `xml:"id,attr" json:"id"`
+	Icon            string `xml:"icon,attr" json:"icon"`
+	ActivationAudio string `xml:"activation-audio,attr" json:"activation-audio"`
+	ActivationAnim  string `xml:"activation-anim,attr" json:"actvation-anim"`
 }

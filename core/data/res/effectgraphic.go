@@ -23,8 +23,18 @@
 
 package res
 
+import (
+	"encoding/xml"
+)
+
+// Struct for effect graphics data.
+type EffectGraphicsData struct {
+	XMLName xml.Name            `xml:"effect-graphics" json:"-"`
+	Effects []EffectGraphicData `xml:"effect-graphic" json:"effect-graphics"`
+}
+
 // Struct for effect graphic data.
 type EffectGraphicData struct {
-	EffectID string
-	Icon     string
+	EffectID string `xml:"id,attr" json:"id"`
+	Icon     string `xml:"icon,attr" json:"icon"`
 }

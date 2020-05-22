@@ -24,13 +24,13 @@
 package data
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
@@ -40,27 +40,33 @@ var (
 )
 
 // ImportItemsGraphics imports all items grpahics from
-// base file with specified path.
-func ImportItemsGraphics(path string) ([]*res.ItemGraphicData, error) {
-	f, err := os.Open(path)
+// data file with specified path.
+func ImportItemsGraphics(path string) ([]res.ItemGraphicData, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open base file: %s", err)
+		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
-	items, err := parsexml.UnmarshalItemGraphics(f)
+	defer file.Close()
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse xml: %v", err)
+		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	return items, nil
+	data := new(res.ItemGraphicsData)
+	err = xml.Unmarshal(buf, data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
+	}
+	return data.Items, nil
 }
 
 // ImportItemsGraphicsDir imports all files with items graphics from
 // directory with specified path.
-func ImportItemsGraphicsDir(dirPath string) ([]*res.ItemGraphicData, error) {
+func ImportItemsGraphicsDir(dirPath string) ([]res.ItemGraphicData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir:%v", err)
 	}
-	items := make([]*res.ItemGraphicData, 0)
+	items := make([]res.ItemGraphicData, 0)
 	for _, fInfo := range files {
 		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
 			continue

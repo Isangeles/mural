@@ -130,24 +130,24 @@ func SetObjects(data []ObjectGraphicData) {
 
 // SetItems sets specified data as items
 // resources data.
-func SetItems(data []*ItemGraphicData) {
-	for _, d := range data {
-		items[d.ItemID] = d
+func SetItems(data []ItemGraphicData) {
+	for i, _ := range data {
+		items[data[i].ItemID] = &data[i]
 	}
 }
 
 // SetEffects sets specified data as effects
 // resources data.
-func SetEffects(data []*EffectGraphicData) {
-	for _, d := range data {
-		effects[d.EffectID] = d
+func SetEffects(data []EffectGraphicData) {
+	for i, _ := range data {
+		effects[data[i].EffectID] = &data[i]
 	}
 }
 
 // SetSkills sets specified data as skills
 // resources data.
-func SetSkills(data []*SkillGraphicData) {
-	for _, d := range data {
-		skills[d.SkillID] = d
+func SetSkills(data []SkillGraphicData) {
+	for i, _ := range data {
+		skills[data[i].SkillID] = &data[i]
 	}
 }

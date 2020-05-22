@@ -24,13 +24,13 @@
 package data
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/parsexml"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
@@ -40,27 +40,33 @@ var (
 )
 
 // ImportSkillsGraphics imports all skills graphics from
-// base file with specified path.
-func ImportSkillsGraphics(path string) ([]*res.SkillGraphicData, error) {
-	f, err := os.Open(path)
+// data file with specified path.
+func ImportSkillsGraphics(path string) ([]res.SkillGraphicData, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open base file: %v", err)
+		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
-	skills, err := parsexml.UnmarshalSkillGraphics(f)
+	defer file.Close()
+	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse xml: %v", err)
+		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	return skills, nil
+	data := new(res.SkillGraphicsData)
+	err = xml.Unmarshal(buf, data)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
+	}
+	return data.Skills, nil
 }
 
 // ImportSkillsGraphicsDir imports all files with skills graphics from
 // directory with specified path.
-func ImportSkillsGraphicsDir(path string) ([]*res.SkillGraphicData, error) {
+func ImportSkillsGraphicsDir(path string) ([]res.SkillGraphicData, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	skills := make([]*res.SkillGraphicData, 0)
+	skills := make([]res.SkillGraphicData, 0)
 	for _, finfo := range files {
 		if !strings.HasSuffix(finfo.Name(), SkillGraphicsFileExt) {
 			continue

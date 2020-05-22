@@ -23,17 +23,27 @@
 
 package res
 
+import (
+	"encoding/xml"
+)
+
+// Struct for item graphics data.
+type ItemGraphicsData struct {
+	XMLName xml.Name          `xml:"item-graphics" json:"-"`
+	Items   []ItemGraphicData `xml:"item-graphic" json:"item-graphics"`
+}
+
 // Struct for item graphic data.
 type ItemGraphicData struct {
-	ItemID       string
-	Icon         string
-	MaxStack     int
-	Spritesheets []*SpritesheetData
+	ItemID       string             `xml:"id,attr" json:"id"`
+	Icon         string             `xml:"icon,attr" json:"icon"`
+	MaxStack     int                `xml:"stack,attr" json:"stack"`
+	Spritesheets []*SpritesheetData `xml:"spritesheets>spritesheet" json:"spritesheets"`
 }
 
 // Struct for avatar spritesheet data.
 type SpritesheetData struct {
-	Texture string
-	Race    string
-	Gender  string
+	Texture string `xml:"texture,attr" json:"texture"`
+	Race    string `xml:"race,attr" json:"race"`
+	Gender  string `xml:"gender,attr" json:"gender"`
 }

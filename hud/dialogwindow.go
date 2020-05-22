@@ -167,6 +167,9 @@ func (dw *DialogWindow) Show(show bool) {
 	if !dw.Opened() {
 		dw.chatBox.Clear()
 		dw.answersList.Clear()
+		if dw.dialog != nil {
+			dw.dialog.Restart()
+		}
 	}
 }
 
@@ -191,7 +194,6 @@ func (dw *DialogWindow) DrawArea() pixel.Rect {
 // SetDialog sets dialog for window.
 func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 	dw.dialog = d
-	dw.dialog.Restart()
 	dw.dialog.SetTarget(dw.hud.ActivePlayer())
 	dw.dialogUpdate()
 }
@@ -207,7 +209,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Print stage text to chat box.
-	text := fmt.Sprintf("[%s]:%s\n", dw.dialog.Owner().Name(), dw.dialog.Stage())
+	text := fmt.Sprintf("[%s]: %s\n", dw.dialog.Owner().Name(), dw.dialog.Stage())
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Select answers.
@@ -220,7 +222,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range answers {
-		answerText := fmt.Sprintf("%d)%s", i, a)
+		answerText := fmt.Sprintf("%d) %s", i, a)
 		dw.answersList.AddItem(answerText, a)
 	}
 }

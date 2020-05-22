@@ -161,9 +161,6 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.ActivePlayer().Targets()[0] != nil {
 		hud.tarFrame.Draw(win, mtk.Matrix().Moved(tarFramePos))
 	}
-	if hud.menu.Opened() {
-		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
-	}
 	if hud.savemenu.Opened() {
 		hud.savemenu.Draw(win, mtk.Matrix().Moved(saveMenuPos))
 	}
@@ -199,6 +196,9 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	}
 	if hud.ActivePlayer().Casting() {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
+	}
+	if hud.menu.Opened() {
+		hud.menu.Draw(win, mtk.Matrix().Moved(menuPos))
 	}
 	// Messages.
 	msgPos := win.Bounds().Center()

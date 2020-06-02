@@ -455,7 +455,7 @@ func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) *res.SpritesheetData 
 	for _, s := range sprs {
 		if s.Race != "*" {
 			race := flameres.Race(s.Race)
-			if race != nil && av.Race().ID() != race.ID {
+			if race == nil || av.Race().ID() != race.ID {
 				continue
 			}
 		}

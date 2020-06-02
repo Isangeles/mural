@@ -153,7 +153,7 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.sexSwitch.SetValues(gens...)
 	// Race switch.
 	races := []mtk.SwitchValue{}
-	for _, r := range flameres.Races() {
+	for _, r := range flameres.Races {
 		if !r.Playable {
 			continue
 		}

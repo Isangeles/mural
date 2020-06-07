@@ -125,11 +125,11 @@ func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, lw.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, lw.Size().Y/2-25))
+	titleTextPos := pixel.V(0, lw.Size().Y/2-mtk.ConvSize(25))
 	lw.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(lw.Size().X/2-20,
-		lw.Size().Y/2-15))
+	closeButtonPos := pixel.V(lw.Size().X/2-mtk.ConvSize(20),
+		lw.Size().Y/2-mtk.ConvSize(15))
 	lw.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	lw.slots.Draw(win, matrix)
@@ -170,7 +170,7 @@ func (lw *LootWindow) Size() pixel.Vec {
 		// TODO: size for draw background.
 		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return lw.bgSpr.Frame().Size()
+	return mtk.ConvVec(lw.bgSpr.Frame().Size())
 }
 
 // DrawArea returns current draw area of window

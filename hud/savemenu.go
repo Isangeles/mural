@@ -137,10 +137,10 @@ func (sm *SaveMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	saveNameMove := pixel.V(0, -mtk.ConvSize(150))
 	sm.saveNameEdit.Draw(win, matrix.Moved(saveNameMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(sm.Size().X/2-20,
-		sm.Size().Y/2-15))
+	closeButtonMove := pixel.V(sm.Size().X/2-mtk.ConvSize(20),
+		sm.Size().Y/2-mtk.ConvSize(15))
 	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonMove))
-	saveButtonMove := mtk.ConvVec(pixel.V(0, -sm.Size().Y/2+30))
+	saveButtonMove := pixel.V(mtk.ConvSize(0), -sm.Size().Y/2+mtk.ConvSize(30))
 	sm.saveButton.Draw(win, matrix.Moved(saveButtonMove))
 }
 
@@ -162,7 +162,7 @@ func (sm *SaveMenu) Size() pixel.Vec {
 		// TODO: menu draw background size.
 		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return sm.bgSpr.Frame().Size()
+	return mtk.ConvVec(sm.bgSpr.Frame().Size())
 }
 
 // DrawArea return menu background draw area.

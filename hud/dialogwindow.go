@@ -133,8 +133,8 @@ func (dw *DialogWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextMove := pixel.V(0, dw.Size().Y/2-mtk.ConvSize(20))
 	dw.titleText.Draw(win.Window, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(dw.Size().X/2-20,
-		dw.Size().Y/2-15))
+	closeButtonPos := pixel.V(dw.Size().X/2-mtk.ConvSize(20),
+		dw.Size().Y/2-mtk.ConvSize(15))
 	dw.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Chat & answers list.
 	chatMove := mtk.MoveTC(dw.Size(), dw.chatBox.Size())
@@ -183,7 +183,7 @@ func (dw *DialogWindow) Size() pixel.Vec {
 	if dw.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(0, 0)) // TODO: draw bg size
 	}
-	return dw.bgSpr.Frame().Size()
+	return mtk.ConvVec(dw.bgSpr.Frame().Size())
 }
 
 // DrawArea returns current draw area.

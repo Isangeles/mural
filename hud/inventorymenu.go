@@ -129,11 +129,11 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win, im.DrawArea(), mainColor)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, im.Size().Y/2-25))
+	titleTextPos := pixel.V(0, im.Size().Y/2-mtk.ConvSize(25))
 	im.titleText.Draw(win, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(im.Size().X/2-20,
-		im.Size().Y/2-15))
+	closeButtonPos := pixel.V(im.Size().X/2-mtk.ConvSize(20),
+		im.Size().Y/2-mtk.ConvSize(15))
 	im.closeButton.Draw(win, matrix.Moved(closeButtonPos))
 	// Slots.
 	im.slots.Draw(win, matrix)
@@ -194,9 +194,9 @@ func (im *InventoryMenu) DrawArea() pixel.Rect {
 func (im *InventoryMenu) Size() pixel.Vec {
 	if im.bgSpr == nil {
 		// TODO: size for draw background.
-		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
+		return mtk.ConvVec(pixel.V(0, 0))
 	}
-	return im.bgSpr.Frame().Size()
+	return mtk.ConvVec(im.bgSpr.Frame().Size())
 }
 
 // insertItems inserts specified items in inventory slots.

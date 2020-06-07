@@ -174,14 +174,14 @@ func (tw *TradeWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win, tw.DrawArea(), mainColor)
 	}
 	// Title & trade value.
-	titleTextMove := mtk.ConvVec(pixel.V(0, tw.Size().Y/2-25))
-	valueTextMove := mtk.ConvVec(pixel.V(-80, -tw.Size().Y/2+30))
+	titleTextMove := pixel.V(mtk.ConvSize(0), tw.Size().Y/2-mtk.ConvSize(25))
+	valueTextMove := pixel.V(mtk.ConvSize(-80), -tw.Size().Y/2+mtk.ConvSize(30))
 	tw.titleText.Draw(win, matrix.Moved(titleTextMove))
 	tw.valueText.Draw(win, matrix.Moved(valueTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(tw.Size().X/2-20,
-		tw.Size().Y/2-15))
-	tradeButtonMove := mtk.ConvVec(pixel.V(50, -tw.Size().Y/2+30))
+	closeButtonMove := pixel.V(tw.Size().X/2-mtk.ConvSize(20),
+		tw.Size().Y/2-mtk.ConvSize(15))
+	tradeButtonMove := pixel.V(mtk.ConvSize(50), -tw.Size().Y/2+mtk.ConvSize(30))
 	tw.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	tw.tradeButton.Draw(win, matrix.Moved(tradeButtonMove))
 	// Slot lists.
@@ -232,7 +232,7 @@ func (tw *TradeWindow) Size() pixel.Vec {
 	if tw.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(250, 350))
 	}
-	return tw.bgSpr.Frame().Size()
+	return mtk.ConvVec(tw.bgSpr.Frame().Size())
 }
 
 // SetSeller sets c as seller.

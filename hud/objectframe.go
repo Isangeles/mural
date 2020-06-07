@@ -150,7 +150,7 @@ func (of *ObjectFrame) Size() pixel.Vec {
 	if of.bgSpr == nil {
 		return pixel.V(mtk.ConvSize(200), mtk.ConvSize(50))
 	}
-	return of.bgSpr.Frame().Size()
+	return mtk.ConvVec(of.bgSpr.Frame().Size())
 }
 
 // DrawArea retruns current frame draw area.

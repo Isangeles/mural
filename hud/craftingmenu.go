@@ -157,8 +157,8 @@ func (cm *CraftingMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextMove := pixel.V(0, cm.Size().Y/2-mtk.ConvSize(25))
 	cm.titleText.Draw(win, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(cm.Size().X/2 - 20,
-		cm.Size().Y/2 - 15))
+	closeButtonMove := pixel.V(cm.Size().X/2 - mtk.ConvSize(20),
+		cm.Size().Y/2 - mtk.ConvSize(15))
 	makeButtonMove := mtk.ConvVec(pixel.V(0, -60))
 	cm.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	cm.makeButton.Draw(win, matrix.Moved(makeButtonMove))
@@ -215,7 +215,7 @@ func (cm *CraftingMenu) Size() pixel.Vec {
 	if cm.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(50, 100))
 	}
-	return cm.bgSpr.Frame().Size()
+	return mtk.ConvVec(cm.bgSpr.Frame().Size())
 }
 
 // insertRecipes adds all specified recipes to crafting

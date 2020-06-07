@@ -128,11 +128,11 @@ func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win.Window, sm.DrawArea(), nil)
 	}
 	// Title.
-	titleTextPos := mtk.ConvVec(pixel.V(0, sm.Size().Y/2-25))
+	titleTextPos := pixel.V(mtk.ConvSize(0), sm.Size().Y/2-mtk.ConvSize(25))
 	sm.titleText.Draw(win.Window, matrix.Moved(titleTextPos))
 	// Buttons.
-	closeButtonPos := mtk.ConvVec(pixel.V(sm.Size().X/2-20,
-		sm.Size().Y/2-15))
+	closeButtonPos := pixel.V(sm.Size().X/2-mtk.ConvSize(20),
+		sm.Size().Y/2-mtk.ConvSize(15))
 	sm.closeButton.Draw(win.Window, matrix.Moved(closeButtonPos))
 	// Slots.
 	slotsPos := pixel.V(mtk.ConvSize(0), mtk.ConvSize(-10))
@@ -190,7 +190,7 @@ func (sm *SkillMenu) Size() pixel.Vec {
 		// TODO: size for draw background.
 		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return sm.bgSpr.Frame().Size()
+	return mtk.ConvVec(sm.bgSpr.Frame().Size())
 }
 
 // insert inserts specified skills in menu slots.

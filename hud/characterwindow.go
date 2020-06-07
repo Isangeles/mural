@@ -113,11 +113,11 @@ func (cw *CharacterWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win, cw.DrawArea(), mainColor)
 	}
 	// Title.
-	titleTextMove := mtk.ConvVec(pixel.V(0, cw.Size().Y/2-25))
+	titleTextMove := pixel.V(0, cw.Size().Y/2-mtk.ConvSize(25))
 	cw.titleText.Draw(win, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(cw.Size().X/2-20,
-		cw.Size().Y/2-15))
+	closeButtonMove := pixel.V(cw.Size().X/2-mtk.ConvSize(20),
+		cw.Size().Y/2-mtk.ConvSize(15))
 	cw.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	// Char info.
 	infoMove := mtk.ConvVec(pixel.V(0, -20))
@@ -160,7 +160,7 @@ func (cw *CharacterWindow) Size() pixel.Vec {
 	if cw.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(250, 350))
 	}
-	return cw.bgSpr.Frame().Size()
+	return mtk.ConvVec(cw.bgSpr.Frame().Size())
 }
 
 // updateInfo updates info textbox with

@@ -140,8 +140,8 @@ func (jw *JournalWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	titleTextMove := pixel.V(0, jw.Size().Y/2-mtk.ConvSize(25))
 	jw.titleText.Draw(win, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(jw.Size().X/2-20,
-		jw.Size().Y/2-15))
+	closeButtonMove := pixel.V(jw.Size().X/2-mtk.ConvSize(20),
+		jw.DrawArea().Size().Y/2-mtk.ConvSize(15))
 	jw.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	// Quest info.
 	questInfoMove := mtk.MoveTC(jw.Size(), jw.questInfo.Size())
@@ -194,7 +194,7 @@ func (jw *JournalWindow) Size() pixel.Vec {
 	if jw.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(50, 200))
 	}
-	return jw.bgSpr.Frame().Size()
+	return mtk.ConvVec(jw.bgSpr.Frame().Size())
 }
 
 // insertQuests adds all specified quests to journal

@@ -160,11 +160,11 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		slotsStartPos.X += s.Size().X + mtk.ConvSize(6)
 	}
 	// Buttons.
-	menuButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-30, 0))
-	invButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-65, 0))
-	skillsButtonPos := mtk.ConvVec(pixel.V(mb.Size().X/2-100, 0))
-	journalButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+100, 0))
-	charButtonPos := mtk.ConvVec(pixel.V(-mb.Size().X/2+65, 0))
+	menuButtonPos := pixel.V(mb.Size().X/2-mtk.ConvSize(30), mtk.ConvSize(0))
+	invButtonPos := pixel.V(mb.Size().X/2-mtk.ConvSize(65), mtk.ConvSize(0))
+	skillsButtonPos := pixel.V(mb.Size().X/2-mtk.ConvSize(100), mtk.ConvSize(0))
+	journalButtonPos := pixel.V(-mb.Size().X/2+mtk.ConvSize(100), mtk.ConvSize(0))
+	charButtonPos := pixel.V(-mb.Size().X/2+mtk.ConvSize(65), mtk.ConvSize(0))
 	mb.menuButton.Draw(win, matrix.Moved(menuButtonPos))
 	mb.invButton.Draw(win, matrix.Moved(invButtonPos))
 	mb.skillsButton.Draw(win, matrix.Moved(skillsButtonPos))
@@ -233,7 +233,7 @@ func (mb *MenuBar) Size() pixel.Vec {
 	if mb.bgSpr == nil {
 		return pixel.V(mtk.ConvSize(0), mtk.ConvSize(0))
 	}
-	return mb.bgSpr.Frame().Size()
+	return mtk.ConvVec(mb.bgSpr.Frame().Size())
 }
 
 // DrawArea return current draw area of bar background.

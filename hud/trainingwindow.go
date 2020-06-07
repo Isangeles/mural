@@ -154,11 +154,11 @@ func (tw *TrainingWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mtk.DrawRectangle(win, tw.DrawArea(), mainColor)
 	}
 	// Title & trade value.
-	titleTextMove := mtk.ConvVec(pixel.V(0, tw.Size().Y/2-25))
+	titleTextMove := pixel.V(mtk.ConvSize(0), tw.Size().Y/2-mtk.ConvSize(25))
 	tw.titleText.Draw(win, matrix.Moved(titleTextMove))
 	// Buttons.
-	closeButtonMove := mtk.ConvVec(pixel.V(tw.Size().X/2-20,
-		tw.Size().Y/2-15))
+	closeButtonMove := pixel.V(tw.Size().X/2-mtk.ConvSize(20),
+		tw.Size().Y/2-mtk.ConvSize(15))
 	trainButtonMove := mtk.ConvVec(pixel.V(0, -60))
 	tw.closeButton.Draw(win, matrix.Moved(closeButtonMove))
 	tw.trainButton.Draw(win, matrix.Moved(trainButtonMove))
@@ -209,7 +209,7 @@ func (tw *TrainingWindow) Size() pixel.Vec {
 	if tw.bgSpr == nil {
 		return mtk.ConvVec(pixel.V(250, 350))
 	}
-	return tw.bgSpr.Frame().Size()
+	return mtk.ConvVec(tw.bgSpr.Frame().Size())
 }
 
 // SetTrainer sets trainer for window.

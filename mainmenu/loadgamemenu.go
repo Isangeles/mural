@@ -113,7 +113,7 @@ func (lgm *LoadGameMenu) Show(show bool) {
 		lgm.mainmenu.userFocus.Focus(lgm.savesList)
 		err := lgm.loadSaves()
 		if err != nil {
-			log.Err.Printf("load game menu: fail to load saves: %v", err)
+			log.Err.Printf("load game menu: unable to load saves: %v", err)
 		}
 	} else {
 		lgm.mainmenu.userFocus.Focus(nil)
@@ -135,7 +135,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	saves, err := flamedata.DirFilesNames(lgm.mainmenu.mod.Conf().SavesPath(),
 		pattern)
 	if err != nil {
-		return fmt.Errorf("fail to read saved games dir: %v", err)
+		return fmt.Errorf("unable to read saved games dir: %v", err)
 	}
 	for _, s := range saves {
 		lgm.savesList.AddItem(s, s)
@@ -156,7 +156,7 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 	selection := lgm.savesList.SelectedValue()
 	filename, ok := selection.(string)
 	if !ok {
-		log.Err.Printf("main menu: load game: fail to retrieve save name from list value")
+		log.Err.Printf("main menu: load game: unable to retrieve save name from list value")
 		return
 	}
 	savename := strings.Replace(filename, ".savegame", "", 1)

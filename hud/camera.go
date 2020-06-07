@@ -346,11 +346,12 @@ func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
 // ConvCameraPos translates specified camera
 // position to area position.
 func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
-	posX := pos.X
-	posY := pos.Y
-	camX := c.Position().X
-	camY := c.Position().Y
-	return pixel.V(posX+camX, posY+camY)
+	areaPos := pixel.V(pos.X+c.Position().X, pos.Y+c.Position().Y)
+	// Unscale position.
+	drawScale := mtk.Matrix()[0]
+	areaPos.X = math.Round(areaPos.X / drawScale)
+	areaPos.Y = math.Round(areaPos.Y / drawScale)
+	return areaPos
 }
 
 // VisibleForPlayers checks whether specified position is

@@ -25,6 +25,9 @@ package hud
 
 import (
 	flameobject "github.com/isangeles/flame/module/objects"
+
+	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/core/object"
 )
 
 // Struct for HUD layout.
@@ -66,21 +69,29 @@ func (l *Layout) BarSlots() map[string]int {
 
 // SaveInvSlot saves position(slot ID) of specified item at
 // inventory slot list.
-func (l *Layout) SaveInvSlot(ob flameobject.Object, slotID int) {
+func (l *Layout) SaveInvSlot(ob *object.ItemGraphic, slotID int) {
 	l.invSlots[ob.ID()+ob.Serial()] = slotID
 }
 
 // SaveBarSlot saves position(slot ID) of specified object
 // at menu bar.
-func (l *Layout) SaveBarSlot(ob flameobject.Object, slotID int) {
-	l.barSlots[ob.ID()+ob.Serial()] = slotID
+func (l *Layout) SaveBarSlot(ob interface{}, id int) {
+	switch ob := ob.(type) {
+	case *object.ItemGraphic:
+		l.barSlots[ob.ID()+ob.Serial()] = id
+	case *object.SkillGraphic:
+		l.barSlots[ob.ID()] = id
+	default:
+		log.Err.Printf("hud: layout: save bar slot: unsupported object type: %v",
+			ob)
+	}
 }
 
 // InvSlotID returns saved inventory slot ID for specified
 // object.
 func (l *Layout) InvSlotID(ob flameobject.Object) int {
-	id, prs := l.invSlots[ob.ID()+ob.Serial()]
-	if !prs {
+	id, ok := l.invSlots[ob.ID()+ob.Serial()]
+	if !ok {
 		return -1
 	}
 	return id
@@ -88,10 +99,19 @@ func (l *Layout) InvSlotID(ob flameobject.Object) int {
 
 // BarSlotID returns saved menu bar slot ID for specified
 // object.
-func (l *Layout) BarSlotID(ob flameobject.Object) int {
-	id, prs := l.barSlots[ob.ID()+ob.Serial()]
-	if !prs {
-		return -1
+func (l *Layout) BarSlotID(ob interface{}) int {
+	id := -1
+	switch ob := ob.(type) {
+	case *object.ItemGraphic:
+		i, ok := l.barSlots[ob.ID()+ob.Serial()]
+		if ok {
+			id = i
+		}
+	case *object.SkillGraphic:
+		i, ok := l.barSlots[ob.ID()]
+		if ok {
+			id = i
+		}
 	}
 	return id
 }

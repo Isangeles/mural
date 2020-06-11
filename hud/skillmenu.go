@@ -273,8 +273,8 @@ func skillInfo(s *skill.Skill) string {
 	infoForm := "%s"
 	info := fmt.Sprintf(infoForm, s.Name())
 	if config.Debug {
-		info = fmt.Sprintf("%s\n[%s_%s]", info,
-			s.ID(), s.Serial())
+		info = fmt.Sprintf("%s\n[%s]", info,
+			s.ID())
 	}
 	return info
 }

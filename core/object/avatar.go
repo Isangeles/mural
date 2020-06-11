@@ -298,7 +298,7 @@ func (av *Avatar) updateGraphic() {
 	for id, sg := range av.skills {
 		found := false
 		for _, skill := range av.Character.Skills() {
-			found = flameobject.Equals(sg, skill)
+			found = sg.ID() == skill.ID()
 		}
 		if !found {
 			delete(av.skills, id)
@@ -347,7 +347,7 @@ func (av *Avatar) updateGraphic() {
 	}
 	// Skills.
 	for _, s := range av.Character.Skills() {
-		if av.skills[s.ID()+s.Serial()] != nil {
+		if av.skills[s.ID()] != nil {
 			continue
 		}
 		data := res.Skill(s.ID())
@@ -355,7 +355,7 @@ func (av *Avatar) updateGraphic() {
 			continue
 		}
 		skillGraphic := NewSkillGraphic(s, data)
-		av.skills[s.ID()+s.Serial()] = skillGraphic
+		av.skills[s.ID()] = skillGraphic
 	}
 }
 
@@ -403,10 +403,10 @@ func (av *Avatar) infoText() string {
 
 // Triggered after one of character skills was activated.
 func (av *Avatar) onSkillActivated(s *skill.Skill) {
-	sg := av.skills[s.ID()+s.Serial()]
+	sg := av.skills[s.ID()]
 	if sg == nil {
-		log.Err.Printf("avatar: %s_%s: on skill activated: fail to find skill graphic: %s_%s",
-			av.ID(), av.Serial(), s.ID(), s.Serial())
+		log.Err.Printf("avatar: %s %s: on skill activated: skill graphic not found: %s",
+			av.ID(), av.Serial(), s.ID())
 		return
 	}
 	// Animation.

@@ -32,7 +32,6 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/item"
-	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/mtk"
 
@@ -300,12 +299,7 @@ func (mb *MenuBar) updateLayout() {
 			continue
 		}
 		for _, v := range s.Values() {
-			ob, ok := v.(serial.Serialer)
-			if !ok {
-				log.Err.Printf("hud: menu bar: update layout: unable to retrieve slot value")
-				continue
-			}
-			layout.SaveBarSlot(ob, i)
+			layout.SaveBarSlot(v, i)
 		}
 	}
 	mb.hud.layouts[mb.hud.ActivePlayer().SerialID()] = layout

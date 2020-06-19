@@ -168,8 +168,7 @@ func (im *InventoryMenu) Show(show bool) {
 	im.opened = show
 	if im.Opened() {
 		im.hud.UserFocus().Focus(im)
-		im.insertItems(im.hud.ActivePlayer().Inventory().Items()...)
-		im.updateLayout()
+		im.refresh()
 	} else {
 		im.hud.UserFocus().Focus(nil)
 	}
@@ -330,6 +329,13 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	im.hud.ShowMessage(dlg)
 }
 
+// refresh inserts player items to inventory
+// slots and saves inventory layout.
+func (im *InventoryMenu) refresh() {
+	im.insertItems(im.hud.ActivePlayer().Inventory().Items()...)
+	im.updateLayout()
+}
+
 // Triggered after close button clicked.
 func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
 	im.Show(false)
@@ -346,26 +352,30 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 		log.Err.Printf("hud_inv_menu:not_item:%v", s.Values()[0])
 		return
 	}
-	eit, ok := it.Item.(item.Equiper)
-	if !ok {
-		log.Err.Printf("hud_inv_menu:not_equipable_item:%s", it.ID())
-		return
-	}
-	if im.hud.ActivePlayer().Equipment().Equiped(eit) {
-		im.hud.ActivePlayer().Equipment().Unequip(eit)
-		s.SetColor(invSlotColor)
-	} else {
-		err := im.hud.ActivePlayer().Equipment().Equip(eit)
+	switch it := it.Item.(type) {
+	case item.Equiper:
+		if im.hud.ActivePlayer().Equipment().Equiped(it) {
+			im.hud.ActivePlayer().Equipment().Unequip(it)
+			s.SetColor(invSlotColor)
+			break
+		}
+		err := im.hud.ActivePlayer().Equipment().Equip(it)
 		if err != nil {
-			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_equip:%v", eit.ID(),
-				eit.Serial(), err)
+			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_equip:%v", it.ID(),
+				it.Serial(), err)
 			return
 		}
 		s.SetColor(invSlotEqColor)
+	case *item.Misc:
+		im.hud.ActivePlayer().Use(it)
+		if it.Consumable() {
+			im.hud.ActivePlayer().Inventory().RemoveItem(it)
+			im.refresh()
+		}
 	}
 }
 
-// Triggered after one of item slots was clicked with
+// TRIGGERED after one of item slots was clicked with
 // laft mouse button.
 func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
 	for _, ds := range im.slots.Slots() {

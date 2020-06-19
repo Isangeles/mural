@@ -502,7 +502,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	pc := c.hud.ActivePlayer()
 	// Action.
 	for _, ob := range c.AreaObjects() {
-		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.Action() == nil {
+		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
 			continue
 		}
 		// Range check.
@@ -512,8 +512,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
-		pc.TakeModifiers(ob.Object, ob.Action().UserMods()...)
-		ob.TakeModifiers(ob.Object, ob.Action().SelfMods()...)
+		pc.Use(ob.Object)
 		return
 	}
 	// Loot.

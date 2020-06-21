@@ -340,7 +340,7 @@ func (av *Avatar) updateGraphic() {
 		}
 		effectGData := res.Effect(e.ID())
 		if effectGData == nil {
-			continue
+			effectGData = DefaultEffectGraphic(e)
 		}
 		effectGraphic := NewEffectGraphic(e, effectGData)
 		av.effects[e.ID()+e.Serial()] = effectGraphic

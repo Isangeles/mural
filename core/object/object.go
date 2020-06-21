@@ -24,7 +24,11 @@
 package object
 
 import (
+	"github.com/isangeles/flame/module/effect"
+
 	"github.com/faiface/pixel"
+
+	"github.com/isangeles/mural/core/data/res"
 )
 
 // Interface for all objects with
@@ -32,4 +36,12 @@ import (
 type Drawer interface {
 	Position() pixel.Vec
 	DrawArea() pixel.Rect
+}
+
+// DefaultEffectGraphic returns default grahpic for specified effect.
+func DefaultEffectGraphic(eff *effect.Effect) *res.EffectGraphicData {
+	return &res.EffectGraphicData{
+		EffectID: eff.ID(),
+		Icon:     defaultEffectIcon,
+	}
 }

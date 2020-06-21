@@ -40,7 +40,8 @@ import (
 )
 
 var (
-	time_label_color = colornames.Red
+	timeLabelColor    = colornames.Red
+	defaultEffectIcon = "unknown.png"
 )
 
 // Graphical wrapper for effects.
@@ -61,13 +62,14 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 	} else {
 		log.Err.Printf("effect graphic: %s#%s: icon not found: %s", effect.ID(),
 			effect.Serial(), data.Icon)
+		iconPic = graphic.Icons[defaultEffectIcon]
 	}
 	// Time text.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeBig,
 	}
 	eg.timeText = mtk.NewText(textParams)
-	eg.timeText.SetColor(time_label_color)
+	eg.timeText.SetColor(timeLabelColor)
 	return eg
 }
 

@@ -208,7 +208,9 @@ func (av *Avatar) DestPoint() pixel.Vec {
 // graphical wrappers).
 func (av *Avatar) Items() (items []*ItemGraphic) {
 	for _, ig := range av.items {
-		items = append(items, ig)
+		if av.Inventory().Item(ig.ID(), ig.Serial()) != nil {
+			items = append(items, ig)
+		}
 	}
 	return
 }
@@ -311,7 +313,7 @@ func (av *Avatar) updateGraphic() {
 		}
 		data := res.Item(it.ID())
 		if data == nil {
-			continue
+			data = DefaultItemGraphic(it)
 		}
 		itemGraphic := NewItemGraphic(it, data)
 		av.items[it.ID()+it.Serial()] = itemGraphic

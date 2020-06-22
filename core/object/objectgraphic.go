@@ -121,7 +121,9 @@ func (og *ObjectGraphic) Effects() []*EffectGraphic {
 // graphical wrappers).
 func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 	for _, ig := range og.items {
-		items = append(items, ig)
+		if og.Inventory().Item(ig.ID(), ig.Serial()) != nil {
+			items = append(items, ig)
+		}
 	}
 	return
 }
@@ -169,7 +171,7 @@ func (og *ObjectGraphic) updateGraphic() {
 		}
 		data := res.Item(it.ID())
 		if data == nil {
-			continue
+			data = DefaultItemGraphic(it)
 		}
 		itemGraphic := NewItemGraphic(it, data)
 		og.items[it.ID()+it.Serial()] = itemGraphic

@@ -25,6 +25,7 @@ package object
 
 import (
 	"github.com/isangeles/flame/module/effect"
+	"github.com/isangeles/flame/module/item"
 
 	"github.com/faiface/pixel"
 
@@ -38,10 +39,19 @@ type Drawer interface {
 	DrawArea() pixel.Rect
 }
 
-// DefaultEffectGraphic returns default grahpic for specified effect.
+// DefaultEffectGraphic returns default graphic for specified effect.
 func DefaultEffectGraphic(eff *effect.Effect) *res.EffectGraphicData {
 	return &res.EffectGraphicData{
 		EffectID: eff.ID(),
 		Icon:     defaultEffectIcon,
+	}
+}
+
+// DefaultItemGraphic returns default graphic for specified item.
+func DefaultItemGraphic(it item.Item) *res.ItemGraphicData {
+	return &res.ItemGraphicData{
+		ItemID:   it.ID(),
+		Icon:     defaultItemIcon,
+		MaxStack: 100,
 	}
 }

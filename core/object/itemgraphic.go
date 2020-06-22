@@ -32,6 +32,10 @@ import (
 	"github.com/isangeles/mural/core/data/res/graphic"
 )
 
+var (
+	defaultItemIcon = "unknown.png"
+)
+
 // Struct for graphical wrapper
 // for items.
 type ItemGraphic struct {
@@ -47,6 +51,9 @@ func NewItemGraphic(item item.Item, data *res.ItemGraphicData) *ItemGraphic {
 	itg := new(ItemGraphic)
 	itg.Item = item
 	itg.icon = graphic.Icons[data.Icon]
+	if itg.icon == nil {
+		itg.icon = graphic.Icons[defaultItemIcon]
+	}
 	itg.iconName = data.Icon
 	itg.spritesheets = data.Spritesheets
 	itg.maxStack = data.MaxStack

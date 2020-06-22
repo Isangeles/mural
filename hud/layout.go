@@ -31,6 +31,8 @@ import (
 )
 
 // Struct for HUD layout.
+// Stores layout of items and skills
+// in menu bar and inventory menu.
 type Layout struct {
 	invSlots map[string]int
 	barSlots map[string]int

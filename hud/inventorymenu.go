@@ -33,7 +33,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -199,38 +198,41 @@ func (im *InventoryMenu) Size() pixel.Vec {
 }
 
 // insertItems inserts specified items in inventory slots.
-func (im *InventoryMenu) insertItems(items ...item.Item) {
+func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 	im.slots.Clear()
+	// Insert items from layout first.
+	layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())
 	for _, it := range items {
-		// Retrieve item graphic.
-		igd := res.Item(it.ID())
-		if igd == nil { // if icon was found
-			log.Err.Printf("hud: inventory menu: item graphic not found: %s", it.ID())
-			// Get fallback graphic.
-			igd = itemErrorGraphic(it)
+		slotID := layout.InvSlotID(it)
+		if slotID < 0 {
+			continue
 		}
-		ig := object.NewItemGraphic(it, igd)
+		if slotID < len(im.slots.Slots())-1 {
+			slot := im.slots.Slots()[slotID]
+			im.hud.insertSlotItem(it, slot)
+		}
+	}
+	// Insert new items.
+	for _, it := range items {
+		// Skip items from layout.
+		slotID := layout.InvSlotID(it)
+		if slotID > -1 {
+			continue
+		}
 		// Find proper slot.
 		slot := im.slots.EmptySlot()
-		layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())
-		slotID := layout.InvSlotID(it)
-		if slotID > -1 { // insert item to slot from layout
-			if slotID < len(im.slots.Slots())-1 {
-				slot = im.slots.Slots()[slotID]
+		// Try to find slot with same content and available space.
+		for _, s := range im.slots.Slots() {
+			if len(s.Values()) < 1 || len(s.Values()) >= it.MaxStack() {
+				continue
 			}
-		} else { // try to find slot with same content and available space
-			for _, s := range im.slots.Slots() {
-				if len(s.Values()) < 1 || len(s.Values()) >= ig.MaxStack() {
-					continue
-				}
-				slotIt, ok := s.Values()[0].(item.Item)
-				if !ok {
-					continue
-				}
-				if slotIt.ID() == it.ID() {
-					slot = s
-					break
-				}
+			slotIt, ok := s.Values()[0].(*object.ItemGraphic)
+			if !ok {
+				continue
+			}
+			if slotIt.ID() == it.ID() {
+				slot = s
+				break
 			}
 		}
 		if slot == nil {
@@ -238,7 +240,7 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 			return
 		}
 		// Insert item to slot.
-		im.hud.insertSlotItem(ig, slot)
+		im.hud.insertSlotItem(it, slot)
 	}
 }
 
@@ -332,7 +334,7 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 // refresh inserts player items to inventory
 // slots and saves inventory layout.
 func (im *InventoryMenu) refresh() {
-	im.insertItems(im.hud.ActivePlayer().Inventory().Items()...)
+	im.insertItems(im.hud.ActivePlayer().Items()...)
 	im.updateLayout()
 }
 

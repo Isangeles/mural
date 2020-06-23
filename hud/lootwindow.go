@@ -183,12 +183,7 @@ func (lw *LootWindow) DrawArea() pixel.Rect {
 func (lw *LootWindow) SetTarget(t LootTarget) {
 	lw.target = t
 	lw.slots.Clear()
-	for _, it := range lw.target.Inventory().Items() {
-		if !it.Loot() {
-			continue
-		}
-		lw.insertItems(it)
-	}
+	lw.insertItems(lw.target.Inventory().LootItems()...)
 }
 
 // insert inserts specified items in window slots.

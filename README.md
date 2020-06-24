@@ -5,9 +5,10 @@ GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [P
 
 Currently in an early development stage.
 
-<img src="res/readme/img/sc1.png" width="200">
-<img src="res/readme/img/sc2.png" width="200">
-<img src="res/readme/img/sc3.png" width="200">
+||||
+|---|---|---|
+|<img src="res/readme/img/sc1.png" width="200">|<img src="res/readme/img/sc2.png" width="200">|<img src="res/readme/img/sc3.png" width="200">|
+
 ### Flame games with Mural support:
 ### Arena
 Description: simple demo game based on [Arena](https://github.com/isangeles/arena) module with [Mural GUI](https://github.com/isangeles/mural) support.

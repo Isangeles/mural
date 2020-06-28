@@ -27,6 +27,7 @@ package mainmenu
 
 import (
 	"fmt"
+	"path/filepath"
 	"image/color"
 
 	"golang.org/x/image/colornames"
@@ -274,16 +275,16 @@ func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 	mm.playableChars = append(mm.playableChars, c)
 }
 
-// ImportPlayableChars import all characters from specified
-// path.
-func (mm *MainMenu) ImportPlayableChars(path string) error {
-	charsData, err := flamedata.ImportCharactersDir(path)
+// ImportPlayableChars import all characters from current module.
+func (mm *MainMenu) ImportPlayableChars() error {
+	charsData, err := flamedata.ImportCharactersDir(mm.mod.Conf().CharactersPath())
 	if err != nil {
-		return fmt.Errorf("fail to import characters: %v", err)
+		return fmt.Errorf("unable to import characters: %v", err)
 	}
-	avsData, err := data.ImportAvatarsDir(path)
+	avatarsPath := filepath.Join(mm.mod.Conf().Path, data.GUIModulePath, "avatars")
+	avsData, err := data.ImportAvatarsDir(avatarsPath)
 	if err != nil {
-		return fmt.Errorf("fail to import avatars: %v", err)
+		return fmt.Errorf("unable to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
 		for _, charData := range charsData {

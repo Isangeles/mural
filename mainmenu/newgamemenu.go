@@ -206,7 +206,9 @@ func (ngm *NewGameMenu) exportChar() error {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
 	av := object.NewAvatar(c, pcData.AvatarData)
-	err = data.ExportAvatar(av, conf.CharactersPath())
+	avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
+		"avatars")
+	err = data.ExportAvatar(av, avatarsPath)
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
 	}

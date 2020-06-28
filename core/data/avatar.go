@@ -114,7 +114,7 @@ func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
 
 // ExportAvatars exports specified avatars to file
 // with specified path.
-func ExportAvatars(avs []*object.Avatar, basePath string) error {
+func ExportAvatars(avs []*object.Avatar, path string) error {
 	// Marshal avatars.
 	data := new(res.AvatarsData)
 	for _, av := range avs {
@@ -125,11 +125,16 @@ func ExportAvatars(avs []*object.Avatar, basePath string) error {
 		return fmt.Errorf("unable to marshal XML data: %v", err)
 	}
 	// Check whether file path ends with proper extension.
-	if !strings.HasSuffix(basePath, AvatarsFileExt) {
-		basePath = basePath + AvatarsFileExt
+	if !strings.HasSuffix(path, AvatarsFileExt) {
+		path = path + AvatarsFileExt
 	}
 	// Create base file.
-	f, err := os.Create(filepath.FromSlash(basePath))
+	dirPath := filepath.Dir(path)
+	err = os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		return fmt.Errorf("unable to create file directory: %v", err)
+	}
+	f, err := os.Create(filepath.FromSlash(path))
 	if err != nil {
 		return fmt.Errorf("unable to create avatars file: %v", err)
 	}

@@ -154,7 +154,7 @@ func run() {
 	mainMenu = mainmenu.New(mod)
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
-	err = mainMenu.ImportPlayableChars(mod.Conf().CharactersPath())
+	err = mainMenu.ImportPlayableChars()
 	if err != nil {
 		log.Err.Printf("init run: unable to import playable characters: %v",
 			err)

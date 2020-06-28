@@ -1,0 +1,10 @@
+.TH Avatars_dir
+.SH DESCRIPTION
+The avatars directory stores .avatars data files for characters available across all chapters.
+.br
+Avatars for exported characters(export from new game menu) are saved here.
+.br
+For a character to be available to select in the new game menu, corresponding .avatars
+file need to be placed in this directory.
+.SH SEE ALSO
+file/.avatars

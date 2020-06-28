@@ -39,6 +39,16 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
+// RunScript executes specified script, in case
+// of error sends err message to Mural error log.
+func (hud *HUD) RunScript(s *ash.Script) {
+	err := ash.Run(s)
+	if err != nil {
+		log.Err.Printf("ci: unable to run script: %v", err)
+		return
+	}
+}
+
 // insertSlotItem inserts specified item to specified slot.
 func (hud *HUD) insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 	s.AddValues(it)
@@ -66,16 +76,6 @@ func (hud *HUD) itemInfo(it item.Item) string {
 			it.ID(), it.Serial())
 	}
 	return info
-}
-
-// RunScript executes specified script, in case
-// of error sends err message to Mural error log.
-func (hud *HUD) RunScript(s *ash.Script) {
-	err := ash.Run(s)
-	if err != nil {
-		log.Err.Printf("ci: fail to run script: %v", err)
-		return
-	}
 }
 
 // itemErrorGraphic returns error graphic data for specified item.

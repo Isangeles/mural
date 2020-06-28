@@ -26,6 +26,7 @@ package hud
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -462,12 +463,12 @@ func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 }
 
 // runAreaScripts executes all scripts for specified area
-// placed in gui/chapters/[chapter]/areas/scripts/[area].
+// placed in ui/mural/chapters/[chapter]/areas/scripts/[area].
 func (hud *HUD) runAreaScripts(a *area.Area) {
 	// Retrive scripts.
 	mod := hud.Game().Module()
-	path := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/scripts",
-		mod.Conf().Path, mod.Chapter().ID(), a.ID())
+	path := filepath.Join(mod.Conf().Path, data.GUIModulePath, "chapters",
+		mod.Chapter().ID(), "areas", a.ID(), "scripts")
 	scripts, err := data.ScriptsDir(path)
 	if err != nil {
 		log.Err.Printf("hud: run area scripts: fail to retrieve scripts: %v", err)

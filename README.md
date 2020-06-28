@@ -114,7 +114,7 @@ Description: specifies name of audio file(located in audio archive) for main men
 Description: specifies name of audio file(located in audio archive) for button click sound.
 
 ## Module directory
-All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/gui` directory.
+All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/ui/mural` directory.
 
 UI textures and audio files need to be provided by module and stored in `gui/graphic.zip` and `gui/audio.zip` respectively.
 

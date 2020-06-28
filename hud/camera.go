@@ -25,6 +25,7 @@ package hud
 
 import (
 	"fmt"
+	"path/filepath"
 	"math"
 
 	"github.com/faiface/pixel"
@@ -40,6 +41,7 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
@@ -216,11 +218,11 @@ func (c *Camera) SetArea(a *area.Area) error {
 	}
 	// Set map.
 	chapter := c.hud.game.Module().Chapter()
-	mapPath := fmt.Sprintf("%s/gui/chapters/%s/areas/%s/map.tmx",
-		chapter.Module().Conf().Path, chapter.ID(), a.ID())
+	mapPath := filepath.Join(chapter.Module().Conf().Path, data.GUIModulePath,
+		"chapters", chapter.ID(), "areas", a.ID(), "map.tmx")
 	areaMap, err := stone.NewMap(mapPath)
 	if err != nil {
-		return fmt.Errorf("fail to create pc area map: %v", err)
+		return fmt.Errorf("unable to create pc area map: %v", err)
 	}
 	c.areaMap = areaMap
 	// PC avatars.

@@ -236,7 +236,8 @@ func EnterGame(g *flame.Game, pcs ...*object.Avatar) {
 	}
 	// Run module scripts.
 	modpath := game.Module().Conf().Path
-	scripts, err := data.ScriptsDir(modpath + "/gui/scripts/run")
+	scriptsPath := filepath.Join(modpath, data.GUIModulePath, "scritps/run")
+	scripts, err := data.ScriptsDir(scriptsPath)
 	if err != nil {
 		log.Err.Printf("enter game: unable to retrieve module scripts: %v", err)
 	}

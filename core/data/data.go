@@ -47,7 +47,7 @@ import (
 )
 
 const (
-	GUIModulePath   = "gui"
+	GUIModulePath   = "ui/mural"
 	SavesModulePath = GUIModulePath + "/saves"
 	SaveFileExt     = ".savegui"
 	ErrorIcon       = "unknown.png"
@@ -245,8 +245,8 @@ func Script(path string) (*ash.Script, error) {
 
 // Load loads grpahic directories.
 func loadPaths(mod *module.Module) {
-	modGraphicDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
-	modAudioDirPath = filepath.Join("data/modules", mod.Conf().ID, "gui")
-	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/graphic.zip")
-	modAudioArchPath = filepath.Join("data/modules", mod.Conf().ID, "gui/audio.zip")
+	modGraphicDirPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath)
+	modAudioDirPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath)
+	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath, "graphic.zip")
+	modAudioArchPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath, "audio.zip")
 }

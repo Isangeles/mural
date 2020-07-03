@@ -304,11 +304,11 @@ func trainingName(t train.Training) string {
 func reqInfo(r req.Requirement) string {
 	info := ""
 	switch r := r.(type) {
-	case *req.ItemReq:
+	case *req.Item:
 		reqLabel := lang.Text("req_item")
 		info = fmt.Sprintf("%s: %s x%d", reqLabel, r.ItemID(),
 			r.ItemAmount())
-	case *req.CurrencyReq:
+	case *req.Currency:
 		reqLabel := lang.Text("req_currency")
 		info = fmt.Sprintf("%s: %d", reqLabel, r.Amount())
 	default:

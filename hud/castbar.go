@@ -71,5 +71,9 @@ func (cb *CastBar) Update(win *mtk.Window) {
 		cb.bar.SetValue(int(r.CastTime()))
 		break
 	}
+	if pc.Casted() != nil {
+		cb.bar.SetMax(int(pc.Casted().UseAction().CastMax()))
+		cb.bar.SetValue(int(pc.Casted().UseAction().Cast()))
+	}
 	cb.bar.Update(win)
 }

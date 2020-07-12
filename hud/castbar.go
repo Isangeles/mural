@@ -1,7 +1,7 @@
 /*
  * castbar.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,14 +54,6 @@ func (cb *CastBar) Update(win *mtk.Window) {
 	pc := cb.hud.ActivePlayer()
 	if pc == nil {
 		return
-	}
-	for _, s := range pc.Skills() {
-		if !s.Casting() {
-			continue
-		}
-		cb.bar.SetMax(int(s.CastTimeMax()))
-		cb.bar.SetValue(int(s.CastTime()))
-		break
 	}
 	for _, r := range pc.Crafting().Recipes() {
 		if !r.Casting() {

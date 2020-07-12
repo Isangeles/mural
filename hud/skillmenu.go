@@ -245,7 +245,7 @@ func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
 	if !ok {
 		log.Err.Printf("hud: skills menu: %v: is not skill", s.Values()[0])
 	}
-	sm.hud.ActivePlayer().UseSkill(skill.Skill)
+	sm.hud.ActivePlayer().Use(skill.Skill)
 }
 
 // Triggered after one of skill slots was clicked with

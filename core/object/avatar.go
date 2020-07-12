@@ -443,12 +443,8 @@ func (av *Avatar) castingRecipe() bool {
 // castingSpell check if avatar casting
 // any skills right now.
 func (av *Avatar) castingSpell() bool {
-	for _, s := range av.Skills() {
-		if s.Casting() {
-			return true
-		}
-	}
-	return false
+	_, ok := av.Casted().(*skill.Skill)
+	return ok
 }
 
 // spritesheet selects proper spritesheet for avatar from

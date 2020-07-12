@@ -267,7 +267,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	val := s.Values()[0]
 	skill, ok := val.(*object.SkillGraphic)
 	if ok {
-		mb.hud.ActivePlayer().UseSkill(skill.Skill)
+		mb.hud.ActivePlayer().Use(skill.Skill)
 		return
 	}
 	// Item.

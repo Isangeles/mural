@@ -255,6 +255,6 @@ func (cm *CraftingMenu) onMakeButtonClicked(b *mtk.Button) {
 	if !ok {
 		return
 	}
-	cm.hud.ActivePlayer().Craft(recipe)
+	cm.hud.ActivePlayer().Use(recipe)
 	return
 }

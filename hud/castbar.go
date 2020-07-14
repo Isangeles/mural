@@ -55,14 +55,6 @@ func (cb *CastBar) Update(win *mtk.Window) {
 	if pc == nil {
 		return
 	}
-	for _, r := range pc.Crafting().Recipes() {
-		if !r.Casting() {
-			continue
-		}
-		cb.bar.SetMax(int(r.CastTimeMax()))
-		cb.bar.SetValue(int(r.CastTime()))
-		break
-	}
 	if pc.Casted() != nil {
 		cb.bar.SetMax(int(pc.Casted().UseAction().CastMax()))
 		cb.bar.SetValue(int(pc.Casted().UseAction().Cast()))

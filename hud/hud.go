@@ -195,7 +195,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.objectInfo.Opened() {
 		hud.objectInfo.Draw(win)
 	}
-	if hud.ActivePlayer().Casting() {
+	if hud.ActivePlayer().Casted() != nil {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
 	}
 	if hud.menu.Opened() {

@@ -30,6 +30,7 @@ import (
 
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/module/character"
+	"github.com/isangeles/flame/module/craft"
 	"github.com/isangeles/flame/module/item"
 	flameobject "github.com/isangeles/flame/module/objects"
 	"github.com/isangeles/flame/module/skill"
@@ -432,12 +433,8 @@ func (av *Avatar) onChatSent(t string) {
 // castingRecipe checks if avatar crafting
 // any items right now.
 func (av *Avatar) castingRecipe() bool {
-	for _, r := range av.Crafting().Recipes() {
-		if r.Casting() {
-			return true
-		}
-	}
-	return false
+	_, ok := av.Casted().(*craft.Recipe)
+	return ok
 }
 
 // castingSpell check if avatar casting

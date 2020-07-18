@@ -159,7 +159,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
 	hud.chat.Draw(win, mtk.Matrix().Moved(chatPos))
 	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
-	if hud.ActivePlayer().Targets()[0] != nil {
+	if len(hud.ActivePlayer().Targets()) > 0 {
 		hud.tarFrame.Draw(win, mtk.Matrix().Moved(tarFramePos))
 	}
 	if hud.savemenu.Opened() {
@@ -229,7 +229,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		hud.onMouseRightPressed(win.MousePosition())
 	}
 	// Put PC target into target frame.
-	if hud.ActivePlayer().Targets()[0] != nil {
+	if len(hud.ActivePlayer().Targets()) > 0 {
 		for _, av := range hud.camera.Avatars() {
 			if flameobject.Equals(hud.ActivePlayer().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)

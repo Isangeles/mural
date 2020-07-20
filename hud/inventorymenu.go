@@ -24,6 +24,8 @@
 package hud
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -270,6 +272,36 @@ func (im *InventoryMenu) updateLayout() {
 	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
 }
 
+// equip inserts specified equipable item to all
+// compatible slots in active PC equipment.
+func (im *InventoryMenu) equip(it item.Equiper) error {
+	pc := im.hud.ActivePlayer()
+	if !pc.MeetReqs(it.EquipReqs()...) {
+		return fmt.Errorf("requirements not meet")
+	}
+	for _, itSlot := range it.Slots() {
+		equiped := false
+		for _, eqSlot := range pc.Equipment().Slots() {
+			if eqSlot.Item() != nil {
+				continue
+			}
+			if eqSlot.Type() == itSlot {
+				eqSlot.SetItem(it)
+				equiped = true
+				break
+			}
+		}
+		if !equiped {
+			pc.Equipment().Unequip(it)
+			return fmt.Errorf("free slot not found: %s", itSlot)
+		}
+	}
+	if !pc.Equipment().Equiped(it) {
+		return fmt.Errorf("no compatible slots")
+	}
+	return nil
+}
+
 // createSlot creates empty slot for inventory slots list.
 func (im *InventoryMenu) createSlot() *mtk.Slot {
 	params := mtk.Params{
@@ -351,7 +383,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	it, ok := s.Values()[0].(*object.ItemGraphic)
 	if !ok {
-		log.Err.Printf("hud_inv_menu:not_item:%v", s.Values()[0])
+		log.Err.Printf("inventory: inavlid slot value: %v", s.Values()[0])
 		return
 	}
 	switch it := it.Item.(type) {
@@ -361,9 +393,9 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 			s.SetColor(invSlotColor)
 			break
 		}
-		err := im.hud.ActivePlayer().Equipment().Equip(it)
+		err := im.equip(it)
 		if err != nil {
-			log.Err.Printf("hud_inv_menu:item:%s_%s:fail_to_equip:%v", it.ID(),
+			log.Err.Printf("inventory: item: %s %s: unable to equip: %v", it.ID(),
 				it.Serial(), err)
 			return
 		}

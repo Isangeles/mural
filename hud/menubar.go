@@ -280,7 +280,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 				pc.Equipment().Unequip(eqit)
 				return
 			}
-			pc.Equipment().Equip(eqit)
+			mb.hud.inv.equip(eqit)
 			return
 		}
 	}

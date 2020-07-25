@@ -5,13 +5,13 @@ GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [P
 
 Currently in an early development stage.
 
-<img src="res/readme/img/sc1.png" width="200"><img src="res/readme/img/sc2.png" width="200"><img src="res/readme/img/sc3.png" width="200">
-
 ### Flame games with Mural support:
 ### Arena
+<img src="res/readme/img/sc1.png" width="200"><img src="res/readme/img/sc2.png" width="200"><img src="res/readme/img/sc3.png" width="200">
+
 Description: simple demo game based on [Arena](https://github.com/isangeles/arena) module with [Mural GUI](https://github.com/isangeles/mural) support.
 
-Download: [Linux](https://my.opendesktop.org/s/xmxszBXyMQCK5xB), [Windows](https://my.opendesktop.org/s/gcKQmFRdTj8sBdp)
+Download: [Linux](https://my.opendesktop.org/s/xmxszBXyMQCK5xB), [Windows](https://my.opendesktop.org/s/gcKQmFRdTj8sBdp), [macOS](https://my.opendesktop.org/s/5omoYQYMHGLXkfJ)
 
 ## Build
 Get [Pixel](https://github.com/faiface/pixel), [MTK](https://github.com/Isangeles/mtk), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).

@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/train"
+	"github.com/isangeles/flame/module/training"
 	"github.com/isangeles/flame/module/req"
 
 	"github.com/isangeles/mtk"
@@ -52,7 +52,7 @@ type TrainingWindow struct {
 	trainingsList *mtk.List
 	opened        bool
 	focused       bool
-	trainer       train.Trainer
+	trainer       training.Trainer
 }
 
 // newTrainingWindow creates new training
@@ -213,15 +213,14 @@ func (tw *TrainingWindow) Size() pixel.Vec {
 }
 
 // SetTrainer sets trainer for window.
-func (tw *TrainingWindow) SetTrainer(t train.Trainer) {
+func (tw *TrainingWindow) SetTrainer(t training.Trainer) {
 	tw.trainer = t
 }
 
 // insertTrainings adds all specified trainings to trainings list.
-func (tw *TrainingWindow) insertTrainings(trainings ...train.Training) {
+func (tw *TrainingWindow) insertTrainings(trainings ...*training.TrainerTraining) {
 	for _, t := range trainings {
-		trainingText := trainingName(t)
-		tw.trainingsList.AddItem(trainingText, t)
+		tw.trainingsList.AddItem(t.Name(), t)
 	}
 }
 
@@ -233,15 +232,15 @@ func (tw *TrainingWindow) onCloseButtonClicked(b *mtk.Button) {
 // Triggered after selecting training from list.
 func (tw *TrainingWindow) onTrainingSelected(cs *mtk.CheckSlot) {
 	// Retrieve training from slot.
-	training, ok := cs.Value().(train.Training)
+	train, ok := cs.Value().(*training.TrainerTraining)
 	if !ok {
 		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
 	tw.trainButton.Active(true)
 	// Show training info.
-	trainingInfo := trainingName(training)
-	for _, r := range training.Reqs() {
+	trainingInfo := train.Info()
+	for _, r := range train.Requirements() {
 		trainingInfo = fmt.Sprintf("%s\n%s", trainingInfo, reqInfo(r))
 	}
 	tw.trainingInfo.SetText(trainingInfo)
@@ -254,49 +253,13 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 	if val == nil {
 		return
 	}
-	training, ok := val.(train.Training)
+	train, ok := val.(*training.TrainerTraining)
 	if !ok {
 		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
 	pc := tw.hud.ActivePlayer()
-	err := pc.Train(training)
-	if err != nil {
-		log.Err.Printf(lang.Text("train_fail"))
-	}
-}
-
-// trainingName returns name for specified
-// training to display.
-func trainingName(t train.Training) string {
-	switch t := t.(type) {
-	case *train.AttrsTraining:
-		name := ""
-		if t.Strenght() > 0 {
-			strLabel := lang.Text("attr_str")
-			name = fmt.Sprintf("%s(%d)", strLabel, t.Strenght())
-		}
-		if t.Constitution() > 0 {
-			conLabel := lang.Text("attr_con")
-			name = fmt.Sprintf("%s(%d)", conLabel, t.Constitution())
-		}
-		if t.Dexterity() > 0 {
-			dexLabel := lang.Text("attr_dex")
-			name = fmt.Sprintf("%s(%d)", dexLabel, t.Dexterity())
-		}
-		if t.Wisdom() > 0 {
-			wisLabel := lang.Text("attr_wis")
-			name = fmt.Sprintf("%s(%d)", wisLabel, t.Wisdom())
-		}
-		if t.Intelligence() > 0 {
-			intLabel := lang.Text("attr_int")
-			name = fmt.Sprintf("%s(%d)", intLabel, t.Intelligence())
-		}
-		return name
-	default:
-		name := lang.Text("unknown")
-		return name
-	}
+	pc.Use(train)
 }
 
 // reqInfo returns information about specified

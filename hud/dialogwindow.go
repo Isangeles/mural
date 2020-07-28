@@ -32,7 +32,7 @@ import (
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/dialog"
 	"github.com/isangeles/flame/module/item"
-	"github.com/isangeles/flame/module/train"
+	"github.com/isangeles/flame/module/training"
 
 	"github.com/isangeles/mtk"
  
@@ -262,7 +262,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	}
 	// On training.
 	if dw.dialog.Training() {
-		tra, ok := dw.dialog.Owner().(train.Trainer)
+		tra, ok := dw.dialog.Owner().(training.Trainer)
 		if !ok {
 			log.Err.Printf("hud: dialog window: dialog onwer is not a trainer")
 			return

@@ -510,7 +510,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > ActionRange {
-			pc.SendPrivate(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(lang.Text("tar_too_far"))
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
@@ -525,7 +525,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.SendPrivate(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(lang.Text("tar_too_far"))
 			continue
 		}
 		// Show loot window.
@@ -541,7 +541,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.SendPrivate(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(lang.Text("tar_too_far"))
 			continue
 		}
 		// Show loot window.
@@ -559,7 +559,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > DialogRange {
-			pc.SendPrivate(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(lang.Text("tar_too_far"))
 			continue
 		}
 		// Show dialog window.

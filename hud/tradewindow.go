@@ -397,7 +397,7 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	// Check trade value.
 	if tw.tradeValue() < 0 {
 		msg := lang.Text("hud_trade_low_value_msg")
-		tw.hud.ActivePlayer().SendPrivate(msg)
+		tw.hud.ActivePlayer().PrivateLog().Add(msg)
 		return
 	}
 	// Trade.

@@ -25,6 +25,7 @@ package object
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/faiface/pixel"
 
@@ -121,7 +122,6 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
-	av.SetOnChatSentFunc(av.onChatSent)
 	av.updateGraphic()
 	return av
 }
@@ -166,6 +166,14 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.updateGraphic()
 	av.sprite.Update(win)
 	// Chat.
+	for _, m := range av.ChatLog().Messages() {
+		duration := time.Since(m.Time())
+		av.speaking = duration.Seconds() < 2
+		if av.speaking {
+			av.chat.SetText(m.String())
+			break
+		}
+	}
 	if av.speaking {
 		av.chatTimer += win.Delta()
 		if av.chatTimer >= chatTimeMax {
@@ -421,13 +429,6 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	if !av.Silenced() && mtk.Audio() != nil && sg.ActivationAudio() != nil {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
-}
-
-// Triggered after sending text to character
-// chat channel.
-func (av *Avatar) onChatSent(t string) {
-	av.chat.SetText(t)
-	av.speaking = true
 }
 
 // castingRecipe checks if avatar crafting

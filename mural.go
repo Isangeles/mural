@@ -82,7 +82,7 @@ func init() {
 // Main function.
 func main() {
 	// Import module.
-	modData, err := flamedata.ImportModule(config.ModulePath(), config.Lang)
+	modData, err := flamedata.ImportModule(config.ModulePath())
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
@@ -193,7 +193,7 @@ func run() {
 		if pcHUD.Exiting() {
 			inGame = false
 			// Reimport module.
-			modData, err := flamedata.ImportModule(config.ModulePath(), config.Lang)
+			modData, err := flamedata.ImportModule(config.ModulePath())
 			if err != nil {
 				log.Err.Printf("unable to reimport module: %v", err)
 			}
@@ -248,7 +248,7 @@ func LoadSavedGame(saveName string) {
 	// Import saved game.
 	savePath := filepath.Join(mod.Conf().SavesPath(),
 		saveName+flamedata.SavegameFileExt)
-	game, err := flamedata.ImportGame(mod, savePath, config.Lang)
+	game, err := flamedata.ImportGame(mod, savePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to import game: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))

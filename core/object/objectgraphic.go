@@ -26,6 +26,7 @@ package object
 import (
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame/data/res/lang"
 	flameobject "github.com/isangeles/flame/module/object"
 	"github.com/isangeles/flame/module/objects"
 
@@ -40,6 +41,7 @@ import (
 // of area object.
 type ObjectGraphic struct {
 	*flameobject.Object
+	name         string
 	sprite       *mtk.Animation
 	portrait     pixel.Picture
 	spriteName   string
@@ -54,6 +56,7 @@ type ObjectGraphic struct {
 func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *ObjectGraphic {
 	og := new(ObjectGraphic)
 	og.Object = ob
+	og.name = lang.Text(og.ID())
 	// Sprite.
 	spritePic := graphic.ObjectSpritesheets[data.Sprite]
 	if spritePic != nil {
@@ -98,6 +101,11 @@ func (og *ObjectGraphic) DrawArea() pixel.Rect {
 // Portrait returns portrait picture.
 func (og *ObjectGraphic) Portrait() pixel.Picture {
 	return og.portrait
+}
+
+// Name returns object name.
+func (og *ObjectGraphic) Name() string {
+	return og.name
 }
 
 // Position return object position in form of

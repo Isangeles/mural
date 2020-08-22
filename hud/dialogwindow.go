@@ -209,7 +209,8 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Print stage text to chat box.
-	text := fmt.Sprintf("[%s]: %s\n", dw.dialog.Owner().Name(), dw.dialog.Stage())
+	text := fmt.Sprintf("[%s]: %s\n", dw.dialog.Owner().Name(),
+		dw.dialogText(dw.dialog.Stage().ID()))
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()
 	// Select answers.
@@ -222,7 +223,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Insert answers to answers list.
 	dw.answersList.Clear()
 	for i, a := range answers {
-		answerText := fmt.Sprintf("%d) %s", i, a)
+		answerText := fmt.Sprintf("%d) %s", i, dw.dialogText(a.ID()))
 		dw.answersList.AddItem(answerText, a)
 	}
 }
@@ -244,7 +245,8 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Print answer to chat box.
-	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.ActivePlayer().Name(), answer))
+	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.ActivePlayer().Name(),
+		dw.dialogText(answer.ID())))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.
 	dw.dialog.Next(answer)
@@ -274,4 +276,9 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 	}
 	// Update dialog view.
 	dw.dialogUpdate()
+}
+
+// dialogText returns translated dialog text for specified ID.
+func (dw *DialogWindow) dialogText(id string) string {
+	return dw.dialog.DialogText(lang.Text(id))
 }

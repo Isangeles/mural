@@ -30,6 +30,7 @@ import (
 	"github.com/faiface/pixel"
 
 	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/craft"
 	"github.com/isangeles/flame/module/item"
@@ -89,6 +90,10 @@ const (
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
+	// Translate name if not set.
+	if len(av.Name()) < 1 {
+		av.SetName(lang.Text(av.ID()))
+	}
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]
 	if av.portrait != nil {

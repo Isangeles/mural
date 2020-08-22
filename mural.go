@@ -87,6 +87,11 @@ func main() {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
 	setModule(modData)
+	// Load module translation.
+	err = flamedata.LoadModuleLang(mod, config.Lang)
+	if err != nil {
+		log.Err.Printf("unable to load module translation: %v", err)
+	}
 	// Load GUI graphic data.
 	err = data.LoadModuleData(mod)
 	if err != nil {

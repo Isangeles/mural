@@ -209,7 +209,7 @@ func (dw *DialogWindow) dialogUpdate() {
 		return
 	}
 	// Print stage text to chat box.
-	text := fmt.Sprintf("[%s]: %s\n", dw.dialog.Owner().Name(),
+	text := fmt.Sprintf("[%s]: %s\n", lang.Text(dw.dialog.Owner().ID()),
 		dw.dialogText(dw.dialog.Stage().ID()))
 	dw.chatBox.AddText(text)
 	dw.chatBox.ScrollBottom()

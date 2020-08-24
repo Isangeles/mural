@@ -32,6 +32,7 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/objects"
 	flamelog "github.com/isangeles/flame/log"
 
@@ -144,7 +145,8 @@ func (c *Chat) Update(win *mtk.Window) {
 			case msg := <-tar.CombatLog().Channel():
 				c.textbox.AddText(fmt.Sprintf("%s\n", msg))
 			case msg := <-tar.ChatLog().Channel():
-				c.textbox.AddText(fmt.Sprintf("%s: %s\n", tar.Name(), msg))
+				c.textbox.AddText(fmt.Sprintf("%s: %s\n", lang.Text(tar.ID()),
+					msg))
 			case msg := <-tar.PrivateLog().Channel():
 				if tar == pc {
 					c.textbox.AddText(fmt.Sprintf("%s\n", msg))

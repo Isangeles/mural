@@ -50,6 +50,7 @@ import (
 // game character.
 type Avatar struct {
 	*character.Character
+	name         string
 	portrait     pixel.Picture
 	sprite       *internal.AvatarSprite
 	chat         *mtk.Text
@@ -90,7 +91,8 @@ const (
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	// Translate name if not set.
+	av.SetName(data.Name)
+	// Translate name if empty.
 	if len(av.Name()) < 1 {
 		av.SetName(lang.Text(av.ID()))
 	}
@@ -194,6 +196,16 @@ func (av *Avatar) DrawArea() pixel.Rect {
 	return av.sprite.DrawArea()
 }
 
+// Name returns avatar name.
+func (av *Avatar) Name() string {
+	return av.name
+}
+
+// SetName sets avatar name.
+func (av *Avatar) SetName(name string) {
+	av.name = name
+}
+
 // Portrait returns avatar portrait
 // picture.
 func (av *Avatar) Portrait() pixel.Picture {
@@ -252,6 +264,7 @@ func (av *Avatar) Data() res.AvatarData {
 	data := res.AvatarData{
 		ID:       av.ID(),
 		Serial:   av.Serial(),
+		Name:     av.Name(),
 		Portrait: av.portraitName,
 		Torso:    av.torsoName,
 		Head:     av.headName,

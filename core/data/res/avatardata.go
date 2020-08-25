@@ -37,6 +37,7 @@ type AvatarsData struct {
 type AvatarData struct {
 	ID       string `xml:"id,attr" json:"id"`
 	Serial   string `xml:"serial,attr" json:"serial"`
+	Name     string `xml:"name,attr" json:"name"`
 	Portrait string `xml:"portrait,attr" json:"portrait"`
 	Head     string `xml:"head,attr" json:"head"`
 	Torso    string `xml:"torso,attr" json:"torso"`

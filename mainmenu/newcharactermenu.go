@@ -347,7 +347,6 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	id := fmt.Sprintf(newCharIDForm, strings.ToLower(name))
 	charData := flameres.CharacterData{
 		ID:        id,
-		Name:      name,
 		Level:     1,
 		Sex:       string(gender),
 		Race:      race,
@@ -361,6 +360,9 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 		Int: inte,
 		Wis: wis,
 	}
+	// Add name translation.
+	nameTrans := flameres.TranslationData{charData.ID, []string{name}}
+	flameres.Translations = append(flameres.Translations, nameTrans)
 	// Player skills & items from interface config.
 	for _, sid := range ncm.mainmenu.mod.Chapter().Conf().StartSkills {
 		skill := flameres.ObjectSkillData{

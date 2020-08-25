@@ -171,7 +171,7 @@ Gender:     %s
 Race:       %s
 Alignment   %s
 Attributes: %d, %d, %d, %d, %d`
-	info := fmt.Sprintf(charInfoForm, c.CharData.Name, c.CharData.Level,
+	info := fmt.Sprintf(charInfoForm, lang.Text(c.CharData.ID), c.CharData.Level,
 		lang.Text(c.CharData.Sex),
 		lang.Text(c.CharData.Race),
 		lang.Text(c.CharData.Alignment),
@@ -200,7 +200,7 @@ func (ngm *NewGameMenu) exportChar() error {
 	}
 	c := character.New(*pcData.CharData)
 	conf := ngm.mainmenu.mod.Conf()
-	path := filepath.Join(conf.CharactersPath(), c.Name())
+	path := filepath.Join(conf.CharactersPath(), c.ID()+c.Serial())
 	err := flamedata.ExportCharacters(path, c)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)

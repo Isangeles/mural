@@ -293,6 +293,9 @@ func (mm *MainMenu) ImportPlayableChars() error {
 			}
 			pc := PlayableCharData{&charData, &avData}
 			mm.playableChars = append(mm.playableChars, pc)
+			// Add translation for character name.
+			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}
+			flameres.Translations = append(flameres.Translations, nameTrans)
 		}
 	}
 	mm.newgamemenu.SetCharacters(mm.playableChars)

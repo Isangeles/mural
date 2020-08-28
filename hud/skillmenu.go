@@ -271,7 +271,7 @@ func insertSlotSkill(skill *object.SkillGraphic, slot *mtk.Slot) {
 // informations about specified skill.
 func skillInfo(s *skill.Skill) string {
 	infoForm := "%s"
-	info := fmt.Sprintf(infoForm, s.Name())
+	info := fmt.Sprintf(infoForm, lang.Text(s.ID()))
 	if config.Debug {
 		info = fmt.Sprintf("%s\n[%s]", info,
 			s.ID())

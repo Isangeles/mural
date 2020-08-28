@@ -26,6 +26,7 @@ package hud
 import (
 	"fmt"
 
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/item"
 
 	"github.com/isangeles/burn/ash"
@@ -65,11 +66,11 @@ func (hud *HUD) itemInfo(it item.Item) string {
 	case *item.Weapon:
 		infoForm := "%s\n%d-%d"
 		dmgMin, dmgMax := i.Damage()
-		info = fmt.Sprintf(infoForm, i.Name(),
+		info = fmt.Sprintf(infoForm, lang.Text(i.ID()),
 			dmgMin, dmgMax)
 	case *item.Misc:
 		infoForm := "%s"
-		info = fmt.Sprintf(infoForm, i.Name())
+		info = fmt.Sprintf(infoForm, lang.Text(i.ID()))
 	}
 	if config.Debug { // add serial ID info
 		info = fmt.Sprintf("%s\n[%s_%s]", info,

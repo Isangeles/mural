@@ -222,7 +222,7 @@ func (cm *CraftingMenu) Size() pixel.Vec {
 // recipes list.
 func (cm *CraftingMenu) insertRecipes(recipes ...*craft.Recipe) {
 	for _, r := range recipes {
-		cm.recipesList.AddItem(r.Name(), r)
+		cm.recipesList.AddItem(lang.Text(r.ID()), r)
 	}
 }
 
@@ -241,7 +241,11 @@ func (cm *CraftingMenu) onRecipeSelected(cs *mtk.CheckSlot) {
 	}
 	cm.makeButton.Active(true)
 	// Show recipe info.
-	info := fmt.Sprintf("%s\n%s\n", recipe.Name(), recipe.Info()) 
+	nameInfo := lang.Texts(recipe.ID())
+	info := fmt.Sprintf("%s", nameInfo[0])
+	if len(nameInfo) > 1 {
+		info = fmt.Sprintf("%s\n%s\n", info, nameInfo[1])
+	}
 	cm.recipeInfo.SetText(info)
 }
 

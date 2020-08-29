@@ -30,8 +30,8 @@ import (
 	"github.com/faiface/pixel/imdraw"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/training"
 	"github.com/isangeles/flame/module/req"
+	"github.com/isangeles/flame/module/training"
 
 	"github.com/isangeles/mtk"
 
@@ -220,7 +220,7 @@ func (tw *TrainingWindow) SetTrainer(t training.Trainer) {
 // insertTrainings adds all specified trainings to trainings list.
 func (tw *TrainingWindow) insertTrainings(trainings ...*training.TrainerTraining) {
 	for _, t := range trainings {
-		tw.trainingsList.AddItem(t.Name(), t)
+		tw.trainingsList.AddItem(lang.Text(t.ID()), t)
 	}
 }
 
@@ -239,11 +239,14 @@ func (tw *TrainingWindow) onTrainingSelected(cs *mtk.CheckSlot) {
 	}
 	tw.trainButton.Active(true)
 	// Show training info.
-	trainingInfo := train.Info()
-	for _, r := range train.Requirements() {
-		trainingInfo = fmt.Sprintf("%s\n%s", trainingInfo, reqInfo(r))
+	nameInfo := lang.Texts(train.ID())
+	if len(nameInfo) > 1 {
+		trainingInfo := nameInfo[1]
+		for _, r := range train.Requirements() {
+			trainingInfo = fmt.Sprintf("%s\n%s", trainingInfo, reqInfo(r))
+		}
+		tw.trainingInfo.SetText(trainingInfo)
 	}
-	tw.trainingInfo.SetText(trainingInfo)
 }
 
 // Triggered on train button clicked.

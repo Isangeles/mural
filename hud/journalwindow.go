@@ -220,7 +220,11 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Show quest info.
-	info := fmt.Sprintf("%s\n%s", quest.Name(), quest.Info()) 
+	nameInfo := lang.Texts(quest.ID())
+	info := fmt.Sprintf("%s", nameInfo[0])
+	if len(nameInfo) > 1 {
+		info = fmt.Sprintf("%s\n%s", info, nameInfo[1])
+	}
 	stage := quest.ActiveStage()
 	if stage != nil {
 		if stage.Completed() {

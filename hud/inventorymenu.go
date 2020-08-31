@@ -203,7 +203,8 @@ func (im *InventoryMenu) Size() pixel.Vec {
 func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 	im.slots.Clear()
 	// Insert items from layout first.
-	layout := im.hud.Layout(im.hud.ActivePlayer().ID(), im.hud.ActivePlayer().Serial())
+	pc := im.hud.Game().ActivePlayer()
+	layout := im.hud.Layout(pc.ID(), pc.Serial())
 	for _, it := range items {
 		slotID := layout.InvSlotID(it)
 		if slotID < 0 {
@@ -249,7 +250,7 @@ func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 // updateLayout updates inventory layout for active player.
 func (im *InventoryMenu) updateLayout() {
 	// Retrieve layout for current PC.
-	layout := im.hud.layouts[im.hud.ActivePlayer().SerialID()]
+	layout := im.hud.layouts[im.hud.Game().ActivePlayer().SerialID()]
 	if layout == nil {
 		layout = NewLayout()
 	}
@@ -269,13 +270,13 @@ func (im *InventoryMenu) updateLayout() {
 			layout.SaveInvSlot(it, i)
 		}
 	}
-	im.hud.layouts[im.hud.ActivePlayer().SerialID()] = layout
+	im.hud.layouts[im.hud.Game().ActivePlayer().SerialID()] = layout
 }
 
 // equip inserts specified equipable item to all
 // compatible slots in active PC equipment.
 func (im *InventoryMenu) equip(it item.Equiper) error {
-	pc := im.hud.ActivePlayer()
+	pc := im.hud.Game().ActivePlayer()
 	if !pc.MeetReqs(it.EquipReqs()...) {
 		return fmt.Errorf("requirements not meet")
 	}
@@ -336,7 +337,7 @@ func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
 		if !ok {
 			continue
 		}
-		im.hud.ActivePlayer().Inventory().RemoveItem(it)
+		im.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
 	}
 	s.Clear()
 }
@@ -366,7 +367,7 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 // refresh inserts player items to inventory
 // slots and saves inventory layout.
 func (im *InventoryMenu) refresh() {
-	im.insertItems(im.hud.ActivePlayer().Items()...)
+	im.insertItems(im.hud.Game().ActivePlayer().Items()...)
 	im.updateLayout()
 }
 
@@ -388,8 +389,8 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	switch it := it.Item.(type) {
 	case item.Equiper:
-		if im.hud.ActivePlayer().Equipment().Equiped(it) {
-			im.hud.ActivePlayer().Equipment().Unequip(it)
+		if im.hud.Game().ActivePlayer().Equipment().Equiped(it) {
+			im.hud.Game().ActivePlayer().Equipment().Unequip(it)
 			s.SetColor(invSlotColor)
 			break
 		}
@@ -401,9 +402,9 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 		}
 		s.SetColor(invSlotEqColor)
 	case *item.Misc:
-		im.hud.ActivePlayer().Use(it)
+		im.hud.Game().ActivePlayer().Use(it)
 		if it.Consumable() {
-			im.hud.ActivePlayer().Inventory().RemoveItem(it)
+			im.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
 			im.refresh()
 		}
 	}

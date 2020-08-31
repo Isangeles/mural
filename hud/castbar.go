@@ -51,7 +51,7 @@ func (cb *CastBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates cast bar.
 func (cb *CastBar) Update(win *mtk.Window) {
-	pc := cb.hud.ActivePlayer()
+	pc := cb.hud.Game().ActivePlayer()
 	if pc == nil {
 		return
 	}

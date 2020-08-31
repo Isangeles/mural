@@ -249,7 +249,7 @@ func (lw *LootWindow) onSlotLeftClicked(s *mtk.Slot) {
 		if !ok {
 			continue
 		}
-		err := lw.hud.ActivePlayer().Inventory().AddItem(ig.Item)
+		err := lw.hud.Game().ActivePlayer().Inventory().AddItem(ig.Item)
 		if err != nil {
 			log.Err.Printf("hud: loot window: unable to transfer item: %v",
 				err)

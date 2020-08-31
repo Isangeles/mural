@@ -39,6 +39,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
 
@@ -248,12 +249,13 @@ func (ngm *NewGameMenu) startGame() {
 	}
 	startArea.AddCharacter(pc)
 	// Create game.
-	game := flame.NewGame(mod)
+	game := game.New(flame.NewGame(mod))
+	game.AddPlayer(av)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(game, av)
+	ngm.mainmenu.onGameCreated(game)
 }
 
 // Triggered after start button clicked.

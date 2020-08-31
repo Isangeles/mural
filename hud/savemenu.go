@@ -247,7 +247,7 @@ func (sm *SaveMenu) save(saveName string) error {
 	path := filepath.Join(mod.Conf().SavesPath(),
 		saveName + flamedata.SavegameFileExt)
 	// Save current game.
-	err := flamedata.ExportGame(sm.hud.Game(), path)
+	err := flamedata.ExportGame(sm.hud.Game().Game, path)
 	if err != nil {
 		return fmt.Errorf("unable to save game: %v", err)
 	}

@@ -104,7 +104,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.avatars {
-		for _, pc := range c.hud.Players() {
+		for _, pc := range c.hud.Game().Players() {
 			if mtk.Range(pc.Position(),
 				av.Position()) > pc.SightRange() {
 				continue
@@ -115,7 +115,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Objects.
 	for _, ob := range c.objects {
-		for _, pc := range c.hud.Players() {
+		for _, pc := range c.hud.Game().Players() {
 			if mtk.Range(pc.Position(),
 				ob.Position()) > pc.SightRange() {
 				continue
@@ -178,7 +178,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.avatars {
-		for _, pc := range c.hud.Players() {
+		for _, pc := range c.hud.Game().Players() {
 			if mtk.Range(pc.Position(), av.Position()) > pc.SightRange() {
 				av.Silence(true)
 				continue
@@ -189,7 +189,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	// Objects.
 	for _, ob := range c.objects {
-		for _, pc := range c.hud.Players() {
+		for _, pc := range c.hud.Game().Players() {
 			if mtk.Range(pc.Position(), ob.Position()) > pc.SightRange() {
 				ob.Silence(true)
 				continue
@@ -229,7 +229,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	c.avatars = make(map[string]*object.Avatar)
 	for _, char := range a.Characters() {
 		var pcAvatar *object.Avatar
-		for _, pc := range c.hud.Players() {
+		for _, pc := range c.hud.Game().Players() {
 			if char == pc.Character {
 				pcAvatar = pc
 				break
@@ -243,7 +243,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	// Update objects graphics.
 	c.updateAreaObjects()
 	// Center camera at player.
-	pc := c.hud.ActivePlayer()
+	pc := c.hud.Game().ActivePlayer()
 	c.CenterAt(pc.Position())
 	return nil
 }
@@ -359,7 +359,7 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 // VisibleForPlayers checks whether specified position is
 // in visibility range of any HUD PCs.
 func (c *Camera) VisibleForPlayers(pos pixel.Vec) bool {
-	for _, pc := range c.hud.Players() {
+	for _, pc := range c.hud.Game().Players() {
 		if mtk.Range(pc.Position(), pos) <= pc.SightRange() {
 			return true
 		}
@@ -485,7 +485,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: set target: %s", av.ID()+"_"+av.Serial())
-		c.hud.ActivePlayer().SetTarget(av.Character)
+		c.hud.Game().ActivePlayer().SetTarget(av.Character)
 		return
 	}
 	for _, ob := range c.AreaObjects() {
@@ -493,15 +493,15 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: set target: %s", ob.ID()+"_"+ob.Serial())
-		c.hud.ActivePlayer().SetTarget(ob.Object)
+		c.hud.Game().ActivePlayer().SetTarget(ob.Object)
 		return
 	}
-	c.hud.ActivePlayer().SetTarget(nil)
+	c.hud.Game().ActivePlayer().SetTarget(nil)
 }
 
 // Triggered after left mouse button was pressed.
 func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
-	pc := c.hud.ActivePlayer()
+	pc := c.hud.Game().ActivePlayer()
 	// Action.
 	for _, ob := range c.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
@@ -571,7 +571,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
 	if !c.hud.game.Paused() && c.PassablePosition(destPos) && !c.hud.containsPos(pos) {
-		c.hud.ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
+		c.hud.Game().ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }
 

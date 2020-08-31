@@ -35,7 +35,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res"
@@ -52,17 +51,18 @@ import (
 	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
 )
 
 var (
-	mainMenu *mainmenu.MainMenu
-	pcHUD    *hud.HUD
-	mod      *module.Module
-	game     *flame.Game
-	inGame   bool
+	mainMenu   *mainmenu.MainMenu
+	pcHUD      *hud.HUD
+	mod        *module.Module
+	activeGame *game.Game
+	inGame     bool
 )
 
 // On init.
@@ -194,7 +194,7 @@ func run() {
 			continue
 		}
 		pcHUD.Update(win)
-		game.Update(win.Delta())
+		activeGame.Update(win.Delta())
 		if pcHUD.Exiting() {
 			inGame = false
 			// Reimport module.
@@ -212,30 +212,27 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *flame.Game, pcs ...*object.Avatar) {
+func EnterGame(g *game.Game) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
-	game = g
+	activeGame = g
 	// Create HUD.
 	hud := hud.New()
 	// Set HUD.
 	setHUD(hud)
 	// Load GUI data.
-	err := data.LoadChapterData(game.Module().Chapter())
+	err := data.LoadChapterData(activeGame.Module().Chapter())
 	if err != nil {
 		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
 	// Set game for HUD.
-	hud.SetGame(game)
-	burn.Game = game
+	hud.SetGame(activeGame)
+	burn.Game = activeGame.Game 
 	inGame = true
-	for _, pc := range pcs {
-		hud.AddPlayer(pc)
-	}
 	// Run module scripts.
-	modpath := game.Module().Conf().Path
+	modpath := activeGame.Module().Conf().Path
 	scriptsPath := filepath.Join(modpath, data.GUIModulePath, "scripts/run")
 	scripts, err := data.ScriptsDir(scriptsPath)
 	if err != nil {
@@ -253,12 +250,13 @@ func LoadSavedGame(saveName string) {
 	// Import saved game.
 	savePath := filepath.Join(mod.Conf().SavesPath(),
 		saveName+flamedata.SavegameFileExt)
-	game, err := flamedata.ImportGame(mod, savePath)
+	g, err := flamedata.ImportGame(mod, savePath)
 	if err != nil {
 		log.Err.Printf("load saved game: unable to import game: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
+	gameWrapper := game.New(g)
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)
@@ -268,19 +266,18 @@ func LoadSavedGame(saveName string) {
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	pcs := make([]*object.Avatar, 0)
 	for _, pcd := range guisav.Players {
-		char := game.Module().Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
+		char := gameWrapper.Module().Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
 		if char == nil {
 			log.Err.Printf("load saved game: unable to retrieve pc character: %s#%s",
 				pcd.Avatar.ID, pcd.Avatar.Serial)
 			continue
 		}
 		av := object.NewAvatar(char, &pcd.Avatar)
-		pcs = append(pcs, av)
+		gameWrapper.AddPlayer(av)
 	}
 	// Enter game.
-	EnterGame(game, pcs...)
+	EnterGame(gameWrapper)
 	// Load HUD state.
 	err = pcHUD.LoadGUISave(guisav)
 	if err != nil {

@@ -162,7 +162,7 @@ func (sm *SkillMenu) Show(show bool) {
 	sm.opened = show
 	if sm.Opened() {
 		sm.slots.Clear()
-		sm.insert(sm.hud.ActivePlayer().Skills()...)
+		sm.insert(sm.hud.Game().ActivePlayer().Skills()...)
 		sm.hud.UserFocus().Focus(sm)
 	} else {
 		sm.hud.UserFocus().Focus(nil)
@@ -245,7 +245,7 @@ func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
 	if !ok {
 		log.Err.Printf("hud: skills menu: %v: is not skill", s.Values()[0])
 	}
-	sm.hud.ActivePlayer().Use(skill.Skill)
+	sm.hud.Game().ActivePlayer().Use(skill.Skill)
 }
 
 // Triggered after one of skill slots was clicked with

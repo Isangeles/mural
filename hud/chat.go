@@ -125,7 +125,7 @@ func (c *Chat) Update(win *mtk.Window) {
 	}
 	// Print messages from players and nearby objects.
 	game := c.hud.Game()
-	for _, pc := range c.hud.Players() {
+	for _, pc := range c.hud.Game().Players() {
 		select {
 		case msg := <-pc.PrivateLog().Channel():
 			c.textbox.AddText(fmt.Sprintf("%s\n", msg))
@@ -222,7 +222,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		return
 	}
 	// Echo chat.
-	c.hud.ActivePlayer().ChatLog().Add(input)
+	c.hud.Game().ActivePlayer().ChatLog().Add(input)
 }
 
 // executeScriptFile executes Ash script from file

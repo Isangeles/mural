@@ -172,7 +172,7 @@ func (jw *JournalWindow) Show(show bool) {
 	jw.opened = show
 	if jw.Opened() {
 		jw.questsList.Clear()
-		pc := jw.hud.ActivePlayer()
+		pc := jw.hud.Game().ActivePlayer()
 		jw.insertQuests(pc.Journal().Quests()...)
 	} else {
 		jw.questInfo.Clear()

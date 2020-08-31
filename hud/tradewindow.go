@@ -211,7 +211,7 @@ func (tw *TradeWindow) Show(show bool) {
 		if tw.seller != nil {
 			tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
 		}
-		tw.insertSellItems(tw.hud.ActivePlayer().Inventory().Items()...)
+		tw.insertSellItems(tw.hud.Game().ActivePlayer().Inventory().Items()...)
 	} else {
 		tw.reset()
 	}
@@ -397,16 +397,16 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	// Check trade value.
 	if tw.tradeValue() < 0 {
 		msg := lang.Text("hud_trade_low_value_msg")
-		tw.hud.ActivePlayer().PrivateLog().Add(msg)
+		tw.hud.Game().ActivePlayer().PrivateLog().Add(msg)
 		return
 	}
 	// Trade.
 	for _, it := range tw.buyItems {
 		tw.seller.Inventory().RemoveItem(it)
-		tw.hud.ActivePlayer().Inventory().AddItem(it)
+		tw.hud.Game().ActivePlayer().Inventory().AddItem(it)
 	}
 	for _, it := range tw.sellItems {
-		tw.hud.ActivePlayer().Inventory().RemoveItem(it)
+		tw.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
 		tw.seller.Inventory().AddItem(it)
 	}
 	tw.Show(false)

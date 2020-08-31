@@ -33,7 +33,6 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/area"
 	flameobject "github.com/isangeles/flame/module/objects"
@@ -46,6 +45,7 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
 
@@ -79,9 +79,7 @@ type HUD struct {
 	charinfo      *CharacterWindow
 	trade         *TradeWindow
 	training      *TrainingWindow
-	game          *flame.Game
-	pcs           []*object.Avatar
-	activePC      *object.Avatar
+	game          *game.Game
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	layouts       map[string]*Layout
@@ -134,7 +132,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 		hud.loadScreen.Draw(win)
 		return
 	}
-	if hud.ActivePlayer() == nil { // no active pc, don't draw
+	if hud.Game() == nil || hud.Game().ActivePlayer() == nil { // no game or active pc, don't draw
 		return
 	}
 	// Elements positions.
@@ -159,7 +157,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	hud.bar.Draw(win, mtk.Matrix().Moved(barPos))
 	hud.chat.Draw(win, mtk.Matrix().Moved(chatPos))
 	hud.pcFrame.Draw(win, mtk.Matrix().Moved(pcFramePos))
-	if len(hud.ActivePlayer().Targets()) > 0 {
+	if len(hud.Game().ActivePlayer().Targets()) > 0 {
 		hud.tarFrame.Draw(win, mtk.Matrix().Moved(tarFramePos))
 	}
 	if hud.savemenu.Opened() {
@@ -195,7 +193,7 @@ func (hud *HUD) Draw(win *mtk.Window) {
 	if hud.objectInfo.Opened() {
 		hud.objectInfo.Draw(win)
 	}
-	if hud.ActivePlayer().Casted() != nil {
+	if hud.Game().ActivePlayer().Casted() != nil {
 		hud.castBar.Draw(win, mtk.Matrix().Moved(castBarPos))
 	}
 	if hud.menu.Opened() {
@@ -213,7 +211,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		log.Err.Printf("hud loading fail: %v", hud.loaderr)
 		hud.Exit()
 	}
-	if hud.ActivePlayer() == nil { // no active pc, don't update
+	if hud.Game() == nil || hud.Game().ActivePlayer() == nil { // no game or active pc, don't update
 		return
 	}
 	// Handle area change.
@@ -229,14 +227,14 @@ func (hud *HUD) Update(win *mtk.Window) {
 		hud.onMouseRightPressed(win.MousePosition())
 	}
 	// Put PC target into target frame.
-	if len(hud.ActivePlayer().Targets()) > 0 {
+	if len(hud.Game().ActivePlayer().Targets()) > 0 {
 		for _, av := range hud.camera.Avatars() {
-			if flameobject.Equals(hud.ActivePlayer().Targets()[0], av.Character) {
+			if flameobject.Equals(hud.Game().ActivePlayer().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
 			}
 		}
 		for _, ob := range hud.camera.AreaObjects() {
-			if flameobject.Equals(hud.ActivePlayer().Targets()[0], ob.Object) {
+			if flameobject.Equals(hud.Game().ActivePlayer().Targets()[0], ob.Object) {
 				hud.tarFrame.SetObject(ob)
 			}
 		}
@@ -264,40 +262,19 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.msgs.Update(win)
 }
 
-// Players returns player characters
-// (game characters of HUD user).
-func (hud *HUD) Players() []*object.Avatar {
-	return hud.pcs
-}
-
-// ActivePlayers retruns currently active PC.
-func (hud *HUD) ActivePlayer() *object.Avatar {
-	return hud.activePC
-}
-
-// AddPlayer adds specified avatar as player to
-// HUD players list .
-func (hud *HUD) AddPlayer(pc *object.Avatar) {
-	hud.pcs = append(hud.pcs, pc)
-	if hud.ActivePlayer() == nil {
-		hud.SetActivePlayer(pc)
-	}
-	return
-}
-
 // SetActivePlayer sets specified avatar as active
 // player.
 func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
-	hud.activePC = pc
-	hud.camera.CenterAt(hud.ActivePlayer().Position())
-	hud.pcFrame.SetObject(hud.ActivePlayer())
+	hud.Game().SetActivePlayer(pc)
+	hud.camera.CenterAt(hud.Game().ActivePlayer().Position())
+	hud.pcFrame.SetObject(hud.Game().ActivePlayer())
 	hud.Reload()
 	// Setup active player area.
 	if hud.game == nil {
 		return
 	}
 	chapter := hud.game.Module().Chapter()
-	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
+	pcArea := chapter.CharacterArea(hud.Game().ActivePlayer().Character)
 	if pcArea == nil {
 		log.Err.Printf("hud: set active pc: no pc area")
 		return
@@ -329,7 +306,7 @@ func (hud *HUD) Camera() *Camera {
 }
 
 // Game returns HUD current game.
-func (hud *HUD) Game() *flame.Game {
+func (hud *HUD) Game() *game.Game {
 	return hud.game
 }
 
@@ -372,16 +349,19 @@ func (hud *HUD) Layout(id, serial string) *Layout {
 // Reload reloads HUD layouts for
 // active player.
 func (hud *HUD) Reload() {
-	if hud.ActivePlayer() == nil {
+	if hud.Game().ActivePlayer() == nil {
 		return
 	}
-	layout := hud.Layout(hud.ActivePlayer().ID(), hud.ActivePlayer().Serial())
+	layout := hud.Layout(hud.Game().ActivePlayer().ID(), hud.Game().ActivePlayer().Serial())
 	hud.bar.setLayout(layout)
 }
 
 // SetGame sets HUD game.
-func (hud *HUD) SetGame(g *flame.Game) {
+func (hud *HUD) SetGame(g *game.Game) {
 	hud.game = g
+	if len(hud.Game().Players()) > 0 {
+		hud.SetActivePlayer(hud.Game().Players()[0])
+	}
 }
 
 // ChangeArea changes current HUD area.
@@ -410,7 +390,7 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 func (hud *HUD) NewGUISave() *res.GUISave {
 	sav := new(res.GUISave)
 	// Players.
-	for _, pc := range hud.Players() {
+	for _, pc := range hud.Game().Players() {
 		pcData := res.PlayerSave{Avatar: pc.Data()}
 		// Layout.
 		layout := hud.layouts[pc.SerialID()]
@@ -485,7 +465,7 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 // updateCurrentArea updates HUD area to active player area.
 func (hud *HUD) updateCurrentArea() {
 	chapter := hud.Game().Module().Chapter()
-	pcArea := chapter.CharacterArea(hud.ActivePlayer().Character)
+	pcArea := chapter.CharacterArea(hud.Game().ActivePlayer().Character)
 	if pcArea != hud.Camera().Area() {
 		go hud.ChangeArea(pcArea)
 	}

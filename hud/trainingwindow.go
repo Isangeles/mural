@@ -261,7 +261,7 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
-	pc := tw.hud.ActivePlayer()
+	pc := tw.hud.Game().ActivePlayer()
 	pc.Use(train)
 }
 

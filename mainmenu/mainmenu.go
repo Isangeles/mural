@@ -32,7 +32,6 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
@@ -42,7 +41,7 @@ import (
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
 )
 
 var (
@@ -67,7 +66,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	mod           *module.Module
 	playableChars []PlayableCharData
-	onGameCreated func(g *flame.Game, pcs ...*object.Avatar)
+	onGameCreated func(g *game.Game)
 	onSaveLoad    func(savename string)
 	loading       bool
 	exiting       bool
@@ -175,7 +174,7 @@ func (mm *MainMenu) Exit() {
 
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
-func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *flame.Game, pcs ...*object.Avatar)) {
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game)) {
 	mm.onGameCreated = f
 }
 

@@ -250,7 +250,8 @@ func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 // updateLayout updates inventory layout for active player.
 func (im *InventoryMenu) updateLayout() {
 	// Retrieve layout for current PC.
-	layout := im.hud.layouts[im.hud.Game().ActivePlayer().SerialID()]
+	pc := im.hud.Game().ActivePlayer()
+	layout := im.hud.layouts[pc.ID()+pc.Serial()]
 	if layout == nil {
 		layout = NewLayout()
 	}
@@ -270,7 +271,7 @@ func (im *InventoryMenu) updateLayout() {
 			layout.SaveInvSlot(it, i)
 		}
 	}
-	im.hud.layouts[im.hud.Game().ActivePlayer().SerialID()] = layout
+	im.hud.layouts[pc.ID()+pc.Serial()] = layout
 }
 
 // equip inserts specified equipable item to all

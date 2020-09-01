@@ -393,7 +393,7 @@ func (hud *HUD) NewGUISave() *res.GUISave {
 	for _, pc := range hud.Game().Players() {
 		pcData := res.PlayerSave{Avatar: pc.Data()}
 		// Layout.
-		layout := hud.layouts[pc.SerialID()]
+		layout := hud.layouts[pc.ID()+pc.Serial()]
 		if layout != nil {
 			for serialID, slot := range layout.InvSlots() {
 				slotSave := res.SlotSave{slot, serialID}

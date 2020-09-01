@@ -303,7 +303,7 @@ func (mb *MenuBar) updateLayout() {
 			layout.SaveBarSlot(v, i)
 		}
 	}
-	mb.hud.layouts[pc.SerialID()] = layout
+	mb.hud.layouts[pc.ID()+pc.Serial()] = layout
 }
 
 // setLayout sets specified layout as

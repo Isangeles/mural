@@ -202,7 +202,7 @@ func (ngm *NewGameMenu) exportChar() error {
 	c := character.New(*pcData.CharData)
 	conf := ngm.mainmenu.mod.Conf()
 	path := filepath.Join(conf.CharactersPath(), c.ID()+c.Serial())
-	err := flamedata.ExportCharacters(path, c)
+	err := flamedata.ExportCharacters(path, c.Data())
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}

@@ -232,25 +232,15 @@ func (ngm *NewGameMenu) startGame() {
 		log.Err.Printf("main menu: new game: unable to retrieve avatar from switch")
 		return
 	}
-	// Create PC and avatar.
-	pc := character.New(*pcd.CharData)
-	av := object.NewAvatar(pc, pcd.AvatarData)
-	// Set start position.
-	mod := ngm.mainmenu.mod
-	chapterConf := mod.Chapter().Conf()
-	startPos := pixel.V(chapterConf.StartPosX, chapterConf.StartPosY)
-	av.SetPosition(startPos)
-	// PC to start area.
-	startArea := mod.Chapter().Area(chapterConf.StartArea)
-	if startArea == nil {
-		log.Err.Printf("main menu: new game: start area not found: %s",
-			chapterConf.StartArea)
+	// Create game.
+	game := game.New(flame.NewGame(ngm.mainmenu.mod))
+	pc, err := game.NewPlayer(*pcd.CharData, *pcd.AvatarData)
+	if err != nil {
+		log.Err.Printf("main menu: new game: unable to create new player: %v",
+			err)
 		return
 	}
-	startArea.AddCharacter(pc)
-	// Create game.
-	game := game.New(flame.NewGame(mod))
-	game.AddPlayer(av)
+	game.AddPlayer(pc)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return

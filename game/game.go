@@ -24,8 +24,15 @@
 package game
 
 import (
-	"github.com/isangeles/flame"
+	"fmt"
 
+	"github.com/faiface/pixel"
+
+	"github.com/isangeles/flame"
+	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/module/character"
+
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 )
 
@@ -60,4 +67,23 @@ func (g *Game) SetActivePlayer(player *object.Avatar) {
 // ActivePlayer returns active player avatar.
 func (g *Game) ActivePlayer() *object.Avatar {
 	return g.activePlayer
+}
+
+// NewPlayer creates new character avatar for the player from specified data and
+// places this character in the start area of game module.
+func (g *Game) NewPlayer(charData flameres.CharacterData, avData res.AvatarData) (*object.Avatar, error) {
+	pc := character.New(charData)
+	av := object.NewAvatar(pc, &avData)
+	// Set start position.
+	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
+		g.Module().Chapter().Conf().StartPosY)
+	av.SetPosition(startPos)
+	// Set start area.
+	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
+	if startArea == nil {
+		return nil, fmt.Errorf("game: start area not found: %s",
+			g.Module().Chapter().Conf().StartArea)
+	}
+	startArea.AddCharacter(av.Character)
+	return av, nil
 }

@@ -234,7 +234,10 @@ func (ngm *NewGameMenu) startGame() {
 	}
 	// Create game.
 	game := game.New(flame.NewGame(ngm.mainmenu.mod))
-	pc, err := game.NewPlayer(*pcd.CharData, *pcd.AvatarData)
+	// Create player.
+	char := character.New(*pcd.CharData)
+	av := object.NewAvatar(char, pcd.AvatarData)
+	pc, err := game.NewPlayer(av)
 	if err != nil {
 		log.Err.Printf("main menu: new game: unable to create new player: %v",
 			err)

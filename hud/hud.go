@@ -44,7 +44,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
@@ -264,7 +263,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 
 // SetActivePlayer sets specified avatar as active
 // player.
-func (hud *HUD) SetActivePlayer(pc *object.Avatar) {
+func (hud *HUD) SetActivePlayer(pc *game.Player) {
 	hud.Game().SetActivePlayer(pc)
 	hud.camera.CenterAt(hud.Game().ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.Game().ActivePlayer())

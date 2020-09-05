@@ -21,6 +21,7 @@
  *
  */
 
+// Package with game wrapper struct.
 package game
 
 import (
@@ -29,18 +30,15 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	flameres "github.com/isangeles/flame/data/res"
-	"github.com/isangeles/flame/module/character"
 
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 )
 
 // Wrapper struct for game.
 type Game struct {
 	*flame.Game
-	players      []*object.Avatar
-	activePlayer *object.Avatar
+	players      []*Player
+	activePlayer *Player
 }
 
 // New creates new wrapper for specified game.
@@ -50,40 +48,39 @@ func New(game *flame.Game) *Game {
 }
 
 // AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *object.Avatar) {
+func (g *Game) AddPlayer(avatar *Player) {
 	g.players = append(g.players, avatar)
 }
 
 // Players returns all player avatars.
-func (g *Game) Players() []*object.Avatar {
+func (g *Game) Players() []*Player {
 	return g.players
 }
 
 // SetActivePlayer sets specified avatar as active player avatar.
-func (g *Game) SetActivePlayer(player *object.Avatar) {
+func (g *Game) SetActivePlayer(player *Player) {
 	g.activePlayer = player
 }
 
 // ActivePlayer returns active player avatar.
-func (g *Game) ActivePlayer() *object.Avatar {
+func (g *Game) ActivePlayer() *Player {
 	return g.activePlayer
 }
 
 // NewPlayer creates new character avatar for the player from specified data and
 // places this character in the start area of game module.
-func (g *Game) NewPlayer(charData flameres.CharacterData, avData res.AvatarData) (*object.Avatar, error) {
-	pc := character.New(charData)
-	av := object.NewAvatar(pc, &avData)
+func (g *Game) NewPlayer(avatar *object.Avatar) (*Player, error) {
 	// Set start position.
 	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
 		g.Module().Chapter().Conf().StartPosY)
-	av.SetPosition(startPos)
+	avatar.SetPosition(startPos)
 	// Set start area.
 	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
 	if startArea == nil {
 		return nil, fmt.Errorf("game: start area not found: %s",
 			g.Module().Chapter().Conf().StartArea)
 	}
-	startArea.AddCharacter(av.Character)
-	return av, nil
+	startArea.AddCharacter(avatar.Character)
+	player := Player{avatar, g}
+	return &player, nil
 }

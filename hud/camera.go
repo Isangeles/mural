@@ -231,7 +231,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 		var pcAvatar *object.Avatar
 		for _, pc := range c.hud.Game().Players() {
 			if char == pc.Character {
-				pcAvatar = pc
+				pcAvatar = pc.Avatar
 				break
 			}
 		}
@@ -519,7 +519,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Loot.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {
+		if !av.DrawArea().Contains(pos) || av.Live() || av == pc.Avatar {
 			continue
 		}
 		// Range check.
@@ -552,7 +552,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Dialog.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc ||
+		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc.Avatar ||
 			av.AttitudeFor(pc) == character.Hostile || len(av.Dialogs()) < 1 {
 			continue
 		}

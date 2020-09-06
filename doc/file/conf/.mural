@@ -1,0 +1,74 @@
+.TH .mural
+.SH NAME
+\[char46]mural - file for the interface configuration.
+.SH DESCRIPTION
+This file contains the interface configuration values.
+.br
+The configuration file is loaded by the interface on startup.
+.SH VALUES
+.P
+* lang
+.br
+Specifies game language.
+.br
+Value is name of directory with translation files in lang directories.
+.P
+* module
+.br
+Specifies module from `data/modules` directory to load at start.
+.br
+Value is an ID specified in `.module` file inside main module directory.
+.P
+* debug
+.br
+Enables engine debug mode(shows debug messages in engine log).
+.br
+Value 'true' enables mode, everything else sets mode disabled.
+.P
+* fullscreen
+.br
+Enables fullscreen mode.
+.br
+Value 'true' enables fullscreen, everything else sets windowed mode.
+.P
+* resolution
+.br
+Specified current resolution.
+.br
+Values are resolution width and height.
+.P
+* map-fow
+.br
+Enables 'Fog of War' effect for an area map.
+.br
+Value 'true' enables FOW, everything else sets FOW disabled.
+.P
+* main-font
+.br
+Specifies name of font file(located in graphic archive) for main UI font.
+.P
+* music-volume
+.br
+Specifies game music volume.
+.br
+Value 0 is system volume, <0 is quieter then system, >0 is louder then system.
+.P
+* menu-music
+.br
+Specifies name of audio file(located in audio archive) for main menu music theme.
+.P
+* button-click-sound
+.br
+Specifies name of audio file(located in audio archive) for button click sound.
+.SH EXAMPLE
+.nf
+lang:english
+module:test
+debug:false
+fullscreen:true
+resolution:1920;1080
+map-fow:true
+main-font:font.ttf
+music-volume:0
+menu-music:music.ogg
+button-click-sound:click.ogg

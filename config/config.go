@@ -57,6 +57,8 @@ var (
 	MusicVolume      = 0.0
 	MusicMute        = false
 	Fire             = false
+	ServerLogin      = ""
+	ServerPassword   = ""
 	ServerHost       = ""
 	ServerPort       = "8000"
 )
@@ -128,6 +130,10 @@ func Load() error {
 	if len(conf["fire"]) > 0 {
 		Fire = conf["fire"][0] == "true"
 	}
+	if len(conf["server-user"]) > 1 {
+		ServerLogin = conf["server-user"][0]
+		ServerPassword = conf["server-user"][1]
+	}
 	if len(conf["server"]) > 1 {
 		ServerHost = conf["server"][0]
 		ServerPort = conf["server"][1]
@@ -163,6 +169,7 @@ func Save() error {
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
 	conf["fire"] = []string{fmt.Sprintf("%v", Fire)}
+	conf["server-user"] = []string{ServerLogin, ServerPassword}
 	conf["server"] = []string{ServerHost, ServerPort}
 	confText := text.MarshalConfig(conf)
 	// Write config values.

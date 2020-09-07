@@ -21,7 +21,7 @@
  *
  */
 
-// Config package with configuration values.
+// Package with configuration values.
 package config
 
 import (
@@ -56,6 +56,9 @@ var (
 	ButtonClickSound = ""
 	MusicVolume      = 0.0
 	MusicMute        = false
+	Fire             = false
+	ServerHost       = ""
+	ServerPort       = "8000"
 )
 
 // Load loads configuration file.
@@ -121,6 +124,14 @@ func Load() error {
 	if len(conf["music-mute"]) > 0 {
 		MusicMute = conf["music-mute"][0] == "true"
 	}
+	// Server.
+	if len(conf["fire"]) > 0 {
+		Fire = conf["fire"][0] == "true"
+	}
+	if len(conf["server"]) > 1 {
+		ServerHost = conf["server"][0]
+		ServerPort = conf["server"][1]
+	}
 	// Debug.
 	log.Dbg.Print("Config file loaded")
 	return nil
@@ -151,6 +162,8 @@ func Save() error {
 	conf["button-click-sound"] = []string{ButtonClickSound}
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
+	conf["fire"] = []string{fmt.Sprintf("%v", Fire)}
+	conf["server"] = []string{ServerHost, ServerPort}
 	confText := text.MarshalConfig(conf)
 	// Write config values.
 	w := bufio.NewWriter(file)

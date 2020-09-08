@@ -112,6 +112,18 @@ Description: specifies name of audio file(located in audio archive) for main men
   button-click-sound:[file name]
 ```
 Description: specifies name of audio file(located in audio archive) for button click sound.
+```
+  fire:[true/false]
+```
+Description:
+```
+  server:[host];[port]
+```
+Description:
+```
+  server-user:[login];[password]
+```
+Description:
 
 ## Module directory
 All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/ui/mural` directory.

@@ -64,6 +64,7 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
+	server        *game.Server
 	mod           *module.Module
 	playableChars []PlayableCharData
 	onGameCreated func(g *game.Game)
@@ -80,9 +81,10 @@ type PlayableCharData struct {
 }
 
 // New creates new main menu
-func New(mod *module.Module) *MainMenu {
+func New(mod *module.Module, serv *game.Server) *MainMenu {
 	mm := new(MainMenu)
 	mm.mod = mod
+	mm.server = serv
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.newgamemenu = newNewGameMenu(mm)

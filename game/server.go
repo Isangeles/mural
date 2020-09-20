@@ -24,17 +24,22 @@
 package game
 
 import (
+	"bufio"
 	"fmt"
 	"net"
 
 	flameres "github.com/isangeles/flame/data/res"
 
 	"github.com/isangeles/fire/request"
+	"github.com/isangeles/fire/response"
+
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for server connection.
 type Server struct {
-	net.Conn
+	conn       net.Conn
+	onResponse func(r response.Response)
 }
 
 // NewServer creates new server struct with connection to
@@ -46,8 +51,19 @@ func NewServer(host, port string) (*Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Unable to dial server: %v", err)
 	}
-	s.Conn = conn
+	s.conn = conn
+	go s.handleResponses()
 	return s, nil
+}
+
+// Address returns server address.
+func (s *Server) Address() string {
+	return s.conn.RemoteAddr().String()
+}
+
+// SetOnResponseFunc sets function triggered on each server response.
+func (s *Server) SetOnResponseFunc(f func(r response.Response)) {
+	s.onResponse = f
 }
 
 // Login sends login request to the server.
@@ -63,7 +79,7 @@ func (s *Server) Login(id, pass string) error {
 			err)
 	}
 	t = fmt.Sprintf("%s\r\n", t)
-	_, err = s.Write([]byte(t))
+	_, err = s.conn.Write([]byte(t))
 	if err != nil {
 		return fmt.Errorf("Unable to write login request: %v", err)
 	}
@@ -79,10 +95,31 @@ func (s *Server) NewCharacter(charData flameres.CharacterData) error {
 			err)
 	}
 	t = fmt.Sprintf("%s\r\n", t)
-	_, err = s.Write([]byte(t))
+	_, err = s.conn.Write([]byte(t))
 	if err != nil {
 		return fmt.Errorf("Unable to write new char request: %v", err)
 	}
 	return nil
 }
-	
+
+// handleResponses handles responses from the server connection and
+// calls onResponse function for each response.
+func (s *Server) handleResponses() {
+	out := bufio.NewScanner(s.conn)
+	for out.Scan() {
+		if out.Err() != nil {
+			log.Err.Printf("Server: %s: Unable to read from server: %v",
+				s.Address(), out.Err())
+			continue
+		}
+		resp, err := response.Unmarshal(out.Text())
+		if err != nil {
+			log.Err.Printf("Server: %v: Unable to unmarshal server resonse: %v",
+				s.Address(), err)
+			continue
+		}
+		if s.onResponse != nil {
+			go s.onResponse(resp)
+		}
+	}
+}

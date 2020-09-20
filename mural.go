@@ -150,8 +150,18 @@ func run() {
 			config.ButtonClickSound)
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
+	// Fire mode.
+	var server *game.Server
+	if config.Fire {
+		s, err := game.NewServer(config.ServerHost, config.ServerPort)
+		if err != nil {
+			log.Err.Printf("Init run: Unable to connect to the game server: %v",
+				err)
+		}
+		server = s
+	}
 	// Create main menu.
-	mainMenu = mainmenu.New(mod)
+	mainMenu = mainmenu.New(mod, server)
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
 	err = mainMenu.ImportPlayableChars()
@@ -195,7 +205,7 @@ func run() {
 		}
 		pcHUD.Update(win)
 		activeGame.Update(win.Delta())
-		if pcHUD.Exiting() {
+		if pcHUD.Exiting() || activeGame.Closing() {
 			inGame = false
 			// Reimport module.
 			modData, err := flamedata.ImportModule(config.ModulePath())
@@ -256,7 +266,13 @@ func LoadSavedGame(saveName string) {
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	gameWrapper := game.New(g)
+	// Create game wrapper.
+	gameWrapper, err := game.New(g, nil)
+	if err != nil {
+		log.Err.Printf("load saved game: unable to create saved game: %v", err)
+		mainMenu.ShowMessage(lang.Text("lang_game_err"))
+		return
+	}
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)

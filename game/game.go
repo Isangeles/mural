@@ -39,17 +39,23 @@ type Game struct {
 	*flame.Game
 	players      []*Player
 	activePlayer *Player
+	server       *Server
+	closing      bool
 }
 
 // New creates new wrapper for specified game.
-func New(game *flame.Game) *Game {
-	g := Game{Game: game}
-	return &g
+func New(game *flame.Game, server *Server) (*Game, error) {
+	g := Game{
+		Game:   game,
+		server: server,
+	}
+	return &g, nil
 }
 
 // AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *Player) {
+func (g *Game) AddPlayer(avatar *Player) error {
 	g.players = append(g.players, avatar)
+	return nil
 }
 
 // Players returns all player avatars.
@@ -65,6 +71,16 @@ func (g *Game) SetActivePlayer(player *Player) {
 // ActivePlayer returns active player avatar.
 func (g *Game) ActivePlayer() *Player {
 	return g.activePlayer
+}
+
+// Server returns game server connection.
+func (g *Game) Server() *Server {
+	return g.server
+}
+
+// Closing checks if game should be closed.
+func (g *Game) Closing() bool {
+	return g.closing
 }
 
 // NewPlayer creates new character avatar for the player from specified data and

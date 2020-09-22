@@ -39,6 +39,7 @@ import (
 // Struct for server connection.
 type Server struct {
 	conn       net.Conn
+	authorized bool
 	onResponse func(r response.Response)
 }
 
@@ -59,6 +60,11 @@ func NewServer(host, port string) (*Server, error) {
 // Address returns server address.
 func (s *Server) Address() string {
 	return s.conn.RemoteAddr().String()
+}
+
+// Authorized checks if server connection is authorized.
+func (s *Server) Authorized() bool {
+	return s.authorized
 }
 
 // SetOnResponseFunc sets function triggered on each server response.
@@ -118,6 +124,7 @@ func (s *Server) handleResponses() {
 				s.Address(), err)
 			continue
 		}
+		s.authorized = !resp.Logon
 		if s.onResponse != nil {
 			go s.onResponse(resp)
 		}

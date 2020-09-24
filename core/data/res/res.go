@@ -73,41 +73,41 @@ func Skill(id string) *SkillGraphicData {
 }
 
 // Avatars returns all avatars resources.
-func Avatars() (data []*AvatarData) {
+func Avatars() (data []AvatarData) {
 	for _, ad := range avatars {
-		data = append(data, ad)
+		data = append(data, *ad)
 	}
 	return
 }
 
 // Objects returns all object graphic resources.
-func Objects() (data []*ObjectGraphicData) {
+func Objects() (data []ObjectGraphicData) {
 	for _, od := range objects {
-		data = append(data, od)
+		data = append(data, *od)
 	}
 	return
 }
 
 // Items returns all item resources.
-func Items() (data []*ItemGraphicData) {
+func Items() (data []ItemGraphicData) {
 	for _, id := range items {
-		data = append(data, id)
+		data = append(data, *id)
 	}
 	return
 }
 
 // Effects returns all effect resources.
-func Effects() (data []*EffectGraphicData) {
+func Effects() (data []EffectGraphicData) {
 	for _, ed := range effects {
-		data = append(data, ed)
+		data = append(data, *ed)
 	}
 	return
 }
 
 // Skills returns all skill resources.
-func Skills() (data []*SkillGraphicData) {
+func Skills() (data []SkillGraphicData) {
 	for _, sd := range skills {
-		data = append(data, sd)
+		data = append(data, *sd)
 	}
 	return
 }

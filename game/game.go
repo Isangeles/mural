@@ -49,6 +49,9 @@ func New(game *flame.Game, server *Server) (*Game, error) {
 		Game:   game,
 		server: server,
 	}
+	if g.Server() != nil {
+		g.Server().SetOnResponseFunc(g.handleResponse)
+	}
 	return &g, nil
 }
 

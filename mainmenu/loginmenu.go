@@ -60,9 +60,9 @@ func (lm *LoginMenu) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles menu visibility.
-func (lm *LoginMenu) Show(show bool) {
-	lm.opened = show
+// Show shows menu.
+func (lm *LoginMenu) Show() {
+	lm.opened = true
 	if lm.mainmenu.server == nil {
 		return
 	}
@@ -74,6 +74,11 @@ func (lm *LoginMenu) Show(show bool) {
 			log.Err.Printf("Login menu: unable to send login request: %v", err)
 		}
 	}
+}
+
+// Hide hides menu.
+func (lm *LoginMenu) Hide() {
+	lm.opened = false
 }
 
 // Opened checks if menu is open.

@@ -151,7 +151,7 @@ func (m *Menu) Show(show bool) {
 // Triggered after login button clicked.
 func (m *Menu) onLoginButtonClicked(b *mtk.Button) {
 	m.mainmenu.HideMenus()
-	m.mainmenu.loginmenu.Show(true)
+	m.mainmenu.loginmenu.Show()
 }
 
 // Triggered after new game button clicked.

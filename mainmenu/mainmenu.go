@@ -235,7 +235,7 @@ func (mm *MainMenu) CloseLoadingScreen() {
 // HideMenus hides all menus.
 func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
-	mm.loginmenu.Show(false)
+	mm.loginmenu.Hide()
 	mm.newgamemenu.Show(false)
 	mm.newcharmenu.Show(false)
 	mm.loadgamemenu.Show(false)

@@ -18,6 +18,9 @@ resolution_s_label:Resolution
 lang_s_label:Language
 settings_save_msg:Save settings?
 settings_reset_msg:Some changes need game restart.
+login_b_label:Login
+login_b_info:Login to the server
+login_logged_in_msg:Logged to the server
 newgame_b_label:New game
 newgame_b_info:Start new game
 newgame_menu_title:Start new game

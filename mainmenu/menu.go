@@ -34,14 +34,15 @@ import (
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
-	mainmenu  *MainMenu
-	title     *mtk.Text
-	newgameB  *mtk.Button
-	newcharB  *mtk.Button
-	loadgameB *mtk.Button
-	settingsB *mtk.Button
-	exitB     *mtk.Button
-	opened    bool
+	mainmenu    *MainMenu
+	title       *mtk.Text
+	loginButton *mtk.Button
+	newgameB    *mtk.Button
+	newcharB    *mtk.Button
+	loadgameB   *mtk.Button
+	settingsB   *mtk.Button
+	exitB       *mtk.Button
+	opened      bool
 }
 
 // newMenu creates new menu.
@@ -62,6 +63,10 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
+	m.loginButton = mtk.NewButton(buttonParams)
+	m.loginButton.SetLabel(lang.Text("login_b_label"))
+	m.loginButton.SetInfo(lang.Text("login_b_info"))
+	m.loginButton.SetOnClickFunc(m.onLoginButtonClicked)
 	m.newgameB = mtk.NewButton(buttonParams)
 	m.newgameB.SetLabel(lang.Text("newgame_b_label"))
 	m.newgameB.SetInfo(lang.Text("newgame_b_info"))
@@ -93,7 +98,9 @@ func (m *Menu) Draw(win *mtk.Window) {
 	titlePos.Y -= mtk.ConvSize(20)
 	m.title.Draw(win.Window, mtk.Matrix().Moved(titlePos))
 	// Buttons.
-	newgamePos := mtk.BottomOf(m.title.DrawArea(), m.newgameB.Size(), 10)
+	loginPos := mtk.BottomOf(m.title.DrawArea(), m.loginButton.Size(), 10)
+	m.loginButton.Draw(win.Window, mtk.Matrix().Moved(loginPos))
+	newgamePos := mtk.BottomOf(m.loginButton.DrawArea(), m.newgameB.Size(), 5)
 	m.newgameB.Draw(win.Window, mtk.Matrix().Moved(newgamePos))
 	newcharPos := mtk.BottomOf(m.newgameB.DrawArea(), m.newcharB.Size(), 5)
 	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(newcharPos))
@@ -112,6 +119,18 @@ func (m *Menu) Update(win *mtk.Window) {
 	} else {
 		m.newgameB.Active(true)
 	}
+	if m.mainmenu.server == nil || m.mainmenu.server.Authorized() {
+		m.loginButton.Active(false)
+		m.newgameB.Active(true)
+		m.newcharB.Active(true)
+		m.loadgameB.Active(true)
+	} else {
+		m.loginButton.Active(true)
+		m.newgameB.Active(false)
+		m.newcharB.Active(false)
+		m.loadgameB.Active(false)
+	}
+	m.loginButton.Update(win)
 	m.newgameB.Update(win)
 	m.newcharB.Update(win)
 	m.loadgameB.Update(win)
@@ -127,6 +146,12 @@ func (m *Menu) Opened() bool {
 // Show toggles menu visibility.
 func (m *Menu) Show(show bool) {
 	m.opened = show
+}
+
+// Triggered after login button clicked.
+func (m *Menu) onLoginButtonClicked(b *mtk.Button) {
+	m.mainmenu.HideMenus()
+	m.mainmenu.loginmenu.Show(true)
 }
 
 // Triggered after new game button clicked.

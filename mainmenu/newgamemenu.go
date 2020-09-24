@@ -39,7 +39,6 @@ import (
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
@@ -232,14 +231,6 @@ func (ngm *NewGameMenu) startGame() {
 	if !ok {
 		log.Err.Printf("main menu: new game: unable to retrieve avatar from switch")
 		return
-	}
-	if ngm.mainmenu.server != nil  {
-		err := ngm.mainmenu.server.Login(config.ServerLogin, config.ServerPassword)
-		if err != nil {
-			log.Err.Printf("main menu: new game: Unable to send login request: %v",
-				err)
-			return
-		}
 	}
 	// Create game.
 	game, err := game.New(flame.NewGame(ngm.mainmenu.mod), ngm.mainmenu.server)

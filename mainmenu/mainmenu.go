@@ -56,6 +56,7 @@ var (
 // Wraps all main menu screens.
 type MainMenu struct {
 	menu          *Menu
+	loginmenu     *LoginMenu
 	newgamemenu   *NewGameMenu
 	newcharmenu   *NewCharacterMenu
 	loadgamemenu  *LoadGameMenu
@@ -87,6 +88,7 @@ func New(mod *module.Module, serv *game.Server) *MainMenu {
 	mm.server = serv
 	// Menus.
 	mm.menu = newMenu(mm)
+	mm.loginmenu = newLoginMenu(mm)
 	mm.newgamemenu = newNewGameMenu(mm)
 	mm.newcharmenu = newNewCharacterMenu(mm)
 	mm.loadgamemenu = newLoadGameMenu(mm)
@@ -108,23 +110,22 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 		mm.loadscreen.Draw(win)
 		return
 	}
-	// Menu.
+	// Menus
 	if mm.menu.Opened() {
 		mm.menu.Draw(win)
 	}
-	// New game menu.
+	if mm.loginmenu.Opened() {
+		mm.loginmenu.Draw(win)
+	}
 	if mm.newgamemenu.Opened() {
 		mm.newgamemenu.Draw(win)
 	}
-	// New character menu.
 	if mm.newcharmenu.Opened() {
 		mm.newcharmenu.Draw(win)
 	}
-	// Load game menu.
 	if mm.loadgamemenu.Opened() {
 		mm.loadgamemenu.Draw(win)
 	}
-	// Settings.
 	if mm.settings.Opened() {
 		mm.settings.Draw(win.Window)
 	}
@@ -147,6 +148,9 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 	}
 	if mm.menu.Opened() {
 		mm.menu.Update(win)
+	}
+	if mm.loginmenu.Opened() {
+		mm.loginmenu.Update(win)
 	}
 	if mm.newgamemenu.Opened() {
 		mm.newgamemenu.Update(win)
@@ -231,6 +235,7 @@ func (mm *MainMenu) CloseLoadingScreen() {
 // HideMenus hides all menus.
 func (mm *MainMenu) HideMenus() {
 	mm.menu.Show(false)
+	mm.loginmenu.Show(false)
 	mm.newgamemenu.Show(false)
 	mm.newcharmenu.Show(false)
 	mm.loadgamemenu.Show(false)

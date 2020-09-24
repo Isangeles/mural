@@ -290,13 +290,12 @@ func LoadSavedGame(saveName string) {
 			continue
 		}
 		av := object.NewAvatar(char, &pcd.Avatar)
-		pc, err := gameWrapper.NewPlayer(av)
+		err := gameWrapper.AddPlayer(av)
 		if err != nil {
-			log.Err.Printf("load saved game: unable to create saved player: %v",
+			log.Err.Printf("load saved game: unable to add player to the game: %v",
 				err)
 			continue
 		}
-		gameWrapper.AddPlayer(pc)
 	}
 	// Enter game.
 	EnterGame(gameWrapper)

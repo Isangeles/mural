@@ -68,5 +68,6 @@ func (g *Game) handleNewCharResponse(resp []flameres.CharacterData) {
 		avatar := object.NewAvatar(char, avData)
 		player := Player{avatar, g}
 		g.players = append(g.players, &player)
+		g.SetActivePlayer(&player)
 	}
 }

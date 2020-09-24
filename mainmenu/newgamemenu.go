@@ -37,6 +37,7 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
@@ -241,13 +242,18 @@ func (ngm *NewGameMenu) startGame() {
 	// Create player.
 	char := character.New(*pcd.CharData)
 	av := object.NewAvatar(char, pcd.AvatarData)
-	pc, err := game.NewPlayer(av)
+	avatarsRes := make([]res.AvatarData, 0)
+	for _, r := range res.Avatars() {
+		avatarsRes = append(avatarsRes, *r)
+	}
+	avatarsRes = append(avatarsRes, *pcd.AvatarData)
+	res.SetAvatars(avatarsRes)
+	err = game.AddPlayer(av)
 	if err != nil {
-		log.Err.Printf("main menu: new game: unable to create new player: %v",
+		log.Err.Printf("main menu: new game: unable to add player to the game: %v",
 			err)
 		return
 	}
-	game.AddPlayer(pc)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return

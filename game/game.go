@@ -56,8 +56,20 @@ func New(game *flame.Game, server *Server) (*Game, error) {
 }
 
 // AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *Player) error {
-	g.players = append(g.players, avatar)
+func (g *Game) AddPlayer(avatar *object.Avatar) error {
+	if g.Server() != nil {
+		err := g.Server().NewCharacter(avatar.Character.Data())
+		if err != nil {
+			return fmt.Errorf("Unable to send new character request: %v",
+				err)
+		}
+		return nil
+	}
+	player, err := g.newPlayer(avatar)
+	if err != nil {
+		return fmt.Errorf("Unable to create player: %v", err)
+	}
+	g.players = append(g.players, player)
 	return nil
 }
 
@@ -86,9 +98,9 @@ func (g *Game) Closing() bool {
 	return g.closing
 }
 
-// NewPlayer creates new character avatar for the player from specified data and
+// newPlayer creates new character avatar for the player from specified data and
 // places this character in the start area of game module.
-func (g *Game) NewPlayer(avatar *object.Avatar) (*Player, error) {
+func (g *Game) newPlayer(avatar *object.Avatar) (*Player, error) {
 	// Set start position.
 	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
 		g.Module().Chapter().Conf().StartPosY)

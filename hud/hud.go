@@ -264,7 +264,6 @@ func (hud *HUD) Update(win *mtk.Window) {
 // SetActivePlayer sets specified avatar as active
 // player.
 func (hud *HUD) SetActivePlayer(pc *game.Player) {
-	hud.Game().SetActivePlayer(pc)
 	hud.camera.CenterAt(hud.Game().ActivePlayer().Position())
 	hud.pcFrame.SetObject(hud.Game().ActivePlayer())
 	hud.Reload()
@@ -358,9 +357,8 @@ func (hud *HUD) Reload() {
 // SetGame sets HUD game.
 func (hud *HUD) SetGame(g *game.Game) {
 	hud.game = g
-	if len(hud.Game().Players()) > 0 {
-		hud.SetActivePlayer(hud.Game().Players()[0])
-	}
+	hud.game.SetOnActivePlayerChangeFunc(hud.SetActivePlayer)
+	hud.game.SetActivePlayer(hud.game.ActivePlayer())
 }
 
 // ChangeArea changes current HUD area.

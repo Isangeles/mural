@@ -41,6 +41,7 @@ type Game struct {
 	activePlayer *Player
 	server       *Server
 	closing      bool
+	onActivePlayerChange func(p *Player)
 }
 
 // New creates new wrapper for specified game.
@@ -81,6 +82,9 @@ func (g *Game) Players() []*Player {
 // SetActivePlayer sets specified avatar as active player avatar.
 func (g *Game) SetActivePlayer(player *Player) {
 	g.activePlayer = player
+	if g.onActivePlayerChange != nil {
+		g.onActivePlayerChange(player)
+	}
 }
 
 // ActivePlayer returns active player avatar.
@@ -96,6 +100,11 @@ func (g *Game) Server() *Server {
 // Closing checks if game should be closed.
 func (g *Game) Closing() bool {
 	return g.closing
+}
+
+// SetOnActivePlayerChangeFunc sets function triggered on active player change.
+func (g *Game) SetOnActivePlayerChangeFunc(f func(p *Player)) {
+	g.onActivePlayerChange = f
 }
 
 // newPlayer creates new character avatar for the player from specified data and

@@ -242,12 +242,7 @@ func (ngm *NewGameMenu) startGame() {
 	// Create player.
 	char := character.New(*pcd.CharData)
 	av := object.NewAvatar(char, pcd.AvatarData)
-	avatarsRes := make([]res.AvatarData, 0)
-	for _, r := range res.Avatars() {
-		avatarsRes = append(avatarsRes, *r)
-	}
-	avatarsRes = append(avatarsRes, *pcd.AvatarData)
-	res.SetAvatars(avatarsRes)
+	res.SetAvatars(append(res.Avatars(), *pcd.AvatarData))
 	err = game.AddPlayer(av)
 	if err != nil {
 		log.Err.Printf("main menu: new game: unable to add player to the game: %v",

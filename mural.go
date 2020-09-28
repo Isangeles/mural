@@ -267,12 +267,7 @@ func LoadSavedGame(saveName string) {
 		return
 	}
 	// Create game wrapper.
-	gameWrapper, err := game.New(g, nil)
-	if err != nil {
-		log.Err.Printf("load saved game: unable to create saved game: %v", err)
-		mainMenu.ShowMessage(lang.Text("lang_game_err"))
-		return
-	}
+	gameWrapper := game.New(g)
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)

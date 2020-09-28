@@ -45,15 +45,9 @@ type Game struct {
 }
 
 // New creates new wrapper for specified game.
-func New(game *flame.Game, server *Server) (*Game, error) {
-	g := Game{
-		Game:   game,
-		server: server,
-	}
-	if g.Server() != nil {
-		g.Server().SetOnResponseFunc(g.handleResponse)
-	}
-	return &g, nil
+func New(game *flame.Game) *Game {
+	g := Game{Game: game}
+	return &g
 }
 
 // AddPlayer adds specified avatar to player avatars list.
@@ -90,6 +84,12 @@ func (g *Game) SetActivePlayer(player *Player) {
 // ActivePlayer returns active player avatar.
 func (g *Game) ActivePlayer() *Player {
 	return g.activePlayer
+}
+
+// SetServer sets game server.
+func (g *Game) SetServer(server *Server) {
+	g.server = server
+	g.Server().SetOnResponseFunc(g.handleResponse)
 }
 
 // Server returns game server connection.

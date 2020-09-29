@@ -36,6 +36,10 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
+const (
+	responseBufferSize = 99999999
+)
+
 // Struct for server connection.
 type Server struct {
 	conn       net.Conn
@@ -112,6 +116,8 @@ func (s *Server) NewCharacter(charData flameres.CharacterData) error {
 // calls onResponse function for each response.
 func (s *Server) handleResponses() {
 	out := bufio.NewScanner(s.conn)
+	outBuff := make([]byte, responseBufferSize)
+	out.Buffer(outBuff, len(outBuff))
 	for out.Scan() {
 		if out.Err() != nil {
 			log.Err.Printf("Server: %s: Unable to read from server: %v",

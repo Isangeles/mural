@@ -26,8 +26,6 @@ package mainmenu
 import (
 	"github.com/isangeles/flame/data/res/lang"
 
-	"github.com/isangeles/fire/response"
-
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -66,7 +64,7 @@ func (lm *LoginMenu) Show() {
 	if lm.mainmenu.server == nil {
 		return
 	}
-	lm.mainmenu.server.SetOnResponseFunc(lm.handleResponse)
+	lm.mainmenu.server.SetOnResponseFunc(lm.mainmenu.handleResponse)
 	// Auto-login.
 	if len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
 		err := lm.mainmenu.server.Login(config.ServerLogin, config.ServerPassword)
@@ -84,11 +82,4 @@ func (lm *LoginMenu) Hide() {
 // Opened checks if menu is open.
 func (lm *LoginMenu) Opened() bool {
 	return lm.opened
-}
-
-// handleResponse handles specified response from Fire server.
-func (lm *LoginMenu) handleResponse(resp response.Response) {
-	for _, r := range resp.Error {
-		log.Err.Printf("Login menu: server error: %v", r)
-	}
 }

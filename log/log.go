@@ -36,3 +36,9 @@ var (
 	Dbg *log.Logger = log.New(flamelog.DbgWriter, "mural-debug: ", 0)
 	Cli *log.Logger = log.New(flamelog.InfWriter, "mural-cli: ", 0)
 )
+
+// PrintStdOut enables/disables printing log messages
+// on the standard out.
+func PrintStdOut(print bool) {
+	flamelog.PrintStdOut = print
+}

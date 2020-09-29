@@ -72,6 +72,7 @@ func init() {
 	if err != nil {
 		log.Err.Printf("unable to load config file: %v", err)
 	}
+	log.PrintStdOut(config.Debug)
 	// Load UI translation files.
 	err = flamedata.LoadTranslationData(config.LangPath())
 	if err != nil {

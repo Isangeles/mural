@@ -28,6 +28,7 @@ import (
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/module"
 	"github.com/isangeles/flame/module/character"
+	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/fire/response"
 
@@ -47,6 +48,7 @@ func (g *Game) handleResponse(resp response.Response) {
 
 // handleUpdateResponse handles update response.
 func (g *Game) handleUpdateResponse(resp response.Update) {
+	serial.Reset()
 	if g.Game == nil {
 		mod := module.New(resp.Module)
 		g.Game = flame.NewGame(mod)

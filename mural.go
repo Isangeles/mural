@@ -162,14 +162,13 @@ func run() {
 		server = s
 	}
 	// Create main menu.
-	mainMenu = mainmenu.New(mod, server)
+	mainMenu = mainmenu.New()
+	mainMenu.SetServer(server)
+	if server == nil {
+		mainMenu.SetModule(mod)
+	}
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
 	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
-	err = mainMenu.ImportPlayableChars()
-	if err != nil {
-		log.Err.Printf("init run: unable to import playable characters: %v",
-			err)
-	}
 	ci.SetMainMenu(mainMenu)
 	// Debug mode.
 	textParams := mtk.Params{

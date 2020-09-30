@@ -32,7 +32,6 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module"
@@ -82,10 +81,8 @@ type PlayableCharData struct {
 }
 
 // New creates new main menu
-func New(mod *module.Module, serv *game.Server) *MainMenu {
+func New() *MainMenu {
 	mm := new(MainMenu)
-	mm.mod = mod
-	mm.server = serv
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.loginmenu = newLoginMenu(mm)
@@ -171,6 +168,12 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 // SetMod sets module for main menu.
 func (mm *MainMenu) SetModule(mod *module.Module) {
 	mm.mod = mod
+	mm.menu.title.SetText(mod.Conf().ID)
+}
+
+// SetServer sets game server for main menu.
+func (mm *MainMenu) SetServer(server *game.Server) {
+	mm.server = server
 }
 
 // Exit sends exit request to main menu.
@@ -283,17 +286,13 @@ func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 
 // ImportPlayableChars import all characters from current module.
 func (mm *MainMenu) ImportPlayableChars() error {
-	charsData, err := flamedata.ImportCharactersDir(mm.mod.Conf().CharactersPath())
-	if err != nil {
-		return fmt.Errorf("unable to import characters: %v", err)
-	}
-	avatarsPath := filepath.Join(mm.mod.Conf().Path, data.GUIModulePath, "avatars")
+	avatarsPath := filepath.Join("data/modules", mm.mod.Conf().ID, data.GUIModulePath, "avatars")
 	avsData, err := data.ImportAvatarsDir(avatarsPath)
 	if err != nil {
 		return fmt.Errorf("unable to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
-		for _, charData := range charsData {
+		for _, charData := range mm.mod.Res.Characters {
 			if avData.ID != charData.ID {
 				continue
 			}

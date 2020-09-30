@@ -138,6 +138,13 @@ func (ngm *NewGameMenu) Show(show bool) {
 	ngm.opened = show
 	ngm.updateCharInfo()
 	ngm.updateCharSwitch()
+	if ngm.Opened() {
+		err := ngm.mainmenu.ImportPlayableChars()
+		if err != nil {
+			log.Err.Printf("New game menu: unable to import playable characters: %v",
+				err)
+		}
+	}
 }
 
 // Opened checks whether menu is open.

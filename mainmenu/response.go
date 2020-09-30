@@ -24,6 +24,9 @@
 package mainmenu
 
 import (
+	"github.com/isangeles/flame/module"
+	"github.com/isangeles/flame/module/serial"
+
 	"github.com/isangeles/fire/response"
 
 	"github.com/isangeles/mural/log"
@@ -31,7 +34,20 @@ import (
 
 // handleResponse handles specified response from Fire server.
 func (mm *MainMenu) handleResponse(resp response.Response) {
+	if !resp.Logon {
+		mm.handleUpdateResponse(resp.Update)
+	}
 	for _, r := range resp.Error {
 		log.Err.Printf("Login menu: server error: %v", r)
 	}
+}
+
+// handleUpdateResponse handles update response.
+func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
+	serial.Reset()
+	if mm.mod == nil {
+		mm.mod = module.New(resp.Module)
+		return
+	}
+	mm.mod.Apply(resp.Module)
 }

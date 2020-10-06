@@ -312,7 +312,8 @@ func setHUD(h *hud.HUD) {
 
 // setModule sets specified module for UI.
 func setModule(data res.ModuleData) {
-	mod = module.New(data)
+	mod = module.New()
+	mod.Apply(data)
 	burn.Module = mod
 	if mainMenu != nil {
 		mainMenu.SetModule(mod)

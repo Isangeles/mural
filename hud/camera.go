@@ -411,13 +411,22 @@ func (c *Camera) updateAreaObjects() {
 		if c.avatars[char.ID()+char.Serial()] != nil {
 			continue
 		}
-		avData := res.Avatar(char.ID())
-		if avData == nil {
-			log.Err.Printf("hud camera: update area objects: avatar data not found: %s",
-				char.ID())
-			continue
+		var av *object.Avatar
+		// Search players first.
+		for _, p := range c.hud.Game().Players() {
+			if p.ID() == char.ID() && p.Serial() == char.Serial() {
+				av = p.Avatar
+			}
 		}
-		av := object.NewAvatar(char, avData)
+		if av == nil {
+			avData := res.Avatar(char.ID())
+			if avData == nil {
+				log.Err.Printf("hud camera: update area objects: avatar data not found: %s",
+					char.ID())
+				continue
+			}
+			av = object.NewAvatar(char, avData)
+		}
 		c.avatars[char.ID()+char.Serial()] = av
 	}
 	for _, ob := range c.area.Objects() {
@@ -574,5 +583,3 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		c.hud.Game().ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }
-
-

@@ -89,7 +89,9 @@ func (g *Game) ActivePlayer() *Player {
 // SetServer sets game server.
 func (g *Game) SetServer(server *Server) {
 	g.server = server
-	g.Server().SetOnResponseFunc(g.handleResponse)
+	if g.Server() != nil {
+		g.Server().SetOnResponseFunc(g.handleResponse)
+	}
 }
 
 // Server returns game server connection.
@@ -122,5 +124,6 @@ func (g *Game) newPlayer(avatar *object.Avatar) (*Player, error) {
 	}
 	startArea.AddCharacter(avatar.Character)
 	player := Player{avatar, g}
+	g.SetActivePlayer(&player)
 	return &player, nil
 }

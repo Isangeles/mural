@@ -46,7 +46,8 @@ func (mm *MainMenu) handleResponse(resp response.Response) {
 func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	serial.Reset()
 	if mm.mod == nil {
-		mm.mod = module.New(resp.Module)
+		mm.mod = module.New()
+		mm.mod.Apply(resp.Module)
 		return
 	}
 	mm.mod.Apply(resp.Module)

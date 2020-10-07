@@ -24,7 +24,6 @@
 package game
 
 import (
-	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/fire/response"
@@ -50,12 +49,12 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 }
 
 // handleNewCharResponse handles new characters from server response.
-func (g *Game) handleNewCharResponse(resp []flameres.CharacterData) {
-	for _, cd := range resp {
-		char := g.Module().Chapter().Character(cd.ID, cd.Serial)
+func (g *Game) handleNewCharResponse(resp []response.NewChar) {
+	for _, r := range resp {
+		char := g.Module().Chapter().Character(r.ID, r.Serial)
 		if char == nil {
 			log.Err.Printf("Game: character from new char response not found in current module: %s %s",
-				cd.ID, cd.Serial)
+				r.ID, r.Serial)
 			continue
 		}
 		avData := res.Avatar(char.ID())

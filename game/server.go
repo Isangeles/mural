@@ -85,13 +85,12 @@ func (s *Server) Login(id, pass string) error {
 	req := request.Request{Login: []request.Login{login}}
 	t, err := request.Marshal(&req)
 	if err != nil {
-		return fmt.Errorf("Unable to marshal login request: %v",
-			err)
+		return fmt.Errorf("Unable to marshal request: %v", err)
 	}
 	t = fmt.Sprintf("%s\r\n", t)
 	_, err = s.conn.Write([]byte(t))
 	if err != nil {
-		return fmt.Errorf("Unable to write login request: %v", err)
+		return fmt.Errorf("Unable to write request: %v", err)
 	}
 	return nil
 }
@@ -101,13 +100,35 @@ func (s *Server) NewCharacter(charData flameres.CharacterData) error {
 	req := request.Request{NewChar: []flameres.CharacterData{charData}}
 	t, err := request.Marshal(&req)
 	if err != nil {
-		return fmt.Errorf("Unable to marshal new char request: %v",
+		return fmt.Errorf("Unable to marshal request: %v",
 			err)
 	}
 	t = fmt.Sprintf("%s\r\n", t)
 	_, err = s.conn.Write([]byte(t))
 	if err != nil {
-		return fmt.Errorf("Unable to write new char request: %v", err)
+		return fmt.Errorf("Unable to write request: %v", err)
+	}
+	return nil
+}
+
+// Move sends move request to the server.
+func (s *Server) Move(id, serial string, x, y float64) error {
+	req := new(request.Request)
+	moveReq := request.Move{
+		ID:     id,
+		Serial: serial,
+		PosX:   x,
+		PosY:   y,
+	}
+	req.Move = append(req.Move, moveReq)
+	text, err := request.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("Unable to marshal request: %v", err)
+	}
+	text = fmt.Sprintf("%s\r\n", text)
+	_, err = s.conn.Write([]byte(text))
+	if err != nil {
+		return fmt.Errorf("Unable to write request: %v", err)
 	}
 	return nil
 }

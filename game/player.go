@@ -25,10 +25,23 @@ package game
 
 import (
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 // Struct for game player.
 type Player struct {
 	*object.Avatar
 	game *Game
+}
+
+// SetDestPoint sets destination point for player character.
+func (p *Player) SetDestPoint(x, y float64) {
+	p.Character.SetDestPoint(x, y)
+	if p.game.Server() != nil {
+		err := p.game.Server().Move(p.ID(), p.Serial(), x, y)
+		if err != nil {
+			log.Err.Printf("Player: %s %s: unable to send move request to the server: %v",
+				p.ID(), p.Serial(), err)
+		}
+	}
 }

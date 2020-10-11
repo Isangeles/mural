@@ -36,7 +36,9 @@ import (
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
-	g.handleNewCharResponse(resp.NewChar)
+	for _, r := range resp.NewChar {
+		g.handleNewCharResponse(r)
+	}
 	for _, r := range resp.Error {
 		log.Err.Printf("Game: server error response: %s", r)
 	}
@@ -49,23 +51,21 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 }
 
 // handleNewCharResponse handles new characters from server response.
-func (g *Game) handleNewCharResponse(resp []response.NewChar) {
-	for _, r := range resp {
-		char := g.Module().Chapter().Character(r.ID, r.Serial)
-		if char == nil {
-			log.Err.Printf("Game: character from new char response not found in current module: %s %s",
-				r.ID, r.Serial)
-			continue
-		}
-		avData := res.Avatar(char.ID())
-		if avData == nil {
-			log.Err.Printf("Game: no avatar data for new character: %s",
-				char.ID())
-			continue
-		}
-		avatar := object.NewAvatar(char, avData)
-		player := Player{avatar, g}
-		g.players = append(g.players, &player)
-		g.SetActivePlayer(&player)
+func (g *Game) handleNewCharResponse(resp response.NewChar) {
+	char := g.Module().Chapter().Character(resp.ID, resp.Serial)
+	if char == nil {
+		log.Err.Printf("Game: character from new char response not found in current module: %s %s",
+			resp.ID, resp.Serial)
+		return
 	}
+	avData := res.Avatar(char.ID())
+	if avData == nil {
+		log.Err.Printf("Game: no avatar data for new character: %s",
+			char.ID())
+		return
+	}
+	avatar := object.NewAvatar(char, avData)
+	player := Player{avatar, g}
+	g.players = append(g.players, &player)
+	g.SetActivePlayer(&player)
 }

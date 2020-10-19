@@ -27,8 +27,8 @@ package mainmenu
 
 import (
 	"fmt"
-	"path/filepath"
 	"image/color"
+	"path/filepath"
 
 	"golang.org/x/image/colornames"
 
@@ -39,6 +39,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/game"
@@ -294,7 +295,8 @@ func (mm *MainMenu) ImportPlayableChars() error {
 			mm.playableChars = append(mm.playableChars, pc)
 			// Add translation for character name.
 			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}
-			flameres.Translations = append(flameres.Translations, nameTrans)
+			flameres.Translations[config.Lang] = append(flameres.Translations[config.Lang],
+				nameTrans)
 		}
 	}
 	mm.newgamemenu.SetCharacters(mm.playableChars)

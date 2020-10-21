@@ -37,7 +37,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
@@ -363,7 +362,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	}
 	// Add name translation.
 	nameTrans := flameres.TranslationData{charData.ID, []string{name}}
-	flameres.Translations[config.Lang] = append(flameres.Translations[config.Lang], nameTrans)
+	lang.AddTranslation(nameTrans)
 	// Player skills & items from interface config.
 	for _, sid := range ncm.mainmenu.mod.Chapter().Conf().StartSkills {
 		skill := flameres.ObjectSkillData{

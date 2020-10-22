@@ -37,6 +37,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/module"
+	flamedata "github.com/isangeles/flame/data"
 
 	"github.com/isangeles/burn/ash"
 
@@ -137,6 +138,13 @@ func LoadModuleData(mod *module.Module) (err error) {
 		return fmt.Errorf("unable to import skills graphics: %v", err)
 	}
 	res.SetSkills(skillGraphics)
+	// Translations.
+	path = filepath.Join(mod.Conf().Path, GUIModulePath, "lang")
+	translations, err := flamedata.ImportLangDirs(path)
+	if err != nil {
+		return fmt.Errorf("unable to import translations: %v", err)
+	}
+	res.SetTranslationBases(translations)
 	return nil
 }
 

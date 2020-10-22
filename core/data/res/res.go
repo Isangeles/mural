@@ -25,12 +25,17 @@
 // like item graphic data, textures, etc.
 package res
 
+import (
+	flameres "github.com/isangeles/flame/data/res"
+)
+
 var (
-	avatars        map[string]*AvatarData
-	objects        map[string]*ObjectGraphicData
-	items          map[string]*ItemGraphicData
-	effects        map[string]*EffectGraphicData
-	skills         map[string]*SkillGraphicData
+	avatars          map[string]*AvatarData
+	objects          map[string]*ObjectGraphicData
+	items            map[string]*ItemGraphicData
+	effects          map[string]*EffectGraphicData
+	skills           map[string]*SkillGraphicData
+	translationBases map[string]*flameres.TranslationBaseData
 )
 
 // On init.
@@ -40,6 +45,7 @@ func init() {
 	items = make(map[string]*ItemGraphicData)
 	effects = make(map[string]*EffectGraphicData)
 	skills = make(map[string]*SkillGraphicData)
+	translationBases = make(map[string]*flameres.TranslationBaseData)
 }
 
 // Avatar returns avatar data for character
@@ -149,5 +155,13 @@ func SetEffects(data []EffectGraphicData) {
 func SetSkills(data []SkillGraphicData) {
 	for i, _ := range data {
 		skills[data[i].SkillID] = &data[i]
+	}
+}
+
+// SetTranslationBases sets specified data as translation
+// resources.
+func SetTranslationBases(data []flameres.TranslationBaseData) {
+	for i, _ := range data {
+		translationBases[data[i].ID] = &data[i]
 	}
 }

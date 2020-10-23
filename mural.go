@@ -65,38 +65,29 @@ var (
 	inGame     bool
 )
 
-// On init.
-func init() {
+// Main function.
+func main() {
 	// Load GUI config.
 	err := config.Load()
 	if err != nil {
 		log.Err.Printf("unable to load config file: %v", err)
 	}
 	log.PrintStdOut(config.Debug)
-	// Load UI translation files.
-	err = flamedata.LoadTranslationData(config.LangPath())
-	if err != nil {
-		log.Err.Printf("unable to load ui translation files: %v", err)
-	}
-}
-
-// Main function.
-func main() {
 	// Import module.
 	modData, err := flamedata.ImportModule(config.ModulePath())
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
 	setModule(modData)
-	// Load module translation.
-	err = flamedata.LoadModuleLang(mod, config.Lang)
-	if err != nil {
-		log.Err.Printf("unable to load module translation: %v", err)
-	}
 	// Load GUI graphic data.
 	err = data.LoadModuleData(mod)
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
+	}
+	// Load UI translation files.
+	err = flamedata.LoadTranslationData(config.LangPath())
+	if err != nil {
+		log.Err.Printf("unable to load ui translation files: %v", err)
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})

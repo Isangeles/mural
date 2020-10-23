@@ -362,7 +362,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	}
 	// Add name translation.
 	nameTrans := flameres.TranslationData{charData.ID, []string{name}}
-	flameres.Translations = append(flameres.Translations, nameTrans)
+	lang.AddTranslation(nameTrans)
 	// Player skills & items from interface config.
 	for _, sid := range ncm.mainmenu.mod.Chapter().Conf().StartSkills {
 		skill := flameres.ObjectSkillData{
@@ -403,11 +403,11 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		return
 	}
 	avData := res.AvatarData{
-		ID:          charData.ID,
-		Serial:      charData.Serial,
-		Portrait:    portraitName,
-		Head:        ssHeadName,
-		Torso:       ssTorsoName,
+		ID:       charData.ID,
+		Serial:   charData.Serial,
+		Portrait: portraitName,
+		Head:     ssHeadName,
+		Torso:    ssTorsoName,
 	}
 	pc := PlayableCharData{charData, &avData}
 	ncm.mainmenu.AddPlayableChar(pc)

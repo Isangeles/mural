@@ -118,6 +118,14 @@ func Skills() (data []SkillGraphicData) {
 	return
 }
 
+// TranslationBases returns all translation bases.
+func TranslationBases() (data []*flameres.TranslationBaseData) {
+	for _, tbd := range translationBases {
+		data = append(data, tbd)
+	}
+	return
+}
+
 // SetAvatars sets specified data as
 // avatars resources.
 func SetAvatars(data []AvatarData) {

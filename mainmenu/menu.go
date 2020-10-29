@@ -124,9 +124,14 @@ func (m *Menu) Opened() bool {
 	return m.opened
 }
 
-// Show toggles menu visibility.
-func (m *Menu) Show(show bool) {
-	m.opened = show
+// Show shows menu.
+func (m *Menu) Show() {
+	m.opened = true
+}
+
+// Hide hides menu.
+func (m *Menu) Hide() {
+	m.opened = false
 }
 
 // Triggered after new game button clicked.

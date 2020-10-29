@@ -132,11 +132,16 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 	ngm.backButton.Update(win)
 }
 
-// Show toggles menu visibility.
-func (ngm *NewGameMenu) Show(show bool) {
-	ngm.opened = show
+// Show shows menu.
+func (ngm *NewGameMenu) Show() {
+	ngm.opened = true
 	ngm.updateCharInfo()
 	ngm.updateCharSwitch()
+}
+
+// Hide hides menu.
+func (ngm *NewGameMenu) Hide() {
+	ngm.opened = false
 }
 
 // Opened checks whether menu is open.

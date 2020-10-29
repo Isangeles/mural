@@ -24,11 +24,13 @@
 package mainmenu
 
 import (
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/module"
 	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/fire/response"
 
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/log"
 )
 
@@ -38,13 +40,15 @@ func (mm *MainMenu) handleResponse(resp response.Response) {
 		mm.handleUpdateResponse(resp.Update)
 	}
 	for _, r := range resp.Error {
-		log.Err.Printf("Login menu: server error: %v", r)
+		log.Err.Printf("Main menu: server error: %v", r)
 	}
 }
 
 // handleUpdateResponse handles update response.
 func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	serial.Reset()
+	flameres.Clear()
+	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {
 		mm.mod = module.New()
 		mm.mod.Apply(resp.Module)

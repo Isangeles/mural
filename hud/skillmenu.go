@@ -143,7 +143,11 @@ func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (sm *SkillMenu) Update(win *mtk.Window) {
 	// Key events.
 	if !sm.hud.Chat().Activated() && win.JustPressed(skillsKey) {
-		sm.Show(!sm.Opened())
+		if sm.Opened() {
+			sm.Hide()
+		} else {
+			sm.Show()
+		}
 	}
 	// Elements update.
 	if sm.Opened() {
@@ -157,16 +161,18 @@ func (sm *SkillMenu) Opened() bool {
 	return sm.opened
 }
 
-// Show toggles menu visibility.
-func (sm *SkillMenu) Show(show bool) {
-	sm.opened = show
-	if sm.Opened() {
-		sm.slots.Clear()
-		sm.insert(sm.hud.Game().ActivePlayer().Skills()...)
-		sm.hud.UserFocus().Focus(sm)
-	} else {
-		sm.hud.UserFocus().Focus(nil)
-	}
+// Show shows menu.
+func (sm *SkillMenu) Show() {
+	sm.opened = true
+	sm.slots.Clear()
+	sm.insert(sm.hud.Game().ActivePlayer().Skills()...)
+	sm.hud.UserFocus().Focus(sm)
+}
+
+// Hide hides menu.
+func (sm *SkillMenu) Hide() {
+	sm.opened = false
+	sm.hud.UserFocus().Focus(nil)
 }
 
 // Focused checks whether menu us focused.
@@ -232,7 +238,7 @@ func (sm *SkillMenu) draggedSkill() *mtk.Slot {
 
 // Triggered after close button clicked.
 func (sm *SkillMenu) onCloseButtonClicked(b *mtk.Button) {
-	sm.Show(false)
+	sm.Hide()
 }
 
 // Triggered after one of skill slots was clicked with

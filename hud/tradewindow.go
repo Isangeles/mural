@@ -204,17 +204,19 @@ func (tw *TradeWindow) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles window visibility.
-func (tw *TradeWindow) Show(show bool) {
-	tw.opened = show
-	if tw.Opened() {
-		if tw.seller != nil {
-			tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
-		}
-		tw.insertSellItems(tw.hud.Game().ActivePlayer().Inventory().Items()...)
-	} else {
-		tw.reset()
+// Show shows window.
+func (tw *TradeWindow) Show() {
+	tw.opened = true
+	if tw.seller != nil {
+		tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
 	}
+	tw.insertSellItems(tw.hud.Game().ActivePlayer().Inventory().Items()...)
+}
+
+// Hide hides window.
+func (tw *TradeWindow) Hide() {
+	tw.opened = false
+	tw.reset()
 }
 
 // Opened checks if window is open.
@@ -389,7 +391,7 @@ func (tw *TradeWindow) createSellSlot() *mtk.Slot {
 
 // Triggered after close button clicked.
 func (tw *TradeWindow) onCloseButtonClicked(b *mtk.Button) {
-	tw.Show(false)
+	tw.Hide()
 }
 
 // triggered after trade button clicked.
@@ -409,7 +411,7 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 		tw.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
 		tw.seller.Inventory().AddItem(it)
 	}
-	tw.Show(false)
+	tw.Hide()
 }
 
 // Triggered after one of buy slots was clicked

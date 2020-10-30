@@ -144,9 +144,14 @@ func (lw *LootWindow) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles window visibility.
-func (lw *LootWindow) Show(show bool) {
-	lw.opened = show
+// Show shows window.
+func (lw *LootWindow) Show() {
+	lw.opened = true
+}
+
+// Hide hides window.
+func (lw *LootWindow) Hide() {
+	lw.opened = false
 }
 
 // Opened checks whether window is open.
@@ -233,7 +238,7 @@ func (lw *LootWindow) createSlot() *mtk.Slot {
 
 // Triggered after close button was clicked.
 func (lw *LootWindow) onCloseButtonClicked(b *mtk.Button) {
-	lw.Show(false)
+	lw.Hide()
 }
 
 // Triggered after one of items slots was clicked with

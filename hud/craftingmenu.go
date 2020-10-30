@@ -176,7 +176,11 @@ func (cm *CraftingMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (cm *CraftingMenu) Update(win *mtk.Window) {
 	// Key events.
 	if !cm.hud.Chat().Activated() && win.JustPressed(craftingKey) {
-		cm.Show(!cm.Opened())
+		if cm.Opened() {
+			cm.Hide()
+		} else {
+			cm.Show()
+		}
 	}
 	// Elements.
 	if cm.Opened() {
@@ -187,17 +191,19 @@ func (cm *CraftingMenu) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles menu visibility.
-func (cm *CraftingMenu) Show(show bool) {
-	cm.opened = show
-	if cm.Opened() {
-		cm.recipesList.Clear()
-		pc := cm.hud.Game().ActivePlayer()
-		cm.insertRecipes(pc.Crafting().Recipes()...)
-	} else {
-		cm.recipeInfo.Clear()
-		cm.makeButton.Active(false)
-	}
+// Show shows menu.
+func (cm *CraftingMenu) Show() {
+	cm.opened = true
+	cm.recipesList.Clear()
+	pc := cm.hud.Game().ActivePlayer()
+	cm.insertRecipes(pc.Crafting().Recipes()...)
+}
+
+// Hide hides menu.
+func (cm *CraftingMenu) Hide() {
+	cm.opened = false
+	cm.recipeInfo.Clear()
+	cm.makeButton.Active(false)
 }
 
 // Opened checks if menu is open.
@@ -228,7 +234,7 @@ func (cm *CraftingMenu) insertRecipes(recipes ...*craft.Recipe) {
 
 // Triggered after close button clicked.
 func (cm *CraftingMenu) onCloseButtonClicked(b *mtk.Button) {
-	cm.Show(false)
+	cm.Hide()
 }
 
 // Triggered after selecting recipe from recipes list.

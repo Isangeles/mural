@@ -156,20 +156,23 @@ func (dw *DialogWindow) Update(win *mtk.Window) {
 	// Dialog.
 	if dw.dialog != nil {
 		if dw.dialog.Finished() {
-			dw.Show(false)
+			dw.Hide()
 		}
 	}
 }
 
-// Show toggles window visibility.
-func (dw *DialogWindow) Show(show bool) {
-	dw.opened = show
-	if !dw.Opened() {
-		dw.chatBox.Clear()
-		dw.answersList.Clear()
-		if dw.dialog != nil {
-			dw.dialog.Restart()
-		}
+// Show show window.
+func (dw *DialogWindow) Show() {
+	dw.opened = true
+}
+
+// Hide hides window.
+func (dw *DialogWindow) Hide() {
+	dw.opened = false
+	dw.chatBox.Clear()
+	dw.answersList.Clear()
+	if dw.dialog != nil {
+		dw.dialog.Restart()
 	}
 }
 
@@ -230,7 +233,7 @@ func (dw *DialogWindow) dialogUpdate() {
 
 // Triggered after clicking close button.
 func (dw *DialogWindow) onCloseButtonClicked(b *mtk.Button) {
-	dw.Show(false)
+	dw.Hide()
 }
 
 // Triggered after selecting answer from answers list.
@@ -257,9 +260,9 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 			log.Err.Printf("hud: dialog window: dialog onwer has no inventory")
 			return
 		}
-		dw.Show(false)
+		dw.Hide()
 		dw.hud.trade.SetSeller(con)
-		dw.hud.trade.Show(true)
+		dw.hud.trade.Show()
 		return
 	}
 	// On training.
@@ -269,9 +272,9 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 			log.Err.Printf("hud: dialog window: dialog onwer is not a trainer")
 			return
 		}
-		dw.Show(false)
+		dw.Hide()
 		dw.hud.training.SetTrainer(tra)
-		dw.hud.training.Show(true)
+		dw.hud.training.Show()
 		return
 	}
 	// Update dialog view.

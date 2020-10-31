@@ -162,10 +162,15 @@ func (s *Settings) Opened() bool {
 	return s.opened
 }
 
-// Show toggles menu visibility.
-func (s *Settings) Show(show bool) {
-	s.opened = show
+// Show shows menu.
+func (s *Settings) Show() {
+	s.opened = true
 	s.updateValues()
+}
+
+// Hide hides menu.
+func (s *Settings) Hide() {
+	s.opened = false
 }
 
 // Apply applies current settings values.

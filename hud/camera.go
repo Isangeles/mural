@@ -540,7 +540,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Show loot window.
 		log.Dbg.Printf("hud: loot: %s#%s", av.ID(), av.Serial())
 		c.hud.loot.SetTarget(av)
-		c.hud.loot.Show(true)
+		c.hud.loot.Show()
 		return
 	}
 	for _, ob := range c.AreaObjects() {
@@ -556,7 +556,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Show loot window.
 		log.Dbg.Printf("hud: loot: %s#%s", ob.ID(), ob.Serial())
 		c.hud.loot.SetTarget(ob)
-		c.hud.loot.Show(true)
+		c.hud.loot.Show()
 		return
 	}
 	// Dialog.
@@ -575,7 +575,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		log.Dbg.Printf("hud: dialog: %s#%s", av.ID(), av.Serial())
 		dialog := av.Dialogs()[0]
 		c.hud.dialog.SetDialog(dialog)
-		c.hud.dialog.Show(true)
+		c.hud.dialog.Hide()
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)

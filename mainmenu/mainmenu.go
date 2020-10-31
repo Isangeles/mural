@@ -97,7 +97,7 @@ func New() *MainMenu {
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
-	mm.menu.Show(true)
+	mm.OpenMenu()
 	return mm
 }
 
@@ -196,31 +196,31 @@ func (mm *MainMenu) SetOnSaveLoadFunc(f func(savename string)) {
 // OpenMenu opens menu.
 func (mm *MainMenu) OpenMenu() {
 	mm.HideMenus()
-	mm.menu.Show(true)
+	mm.menu.Show()
 }
 
 // OpenNewGameMenu opens new game creation menu.
 func (mm *MainMenu) OpenNewGameMenu() {
 	mm.HideMenus()
-	mm.newgamemenu.Show(true)
+	mm.newgamemenu.Show()
 }
 
 // OpenNewCharMenu opens new character creation menu.
 func (mm *MainMenu) OpenNewCharMenu() {
 	mm.HideMenus()
-	mm.newcharmenu.Show(true)
+	mm.newcharmenu.Show()
 }
 
 // OpenLoadGameMenu opens load game menu.
 func (mm *MainMenu) OpenLoadGameMenu() {
 	mm.HideMenus()
-	mm.loadgamemenu.Show(true)
+	mm.loadgamemenu.Show()
 }
 
 // OpenSettings opens settings menu.
 func (mm *MainMenu) OpenSettings() {
 	mm.HideMenus()
-	mm.settings.Show(true)
+	mm.settings.Show()
 }
 
 // OpenLoadingScreen opens loading screen
@@ -237,12 +237,12 @@ func (mm *MainMenu) CloseLoadingScreen() {
 
 // HideMenus hides all menus.
 func (mm *MainMenu) HideMenus() {
-	mm.menu.Show(false)
+	mm.menu.Hide()
 	mm.loginmenu.Hide()
-	mm.newgamemenu.Show(false)
-	mm.newcharmenu.Show(false)
-	mm.loadgamemenu.Show(false)
-	mm.settings.Show(false)
+	mm.newgamemenu.Hide()
+	mm.newcharmenu.Hide()
+	mm.loadgamemenu.Hide()
+	mm.settings.Hide()
 }
 
 // ShowMessageWindow adds specified message to messages queue

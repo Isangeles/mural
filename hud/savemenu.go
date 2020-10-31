@@ -175,14 +175,19 @@ func (sm *SaveMenu) Opened() bool {
 	return sm.opened
 }
 
-// Show toggles menu visibility.
-func (sm *SaveMenu) Show(show bool) {
-	sm.opened = show
-	sm.hud.Camera().Lock(sm.Opened())
+// Show shows menu.
+func (sm *SaveMenu) Show() {
+	sm.opened = true
+	sm.hud.Camera().Lock(true)
 	err := sm.loadSaves()
 	if err != nil {
 		log.Err.Printf("hud: savegame menu: unable to load saves: %v", err)
 	}
+}
+
+// Hide hides menu.
+func (sm *SaveMenu) Hide() {
+	sm.opened = false
 }
 
 // Focused checks if menu us focused.
@@ -226,7 +231,7 @@ func (sm *SaveMenu) onSaveSelected(cs *mtk.CheckSlot) {
 
 // Triggered after close button clicked.
 func (sm *SaveMenu) onCloseButtonClicked(b *mtk.Button) {
-	sm.Show(false)
+	sm.Hide()
 }
 
 // Triggered after save button clicked.

@@ -279,12 +279,15 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.updatePoints()
 }
 
-// Show toggles menu visibility.
-func (ncm *NewCharacterMenu) Show(show bool) {
-	ncm.opened = show
-	if ncm.opened {
-		ncm.rollPoints()
-	}
+// Show shows menu.
+func (ncm *NewCharacterMenu) Show() {
+	ncm.opened = true
+	ncm.rollPoints()
+}
+
+// Hide hides menu.
+func (ncm *NewCharacterMenu) Hide() {
+	ncm.opened = false
 }
 
 // Opened checks whether menu is open.

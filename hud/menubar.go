@@ -342,45 +342,45 @@ func (mb *MenuBar) setLayout(l *Layout) {
 // Triggered after menu button clicked.
 func (mb *MenuBar) onMenuButtonClicked(b *mtk.Button) {
 	if mb.hud.menu.Opened() {
-		mb.hud.menu.Show(false)
+		mb.hud.menu.Hide()
 	} else {
-		mb.hud.menu.Show(true)
+		mb.hud.menu.Show()
 	}
 }
 
 // Triggered after inventory button clicked.
 func (mb *MenuBar) onInvButtonClicked(b *mtk.Button) {
 	if mb.hud.inv.Opened() {
-		mb.hud.inv.Show(false)
+		mb.hud.inv.Hide()
 	} else {
-		mb.hud.inv.Show(true)
+		mb.hud.inv.Show()
 	}
 }
 
 // Triggered after skills button clicked.
 func (mb *MenuBar) onSkillsButtonClicked(b *mtk.Button) {
 	if mb.hud.skills.Opened() {
-		mb.hud.skills.Show(false)
+		mb.hud.skills.Hide()
 	} else {
-		mb.hud.skills.Show(true)
+		mb.hud.skills.Show()
 	}
 }
 
 // Triggered after journal button clicked.
 func (mb *MenuBar) onJournalButtonClicked(b *mtk.Button) {
 	if mb.hud.journal.Opened() {
-		mb.hud.journal.Show(false)
+		mb.hud.journal.Hide()
 	} else {
-		mb.hud.journal.Show(true)
+		mb.hud.journal.Show()
 	}
 }
 
 // Triggered after character button clicked.
 func (mb *MenuBar) onCharButtonClicked(b *mtk.Button) {
 	if mb.hud.charinfo.Opened() {
-		mb.hud.charinfo.Show(false)
+		mb.hud.charinfo.Hide()
 	} else {
-		mb.hud.charinfo.Show(true)
+		mb.hud.charinfo.Show()
 	}
 }
 

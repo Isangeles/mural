@@ -182,16 +182,18 @@ func (tw *TrainingWindow) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles window visibility.
-func (tw *TrainingWindow) Show(show bool) {
-	tw.opened = show
-	if tw.Opened() {
-		if tw.trainer != nil {
-			tw.insertTrainings(tw.trainer.Trainings()...)
-		}
-	} else {
-		tw.trainingsList.Clear()
+// Show shows window.
+func (tw *TrainingWindow) Show() {
+	tw.opened = true
+	if tw.trainer != nil {
+		tw.insertTrainings(tw.trainer.Trainings()...)
 	}
+}
+
+// Hide hides window.
+func (tw *TrainingWindow) Hide() {
+	tw.opened = false
+	tw.trainingsList.Clear()
 }
 
 // Opened checks if window is open.
@@ -226,7 +228,7 @@ func (tw *TrainingWindow) insertTrainings(trainings ...*training.TrainerTraining
 
 // Triggered on close button clicked.
 func (tw *TrainingWindow) onCloseButtonClicked(b *mtk.Button) {
-	tw.Show(false)
+	tw.Hide()
 }
 
 // Triggered after selecting training from list.

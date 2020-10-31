@@ -128,7 +128,11 @@ func (cw *CharacterWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (cw *CharacterWindow) Update(win *mtk.Window) {
 	// Key events.
 	if !cw.hud.Chat().Activated() && win.JustPressed(charinfoKey) {
-		cw.Show(!cw.Opened())
+		if cw.Opened() {
+			cw.Hide()
+		} else {
+			cw.Show()
+		}
 	}
 	// Elements.
 	if cw.Opened() {
@@ -137,12 +141,15 @@ func (cw *CharacterWindow) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles window visibility.
-func (cw *CharacterWindow) Show(show bool) {
-	cw.opened = show
-	if cw.Opened() {
-		cw.updateInfo()
-	}
+// Show shows window.
+func (cw *CharacterWindow) Show() {
+	cw.opened = true
+	cw.updateInfo()
+}
+
+// Hide hides window.
+func (cw *CharacterWindow) Hide() {
+	cw.opened = false
 }
 
 // Opened checks if window is open.
@@ -186,5 +193,5 @@ Attributes: %s`
 
 // Triggered on close button clicked.
 func (cw *CharacterWindow) onCloseButtonClicked(b *mtk.Button) {
-	cw.Show(false)
+	cw.Hide()
 }

@@ -157,7 +157,11 @@ func (jw *JournalWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (jw *JournalWindow) Update(win *mtk.Window) {
 	// Key events.
 	if !jw.hud.Chat().Activated() && win.JustPressed(journalKey) {
-		jw.Show(!jw.Opened())
+		if jw.Opened() {
+			jw.Hide()
+		} else {
+			jw.Show()
+		}
 	}
 	// Elements.
 	if jw.Opened() {
@@ -167,16 +171,18 @@ func (jw *JournalWindow) Update(win *mtk.Window) {
 	}
 }
 
-// Show toggles window visibility.
-func (jw *JournalWindow) Show(show bool) {
-	jw.opened = show
-	if jw.Opened() {
-		jw.questsList.Clear()
-		pc := jw.hud.Game().ActivePlayer()
-		jw.insertQuests(pc.Journal().Quests()...)
-	} else {
-		jw.questInfo.Clear()
-	}
+// Show shows window.
+func (jw *JournalWindow) Show() {
+	jw.opened = true
+	jw.questsList.Clear()
+	pc := jw.hud.Game().ActivePlayer()
+	jw.insertQuests(pc.Journal().Quests()...)
+}
+
+// Hide hides window.
+func (jw *JournalWindow) Hide() {
+	jw.opened = false
+	jw.questInfo.Clear()
 }
 
 // Opened checks if window is open.
@@ -208,7 +214,7 @@ func (jw *JournalWindow) insertQuests(quests ...*quest.Quest) {
 
 // Triggered after close button clicked.
 func (jw *JournalWindow) onCloseButtonClicked(b *mtk.Button) {
-	jw.Show(false)
+	jw.Hide()
 }
 
 // Triggered after selecting quest from quests list.

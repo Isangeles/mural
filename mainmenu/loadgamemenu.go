@@ -106,18 +106,20 @@ func (lgm *LoadGameMenu) Update(win *mtk.Window) {
 	lgm.savesList.Update(win)
 }
 
-// Show toggles menu visibility.
-func (lgm *LoadGameMenu) Show(show bool) {
-	lgm.opened = show
-	if lgm.Opened() {
-		lgm.mainmenu.userFocus.Focus(lgm.savesList)
-		err := lgm.loadSaves()
-		if err != nil {
-			log.Err.Printf("load game menu: unable to load saves: %v", err)
-		}
-	} else {
-		lgm.mainmenu.userFocus.Focus(nil)
+// Show shows menu.
+func (lgm *LoadGameMenu) Show() {
+	lgm.opened = true
+	lgm.mainmenu.userFocus.Focus(lgm.savesList)
+	err := lgm.loadSaves()
+	if err != nil {
+		log.Err.Printf("load game menu: unable to load saves: %v", err)
 	}
+}
+
+// Hide hides menu.
+func (lgm *LoadGameMenu) Hide() {
+	lgm.opened = false
+	lgm.mainmenu.userFocus.Focus(nil)
 }
 
 // Opened checks whether menu is open.

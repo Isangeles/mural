@@ -150,7 +150,11 @@ func (im *InventoryMenu) Update(win *mtk.Window) {
 		}
 	}
 	if !im.hud.Chat().Activated() && win.JustPressed(invKey) {
-		im.Show(!im.Opened())
+		if im.Opened() {
+			im.Hide()
+		} else {
+			im.Show()
+		}
 	}
 	// Elements update.
 	if im.Opened() {
@@ -164,15 +168,17 @@ func (im *InventoryMenu) Opened() bool {
 	return im.opened
 }
 
-// Show toggles menu visibility.
-func (im *InventoryMenu) Show(show bool) {
-	im.opened = show
-	if im.Opened() {
-		im.hud.UserFocus().Focus(im)
-		im.refresh()
-	} else {
-		im.hud.UserFocus().Focus(nil)
-	}
+// Show shows menu.
+func (im *InventoryMenu) Show() {
+	im.opened = true
+	im.hud.UserFocus().Focus(im)
+	im.refresh()
+}
+
+// Hide hides menu.
+func (im *InventoryMenu) Hide() {
+	im.opened = false
+	im.hud.UserFocus().Focus(nil)
 }
 
 // Focused checks whether menu is focused.
@@ -374,7 +380,7 @@ func (im *InventoryMenu) refresh() {
 
 // Triggered after close button clicked.
 func (im *InventoryMenu) onCloseButtonClicked(b *mtk.Button) {
-	im.Show(false)
+	im.Hide()
 }
 
 // Triggered after one of item slots was clicked with

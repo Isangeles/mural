@@ -146,7 +146,11 @@ func (m *Menu) Update(win *mtk.Window) {
 	// Key events.
 	if win.JustPressed(menuKey) {
 		// Show menu.
-		m.Show(!m.Opened())
+		if m.Opened() {
+			m.Hide()
+		} else {
+			m.Show()
+		}
 	}
 	// Elements.
 	if m.Opened() {
@@ -176,16 +180,20 @@ func (m *Menu) Opened() bool {
 	return m.opened
 }
 
-// Show toggles menu visibility.
-func (m *Menu) Show(show bool) {
-	m.opened = show
-	m.hud.camera.Lock(m.Opened())
-	m.hud.game.Pause(m.Opened())
-	if m.Opened() {
-		m.hud.UserFocus().Focus(m)
-	} else {
-		m.hud.UserFocus().Focus(nil)
-	}
+// Show shows menu.
+func (m *Menu) Show() {
+	m.opened = true
+	m.hud.camera.Lock(true)
+	m.hud.game.Pause(true)
+	m.hud.UserFocus().Focus(m)
+}
+
+// Hide hides menu.
+func (m *Menu) Hide() {
+	m.opened = false
+	m.hud.camera.Lock(false)
+	m.hud.game.Pause(false)
+	m.hud.UserFocus().Focus(nil)
 }
 
 // Focused checks whether menu is focused.
@@ -200,13 +208,13 @@ func (m *Menu) Focus(focus bool) {
 
 // Triggered after close button clicked.
 func (m *Menu) onCloseButtonClicked(b *mtk.Button) {
-	m.Show(false)
+	m.Hide()
 }
 
 // Triggered after save button clicked.
 func (m *Menu) onSaveButtonClicked(b *mtk.Button) {
-	m.Show(false)
-	m.hud.savemenu.Show(true)
+	m.Hide()
+	m.hud.savemenu.Show()
 }
 
 // Triggered after exit button clicked.

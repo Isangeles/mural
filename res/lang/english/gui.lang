@@ -18,6 +18,9 @@ resolution_s_label:Resolution
 lang_s_label:Language
 settings_save_msg:Save settings?
 settings_reset_msg:Some changes need game restart.
+login_b_label:Login
+login_b_info:Login to the server
+login_logged_in_msg:Logged to the server
 newgame_b_label:New game
 newgame_b_info:Start new game
 newgame_menu_title:Start new game
@@ -49,6 +52,10 @@ loadgame_load_mod_res_info:Loading module resources...
 loadgame_import_save_info:Importing saved game...
 loadgame_load_game_info:Loading saved game...
 loadgame_menu_title:Load game
+login_menu_title:Login to the server
+login_menu_login_label:Login
+login_menu_pass_label:Password
+login_menu_login_button_label:Login
 load_b_label:Load
 load_map_info:Loading map...
 load_avatars_info:Loading characters avatars...
@@ -85,7 +92,7 @@ char_frame_mana_bar_label:Mana
 reqs_not_meet:Requirements not meet
 tar_too_far:Target is too far
 no_mod_loaded_err:No module loaded, specify valid module to load in Flame configuration file
-load_game_err:Fail to load game
+load_game_err:Unable to load game
 attNeutral:Neutral
 attFriendly:Friendly
 attHostile:Hostile
@@ -98,3 +105,10 @@ aliChaoticNeutral:Chaotic neutral
 aliLawfulEvil:Lawful evil
 aliNeutralEvil:Neutral evil
 aliChaoticEvil:Chaotic evil
+attr_str:Strenght
+attr_con:Constitution
+attr_dex:Dexterity
+attr_wis:Wisdom
+attr_int:Intelligence
+skill_not_known:Skill not known
+cant_do_right_now:Can't do right now

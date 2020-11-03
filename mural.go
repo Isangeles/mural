@@ -84,11 +84,6 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
 	}
-	// Load UI translation files.
-	err = flamedata.LoadTranslationData(config.LangPath())
-	if err != nil {
-		log.Err.Printf("unable to load ui translation files: %v", err)
-	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
 	if mtk.Audio() != nil {

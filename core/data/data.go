@@ -38,6 +38,7 @@ import (
 
 	"github.com/isangeles/flame/module"
 	flamedata "github.com/isangeles/flame/data"
+	flameres "github.com/isangeles/flame/data/res"
 
 	"github.com/isangeles/burn/ash"
 
@@ -145,6 +146,7 @@ func LoadModuleData(mod *module.Module) (err error) {
 		return fmt.Errorf("unable to import translations: %v", err)
 	}
 	res.SetTranslationBases(translations)
+	flameres.Add(flameres.ResourcesData{TranslationBases: translations})
 	return nil
 }
 

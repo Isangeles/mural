@@ -24,10 +24,6 @@ Build GUI:
 ```
 $ go build github.com/isangeles/mural
 ```
-Copy `data` directory from `res` to directory with `mural` executable(it contains default translation files for UI), for example:
-```
-$ cp -r ~/go/src/github.com/isangeles/mural/res/data .
-```
 Now, specify the ID of a valid Flame module in Flame configuration file:
 
 Create file `.mural` in Mural executable directory(or run Mural to create it
@@ -126,12 +122,15 @@ Description:
 Description:
 
 ## Module directory
-All GUI-related files(including UI textures and audio files) must be stored in `data/modules/[module name]/ui/mural` directory.
+All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/ui/mural` directory.
 
-UI textures and audio files need to be provided by module and stored in `gui/graphic.zip` and `gui/audio.zip` respectively.
+UI textures and audio files need to be provided by module and stored in `mural/graphic.zip` and `mural/audio.zip` respectively.
+
+Translation for GUI elements needs to be stored in the `mural/lang` sub-directory of the module directory.
+
+You can find default translations for the GUI in the `res/lang` directory of this repository.
 
 For example check [Arena](https://github.com/Isangeles/arena) module.
-
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 

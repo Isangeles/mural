@@ -238,22 +238,23 @@ func (ngm *NewGameMenu) startGame() {
 		return
 	}
 	// Create game.
-	game := game.New(flame.NewGame(ngm.mainmenu.mod))
+	gameWrapper := game.New(flame.NewGame(ngm.mainmenu.mod))
 	// Create player.
 	char := character.New(*pcd.CharData)
 	av := object.NewAvatar(char, pcd.AvatarData)
-	pc, err := game.NewPlayer(av)
+	pc := game.NewPlayer(av, gameWrapper)
+	err := gameWrapper.SpawnChar(pc.Avatar)
 	if err != nil {
-		log.Err.Printf("main menu: new game: unable to create new player: %v",
+		log.Err.Printf("main menu: new game: unable to spawn new player: %v",
 			err)
 		return
 	}
-	game.AddPlayer(pc)
+	gameWrapper.AddPlayer(pc)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(game)
+	ngm.mainmenu.onGameCreated(gameWrapper)
 }
 
 // Triggered after start button clicked.

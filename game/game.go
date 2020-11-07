@@ -67,9 +67,8 @@ func (g *Game) ActivePlayer() *Player {
 	return g.activePlayer
 }
 
-// NewPlayer creates new character avatar for the player from specified data and
-// places this character in the start area of game module.
-func (g *Game) NewPlayer(avatar *object.Avatar) (*Player, error) {
+// SpawnChar sets start area and position of current chapter for specified avatar.
+func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	// Set start position.
 	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
 		g.Module().Chapter().Conf().StartPosY)
@@ -77,10 +76,9 @@ func (g *Game) NewPlayer(avatar *object.Avatar) (*Player, error) {
 	// Set start area.
 	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
 	if startArea == nil {
-		return nil, fmt.Errorf("game: start area not found: %s",
+		return fmt.Errorf("chapter start area not found: %s",
 			g.Module().Chapter().Conf().StartArea)
 	}
 	startArea.AddCharacter(avatar.Character)
-	player := Player{avatar, g}
-	return &player, nil
+	return nil
 }

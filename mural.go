@@ -35,6 +35,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
+	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res"
@@ -236,14 +237,16 @@ func LoadSavedGame(saveName string) {
 	defer mainMenu.CloseLoadingScreen()
 	// Import saved game.
 	savePath := filepath.Join(mod.Conf().SavesPath(),
-		saveName+flamedata.SavegameFileExt)
-	g, err := flamedata.ImportGame(mod, savePath)
+		saveName+flamedata.ModuleFileExt)
+	modData, err := flamedata.ImportModuleFile(savePath)
 	if err != nil {
-		log.Err.Printf("load saved game: unable to import game: %v", err)
+		log.Err.Printf("load saved game: unable to import module: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
-	gameWrapper := game.New(g)
+	m := module.New()
+	m.Apply(modData)
+	gameWrapper := game.New(flame.NewGame(m))
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)

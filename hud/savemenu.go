@@ -207,7 +207,7 @@ func (sm *SaveMenu) loadSaves() error {
 	sm.savesList.Clear()
 	// Insert save names.
 	mod := sm.hud.Game().Module()
-	pattern := fmt.Sprintf(".*%s", flamedata.SavegameFileExt)
+	pattern := fmt.Sprintf(".*%s", flamedata.ModuleFileExt)
 	saves, err := flamedata.DirFilesNames(mod.Conf().SavesPath(),
 		pattern)
 	if err != nil {
@@ -250,11 +250,11 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
 	mod := sm.hud.Game().Module()
 	path := filepath.Join(mod.Conf().SavesPath(),
-		saveName + flamedata.SavegameFileExt)
+		saveName + flamedata.ModuleFileExt)
 	// Save current game.
-	err := flamedata.ExportGame(sm.hud.Game().Game, path)
+	err := flamedata.ExportModuleFile(path, mod)
 	if err != nil {
-		return fmt.Errorf("unable to save game: %v", err)
+		return fmt.Errorf("unable to export module: %v", err)
 	}
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()

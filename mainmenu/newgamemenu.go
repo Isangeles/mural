@@ -37,7 +37,6 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
@@ -246,23 +245,24 @@ func (ngm *NewGameMenu) startGame() {
 		return
 	}
 	// Create game.
-	game := game.New(flame.NewGame(ngm.mainmenu.mod))
-	game.SetServer(ngm.mainmenu.server)
+	gameWrapper := game.New(flame.NewGame(ngm.mainmenu.mod))
+	gameWrapper.SetServer(ngm.mainmenu.server)
 	// Create player.
 	char := character.New(*pcd.CharData)
 	av := object.NewAvatar(char, pcd.AvatarData)
-	res.SetAvatars(append(res.Avatars(), *pcd.AvatarData))
-	err := game.AddPlayer(av)
+	pc := game.NewPlayer(av, gameWrapper)
+	err := gameWrapper.SpawnChar(pc.Avatar)
 	if err != nil {
-		log.Err.Printf("main menu: new game: unable to add player to the game: %v",
+		log.Err.Printf("main menu: new game: unable to spawn new player: %v",
 			err)
 		return
 	}
+	gameWrapper.AddPlayer(pc)
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(game)
+	ngm.mainmenu.onGameCreated(gameWrapper)
 }
 
 // Triggered after start button clicked.

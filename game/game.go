@@ -51,20 +51,16 @@ func New(game *flame.Game) *Game {
 }
 
 // AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *object.Avatar) error {
+func (g *Game) AddPlayer(avatar *Player) error {
 	if g.Server() != nil {
-		err := g.Server().NewCharacter(avatar.Character.Data())
+		err := g.Server().NewCharacter(avatar.Avatar.Character.Data())
 		if err != nil {
 			return fmt.Errorf("Unable to send new character request: %v",
 				err)
 		}
 		return nil
 	}
-	player, err := g.newPlayer(avatar)
-	if err != nil {
-		return fmt.Errorf("Unable to create player: %v", err)
-	}
-	g.players = append(g.players, player)
+	g.players = append(g.players, avatar)
 	return nil
 }
 
@@ -109,9 +105,8 @@ func (g *Game) SetOnActivePlayerChangeFunc(f func(p *Player)) {
 	g.onActivePlayerChange = f
 }
 
-// newPlayer creates new character avatar for the player from specified data and
-// places this character in the start area of game module.
-func (g *Game) newPlayer(avatar *object.Avatar) (*Player, error) {
+// SpawnChar sets start area and position of current chapter for specified avatar.
+func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	// Set start position.
 	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
 		g.Module().Chapter().Conf().StartPosY)
@@ -119,11 +114,9 @@ func (g *Game) newPlayer(avatar *object.Avatar) (*Player, error) {
 	// Set start area.
 	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
 	if startArea == nil {
-		return nil, fmt.Errorf("game: start area not found: %s",
+		return fmt.Errorf("chapter start area not found: %s",
 			g.Module().Chapter().Conf().StartArea)
 	}
 	startArea.AddCharacter(avatar.Character)
-	player := Player{avatar, g}
-	g.SetActivePlayer(&player)
-	return &player, nil
+	return nil
 }

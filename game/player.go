@@ -45,3 +45,9 @@ func (p *Player) SetDestPoint(x, y float64) {
 		}
 	}
 }
+
+// NewPlayer creates game wrapper for player avatar.
+func NewPlayer(avatar *object.Avatar, game *Game) *Player {
+	player := Player{avatar, game}
+	return &player
+}

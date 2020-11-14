@@ -38,9 +38,10 @@ import (
 	"github.com/isangeles/flame"
 	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
-	"github.com/isangeles/flame/data/res"
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module"
+	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/burn"
 
@@ -49,6 +50,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/ci"
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
@@ -244,6 +246,9 @@ func LoadSavedGame(saveName string) {
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
+	flameres.Clear()
+	serial.Reset()
+	flameres.TranslationBases = res.TranslationBases()
 	m := module.New()
 	m.Apply(modData)
 	gameWrapper := game.New(flame.NewGame(m))
@@ -286,7 +291,7 @@ func setHUD(h *hud.HUD) {
 }
 
 // setModule sets specified module for UI.
-func setModule(data res.ModuleData) {
+func setModule(data flameres.ModuleData) {
 	mod = module.New()
 	mod.Apply(data)
 	burn.Module = mod

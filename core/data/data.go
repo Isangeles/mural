@@ -111,8 +111,15 @@ func LoadModuleData(mod *module.Module) (err error) {
 	if err != nil {
 		return fmt.Errorf("unable to load icons: %v", err)
 	}
+	// Avatars.
+	path := filepath.Join(mod.Conf().Path, GUIModulePath, "avatars")
+	avs, err := ImportAvatarsDir(path)
+	if err != nil {
+		return fmt.Errorf("unable to import avatars: %v", err)
+	}
+	res.SetAvatars(avs)
 	// Objects graphics.
-	path := filepath.Join(mod.Conf().Path, GUIModulePath, "objects")
+	path = filepath.Join(mod.Conf().Path, GUIModulePath, "objects")
 	obGraphics, err := ImportObjectsGraphicsDir(path)
 	if err != nil {
 		return fmt.Errorf("unable to import objects graphics: %v", err)
@@ -159,7 +166,7 @@ func LoadChapterData(chapter *module.Chapter) error {
 	if err != nil {
 		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}
-	res.SetAvatars(avs)
+	res.SetAvatars(append(res.Avatars(), avs...))
 	// Object graphics.
 	path = filepath.Join(chapter.Module().Conf().Path, GUIModulePath, "chapters",
 		chapter.Conf().ID, "objects")

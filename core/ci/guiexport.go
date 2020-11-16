@@ -48,11 +48,12 @@ func guiexport(cmd burn.Command) (int, string) {
 		}
 		for _, av := range guiHUD.Camera().Avatars() {
 			if av.ID()+"#"+av.Serial() == cmd.TargetArgs()[0] {
-				expPath := guiHUD.Game().Module().Conf().CharactersPath()
-				err := data.ExportAvatar(av, expPath)
+				conf := guiHUD.Game().Module().Conf()
+				avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
+					"avatars", av.ID())
+				err := data.ExportAvatars(avatarsPath, av.Data())
 				if err != nil {
-					return 8, fmt.Sprintf("%s: unable to export avatar: %v",
-						GUIExport, err)
+					return 3, fmt.Sprintf("unable to export avatar: %v", err)
 				}
 				return 0, ""
 			}

@@ -211,17 +211,15 @@ func (ngm *NewGameMenu) exportChar() error {
 	if !ok {
 		return fmt.Errorf("unable to retrieve character data from switch")
 	}
-	c := character.New(*pcData.CharData)
 	conf := ngm.mainmenu.mod.Conf()
-	path := filepath.Join(conf.CharactersPath(), c.ID()+c.Serial())
-	err := flamedata.ExportCharacters(path, c.Data())
+	path := filepath.Join(conf.CharactersPath(), pcData.CharData.ID)
+	err := flamedata.ExportCharacters(path, *pcData.CharData)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
-	av := object.NewAvatar(c, pcData.AvatarData)
 	avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
-		"avatars")
-	err = data.ExportAvatar(av, avatarsPath)
+		"avatars", pcData.CharData.ID)
+	err = data.ExportAvatars(avatarsPath, *pcData.AvatarData)
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
 	}

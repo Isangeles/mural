@@ -34,20 +34,34 @@ type Player struct {
 	game *Game
 }
 
-// SetDestPoint sets destination point for player character.
-func (p *Player) SetDestPoint(x, y float64) {
-	p.Character.SetDestPoint(x, y)
-	if p.game.Server() != nil {
-		err := p.game.Server().Move(p.ID(), p.Serial(), x, y)
-		if err != nil {
-			log.Err.Printf("Player: %s %s: unable to send move request to the server: %v",
-				p.ID(), p.Serial(), err)
-		}
-	}
-}
-
 // NewPlayer creates game wrapper for player avatar.
 func NewPlayer(avatar *object.Avatar, game *Game) *Player {
 	player := Player{avatar, game}
 	return &player
+}
+
+// SetDestPoint sets destination point for player character.
+func (p *Player) SetDestPoint(x, y float64) {
+	p.Character.SetDestPoint(x, y)
+	if p.game.Server() == nil {
+		return
+	}
+	err := p.game.Server().Move(p.ID(), p.Serial(), x, y)
+	if err != nil {
+		log.Err.Printf("Player: %s %s: unable to send move request to the server: %v",
+			p.ID(), p.Serial(), err)
+	}
+}
+
+// AddChatMessage adds new message to the character chat log.
+func (p *Player) AddChatMessage(message string) {
+	p.ChatLog().Add(message)
+	if p.game.Server() == nil {
+		return
+	}
+	err := p.game.Server().Chat(p.ID(), p.Serial(), message)
+	if err != nil {
+		log.Err.Printf("Player: %s %s: unable to send chat request to the server: %v",
+			p.ID(), p.Serial(), err)
+	}
 }

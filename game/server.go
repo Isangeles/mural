@@ -133,6 +133,27 @@ func (s *Server) Move(id, serial string, x, y float64) error {
 	return nil
 }
 
+// Chat sends chat request to the server.
+func (s *Server) Chat(id, serial, message string) error {
+	req := new(request.Request)
+	chatReq := request.Chat{
+		ObjectID:     id,
+		ObjectSerial: serial,
+		Message:      message,
+	}
+	req.Chat = append(req.Chat, chatReq)
+	text, err := request.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("Unable to marshal request: %v", err)
+	}
+	text = fmt.Sprintf("%s\r\n", text)
+	_, err = s.conn.Write([]byte(text))
+	if err != nil {
+		return fmt.Errorf("Unable to write request: %v", err)
+	}
+	return nil
+}
+
 // handleResponses handles responses from the server connection and
 // calls onResponse function for each response.
 func (s *Server) handleResponses() {

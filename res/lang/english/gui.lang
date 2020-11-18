@@ -112,3 +112,4 @@ attr_wis:Wisdom
 attr_int:Intelligence
 skill_not_known:Skill not known
 cant_do_right_now:Can't do right now
+system:System

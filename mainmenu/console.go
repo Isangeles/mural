@@ -105,7 +105,7 @@ func (c *Console) Update(win *mtk.Window) {
 		}
 		c.msgs[msg.ID()] = &msg
 		c.textbox.AddText(msg.String())
-		//c.textbox.ScrollBottom()
+		c.textbox.ScrollBottom()
 	}
 	// Elements.
 	c.textbox.Update(win)

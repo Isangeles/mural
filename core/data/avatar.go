@@ -35,7 +35,6 @@ import (
 	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
 
@@ -90,35 +89,13 @@ func ImportAvatarsDir(dirPath string) ([]res.AvatarData, error) {
 	return avsData, nil
 }
 
-// DefaultAvatarData creates default avatar data
-// for specified character.
-func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
-	ssHeadName := "m-head-black-1222211-80x90.png"
-	ssTorsoName := "m-cloth-1222211-80x90.png"
-	portraitName := "male01.png"
-	if char.Gender() == character.Female {
-		ssHeadName = "f-head-black-1222211-80x90.png"
-		ssTorsoName = "f-cloth-1222211-80x90.png"
-		portraitName = "female01.png"
-	}
-	avData := res.AvatarData{
-		ID:          char.ID(),
-		Serial:      char.Serial(),
-		Portrait:    portraitName,
-		Head:        ssHeadName,
-		Torso:       ssTorsoName,
-	}
-	return &avData, nil
-}
-
-
-// ExportAvatars exports specified avatars to file
+// ExportAvatars exports specified avatars to the new avatar data file
 // with specified path.
-func ExportAvatars(avs []*object.Avatar, path string) error {
+func ExportAvatars(path string, avatars ...res.AvatarData) error {
 	// Marshal avatars.
 	data := new(res.AvatarsData)
-	for _, av := range avs {
-		data.Avatars = append(data.Avatars, av.Data())
+	for _, av := range avatars {
+		data.Avatars = append(data.Avatars, av)
 	}
 	xml, err := xml.Marshal(data)
 	if err != nil {
@@ -146,10 +123,23 @@ func ExportAvatars(avs []*object.Avatar, path string) error {
 	return nil
 }
 
-// ExportAvatars exports specified avatar to directory
-// with specified path.
-func ExportAvatar(av *object.Avatar, dirPath string) error {
-	filePath := filepath.FromSlash(dirPath + "/" + strings.ToLower(av.Name()) +
-		AvatarsFileExt)
-	return ExportAvatars([]*object.Avatar{av}, filePath)
+// DefaultAvatarData creates default avatar data
+// for specified character.
+func DefaultAvatarData(char *character.Character) (*res.AvatarData, error) {
+	ssHeadName := "m-head-black-1222211-80x90.png"
+	ssTorsoName := "m-cloth-1222211-80x90.png"
+	portraitName := "male01.png"
+	if char.Gender() == character.Female {
+		ssHeadName = "f-head-black-1222211-80x90.png"
+		ssTorsoName = "f-cloth-1222211-80x90.png"
+		portraitName = "female01.png"
+	}
+	avData := res.AvatarData{
+		ID:          char.ID(),
+		Serial:      char.Serial(),
+		Portrait:    portraitName,
+		Head:        ssHeadName,
+		Torso:       ssTorsoName,
+	}
+	return &avData, nil
 }

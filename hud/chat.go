@@ -26,15 +26,17 @@ package hud
 import (
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/objects"
 	flamelog "github.com/isangeles/flame/log"
+	"github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
@@ -65,6 +67,20 @@ type Chat struct {
 	lastInput    string
 	onScriptName func(name string, args ...string) error
 }
+
+// Struct for log message.
+type Message struct {
+	author string
+	time   time.Time
+	text   string
+}
+
+// Struct for sorting messages by the messsage time.
+type MessagesByTime []Message
+
+func (mbt MessagesByTime) Len() int           { return len(mbt) }
+func (mbt MessagesByTime) Swap(i, j int)      { mbt[i], mbt[j] = mbt[j], mbt[i] }
+func (mbt MessagesByTime) Less(i, j int) bool { return mbt[i].time.UnixNano() < mbt[j].time.UnixNano() }
 
 // newChat creates new chat window for HUD.
 func newChat(hud *HUD) *Chat {
@@ -115,22 +131,13 @@ func (c *Chat) Update(win *mtk.Window) {
 		// Toggle chat activity.
 		c.Activate(!c.Activated())
 	}
-	// Print log messages.
-	for _, msg := range flamelog.Messages() {
-		if c.msgs[msg.ID()] != nil {
-			continue
-		}
-		c.msgs[msg.ID()] = &msg
-		c.textbox.AddText(msg.String())
-	}
+	// Clear textbox.
+	scrollBottom := c.textbox.AtBottom()
+	c.textbox.Clear()
 	// Print messages from players and nearby objects.
+	messages := make([]Message, 0)
 	game := c.hud.Game()
 	for _, pc := range c.hud.Game().Players() {
-		select {
-		case msg := <-pc.PrivateLog().Channel():
-			c.textbox.AddText(fmt.Sprintf("%s\n", msg))
-		default:
-		}
 		// Near objects.
 		area := game.Module().Chapter().CharacterArea(pc.Character)
 		if area == nil {
@@ -141,19 +148,32 @@ func (c *Chat) Update(win *mtk.Window) {
 			if !ok {
 				continue
 			}
-			select {
-			case msg := <-tar.CombatLog().Channel():
-				c.textbox.AddText(fmt.Sprintf("%s\n", msg))
-			case msg := <-tar.ChatLog().Channel():
-				c.textbox.AddText(fmt.Sprintf("%s: %s\n", lang.Text(tar.ID()),
-					msg))
-			case msg := <-tar.PrivateLog().Channel():
-				if tar == pc {
-					c.textbox.AddText(fmt.Sprintf("%s\n", msg))
+			for _, m := range tar.ChatLog().Messages() {
+				m := Message{
+					author: tar.ID(),
+					time:   m.Time(),
+					text:   fmt.Sprintf("%s\n", m.String()),
 				}
-			default:
+				messages = append(messages, m)
 			}
 		}
+	}
+	// Print log messages.
+	for _, m := range flamelog.Messages() {
+		m := Message{
+			author: "system",
+			time:   m.Date(),
+			text:   m.String(),
+		}
+		messages = append(messages, m)
+	}
+	sort.Sort(MessagesByTime(messages))
+	for _, m := range messages {
+		c.textbox.AddText(fmt.Sprintf("%s: %s", lang.Text(m.author),
+			m.text))
+	}
+	if scrollBottom {
+		c.textbox.ScrollBottom()
 	}
 	// Elements update.
 	c.textbox.Update(win)

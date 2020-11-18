@@ -133,7 +133,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	// Clear list.
 	lgm.savesList.Clear()
 	// Insert save names.
-	pattern := fmt.Sprintf(".*%s", flamedata.SavegameFileExt)
+	pattern := fmt.Sprintf(".*%s", flamedata.ModuleFileExt)
 	saves, err := flamedata.DirFilesNames(lgm.mainmenu.mod.Conf().SavesPath(),
 		pattern)
 	if err != nil {
@@ -161,7 +161,7 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		log.Err.Printf("main menu: load game: unable to retrieve save name from list value")
 		return
 	}
-	savename := strings.Replace(filename, ".savegame", "", 1)
+	savename := strings.Replace(filename, flamedata.ModuleFileExt, "", 1)
 	if lgm.mainmenu.onSaveLoad != nil {
 		go lgm.mainmenu.onSaveLoad(savename)
 	}

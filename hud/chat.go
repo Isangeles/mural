@@ -242,7 +242,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		return
 	}
 	// Echo chat.
-	c.hud.Game().ActivePlayer().ChatLog().Add(input)
+	c.hud.Game().ActivePlayer().AddChatMessage(input)
 }
 
 // executeScriptFile executes Ash script from file

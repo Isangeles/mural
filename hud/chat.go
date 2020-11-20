@@ -134,12 +134,20 @@ func (c *Chat) Update(win *mtk.Window) {
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
 	c.textbox.Clear()
-	// Print messages from players and nearby objects.
+	// Add messages from players and nearby objects.
 	messages := make([]Message, 0)
-	game := c.hud.Game()
 	for _, pc := range c.hud.Game().Players() {
-		// Near objects.
-		area := game.Module().Chapter().CharacterArea(pc.Character)
+		// PC's private messages.
+		for _, m := range pc.PrivateLog().Messages() {
+			m := Message{
+				author: pc.ID(),
+				time:   m.Time(),
+				text:   fmt.Sprintf("%s\n", m.String()),
+			}
+			messages = append(messages, m)
+		}
+		// Near objects chat & combat.
+		area := c.hud.Game().Module().Chapter().CharacterArea(pc.Character)
 		if area == nil {
 			continue
 		}
@@ -156,9 +164,17 @@ func (c *Chat) Update(win *mtk.Window) {
 				}
 				messages = append(messages, m)
 			}
+			for _, m := range tar.CombatLog().Messages() {
+				m := Message{
+					author: tar.ID(),
+					time:   m.Time(),
+					text:   fmt.Sprintf("%s\n", m.String()),
+				}
+				messages = append(messages, m)
+			}
 		}
 	}
-	// Print log messages.
+	// Add engine log messages.
 	for _, m := range flamelog.Messages() {
 		m := Message{
 			author: "system",
@@ -167,6 +183,7 @@ func (c *Chat) Update(win *mtk.Window) {
 		}
 		messages = append(messages, m)
 	}
+	// Sort and print messages.
 	sort.Sort(MessagesByTime(messages))
 	for _, m := range messages {
 		c.textbox.AddText(fmt.Sprintf("%s: %s", lang.Text(m.author),

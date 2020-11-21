@@ -61,6 +61,7 @@ func (g *Game) AddPlayer(avatar *Player) error {
 		return nil
 	}
 	g.players = append(g.players, avatar)
+	g.SetActivePlayer(avatar)
 	return nil
 }
 

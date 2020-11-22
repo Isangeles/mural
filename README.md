@@ -110,7 +110,7 @@ Description: specifies name of audio file(located in audio archive) for main men
 Description: specifies name of audio file(located in audio archive) for button click sound.
 
 ## Module directory
-All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/ui/mural` directory.
+All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/mural` directory.
 
 UI textures and audio files need to be provided by module and stored in `mural/graphic.zip` and `mural/audio.zip` respectively.
 
@@ -159,7 +159,7 @@ guiaudio -o set-volue -a [value]
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
-Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/gui/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` subdirectory are started automatically on game start/load.
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` subdirectory are started automatically on game start/load.
 
 Area scripts are stored in `chapters/[chapter id]/areas/[area id]/scripts` directory and started after area change.
 
@@ -180,7 +180,7 @@ Note that documentation of Burn commands is still incomplete.
 ## Contributing
 You are welcome to contribute to project development.
 
-If you looking for things to do, then check [TODO file](https://github.com/Isangeles/mural/blob/master/TODO) or contact me(dev@isangeles.pl).
+If you looking for things to do, then check [TODO file](https://github.com/Isangeles/mural/blob/master/TODO) or contact maintainer(dev@isangeles.pl).
 
 When you find something to do, create a new branch for your feature.
 After you finish, open a pull request to merge your changes with master branch.

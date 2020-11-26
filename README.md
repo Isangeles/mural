@@ -14,7 +14,7 @@ Description: simple demo game based on [Arena](https://github.com/isangeles/aren
 Download: [Linux](https://my.opendesktop.org/s/xmxszBXyMQCK5xB), [Windows](https://my.opendesktop.org/s/gcKQmFRdTj8sBdp), [macOS](https://my.opendesktop.org/s/5omoYQYMHGLXkfJ)
 
 ## Build
-Get [Pixel](https://github.com/faiface/pixel), [MTK](https://github.com/Isangeles/mtk), [Beep](https://github.com/faiface/beep), [Stone](https://github.com/Isangeles/stone) and [Flame](https://github.com/Isangeles/flame).
+First, make sure you have dependencies required by [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep).
 
 Get sources from git:
 ```
@@ -31,7 +31,7 @@ automatically) and add the following line:
 ```
 module:[module ID]
 ```
-The engine will search the default modules directory(`data/modules`) for a module with the specified ID.
+Mural will search the default modules directory(`data/modules`) for a module with the specified ID.
 
 Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 
@@ -159,9 +159,9 @@ guiaudio -o set-volue -a [value]
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
-Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` subdirectory are started automatically on game start/load.
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` sub-directory are started automatically on game start/load.
 
-Area scripts are stored in `chapters/[chapter id]/areas/[area id]/scripts` directory and started after area change.
+Area scripts are stored in `[module dir]/mural/chapters/[chapter id]/areas/[area id]/scripts` directory and started after area change.
 
 ## Documentation
 Source code documentation can be easily browsed with `go doc` command.

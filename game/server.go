@@ -154,6 +154,28 @@ func (s *Server) Chat(id, serial, message string) error {
 	return nil
 }
 
+// Use sends use request to the server.
+func (s *Server) Use(userID, userSerial, objectID, objectSerial string) error {
+	req := new(request.Request)
+	useReq := request.Use{
+		UserID: userID,
+		UserSerial: userSerial,
+		ObjectID: objectID,
+		ObjectSerial: objectSerial,
+	}
+	req.Use = append(req.Use, useReq)
+	text, err := request.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("Unable to marshal request: %v", err)
+	}
+	text = fmt.Sprintf("%s\r\n", text)
+	_, err = s.conn.Write([]byte(text))
+	if err != nil {
+		return fmt.Errorf("Unable to write request: %v", err)
+	}
+	return nil
+}
+
 // handleResponses handles responses from the server connection and
 // calls onResponse function for each response.
 func (s *Server) handleResponses() {

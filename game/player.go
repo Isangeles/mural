@@ -24,6 +24,9 @@
 package game
 
 import (
+	"github.com/isangeles/flame/module/serial"
+	"github.com/isangeles/flame/module/useaction"
+
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -62,6 +65,23 @@ func (p *Player) AddChatMessage(message string) {
 	err := p.game.Server().Chat(p.ID(), p.Serial(), message)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send chat request to the server: %v",
+			p.ID(), p.Serial(), err)
+	}
+}
+
+// Use uses specified usable object.
+func (p *Player) Use(ob useaction.Usable) {
+	p.Character.Use(ob)
+	if p.game.Server() == nil {
+		return
+	}
+	obSerial := ""
+	if ob, ok := ob.(serial.Serialer); ok {
+		obSerial = ob.Serial()
+	}
+	err := p.game.Server().Use(p.ID(), p.Serial(), ob.ID(), obSerial)
+	if err != nil {
+		log.Err.Printf("Player: %s %s: unable to send use request: %v",
 			p.ID(), p.Serial(), err)
 	}
 }

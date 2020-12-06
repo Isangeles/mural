@@ -154,13 +154,35 @@ func (s *Server) Chat(id, serial, message string) error {
 	return nil
 }
 
+// Target sends target request to the server.
+func (s *Server) Target(obID, obSerial, tarID, tarSerial string) error {
+	req := new(request.Request)
+	targetReq := request.Target{
+		ObjectID:     obID,
+		ObjectSerial: obSerial,
+		TargetID:     tarID,
+		TargetSerial: tarSerial,
+	}
+	req.Target = append(req.Target, targetReq)
+	text, err := request.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("Unable to marshal request: %v", err)
+	}
+	text = fmt.Sprintf("%s\r\n", text)
+	_, err = s.conn.Write([]byte(text))
+	if err != nil {
+		return fmt.Errorf("Unable to write request: %v", err)
+	}
+	return nil
+}
+
 // Use sends use request to the server.
 func (s *Server) Use(userID, userSerial, objectID, objectSerial string) error {
 	req := new(request.Request)
 	useReq := request.Use{
-		UserID: userID,
-		UserSerial: userSerial,
-		ObjectID: objectID,
+		UserID:       userID,
+		UserSerial:   userSerial,
+		ObjectID:     objectID,
 		ObjectSerial: objectSerial,
 	}
 	req.Use = append(req.Use, useReq)

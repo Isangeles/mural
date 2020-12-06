@@ -24,6 +24,7 @@
 package game
 
 import (
+	"github.com/isangeles/flame/module/effect"
 	"github.com/isangeles/flame/module/serial"
 	"github.com/isangeles/flame/module/useaction"
 
@@ -65,6 +66,23 @@ func (p *Player) AddChatMessage(message string) {
 	err := p.game.Server().Chat(p.ID(), p.Serial(), message)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send chat request to the server: %v",
+			p.ID(), p.Serial(), err)
+	}
+}
+
+// SetTarget sets specified targetable object as the current target.
+func (p *Player) SetTarget(tar effect.Target) {
+	p.Character.SetTarget(tar)
+	if p.game.Server() == nil {
+		return
+	}
+	tarID, tarSerial := "", ""
+	if tar != nil {
+		tarID, tarSerial = tar.ID(), tar.Serial()
+	}
+	err := p.game.Server().Target(p.ID(), p.Serial(), tarID, tarSerial)
+	if err != nil {
+		log.Err.Printf("Player: %s %s: unable to send target request to the server: %v",
 			p.ID(), p.Serial(), err)
 	}
 }

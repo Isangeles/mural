@@ -46,10 +46,10 @@ func (mm *MainMenu) handleResponse(resp response.Response) {
 
 // handleUpdateResponse handles update response.
 func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
-	serial.Reset()
 	flameres.Clear()
 	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {
+		serial.Reset()
 		mm.mod = module.New()
 		mm.mod.Apply(resp.Module)
 		return

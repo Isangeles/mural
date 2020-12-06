@@ -25,7 +25,6 @@ package game
 
 import (
 	flameres "github.com/isangeles/flame/data/res"
-	"github.com/isangeles/flame/module/serial"
 
 	"github.com/isangeles/fire/response"
 
@@ -47,7 +46,6 @@ func (g *Game) handleResponse(resp response.Response) {
 
 // handleUpdateResponse handles update response.
 func (g *Game) handleUpdateResponse(resp response.Update) {
-	serial.Reset()
 	flameres.Clear()
 	flameres.TranslationBases = res.TranslationBases()
 	g.Module().Apply(resp.Module)

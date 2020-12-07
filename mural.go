@@ -74,6 +74,7 @@ func main() {
 	err := config.Load()
 	if err != nil {
 		log.Err.Printf("unable to load config file: %v", err)
+		config.Save() // save default config to the config file
 	}
 	log.PrintStdOut(config.Debug)
 	// Import module.

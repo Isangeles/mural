@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	Name, Version = "Mural", "0.0.0"
+	Name, Version = "Mural", "0.1.0-dev"
 	ConfFileName  = ".mural"
 )
 

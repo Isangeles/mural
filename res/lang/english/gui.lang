@@ -113,3 +113,5 @@ attr_int:Intelligence
 skill_not_known:Skill not known
 cant_do_right_now:Can't do right now
 system:System
+com_no:No
+com_yes:Yes

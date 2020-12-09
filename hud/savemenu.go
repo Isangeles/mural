@@ -188,6 +188,7 @@ func (sm *SaveMenu) Show() {
 // Hide hides menu.
 func (sm *SaveMenu) Hide() {
 	sm.opened = false
+	sm.hud.Camera().Lock(false)
 }
 
 // Focused checks if menu us focused.

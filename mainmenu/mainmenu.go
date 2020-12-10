@@ -253,7 +253,7 @@ func (mm *MainMenu) ShowMessage(msg string) {
 		Info:      msg,
 	}
 	mw := mtk.NewMessageWindow(params)
-	mw.SetAcceptLabel(lang.Text("accept_b_label"))
+	mw.SetAcceptLabel(lang.Text("accept_button_label"))
 	mw.Show(true)
 	mm.msgs.Append(mw)
 }

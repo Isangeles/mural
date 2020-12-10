@@ -94,7 +94,7 @@ func newNewGameMenu(mainmenu *MainMenu) *NewGameMenu {
 	ngm.exportButton.SetLabel(lang.Text("newgame_export_button_label"))
 	ngm.exportButton.SetOnClickFunc(ngm.onExportButtonClicked)
 	ngm.backButton = mtk.NewButton(buttonParams)
-	ngm.backButton.SetLabel(lang.Text("back_b_label"))
+	ngm.backButton.SetLabel(lang.Text("back_button_label"))
 	ngm.backButton.SetOnClickFunc(ngm.onBackButtonClicked)
 	return ngm
 }

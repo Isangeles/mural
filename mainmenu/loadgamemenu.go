@@ -75,10 +75,10 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 		MainColor: accentColor,
 	}
 	lgm.backButton = mtk.NewButton(buttonParams)
-	lgm.backButton.SetLabel(lang.Text("back_b_label"))
+	lgm.backButton.SetLabel(lang.Text("back_button_label"))
 	lgm.backButton.SetOnClickFunc(lgm.onBackButtonClicked)
 	lgm.loadButton = mtk.NewButton(buttonParams)
-	lgm.loadButton.SetLabel(lang.Text("load_b_label"))
+	lgm.loadButton.SetLabel(lang.Text("load_button_label"))
 	lgm.loadButton.SetOnClickFunc(lgm.onLoadButtonClicked)
 	return lgm
 }

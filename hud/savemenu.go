@@ -107,7 +107,7 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	}
 	sm.closeButton.SetOnClickFunc(sm.onCloseButtonClicked)
 	sm.saveButton = mtk.NewButton(saveButtonParams)
-	sm.saveButton.SetLabel(lang.Text("save_b_label"))
+	sm.saveButton.SetLabel(lang.Text("save_button_label"))
 	saveButtonBG := graphic.Textures["button_green.png"]
 	if saveButtonBG != nil {
 		bg := pixel.NewSprite(saveButtonBG, saveButtonBG.Bounds())

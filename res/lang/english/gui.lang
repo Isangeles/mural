@@ -1,28 +1,28 @@
-exit_b_label:Exit
-exit_b_info:Exit game
-exit_hud_b_info:Exit to menu
-accept_b_label:Ok
-cancel_b_label:Cancel
-done_b_label:Done
-back_b_label:Back
-settings_b_label:Settings
-settings_b_info:Open settings menu
+exit_button_label:Exit
+exit_button_info:Exit game
+exit_hud_button_info:Exit to menu
+accept_button_label:Ok
+cancel_button_label:Cancel
+done_button_label:Done
+back_button_label:Back
+settings_button_label:Settings
+settings_button_info:Open settings menu
 settings_mute_switch_label:Mute music
 settings_vol_switch_label:Music volume
-newchar_b_label:New character
-newchar_b_info:Create new character
+newchar_button_label:New character
+newchar_button_info:Create new character
 settings_menu_title:Settings
 settings_fullscr_switch_label:Fullscreen
 settings_vol_sys:System
-resolution_s_label:Resolution
-lang_s_label:Language
+resolution_switch_label:Resolution
+lang_switch_label:Language
 settings_save_msg:Save settings?
 settings_reset_msg:Some changes need game restart.
-login_b_label:Login
-login_b_info:Login to the server
+login_button_label:Login
+login_button_info:Login to the server
 login_logged_in_msg:Logged to the server
-newgame_b_label:New game
-newgame_b_info:Start new game
+newgame_button_label:New game
+newgame_button_info:Start new game
 newgame_menu_title:Start new game
 newgame_char_switch_label:Character
 newgame_start_button_label:Start game
@@ -37,17 +37,17 @@ newchar_con_switch_label:Constitution
 newchar_dex_switch_label:Dexterity
 newchar_int_switch_label:Inteligence
 newchar_wis_switch_label:Wisdom
-newchar_roll_b_label:Roll
-newchar_roll_b_info:Roll attributes points
+newchar_roll_button_label:Roll
+newchar_roll_button_info:Roll attributes points
 newchar_sex_switch_label:Gender
 newchar_race_switch_label:Race
 newchar_ali_switch_label:Alignment
 newchar_create_msg:New character created.
-save_b_label:Save
-savegame_b_label:Save game
-savegame_b_info:Save game state
-loadgame_b_label:Load game
-loadgame_b_info:Load saved game
+save_button_label:Save
+savegame_button_label:Save game
+savegame_button_info:Save game state
+loadgame_button_label:Load game
+loadgame_button_info:Load saved game
 loadgame_load_mod_res_info:Loading module resources...
 loadgame_import_save_info:Importing saved game...
 loadgame_load_game_info:Loading saved game...
@@ -56,7 +56,7 @@ login_menu_title:Login to the server
 login_menu_login_label:Login
 login_menu_pass_label:Password
 login_menu_login_button_label:Login
-load_b_label:Load
+load_button_label:Load
 load_map_info:Loading map...
 load_avatars_info:Loading characters avatars...
 load_objects_info:Loading area objects...

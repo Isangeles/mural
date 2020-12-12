@@ -63,8 +63,8 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		MainColor: accentColor,
 	}
 	m.loginButton = mtk.NewButton(buttonParams)
-	m.loginButton.SetLabel(lang.Text("login_b_label"))
-	m.loginButton.SetInfo(lang.Text("login_b_info"))
+	m.loginButton.SetLabel(lang.Text("login_button_label"))
+	m.loginButton.SetInfo(lang.Text("login_button_info"))
 	m.loginButton.SetOnClickFunc(m.onLoginButtonClicked)
 	m.newgameB = mtk.NewButton(buttonParams)
 	m.newgameB.SetLabel(lang.Text("newgame_button_label"))

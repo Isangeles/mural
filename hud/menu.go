@@ -99,16 +99,16 @@ func newMenu(hud *HUD) *Menu {
 		log.Err.Printf("hud menu: unable to retrieve green button texture")
 	}
 	m.saveButton = mtk.NewButton(menuButtonParams)
-	m.saveButton.SetLabel(lang.Text("savegame_b_label"))
-	m.saveButton.SetInfo(lang.Text("savegame_b_info"))
+	m.saveButton.SetLabel(lang.Text("savegame_button_label"))
+	m.saveButton.SetInfo(lang.Text("savegame_button_info"))
 	if greenButtonBG != nil {
 		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
 		m.saveButton.SetBackground(bg)
 	}
 	m.saveButton.SetOnClickFunc(m.onSaveButtonClicked)
 	m.exitButton = mtk.NewButton(menuButtonParams)
-	m.exitButton.SetLabel(lang.Text("exit_b_label"))
-	m.exitButton.SetInfo(lang.Text("exit_hud_b_info"))
+	m.exitButton.SetLabel(lang.Text("exit_button_label"))
+	m.exitButton.SetInfo(lang.Text("exit_hud_button_info"))
 	if greenButtonBG != nil {
 		bg := pixel.NewSprite(greenButtonBG, greenButtonBG.Bounds())
 		m.exitButton.SetBackground(bg)

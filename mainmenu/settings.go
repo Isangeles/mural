@@ -71,7 +71,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 		MainColor: accentColor,
 	}
 	s.backButton = mtk.NewButton(buttonParams)
-	s.backButton.SetLabel(lang.Text("back_b_label"))
+	s.backButton.SetLabel(lang.Text("back_button_label"))
 	s.backButton.SetOnClickFunc(s.onBackButtonClicked)
 	// Switches.
 	switchParams := mtk.Params{
@@ -88,7 +88,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.fullscrSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Resolution.
 	s.resSwitch = mtk.NewSwitch(switchParams)
-	s.resSwitch.SetLabel(lang.Text("resolution_s_label"))
+	s.resSwitch.SetLabel(lang.Text("resolution_switch_label"))
 	var resValues []mtk.SwitchValue
 	for _, res := range config.SupportedResolutions() {
 		v := mtk.SwitchValue{fmt.Sprintf("%vx%v", res.X, res.Y), res}
@@ -98,7 +98,7 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	s.resSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Language.
 	s.langSwitch = mtk.NewSwitch(switchParams)
-	s.langSwitch.SetLabel(lang.Text("lang_s_label"))
+	s.langSwitch.SetLabel(lang.Text("lang_switch_label"))
 	langValues := make([]mtk.SwitchValue, len(config.SupportedLangs()))
 	for i, l := range config.SupportedLangs() {
 		langValues[i] = mtk.SwitchValue{l, l}
@@ -254,8 +254,8 @@ func (s *Settings) closeWithDialog() {
 			Info:      lang.Text("settings_save_msg"),
 		}
 		dlg := mtk.NewDialogWindow(dlgParams)
-		dlg.SetAcceptLabel(lang.Text("accept_b_label"))
-		dlg.SetCancelLabel(lang.Text("cancel_b_label"))
+		dlg.SetAcceptLabel(lang.Text("accept_button_label"))
+		dlg.SetCancelLabel(lang.Text("cancel_button_label"))
 		dlg.SetOnAcceptFunc(s.onSettingsApplyAccept)
 		dlg.SetOnCancelFunc(s.onSettingsApplyCancel)
 		s.mainmenu.ShowMessageWindow(dlg)

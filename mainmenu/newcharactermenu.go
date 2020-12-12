@@ -186,14 +186,14 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 		MainColor: accentColor,
 	}
 	ncm.doneButton = mtk.NewButton(buttonParams)
-	ncm.doneButton.SetLabel(lang.Text("done_b_label"))
+	ncm.doneButton.SetLabel(lang.Text("done_button_label"))
 	ncm.doneButton.SetOnClickFunc(ncm.onDoneButtonClicked)
 	ncm.backButton = mtk.NewButton(buttonParams)
-	ncm.backButton.SetLabel(lang.Text("back_b_label"))
+	ncm.backButton.SetLabel(lang.Text("back_button_label"))
 	ncm.backButton.SetOnClickFunc(ncm.onBackButtonClicked)
 	ncm.rollButton = mtk.NewButton(buttonParams)
-	ncm.rollButton.SetLabel(lang.Text("newchar_roll_b_label"))
-	ncm.rollButton.SetInfo(lang.Text("newchar_roll_b_info"))
+	ncm.rollButton.SetLabel(lang.Text("newchar_roll_button_label"))
+	ncm.rollButton.SetInfo(lang.Text("newchar_roll_button_info"))
 	ncm.rollButton.SetOnClickFunc(ncm.onRollButtonClicked)
 	return ncm
 }

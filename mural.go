@@ -53,7 +53,6 @@ import (
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -269,9 +268,7 @@ func LoadSavedGame(saveName string) {
 				pcd.Avatar.ID, pcd.Avatar.Serial)
 			continue
 		}
-		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewPlayer(av, gameWrapper)
-		gameWrapper.AddPlayer(pc)
+		gameWrapper.AddNewPlayer(char, pcd.Avatar)
 	}
 	// Enter game.
 	EnterGame(gameWrapper)

@@ -33,8 +33,8 @@ type Player struct {
 	game *Game
 }
 
-// NewPlayer creates game wrapper for player avatar.
-func NewPlayer(avatar *object.Avatar, game *Game) *Player {
+// newPlayer creates game wrapper for player avatar.
+func newPlayer(avatar *object.Avatar, game *Game) *Player {
 	player := Player{avatar, game}
 	return &player
 }

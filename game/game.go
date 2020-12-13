@@ -30,7 +30,10 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/module/character"
 
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 )
 
@@ -45,11 +48,6 @@ type Game struct {
 func New(game *flame.Game) *Game {
 	g := Game{Game: game}
 	return &g
-}
-
-// AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *Player) {
-	g.players = append(g.players, avatar)
 }
 
 // Players returns all player avatars.
@@ -67,18 +65,32 @@ func (g *Game) ActivePlayer() *Player {
 	return g.activePlayer
 }
 
-// SpawnChar sets start area and position of current chapter for specified avatar.
-func (g *Game) SpawnChar(avatar *object.Avatar) error {
+// NewPlayer creates new game player from specified data.
+func (g *Game) NewPlayer(charData flameres.CharacterData, avData res.AvatarData) *Player {
+	char := character.New(charData)
+	return g.AddNewPlayer(char, avData)
+}
+
+// AddNewPlayer creates new player from existing character and specified avatar data.
+func (g *Game) AddNewPlayer(char *character.Character, avData res.AvatarData) *Player {
+	av := object.NewAvatar(char, &avData)
+	player := newPlayer(av, g)
+	g.players = append(g.players, player)
+	return player
+}
+
+// SpawnPlayer sets start area and position of current chapter for specified player.
+func (g *Game) SpawnPlayer(player *Player) error {
 	// Set start position.
 	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
 		g.Module().Chapter().Conf().StartPosY)
-	avatar.SetPosition(startPos)
+	player.SetPosition(startPos)
 	// Set start area.
 	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
 	if startArea == nil {
 		return fmt.Errorf("chapter start area not found: %s",
 			g.Module().Chapter().Conf().StartArea)
 	}
-	startArea.AddCharacter(avatar.Character)
+	startArea.AddCharacter(player.Avatar.Character)
 	return nil
 }

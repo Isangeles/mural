@@ -421,9 +421,9 @@ func (c *Camera) updateAreaObjects() {
 		if av == nil {
 			avData := res.Avatar(char.ID())
 			if avData == nil {
-				log.Err.Printf("hud camera: update area objects: avatar data not found: %s",
-					char.ID())
-				continue
+				defData := data.DefaultAvatarData(char)
+				res.SetAvatars(append(res.Avatars(), defData))
+				avData = &defData
 			}
 			av = object.NewAvatar(char, avData)
 		}

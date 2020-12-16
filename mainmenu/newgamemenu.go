@@ -31,12 +31,16 @@ import (
 
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/character"
+
+	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
@@ -246,21 +250,31 @@ func (ngm *NewGameMenu) startGame() {
 	gameWrapper := game.New(flame.NewGame(ngm.mainmenu.mod))
 	gameWrapper.SetServer(ngm.mainmenu.server)
 	// Create player.
-	char := character.New(*pcd.CharData)
-	av := object.NewAvatar(char, pcd.AvatarData)
-	pc := game.NewPlayer(av, gameWrapper)
-	err := gameWrapper.SpawnChar(pc.Avatar)
-	if err != nil {
-		log.Err.Printf("main menu: new game: unable to spawn new player: %v",
-			err)
-		return
+	if gameWrapper.Server() != nil {
+		res.SetAvatars(append(res.Avatars(), *pcd.AvatarData))
+		req := request.Request{NewChar: []flameres.CharacterData{*pcd.CharData}}
+		err := gameWrapper.Server().Send(req)
+		if err != nil {
+			log.Err.Printf("main menu: new game: unable to send new char request: %v",
+				err)
+			return
+		}
+	} else {
+		char := character.New(*pcd.CharData)
+		av := object.NewAvatar(char, pcd.AvatarData)
+		pc := game.NewPlayer(av, gameWrapper)
+		err := gameWrapper.SpawnChar(pc.Avatar)
+		if err != nil {
+			log.Err.Printf("main menu: new game: unable to spawn new player: %v",
+				err)
+			return
+		}
+		gameWrapper.AddPlayer(pc)
 	}
-	gameWrapper.AddPlayer(pc)
 	// Trigger game created function.
-	if ngm.mainmenu.onGameCreated == nil {
-		return
+	if ngm.mainmenu.onGameCreated != nil {
+		ngm.mainmenu.onGameCreated(gameWrapper)
 	}
-	ngm.mainmenu.onGameCreated(gameWrapper)
 }
 
 // Triggered after start button clicked.

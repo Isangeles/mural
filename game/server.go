@@ -28,8 +28,6 @@ import (
 	"fmt"
 	"net"
 
-	flameres "github.com/isangeles/flame/data/res"
-
 	"github.com/isangeles/fire/request"
 	"github.com/isangeles/fire/response"
 
@@ -88,66 +86,6 @@ func (s *Server) Send(req request.Request) error {
 		return fmt.Errorf("Unable to write request: %v", err)
 	}
 	return nil
-}
-
-// Login sends login request to the server.
-func (s *Server) Login(id, pass string) error {
-	login := request.Login{
-		ID:   id,
-		Pass: pass,
-	}
-	req := request.Request{Login: []request.Login{login}}
-	return s.Send(req)
-}
-
-// NewCharacter sends new character request to the server.
-func (s *Server) NewCharacter(charData flameres.CharacterData) error {
-	req := request.Request{NewChar: []flameres.CharacterData{charData}}
-	return s.Send(req)
-}
-
-// Move sends move request to the server.
-func (s *Server) Move(id, serial string, x, y float64) error {
-	req := new(request.Request)
-	return s.Send(*req)
-}
-
-// Chat sends chat request to the server.
-func (s *Server) Chat(id, serial, message string) error {
-	req := new(request.Request)
-	chatReq := request.Chat{
-		ObjectID:     id,
-		ObjectSerial: serial,
-		Message:      message,
-	}
-	req.Chat = append(req.Chat, chatReq)
-	return s.Send(*req)
-}
-
-// Target sends target request to the server.
-func (s *Server) Target(obID, obSerial, tarID, tarSerial string) error {
-	req := new(request.Request)
-	targetReq := request.Target{
-		ObjectID:     obID,
-		ObjectSerial: obSerial,
-		TargetID:     tarID,
-		TargetSerial: tarSerial,
-	}
-	req.Target = append(req.Target, targetReq)
-	return s.Send(*req)
-}
-
-// Use sends use request to the server.
-func (s *Server) Use(userID, userSerial, objectID, objectSerial string) error {
-	req := new(request.Request)
-	useReq := request.Use{
-		UserID:       userID,
-		UserSerial:   userSerial,
-		ObjectID:     objectID,
-		ObjectSerial: objectSerial,
-	}
-	req.Use = append(req.Use, useReq)
-	return s.Send(*req)
 }
 
 // handleResponses handles responses from the server connection and

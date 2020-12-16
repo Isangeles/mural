@@ -30,6 +30,9 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	flameres "github.com/isangeles/flame/data/res"
+
+	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mural/core/object"
 )
@@ -53,7 +56,8 @@ func New(game *flame.Game) *Game {
 // AddPlayer adds specified avatar to player avatars list.
 func (g *Game) AddPlayer(avatar *Player) error {
 	if g.Server() != nil {
-		err := g.Server().NewCharacter(avatar.Avatar.Character.Data())
+		req := request.Request{NewChar: []flameres.CharacterData{avatar.Avatar.Character.Data()}}
+		err := g.Server().Send(req)
 		if err != nil {
 			return fmt.Errorf("Unable to send new character request: %v",
 				err)

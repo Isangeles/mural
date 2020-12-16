@@ -28,6 +28,8 @@ import (
 	"github.com/isangeles/flame/module/serial"
 	"github.com/isangeles/flame/module/useaction"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
 )
@@ -50,7 +52,9 @@ func (p *Player) SetDestPoint(x, y float64) {
 	if p.game.Server() == nil {
 		return
 	}
-	err := p.game.Server().Move(p.ID(), p.Serial(), x, y)
+	moveReq := request.Move{p.ID(), p.Serial(), x, y}
+	req := request.Request{Move: []request.Move{moveReq}}
+	err := p.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send move request to the server: %v",
 			p.ID(), p.Serial(), err)
@@ -63,7 +67,9 @@ func (p *Player) AddChatMessage(message string) {
 	if p.game.Server() == nil {
 		return
 	}
-	err := p.game.Server().Chat(p.ID(), p.Serial(), message)
+	chatReq := request.Chat{p.ID(), p.Serial(), message}
+	req := request.Request{Chat: []request.Chat{chatReq}}
+	err := p.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send chat request to the server: %v",
 			p.ID(), p.Serial(), err)
@@ -76,11 +82,15 @@ func (p *Player) SetTarget(tar effect.Target) {
 	if p.game.Server() == nil {
 		return
 	}
-	tarID, tarSerial := "", ""
-	if tar != nil {
-		tarID, tarSerial = tar.ID(), tar.Serial()
+	targetReq := request.Target{
+		ObjectID:     p.ID(),
+		ObjectSerial: p.Serial(),
 	}
-	err := p.game.Server().Target(p.ID(), p.Serial(), tarID, tarSerial)
+	if tar != nil {
+		targetReq.TargetID, targetReq.TargetSerial = tar.ID(), tar.Serial()
+	}
+	req := request.Request{Target: []request.Target{targetReq}}
+	err := p.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send target request to the server: %v",
 			p.ID(), p.Serial(), err)
@@ -93,11 +103,16 @@ func (p *Player) Use(ob useaction.Usable) {
 	if p.game.Server() == nil {
 		return
 	}
-	obSerial := ""
-	if ob, ok := ob.(serial.Serialer); ok {
-		obSerial = ob.Serial()
+	useReq := request.Use{
+		UserID: p.ID(),
+		UserSerial: p.Serial(),
+		ObjectID: ob.ID(),
 	}
-	err := p.game.Server().Use(p.ID(), p.Serial(), ob.ID(), obSerial)
+	if ob, ok := ob.(serial.Serialer); ok {
+		useReq.ObjectSerial = ob.Serial()
+	}
+	req := request.Request{Use: []request.Use{useReq}}
+	err := p.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send use request: %v",
 			p.ID(), p.Serial(), err)

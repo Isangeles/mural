@@ -28,6 +28,8 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -130,7 +132,9 @@ func (lm *LoginMenu) Show() {
 	lm.mainmenu.server.SetOnResponseFunc(lm.mainmenu.handleResponse)
 	// Auto-login.
 	if len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
-		err := lm.mainmenu.server.Login(config.ServerLogin, config.ServerPassword)
+		loginReq := request.Login{config.ServerLogin, config.ServerPassword}
+		req := request.Request{Login: []request.Login{loginReq}}
+		err := lm.mainmenu.server.Send(req)
 		if err != nil {
 			log.Err.Printf("Login menu: unable to send login request: %v", err)
 		}
@@ -149,8 +153,9 @@ func (lm *LoginMenu) Opened() bool {
 
 // Triggered on login button click.
 func (lm *LoginMenu) onLoginButtonClicked(b *mtk.Button) {
-	err := lm.mainmenu.server.Login(lm.loginEdit.Text(),
-		lm.passEdit.Text())
+	loginReq := request.Login{lm.loginEdit.Text(), lm.passEdit.Text()}
+	req := request.Request{Login: []request.Login{loginReq}}
+	err := lm.mainmenu.server.Send(req)
 	if err != nil {
 		lm.mainmenu.ShowMessage(lang.Text("login_menu_create_login_req_err"))
 	}

@@ -114,9 +114,11 @@ All GUI-related files, including UI textures, audio files, and translations for 
 
 UI textures and audio files need to be provided by module and stored in `mural/graphic.zip` and `mural/audio.zip` respectively.
 
+You can find default audio and graphic archives in the `res` directory of this repository.
+
 Translation for GUI elements needs to be stored in the `mural/lang` sub-directory of the module directory.
 
-You can find default translations for the GUI in the `res/lang` directory of this repository.
+You can find default translations in the `res/lang` directory of this repository.
 
 For example check [Arena](https://github.com/Isangeles/arena) module.
 ## Commands

@@ -31,7 +31,6 @@ import (
 
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
-	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/character"
 
@@ -252,7 +251,8 @@ func (ngm *NewGameMenu) startGame() {
 	// Create player.
 	if gameWrapper.Server() != nil {
 		res.SetAvatars(append(res.Avatars(), *pcd.AvatarData))
-		req := request.Request{NewChar: []flameres.CharacterData{*pcd.CharData}}
+		newCharReq := request.NewChar{lang.Text(pcd.CharData.ID), *pcd.CharData}
+		req := request.Request{NewChar: []request.NewChar{newCharReq}}
 		err := gameWrapper.Server().Send(req)
 		if err != nil {
 			log.Err.Printf("main menu: new game: unable to send new char request: %v",

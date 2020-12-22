@@ -292,7 +292,7 @@ func (mm *MainMenu) ImportPlayableChars() error {
 		return fmt.Errorf("unable to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
-		for _, charData := range mm.mod.Res.Characters {
+		for _, charData := range mm.mod.Resources().Characters {
 			if avData.ID != charData.ID {
 				continue
 			}

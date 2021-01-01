@@ -54,7 +54,7 @@ type LootWindow struct {
 
 // Interface for 'lootable' objects.
 type LootTarget interface {
-	Inventory() *item.Inventory
+	item.Container
 	Items() []*object.ItemGraphic
 }
 

@@ -30,6 +30,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/module/item"
 
 	"github.com/isangeles/mural/core/object"
 )
@@ -111,5 +112,23 @@ func (g *Game) SpawnChar(avatar *object.Avatar) error {
 			g.Module().Chapter().Conf().StartArea)
 	}
 	startArea.AddCharacter(avatar.Character)
+	return nil
+}
+
+// transferItems transfer items between specified objects.
+// Items are in the form of a map with IDs as keys and serial values as values.
+func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error {
+	for _, i := range items {
+		if from.Inventory().Item(i.ID(), i.Serial()) == nil {
+			return fmt.Errorf("Item not found: %s %s",
+				i.ID(), i.Serial())
+		}
+		from.Inventory().RemoveItem(i)
+		err := to.Inventory().AddItem(i)
+		if err != nil {
+			return fmt.Errorf("Unable to add item inventory: %v",
+				err)
+		}
+	}
 	return nil
 }

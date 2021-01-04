@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +32,19 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/module/item"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/log"
 )
 
 // Wrapper struct for game.
 type Game struct {
 	*flame.Game
-	players      []*Player
-	activePlayer *Player
-	server       *Server
-	closing      bool
+	players              []*Player
+	activePlayer         *Player
+	server               *Server
+	closing              bool
 	onActivePlayerChange func(p *Player)
 }
 
@@ -115,7 +118,7 @@ func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	return nil
 }
 
-// transferItems transfer items between specified objects.
+// TransferItems transfer items between specified objects.
 // Items are in the form of a map with IDs as keys and serial values as values.
 func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error {
 	for _, i := range items {
@@ -129,6 +132,25 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 			return fmt.Errorf("Unable to add item inventory: %v",
 				err)
 		}
+	}
+	if g.Server() == nil {
+		return nil
+	}
+	transferReq := request.TransferItems{
+		ObjectFromID:     from.ID(),
+		ObjectFromSerial: from.Serial(),
+		ObjectToID:       to.ID(),
+		ObjectToSerial:   to.Serial(),
+		Items:            make(map[string][]string),
+	}
+	for _, i := range items {
+		transferReq.Items[i.ID()] = append(transferReq.Items[i.ID()], i.Serial())
+	}
+	req := request.Request{TransferItems: []request.TransferItems{transferReq}}
+	err := g.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Game: transfer items: unable to send transfer items request: %v",
+			err)
 	}
 	return nil
 }

@@ -22,7 +22,6 @@ MINOR:
 * Inventory: fix issue that allows placing two different items in same slot
 * Dialog: on smaller resolution(e.g. 1280x1024) answer labels are not aligned to right
 * HUD save menu: lock camera while menu is open
-* Rename directrory with chapter avatars(mural/chapters/chapter/npc) from 'npc' to 'avatars'
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

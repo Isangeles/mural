@@ -164,14 +164,6 @@ func (c *Chat) Update(win *mtk.Window) {
 				}
 				messages = append(messages, m)
 			}
-			for _, m := range tar.CombatLog().Messages() {
-				m := Message{
-					author: tar.ID(),
-					time:   m.Time(),
-					text:   fmt.Sprintf("%s\n", m.String()),
-				}
-				messages = append(messages, m)
-			}
 		}
 	}
 	// Add engine log messages.

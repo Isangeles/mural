@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import (
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/craft"
+	"github.com/isangeles/flame/module/effect"
 	"github.com/isangeles/flame/module/item"
 	flameobject "github.com/isangeles/flame/module/objects"
 	"github.com/isangeles/flame/module/skill"
@@ -66,6 +67,7 @@ type Avatar struct {
 	torsoName    string
 	headName     string
 	fullBodyName string
+	combatLog    *flameobject.Log
 }
 
 // Type for avatar animations
@@ -127,8 +129,11 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
+	// Logs.
+	av.combatLog = flameobject.NewLog()
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
+	av.SetOnModifierTakenFunc(av.onModifierTaken)
 	av.updateGraphic()
 	return av
 }
@@ -289,6 +294,11 @@ func (av *Avatar) Hovered() bool {
 	return av.hovered
 }
 
+// CombatLog returns avatar combat log.
+func (av *Avatar) CombatLog() *flameobject.Log {
+	return av.combatLog
+}
+
 // updateGraphic updates avatar grapphical
 // content.
 func (av *Avatar) updateGraphic() {
@@ -446,6 +456,15 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	// Audio effect.
 	if !av.Silenced() && mtk.Audio() != nil && sg.ActivationAudio() != nil {
 		mtk.Audio().Play(sg.ActivationAudio())
+	}
+}
+// Triggered on receiving new modifier.
+func (av *Avatar) onModifierTaken(m effect.Modifier) {
+	switch m := m.(type) {
+	case *effect.HealthMod:
+		msg := fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+			m.LastValue())
+		av.CombatLog().Add(msg)
 	}
 }
 

@@ -1,7 +1,7 @@
 /*
  * player.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 package game
 
 import (
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/effect"
 	"github.com/isangeles/flame/module/serial"
 	"github.com/isangeles/flame/module/useaction"
@@ -99,20 +100,24 @@ func (p *Player) SetTarget(tar effect.Target) {
 
 // Use uses specified usable object.
 func (p *Player) Use(ob useaction.Usable) {
-	p.Character.Use(ob)
+	err := p.Character.Use(ob)
+	if err != nil {
+		p.PrivateLog().Add(lang.Text("cant_do_right_now"))
+		return
+	}
 	if p.game.Server() == nil {
 		return
 	}
 	useReq := request.Use{
-		UserID: p.ID(),
+		UserID:     p.ID(),
 		UserSerial: p.Serial(),
-		ObjectID: ob.ID(),
+		ObjectID:   ob.ID(),
 	}
 	if ob, ok := ob.(serial.Serialer); ok {
 		useReq.ObjectSerial = ob.Serial()
 	}
 	req := request.Request{Use: []request.Use{useReq}}
-	err := p.game.Server().Send(req)
+	err = p.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Player: %s %s: unable to send use request: %v",
 			p.ID(), p.Serial(), err)

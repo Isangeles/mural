@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,12 @@ type Chat struct {
 	activated    bool
 	lastInput    string
 	onScriptName func(name string, args ...string) error
+}
+
+// Interface for objects with combat log.
+type CombatLogger interface {
+	objects.Logger
+	CombatLog() *objects.Log
 }
 
 // Struct for log message.
@@ -152,21 +158,25 @@ func (c *Chat) Update(win *mtk.Window) {
 			continue
 		}
 		for _, tar := range area.NearTargets(pc.Character, pc.SightRange()) {
-			tar, ok := tar.(objects.Logger)
+			log, ok := tar.(objects.Logger)
 			if !ok {
 				continue
 			}
-			for _, m := range tar.ChatLog().Messages() {
+			for _, m := range log.ChatLog().Messages() {
 				m := Message{
-					author: tar.ID(),
+					author: log.ID(),
 					time:   m.Time(),
 					text:   fmt.Sprintf("%s\n", m.String()),
 				}
 				messages = append(messages, m)
 			}
-			for _, m := range tar.CombatLog().Messages() {
+			cmbLog := c.combatLogger(log)
+			if cmbLog == nil {
+				continue
+			}
+			for _, m := range cmbLog.CombatLog().Messages() {
 				m := Message{
-					author: tar.ID(),
+					author: log.ID(),
 					time:   m.Time(),
 					text:   fmt.Sprintf("%s\n", m.String()),
 				}
@@ -229,6 +239,18 @@ func (c *Chat) Activate(active bool) {
 // Echo displays specified text in chat log.
 func (c *Chat) Echo(text string) {
 	log.Inf.Printf("%s", text)
+}
+
+// combatLogger retruns returns object with combat
+// log for specified logger, or nil if such object
+// does not exists.
+func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
+	for _, a := range c.hud.Camera().Avatars() {
+		if a.ID() == l.ID() && a.Serial() == l.Serial() {
+			return a
+		}
+	}
+	return nil
 }
 
 // Triggered after accepting input in text edit.

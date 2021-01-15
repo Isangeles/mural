@@ -1,7 +1,7 @@
 /*
  * player.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 package game
 
 import (
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/useaction"
+
 	"github.com/isangeles/mural/core/object"
 )
 
@@ -39,3 +42,10 @@ func NewPlayer(avatar *object.Avatar, game *Game) *Player {
 	return &player
 }
 
+// Use uses specified usable object.
+func (p *Player) Use(object useaction.Usable) {
+	err := p.Avatar.Use(object)
+	if err != nil {
+		p.PrivateLog().Add(lang.Text("cant_do_right_now"))
+	}
+}

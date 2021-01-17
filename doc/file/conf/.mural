@@ -65,21 +65,15 @@ Specifies name of audio file(located in audio archive) for button click sound.
 .br
 Specifies name of audio file(located in audio archive) for button click sound.
 .P
-* fire
-.br
-Enables Fire server mode.
-.br
-Value 'true' enables Fire server mode, everything else sets mode disabled.
-.P
 * server
 .br
-Specified server host and port for Fire mode.
+Specified server host and port for remote game server.
 .br
 First value is used as server host, second as server port.
 .P
 * server-user
 .br
-Specifies user login and password for Fire mode.
+Specifies user login and password for remote game server.
 .br
 First value is for login, second for password.
 .SH EXAMPLE

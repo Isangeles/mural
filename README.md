@@ -109,10 +109,6 @@ Description: specifies name of audio file(located in audio archive) for main men
 ```
 Description: specifies name of audio file(located in audio archive) for button click sound.
 ```
-  fire:[true/false]
-```
-Description:
-```
   server:[host];[port]
 ```
 Description:

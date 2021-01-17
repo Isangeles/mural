@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,10 @@ var (
 	ButtonClickSound = ""
 	MusicVolume      = 0.0
 	MusicMute        = false
-	Fire             = false
 	ServerLogin      = ""
 	ServerPassword   = ""
 	ServerHost       = ""
-	ServerPort       = "8000"
+	ServerPort       = ""
 )
 
 // Load loads configuration file.
@@ -127,9 +126,6 @@ func Load() error {
 		MusicMute = conf["music-mute"][0] == "true"
 	}
 	// Server.
-	if len(conf["fire"]) > 0 {
-		Fire = conf["fire"][0] == "true"
-	}
 	if len(conf["server-user"]) > 1 {
 		ServerLogin = conf["server-user"][0]
 		ServerPassword = conf["server-user"][1]
@@ -168,7 +164,6 @@ func Save() error {
 	conf["button-click-sound"] = []string{ButtonClickSound}
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
-	conf["fire"] = []string{fmt.Sprintf("%v", Fire)}
 	conf["server-user"] = []string{ServerLogin, ServerPassword}
 	conf["server"] = []string{ServerHost, ServerPort}
 	confText := text.MarshalConfig(conf)

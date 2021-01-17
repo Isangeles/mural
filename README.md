@@ -63,7 +63,14 @@ L - open journal
 V - open crafting menu
 
 C - open character window
+## Multiplayer
+It's possible to join an online game hosted on the [Fire](https://github.com/isangeles/fire) server.
 
+To connect to the remote server specify server host and port in `server` config value in the `.mural` configuration file.
+
+After that Mural will try to establish a connection with the game server on startup.
+
+If the connection was successful you can use the `login` menu to log in to the server.
 ## Configuration
 Configuration values are loaded from `.mural` file in Mural executable directory.
 
@@ -111,11 +118,11 @@ Description: specifies name of audio file(located in audio archive) for button c
 ```
   server:[host];[port]
 ```
-Description:
+Description: Specified server host and port for remote game server.
 ```
   server-user:[login];[password]
 ```
-Description:
+Description: Specifies user login and password for remote game server.
 
 ## Module directory
 All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/mural` directory.

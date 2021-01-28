@@ -26,6 +26,7 @@ package game
 import (
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/useaction"
+	"github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/mural/core/object"
 )
@@ -46,6 +47,6 @@ func NewPlayer(avatar *object.Avatar, game *Game) *Player {
 func (p *Player) Use(object useaction.Usable) {
 	err := p.Avatar.Use(object)
 	if err != nil {
-		p.PrivateLog().Add(lang.Text("cant_do_right_now"))
+		p.PrivateLog().Add(objects.Message{Text: lang.Text("cant_do_right_now")})
 	}
 }

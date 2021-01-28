@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ package hud
 
 import (
 	"fmt"
-	"path/filepath"
 	"math"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -35,6 +35,7 @@ import (
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/area"
 	"github.com/isangeles/flame/module/character"
+	"github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/stone"
 
@@ -336,13 +337,13 @@ func (c *Camera) PassablePosition(pos pixel.Vec) bool {
 // position to camera position.
 func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
 	drawMatrix := mtk.Matrix().Moved(c.Position())
-	drawPos := pixel.V(drawMatrix[4], drawMatrix[5]) 
+	drawPos := pixel.V(drawMatrix[4], drawMatrix[5])
 	drawScale := drawMatrix[0]
 	posX := pos.X * drawScale
 	posY := pos.Y * drawScale
 	drawX := drawPos.X //* drawScale
 	drawY := drawPos.Y //* drawScale
-	return pixel.V(posX - drawX, posY - drawY)
+	return pixel.V(posX-drawX, posY-drawY)
 }
 
 // ConvCameraPos translates specified camera
@@ -510,7 +511,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > ActionRange {
-			pc.PrivateLog().Add(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
@@ -525,7 +526,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.PrivateLog().Add(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
 			continue
 		}
 		// Show loot window.
@@ -541,7 +542,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.PrivateLog().Add(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
 			continue
 		}
 		// Show loot window.
@@ -559,7 +560,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > DialogRange {
-			pc.PrivateLog().Add(lang.Text("tar_too_far"))
+			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
 			continue
 		}
 		// Show dialog window.
@@ -574,5 +575,3 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		c.hud.Game().ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }
-
-

@@ -465,12 +465,16 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }
+
 // Triggered on receiving new modifier.
 func (av *Avatar) onModifierTaken(m effect.Modifier) {
 	switch m := m.(type) {
 	case *effect.HealthMod:
-		msg := fmt.Sprintf("%s: %d", lang.Text("ob_health"),
-			m.LastValue())
+		msg := flameobject.Message{
+			Translated: true,
+			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+				m.LastValue()),
+		}
 		av.CombatLog().Add(msg)
 	}
 }

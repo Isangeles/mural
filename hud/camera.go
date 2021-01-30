@@ -32,7 +32,6 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/area"
 	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/objects"
@@ -511,7 +510,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > ActionRange {
-			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
+			pc.PrivateLog().Add(objects.Message{Text: "tar_too_far"})
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
@@ -526,7 +525,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
+			pc.PrivateLog().Add(objects.Message{Text: "tar_too_far"})
 			continue
 		}
 		// Show loot window.
@@ -542,7 +541,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
 		if r > LootRange {
-			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
+			pc.PrivateLog().Add(objects.Message{Text: "tar_too_far"})
 			continue
 		}
 		// Show loot window.
@@ -560,7 +559,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Range check.
 		r := math.Hypot(av.Position().X-pc.Position().X, av.Position().Y-pc.Position().Y)
 		if r > DialogRange {
-			pc.PrivateLog().Add(objects.Message{Text: lang.Text("tar_too_far")})
+			pc.PrivateLog().Add(objects.Message{Text: "tar_too_far"})
 			continue
 		}
 		// Show dialog window.

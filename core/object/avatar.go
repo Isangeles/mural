@@ -184,7 +184,11 @@ func (av *Avatar) Update(win *mtk.Window) {
 		duration := time.Since(m.Time())
 		av.speaking = duration.Seconds() < 2
 		if av.speaking {
-			av.chat.SetText(m.String())
+			text := m.String()
+			if !m.Translated {
+				text = lang.Text(m.String())
+			}
+			av.chat.SetText(text)
 			break
 		}
 	}

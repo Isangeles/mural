@@ -24,8 +24,8 @@
 package game
 
 import (
-	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/effect"
+	"github.com/isangeles/flame/module/objects"
 	"github.com/isangeles/flame/module/serial"
 	"github.com/isangeles/flame/module/useaction"
 
@@ -63,12 +63,12 @@ func (p *Player) SetDestPoint(x, y float64) {
 }
 
 // AddChatMessage adds new message to the character chat log.
-func (p *Player) AddChatMessage(message string) {
+func (p *Player) AddChatMessage(message objects.Message) {
 	p.ChatLog().Add(message)
 	if p.game.Server() == nil {
 		return
 	}
-	chatReq := request.Chat{p.ID(), p.Serial(), message}
+	chatReq := request.Chat{p.ID(), p.Serial(), message.String()}
 	req := request.Request{Chat: []request.Chat{chatReq}}
 	err := p.game.Server().Send(req)
 	if err != nil {
@@ -102,7 +102,7 @@ func (p *Player) SetTarget(tar effect.Target) {
 func (p *Player) Use(ob useaction.Usable) {
 	err := p.Character.Use(ob)
 	if err != nil {
-		p.PrivateLog().Add(lang.Text("cant_do_right_now"))
+		p.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
 		return
 	}
 	if p.game.Server() == nil {

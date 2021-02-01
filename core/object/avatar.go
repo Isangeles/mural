@@ -184,7 +184,11 @@ func (av *Avatar) Update(win *mtk.Window) {
 		duration := time.Since(m.Time())
 		av.speaking = duration.Seconds() < 2
 		if av.speaking {
-			av.chat.SetText(m.String())
+			text := m.String()
+			if !m.Translated {
+				text = lang.Text(m.String())
+			}
+			av.chat.SetText(text)
 			break
 		}
 	}
@@ -465,12 +469,16 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }
+
 // Triggered on receiving new modifier.
 func (av *Avatar) onModifierTaken(m effect.Modifier) {
 	switch m := m.(type) {
 	case *effect.HealthMod:
-		msg := fmt.Sprintf("%s: %d", lang.Text("ob_health"),
-			m.LastValue())
+		msg := flameobject.Message{
+			Translated: true,
+			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+				m.LastValue()),
+		}
 		av.CombatLog().Add(msg)
 	}
 }

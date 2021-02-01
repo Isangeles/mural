@@ -1,7 +1,7 @@
 /*
  * tradewindow.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/module/objects"
 
 	"github.com/isangeles/mtk"
 
@@ -398,7 +399,7 @@ func (tw *TradeWindow) onCloseButtonClicked(b *mtk.Button) {
 func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	// Check trade value.
 	if tw.tradeValue() < 0 {
-		msg := lang.Text("hud_trade_low_value_msg")
+		msg := objects.Message{Text: "hud_trade_low_value_msg"}
 		tw.hud.Game().ActivePlayer().PrivateLog().Add(msg)
 		return
 	}

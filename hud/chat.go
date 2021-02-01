@@ -144,11 +144,14 @@ func (c *Chat) Update(win *mtk.Window) {
 	messages := make([]Message, 0)
 	for _, pc := range c.hud.Game().Players() {
 		// PC's private messages.
-		for _, m := range pc.PrivateLog().Messages() {
+		for _, lm := range pc.PrivateLog().Messages() {
 			m := Message{
 				author: pc.ID(),
-				time:   m.Time(),
-				text:   fmt.Sprintf("%s\n", m.String()),
+				time:   lm.Time(),
+				text:   fmt.Sprintf("%s\n", lm.String()),
+			}
+			if !lm.Translated {
+				m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
 			}
 			messages = append(messages, m)
 		}
@@ -162,11 +165,14 @@ func (c *Chat) Update(win *mtk.Window) {
 			if !ok {
 				continue
 			}
-			for _, m := range log.ChatLog().Messages() {
+			for _, lm := range log.ChatLog().Messages() {
 				m := Message{
 					author: log.ID(),
-					time:   m.Time(),
-					text:   fmt.Sprintf("%s\n", m.String()),
+					time:   lm.Time(),
+					text:   fmt.Sprintf("%s\n", lm.String()),
+				}
+				if !lm.Translated {
+					m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
 				}
 				messages = append(messages, m)
 			}
@@ -281,7 +287,11 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		return
 	}
 	// Echo chat.
-	c.hud.Game().ActivePlayer().AddChatMessage(input)
+	msg := objects.Message{
+		Translated: true,
+		Text:       input,
+	}
+	c.hud.Game().ActivePlayer().AddChatMessage(msg)
 }
 
 // executeScriptFile executes Ash script from file

@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ type ObjectGraphic struct {
 	silenced     bool
 	effects      map[string]*EffectGraphic
 	items        map[string]*ItemGraphic
+	combatLog    *objects.Log
 }
 
 // NewObjectGraphic creates new graphical wrapper for specified object.
@@ -57,6 +58,7 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	og := new(ObjectGraphic)
 	og.Object = ob
 	og.name = lang.Text(og.ID())
+	og.combatLog = objects.NewLog()
 	// Sprite.
 	spritePic := graphic.ObjectSpritesheets[data.Sprite]
 	if spritePic != nil {
@@ -156,6 +158,11 @@ func (og *ObjectGraphic) Silence(silence bool) {
 // HUD user mouse cursor.
 func (og *ObjectGraphic) Hovered() bool {
 	return og.hovered
+}
+
+// ComabatLog retruns object comabt log.
+func (og *ObjectGraphic) CombatLog() *objects.Log {
+	return og.combatLog
 }
 
 // updateGraphic updates object

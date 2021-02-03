@@ -24,9 +24,12 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/effect"
 	flameobject "github.com/isangeles/flame/module/object"
 	"github.com/isangeles/flame/module/objects"
 
@@ -76,6 +79,8 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
+	// Events.
+	og.SetOnModifierTakenFunc(og.onModifierTaken)
 	return og
 }
 
@@ -190,6 +195,19 @@ func (og *ObjectGraphic) updateGraphic() {
 		}
 		itemGraphic := NewItemGraphic(it, data)
 		og.items[it.ID()+it.Serial()] = itemGraphic
+	}
+}
+
+// Triggered after taking new modifier.
+func (og *ObjectGraphic) onModifierTaken(m effect.Modifier) {
+	switch m := m.(type) {
+	case *effect.HealthMod:
+		msg := objects.Message{
+			Translated: true,
+			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+				m.LastValue()),
+		}
+		og.CombatLog().Add(msg)
 	}
 }
 

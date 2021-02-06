@@ -575,7 +575,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		log.Dbg.Printf("hud: dialog: %s#%s", av.ID(), av.Serial())
 		dialog := av.Dialogs()[0]
 		c.hud.dialog.SetDialog(dialog)
-		c.hud.dialog.Hide()
+		c.hud.dialog.Show()
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)

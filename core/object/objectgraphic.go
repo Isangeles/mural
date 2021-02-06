@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,12 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/effect"
 	flameobject "github.com/isangeles/flame/module/object"
 	"github.com/isangeles/flame/module/objects"
 
@@ -50,6 +53,7 @@ type ObjectGraphic struct {
 	silenced     bool
 	effects      map[string]*EffectGraphic
 	items        map[string]*ItemGraphic
+	combatLog    *objects.Log
 }
 
 // NewObjectGraphic creates new graphical wrapper for specified object.
@@ -57,6 +61,7 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	og := new(ObjectGraphic)
 	og.Object = ob
 	og.name = lang.Text(og.ID())
+	og.combatLog = objects.NewLog()
 	// Sprite.
 	spritePic := graphic.ObjectSpritesheets[data.Sprite]
 	if spritePic != nil {
@@ -74,6 +79,8 @@ func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *Obje
 	// Effect, items.
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
+	// Events.
+	og.SetOnModifierTakenFunc(og.onModifierTaken)
 	return og
 }
 
@@ -158,6 +165,11 @@ func (og *ObjectGraphic) Hovered() bool {
 	return og.hovered
 }
 
+// ComabatLog retruns object comabt log.
+func (og *ObjectGraphic) CombatLog() *objects.Log {
+	return og.combatLog
+}
+
 // updateGraphic updates object
 // graphical content.
 func (og *ObjectGraphic) updateGraphic() {
@@ -183,6 +195,19 @@ func (og *ObjectGraphic) updateGraphic() {
 		}
 		itemGraphic := NewItemGraphic(it, data)
 		og.items[it.ID()+it.Serial()] = itemGraphic
+	}
+}
+
+// Triggered after taking new modifier.
+func (og *ObjectGraphic) onModifierTaken(m effect.Modifier) {
+	switch m := m.(type) {
+	case *effect.HealthMod:
+		msg := objects.Message{
+			Translated: true,
+			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+				m.LastValue()),
+		}
+		og.CombatLog().Add(msg)
 	}
 }
 

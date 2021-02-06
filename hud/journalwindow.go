@@ -1,7 +1,7 @@
 /*
  * journalwindow.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,7 +237,7 @@ func (jw *JournalWindow) onQuestSelected(cs *mtk.CheckSlot) {
 			completeInfo := lang.Text("hud_journal_quest_complete")
 			info = fmt.Sprintf("%s\n%s", info, completeInfo)
 		} else {
-			info = fmt.Sprintf("%s\n%s", info, stage.Info())
+			info = fmt.Sprintf("%s\n%s", info, lang.Text(stage.ID()))
 		}
 	}
 	jw.questInfo.SetText(info)

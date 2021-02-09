@@ -1,7 +1,7 @@
 /*
  * dialogwindow.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,7 +197,7 @@ func (dw *DialogWindow) DrawArea() pixel.Rect {
 // SetDialog sets dialog for window.
 func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 	dw.dialog = d
-	dw.dialog.SetTarget(dw.hud.Game().ActivePlayer())
+	dw.hud.Game().StartDialog(d, dw.hud.Game().ActivePlayer())
 	dw.dialogUpdate()
 }
 
@@ -252,7 +252,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		dw.dialogText(answer.ID())))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.
-	dw.dialog.Next(answer)
+	dw.hud.Game().AnswerDialog(dw.dialog, answer)
 	// On trade.
 	if dw.dialog.Trading() {
 		con, ok := dw.dialog.Owner().(item.Container)

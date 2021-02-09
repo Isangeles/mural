@@ -30,6 +30,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/module/dialog"
 	"github.com/isangeles/flame/module/item"
 
 	"github.com/isangeles/fire/request"
@@ -153,4 +154,50 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 			err)
 	}
 	return nil
+}
+
+// StartDialog starts dialog with specified object as dialog target.
+func (g *Game) StartDialog(dialog *dialog.Dialog, target dialog.Talker) {
+	dialog.SetTarget(target)
+	if g.Server() == nil || dialog.Owner() == nil {
+		return
+	}
+	dialogReq := request.Dialog{
+		TargetID:     target.ID(),
+		TargetSerial: target.Serial(),
+		OwnerID:      dialog.Owner().ID(),
+		OwnerSerial:  dialog.Owner().Serial(),
+		DialogID:     dialog.ID(),
+	}
+	req := request.Request{Dialog: []request.Dialog{dialogReq}}
+	err := g.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Game: start dialog: unable to send dialog request: %v",
+			err)
+	}
+}
+
+// AnswerDialog answers dialog with specified answer.
+func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
+	dialog.Next(answer)
+	if g.Server() == nil || dialog.Owner() == nil || dialog.Target() == nil {
+		return
+	}
+	dialogReq := request.Dialog{
+		TargetID:     dialog.Target().ID(),
+		TargetSerial: dialog.Target().Serial(),
+		OwnerID:      dialog.Owner().ID(),
+		OwnerSerial:  dialog.Owner().Serial(),
+		DialogID:     dialog.ID(),
+	}
+	dialogAnswerReq := request.DialogAnswer{
+		Dialog:   dialogReq,
+		AnswerID: answer.ID(),
+	}
+	req := request.Request{DialogAnswer: []request.DialogAnswer{dialogAnswerReq}}
+	err := g.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Game: answer dialog: unable to send dialog answer: %v",
+			err)
+	}
 }

@@ -18,11 +18,11 @@ First, make sure you have dependencies required by [Pixel](https://github.com/fa
 
 Get sources from git:
 ```
-$ go get -u github.com/isangeles/mural
+go get -u github.com/isangeles/mural
 ```
 Build GUI:
 ```
-$ go build github.com/isangeles/mural
+go build github.com/isangeles/mural
 ```
 Now, specify the ID of a valid Flame module in Flame configuration file:
 
@@ -37,7 +37,7 @@ Flame modules are available for download [here](http://flame.isangeles.pl/mods).
 
 Run Mural:
 ```
-$ ./mural
+./mural
 ```
 
 ## Controls

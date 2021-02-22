@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 package hud
 
 import (
-	"fmt"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -280,36 +278,6 @@ func (im *InventoryMenu) updateLayout() {
 	im.hud.layouts[pc.ID()+pc.Serial()] = layout
 }
 
-// equip inserts specified equipable item to all
-// compatible slots in active PC equipment.
-func (im *InventoryMenu) equip(it item.Equiper) error {
-	pc := im.hud.Game().ActivePlayer()
-	if !pc.MeetReqs(it.EquipReqs()...) {
-		return fmt.Errorf("requirements not meet")
-	}
-	for _, itSlot := range it.Slots() {
-		equiped := false
-		for _, eqSlot := range pc.Equipment().Slots() {
-			if eqSlot.Item() != nil {
-				continue
-			}
-			if eqSlot.Type() == itSlot {
-				eqSlot.SetItem(it)
-				equiped = true
-				break
-			}
-		}
-		if !equiped {
-			pc.Equipment().Unequip(it)
-			return fmt.Errorf("free slot not found: %s", itSlot)
-		}
-	}
-	if !pc.Equipment().Equiped(it) {
-		return fmt.Errorf("no compatible slots")
-	}
-	return nil
-}
-
 // createSlot creates empty slot for inventory slots list.
 func (im *InventoryMenu) createSlot() *mtk.Slot {
 	params := mtk.Params{
@@ -401,7 +369,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 			s.SetColor(invSlotColor)
 			break
 		}
-		err := im.equip(it)
+		err := im.hud.Game().ActivePlayer().Equip(it)
 		if err != nil {
 			log.Err.Printf("inventory: item: %s %s: unable to equip: %v", it.ID(),
 				it.Serial(), err)
@@ -417,7 +385,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 }
 
-// TRIGGERED after one of item slots was clicked with
+// Triggered after one of item slots was clicked with
 // laft mouse button.
 func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
 	for _, ds := range im.slots.Slots() {

@@ -24,7 +24,12 @@
 package game
 
 import (
+	"fmt"
+
+	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/module/character"
 	"github.com/isangeles/flame/module/effect"
+	"github.com/isangeles/flame/module/item"
 	"github.com/isangeles/flame/module/objects"
 	"github.com/isangeles/flame/module/serial"
 	"github.com/isangeles/flame/module/useaction"
@@ -122,4 +127,57 @@ func (p *Player) Use(ob useaction.Usable) {
 		log.Err.Printf("Player: %s %s: unable to send use request: %v",
 			p.ID(), p.Serial(), err)
 	}
+}
+
+// Equip inserts specified equipable item to all
+// compatible slots in active PC equipment.
+func (p *Player) Equip(it item.Equiper) error {
+	if !p.MeetReqs(it.EquipReqs()...) {
+		return fmt.Errorf(lang.Text("reqs_not_meet"))
+	}
+	slots := make([]*character.EquipmentSlot, 0)
+	for _, itSlot := range it.Slots() {
+		equiped := false
+		for _, eqSlot := range p.Equipment().Slots() {
+			if eqSlot.Item() != nil {
+				continue
+			}
+			if eqSlot.Type() == itSlot {
+				eqSlot.SetItem(it)
+				equiped = true
+				slots = append(slots, eqSlot)
+				break
+			}
+		}
+		if !equiped {
+			p.Equipment().Unequip(it)
+			return fmt.Errorf(lang.Text("equip_no_free_slot_error"))
+		}
+	}
+	if !p.Equipment().Equiped(it) {
+		return fmt.Errorf(lang.Text("equip_no_valid_slot_error"))
+	}
+	if p.game.Server() == nil {
+		return nil
+	}
+	eqReq := request.Equip{
+		CharID:     p.ID(),
+		CharSerial: p.Serial(),
+		ItemID:     it.ID(),
+		ItemSerial: it.Serial(),
+	}
+	for _, s := range slots {
+		slotReq := request.EquipmentSlot{
+			Type: string(s.Type()),
+			ID:   s.ID(),
+		}
+		eqReq.Slots = append(eqReq.Slots, slotReq)
+	}
+	req := request.Request{Equip: []request.Equip{eqReq}}
+	err := p.game.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Player: %s %s: unable to send equip request: %v",
+			p.ID(), p.Serial(), err)
+	}
+	return nil
 }

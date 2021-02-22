@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,7 +280,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 				pc.Equipment().Unequip(eqit)
 				return
 			}
-			mb.hud.inv.equip(eqit)
+			mb.hud.Game().ActivePlayer().Equip(eqit)
 			return
 		}
 	}

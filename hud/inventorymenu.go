@@ -365,7 +365,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	switch it := it.Item.(type) {
 	case item.Equiper:
 		if im.hud.Game().ActivePlayer().Equipment().Equiped(it) {
-			im.hud.Game().ActivePlayer().Equipment().Unequip(it)
+			im.hud.Game().ActivePlayer().Unequip(it)
 			s.SetColor(invSlotColor)
 			break
 		}

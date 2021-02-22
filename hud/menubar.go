@@ -277,7 +277,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 		if ok {
 			pc := mb.hud.Game().ActivePlayer()
 			if pc.Equipment().Equiped(eqit) {
-				pc.Equipment().Unequip(eqit)
+				pc.Unequip(eqit)
 				return
 			}
 			mb.hud.Game().ActivePlayer().Equip(eqit)

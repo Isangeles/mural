@@ -156,6 +156,56 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 	return nil
 }
 
+// Trade exchanges items between specified containers.
+func (g *Game) Trade(seller, buyer item.Container, sellItems, buyItems []item.Item) {
+	for _, it := range sellItems {
+		buyer.Inventory().RemoveItem(it)
+		err := seller.Inventory().AddItem(it)
+		if err  != nil {
+			log.Err.Printf("Game: trade items: unable to add sell item: %s %s: %v",
+				it.ID(), it.Serial(), err)
+		}
+	}
+	for _, it := range buyItems {
+		seller.Inventory().RemoveItem(it)
+		err := buyer.Inventory().AddItem(it)
+		if err != nil {
+			log.Err.Printf("Game: trade items: unable to add buy item: %s %s: %v",
+				it.ID(), it.Serial(), err)
+		}
+	}
+	if g.Server() == nil {
+		return
+	}
+	transferReqSell := request.TransferItems{
+		ObjectFromID:     buyer.ID(),
+		ObjectFromSerial: buyer.Serial(),
+		ObjectToID:       seller.ID(),
+		ObjectToSerial:   seller.Serial(),
+		Items:            make(map[string][]string),
+	}
+	for _, i := range sellItems {
+		transferReqSell.Items[i.ID()] = append(transferReqSell.Items[i.ID()], i.Serial())
+	}
+	transferReqBuy := request.TransferItems{
+		ObjectFromID:     seller.ID(),
+		ObjectFromSerial: seller.Serial(),
+		ObjectToID:       buyer.ID(),
+		ObjectToSerial:   buyer.Serial(),
+		Items:            make(map[string][]string),
+	}
+	for _, i := range buyItems {
+		transferReqBuy.Items[i.ID()] = append(transferReqBuy.Items[i.ID()], i.Serial())
+	}
+	tradeReq := request.Trade{Sell: transferReqSell, Buy: transferReqBuy}
+	req := request.Request{Trade: []request.Trade{tradeReq}}
+	err := g.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Game: trade items: unable to send trade request: %v",
+			err)
+	}
+}
+
 // StartDialog starts dialog with specified object as dialog target.
 func (g *Game) StartDialog(dialog *dialog.Dialog, target dialog.Talker) {
 	dialog.SetTarget(target)

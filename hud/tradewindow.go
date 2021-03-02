@@ -404,14 +404,15 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 		return
 	}
 	// Trade.
-	for _, it := range tw.buyItems {
-		tw.seller.Inventory().RemoveItem(it)
-		tw.hud.Game().ActivePlayer().Inventory().AddItem(it)
-	}
+	sellItems := make([]item.Item, 0)
 	for _, it := range tw.sellItems {
-		tw.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
-		tw.seller.Inventory().AddItem(it)
+		sellItems = append(sellItems, it)
 	}
+	buyItems := make([]item.Item, 0)
+	for _, it := range tw.buyItems {
+		buyItems = append(buyItems, it)
+	}
+	tw.hud.Game().Trade(tw.seller, tw.hud.Game().ActivePlayer(), sellItems, buyItems)
 	tw.Hide()
 }
 

@@ -229,25 +229,24 @@ func (g *Game) StartDialog(dialog *dialog.Dialog, target dialog.Talker) {
 
 // AnswerDialog answers dialog with specified answer.
 func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
+	if g.Server() != nil || dialog.Owner() != nil || dialog.Target() != nil {
+		dialogReq := request.Dialog{
+			TargetID:     dialog.Target().ID(),
+			TargetSerial: dialog.Target().Serial(),
+			OwnerID:      dialog.Owner().ID(),
+			OwnerSerial:  dialog.Owner().Serial(),
+			DialogID:     dialog.ID(),
+		}
+		dialogAnswerReq := request.DialogAnswer{
+			Dialog:   dialogReq,
+			AnswerID: answer.ID(),
+		}
+		req := request.Request{DialogAnswer: []request.DialogAnswer{dialogAnswerReq}}
+		err := g.Server().Send(req)
+		if err != nil {
+			log.Err.Printf("Game: answer dialog: unable to send dialog answer: %v",
+				err)
+		}
+	}
 	dialog.Next(answer)
-	if g.Server() == nil || dialog.Owner() == nil || dialog.Target() == nil {
-		return
-	}
-	dialogReq := request.Dialog{
-		TargetID:     dialog.Target().ID(),
-		TargetSerial: dialog.Target().Serial(),
-		OwnerID:      dialog.Owner().ID(),
-		OwnerSerial:  dialog.Owner().Serial(),
-		DialogID:     dialog.ID(),
-	}
-	dialogAnswerReq := request.DialogAnswer{
-		Dialog:   dialogReq,
-		AnswerID: answer.ID(),
-	}
-	req := request.Request{DialogAnswer: []request.DialogAnswer{dialogAnswerReq}}
-	err := g.Server().Send(req)
-	if err != nil {
-		log.Err.Printf("Game: answer dialog: unable to send dialog answer: %v",
-			err)
-	}
 }

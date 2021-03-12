@@ -21,6 +21,9 @@ settings_reset_msg:Some changes need game restart.
 login_button_label:Login
 login_button_info:Login to the server
 login_logged_in_msg:Logged to the server
+continue_button_label:Continue
+continue_button_info:Continue game
+entering_game_info:Loading game...
 newgame_button_label:New game
 newgame_button_info:Start new game
 newgame_menu_title:Start new game

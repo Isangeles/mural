@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +34,16 @@ import (
 // Menu struct represents main menu screen
 // with buttons to other menus.
 type Menu struct {
-	mainmenu    *MainMenu
-	title       *mtk.Text
-	loginButton *mtk.Button
-	newgameB    *mtk.Button
-	newcharB    *mtk.Button
-	loadgameB   *mtk.Button
-	settingsB   *mtk.Button
-	exitB       *mtk.Button
-	opened      bool
+	mainmenu       *MainMenu
+	title          *mtk.Text
+	loginButton    *mtk.Button
+	continueButton *mtk.Button
+	newgameB       *mtk.Button
+	newcharB       *mtk.Button
+	loadgameB      *mtk.Button
+	settingsB      *mtk.Button
+	exitB          *mtk.Button
+	opened         bool
 }
 
 // newMenu creates new menu.
@@ -66,6 +67,10 @@ func newMenu(mainmenu *MainMenu) *Menu {
 	m.loginButton.SetLabel(lang.Text("login_button_label"))
 	m.loginButton.SetInfo(lang.Text("login_button_info"))
 	m.loginButton.SetOnClickFunc(m.onLoginButtonClicked)
+	m.continueButton = mtk.NewButton(buttonParams)
+	m.continueButton.SetLabel(lang.Text("continue_button_label"))
+	m.continueButton.SetInfo(lang.Text("continue_button_info"))
+	m.continueButton.SetOnClickFunc(m.onContinueButtonClicked)
 	m.newgameB = mtk.NewButton(buttonParams)
 	m.newgameB.SetLabel(lang.Text("newgame_button_label"))
 	m.newgameB.SetInfo(lang.Text("newgame_button_info"))
@@ -99,7 +104,9 @@ func (m *Menu) Draw(win *mtk.Window) {
 	// Buttons.
 	loginPos := mtk.BottomOf(m.title.DrawArea(), m.loginButton.Size(), 10)
 	m.loginButton.Draw(win.Window, mtk.Matrix().Moved(loginPos))
-	newgamePos := mtk.BottomOf(m.loginButton.DrawArea(), m.newgameB.Size(), 5)
+	continuePos := mtk.BottomOf(m.loginButton.DrawArea(), m.newgameB.Size(), 5)
+	m.continueButton.Draw(win.Window, mtk.Matrix().Moved(continuePos))
+	newgamePos := mtk.BottomOf(m.continueButton.DrawArea(), m.newgameB.Size(), 5)
 	m.newgameB.Draw(win.Window, mtk.Matrix().Moved(newgamePos))
 	newcharPos := mtk.BottomOf(m.newgameB.DrawArea(), m.newcharB.Size(), 5)
 	m.newcharB.Draw(win.Window, mtk.Matrix().Moved(newcharPos))
@@ -113,11 +120,8 @@ func (m *Menu) Draw(win *mtk.Window) {
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
-	if len(m.mainmenu.playableChars) < 1 {
-		m.newgameB.Active(false)
-	} else {
-		m.newgameB.Active(true)
-	}
+	m.newgameB.Active(len(m.mainmenu.playableChars) > 0)
+	m.continueButton.Active(len(m.mainmenu.continueChars) > 0)
 	if m.mainmenu.server == nil || m.mainmenu.server.Authorized() {
 		m.loginButton.Active(false)
 		m.newgameB.Active(true)
@@ -130,6 +134,7 @@ func (m *Menu) Update(win *mtk.Window) {
 		m.loadgameB.Active(false)
 	}
 	m.loginButton.Update(win)
+	m.continueButton.Update(win)
 	m.newgameB.Update(win)
 	m.newcharB.Update(win)
 	m.loadgameB.Update(win)
@@ -156,6 +161,11 @@ func (m *Menu) Hide() {
 func (m *Menu) onLoginButtonClicked(b *mtk.Button) {
 	m.mainmenu.HideMenus()
 	m.mainmenu.loginmenu.Show()
+}
+
+// Triggered after continue button clicked.
+func (m *Menu) onContinueButtonClicked(b *mtk.Button) {
+	go m.mainmenu.continueGame()
 }
 
 // Triggered after new game button clicked.

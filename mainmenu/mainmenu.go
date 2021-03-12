@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,17 @@ import (
 
 	"golang.org/x/image/colornames"
 
+	"github.com/isangeles/flame"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/module"
+	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
 )
 
@@ -67,6 +70,7 @@ type MainMenu struct {
 	server        *game.Server
 	mod           *module.Module
 	playableChars []PlayableCharData
+	continueChars []*character.Character
 	onGameCreated func(g *game.Game)
 	onSaveLoad    func(savename string)
 	loading       bool
@@ -305,4 +309,30 @@ func (mm *MainMenu) ImportPlayableChars() error {
 	}
 	mm.newgamemenu.SetCharacters(mm.playableChars)
 	return nil
+}
+
+// continueGame creates game with continue characters and triggers
+// onGameCreated function.
+func (mm *MainMenu) continueGame() {
+	// Show loading screen.
+	mm.OpenLoadingScreen(lang.Text("loading_game_info"))
+	defer mm.CloseLoadingScreen()
+	// Create game.
+	gameWrapper := game.New(flame.NewGame(mm.mod))
+	gameWrapper.SetServer(mm.server)
+	// Create players.
+	for _, c := range mm.continueChars {
+		avData := res.Avatar(c.ID())
+		if avData == nil {
+			defAv := data.DefaultAvatarData(c)
+			avData = &defAv
+		}
+		av := object.NewAvatar(c, avData)
+		pc := game.NewPlayer(av, gameWrapper)
+		gameWrapper.AddPlayer(pc)
+	}
+	// Trigger game created function.
+	if mm.onGameCreated != nil {
+		mm.onGameCreated(gameWrapper)
+	}
 }

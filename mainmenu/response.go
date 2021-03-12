@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,24 @@ import (
 func (mm *MainMenu) handleResponse(resp response.Response) {
 	if !resp.Logon {
 		mm.handleUpdateResponse(resp.Update)
+		for _, r := range resp.NewChar {
+			mm.handleNewCharResponse(r)
+		}
 	}
 	for _, r := range resp.Error {
 		log.Err.Printf("Main menu: server error: %v", r)
+	}
+}
+
+// handleNewCharResponse handles new char response.
+func (mm *MainMenu) handleNewCharResponse(resp response.NewChar) {
+	if mm.mod == nil {
+		return
+	}
+	for _, c := range mm.mod.Chapter().Characters() {
+		if c.ID() == resp.ID && c.Serial() == resp.Serial {
+			mm.continueChars = append(mm.continueChars, c)
+		}
 	}
 }
 

@@ -38,8 +38,8 @@ import (
 func (mm *MainMenu) handleResponse(resp response.Response) {
 	if !resp.Logon {
 		mm.handleUpdateResponse(resp.Update)
-		for _, r := range resp.NewChar {
-			mm.handleNewCharResponse(r)
+		for _, r := range resp.Character {
+			mm.handleCharacterResponse(r)
 		}
 	}
 	for _, r := range resp.Error {
@@ -48,9 +48,14 @@ func (mm *MainMenu) handleResponse(resp response.Response) {
 }
 
 // handleNewCharResponse handles new char response.
-func (mm *MainMenu) handleNewCharResponse(resp response.NewChar) {
+func (mm *MainMenu) handleCharacterResponse(resp response.Character) {
 	if mm.mod == nil {
 		return
+	}
+	for _, c := range mm.continueChars {
+		if c.ID() == resp.ID && c.Serial() == resp.Serial {
+			return
+		}
 	}
 	for _, c := range mm.mod.Chapter().Characters() {
 		if c.ID() == resp.ID && c.Serial() == resp.Serial {

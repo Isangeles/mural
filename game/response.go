@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ import (
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
-	for _, r := range resp.NewChar {
-		g.handleNewCharResponse(r)
+	for _, r := range resp.Character {
+		g.handleCharacterResponse(r)
 	}
 	for _, r := range resp.Error {
 		log.Err.Printf("Game: server error response: %s", r)
@@ -51,8 +51,13 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 	g.Module().Apply(resp.Module)
 }
 
-// handleNewCharResponse handles new characters from server response.
-func (g *Game) handleNewCharResponse(resp response.NewChar) {
+// handleCharacterResponse handles new characters from server response.
+func (g *Game) handleCharacterResponse(resp response.Character) {
+	for _, p := range g.Players() {
+		if p.ID() == resp.ID && p.Serial() == resp.Serial {
+			return
+		}
+	}
 	char := g.Module().Chapter().Character(resp.ID, resp.Serial)
 	if char == nil {
 		log.Err.Printf("Game: character from new char response not found in current module: %s %s",

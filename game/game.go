@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,21 +30,37 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/module/flag"
+
+	"github.com/isangeles/ignite/ai"
 
 	"github.com/isangeles/mural/core/object"
+)
+
+const (
+	aiCharFlag = flag.Flag("igniteNpc")
 )
 
 // Wrapper struct for game.
 type Game struct {
 	*flame.Game
 	players      []*Player
+	localAI      *ai.AI
 	activePlayer *Player
 }
 
 // New creates new wrapper for specified game.
 func New(game *flame.Game) *Game {
 	g := Game{Game: game}
+	g.localAI = ai.New(ai.NewGame(game))
 	return &g
+}
+
+// Update updates game.
+func (g *Game) Update(delta int64) {
+	g.Game.Update(delta)
+	g.updateAIChars()
+	g.localAI.Update(delta)
 }
 
 // AddPlayer adds specified avatar to player avatars list.
@@ -81,4 +97,21 @@ func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	}
 	startArea.AddCharacter(avatar.Character)
 	return nil
+}
+
+// updateAIChars updates list of characters controlled by the AI.
+func (g *Game) updateAIChars() {
+outer:
+	for _, c := range g.Module().Chapter().Characters() {
+		for _, aic := range g.localAI.Game().Characters() {
+			if aic.ID() == c.ID() && aic.Serial() == c.Serial() {
+				continue outer
+			}
+		}
+		if !c.HasFlag(aiCharFlag) {
+			continue
+		}
+		aiChar := ai.NewCharacter(c, g.localAI.Game())
+		g.localAI.Game().AddCharacter(aiChar)
+	}
 }

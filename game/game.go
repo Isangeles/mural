@@ -32,11 +32,18 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/module/dialog"
 	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/module/flag"
 
 	"github.com/isangeles/fire/request"
 
+	"github.com/isangeles/ignite/ai"
+
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
+)
+
+const (
+	aiCharFlag = flag.Flag("igniteNpc")
 )
 
 // Wrapper struct for game.
@@ -45,6 +52,7 @@ type Game struct {
 	players              []*Player
 	activePlayer         *Player
 	server               *Server
+	localAI              *ai.AI
 	closing              bool
 	onActivePlayerChange func(p *Player)
 }
@@ -52,7 +60,15 @@ type Game struct {
 // New creates new wrapper for specified game.
 func New(game *flame.Game) *Game {
 	g := Game{Game: game}
+	g.localAI = ai.New(ai.NewGame(game))
 	return &g
+}
+
+// Update updates game.
+func (g *Game) Update(delta int64) {
+	g.Game.Update(delta)
+	g.updateAIChars()
+	g.localAI.Update(delta)
 }
 
 // AddPlayer adds specified avatar to player avatars list.
@@ -249,4 +265,21 @@ func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
 		}
 	}
 	dialog.Next(answer)
+}
+
+// updateAIChars updates list of characters controlled by the AI.
+func (g *Game) updateAIChars() {
+outer:
+	for _, c := range g.Module().Chapter().Characters() {
+		for _, aic := range g.localAI.Game().Characters() {
+			if aic.ID() == c.ID() && aic.Serial() == c.Serial() {
+				continue outer
+			}
+		}
+		if !c.HasFlag(aiCharFlag) {
+			continue
+		}
+		aiChar := ai.NewCharacter(c, g.localAI.Game())
+		g.localAI.Game().AddCharacter(aiChar)
+	}
 }

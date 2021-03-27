@@ -136,6 +136,10 @@ Translation for GUI elements needs to be stored in the `mural/lang` sub-director
 You can find default translations in the `res/lang` directory of this repository.
 
 For example check [Arena](https://github.com/Isangeles/arena) module.
+## AI
+Mural uses AI API from [Ignite](https://github.com/Isangeles/ignite) to control NPCs.
+
+All NPCs that should be controlled by the AI need to have the `igniteNpc` flag set.
 ## Commands
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 

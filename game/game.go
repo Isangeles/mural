@@ -67,6 +67,9 @@ func New(game *flame.Game) *Game {
 // Update updates game.
 func (g *Game) Update(delta int64) {
 	g.Game.Update(delta)
+	if g.Server() != nil {
+		return
+	}
 	g.updateAIChars()
 	g.localAI.Update(delta)
 }

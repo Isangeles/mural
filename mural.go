@@ -36,7 +36,6 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
-	flameconf "github.com/isangeles/flame/config"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
@@ -168,7 +167,7 @@ func run() {
 	fpsInfo.Align(mtk.AlignRight)
 	verInfo := mtk.NewText(textParams)
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
-		flameconf.Name, flameconf.Version))
+		flame.Name, flame.Version))
 	verInfo.Align(mtk.AlignRight)
 	// Main loop.
 	for !win.Closed() {

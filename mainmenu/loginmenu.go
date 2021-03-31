@@ -31,9 +31,6 @@ import (
 	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mtk"
-
-	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/log"
 )
 
 // Struct for login menu.
@@ -126,19 +123,6 @@ func (lm *LoginMenu) Update(win *mtk.Window) {
 // Show shows menu.
 func (lm *LoginMenu) Show() {
 	lm.opened = true
-	if lm.mainmenu.server == nil {
-		return
-	}
-	lm.mainmenu.server.SetOnResponseFunc(lm.mainmenu.handleResponse)
-	// Auto-login.
-	if len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
-		loginReq := request.Login{config.ServerLogin, config.ServerPassword}
-		req := request.Request{Login: []request.Login{loginReq}}
-		err := lm.mainmenu.server.Send(req)
-		if err != nil {
-			log.Err.Printf("Login menu: unable to send login request: %v", err)
-		}
-	}
 }
 
 // Hide hides menu.

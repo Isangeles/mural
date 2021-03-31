@@ -38,12 +38,16 @@ import (
 	"github.com/isangeles/flame/module"
 	"github.com/isangeles/flame/module/character"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
+	"github.com/isangeles/mural/log"
 )
 
 var (
@@ -178,6 +182,16 @@ func (mm *MainMenu) SetModule(mod *module.Module) {
 // SetServer sets game server for main menu.
 func (mm *MainMenu) SetServer(server *game.Server) {
 	mm.server = server
+	mm.server.SetOnResponseFunc(mm.handleResponse)
+	// Auto-login.
+	if mm.server != nil && len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
+		loginReq := request.Login{config.ServerLogin, config.ServerPassword}
+		req := request.Request{Login: []request.Login{loginReq}}
+		err := mm.server.Send(req)
+		if err != nil {
+			log.Err.Printf("Login menu: unable to send login request: %v", err)
+		}
+	}
 }
 
 // Exit sends exit request to main menu.

@@ -219,7 +219,6 @@ func EnterGame(g *game.Game) {
 	}
 	// Set game for HUD.
 	hud.SetGame(activeGame)
-	burn.Game = activeGame.Game 
 	inGame = true
 	// Run module scripts.
 	modpath := activeGame.Module().Conf().Path

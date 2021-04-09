@@ -47,6 +47,7 @@ type Game struct {
 	players      []*Player
 	localAI      *ai.AI
 	activePlayer *Player
+	Pause        bool
 }
 
 // New creates new wrapper for specified game.
@@ -58,6 +59,9 @@ func New(game *flame.Game) *Game {
 
 // Update updates game.
 func (g *Game) Update(delta int64) {
+	if g.Pause {
+		return
+	}
 	g.Game.Update(delta)
 	g.updateAIChars()
 	g.localAI.Update(delta)

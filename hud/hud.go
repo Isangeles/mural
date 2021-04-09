@@ -34,8 +34,8 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/area"
-	flameobject "github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/area"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/burn/ash"
 
@@ -228,12 +228,12 @@ func (hud *HUD) Update(win *mtk.Window) {
 	// Put PC target into target frame.
 	if len(hud.Game().ActivePlayer().Targets()) > 0 {
 		for _, av := range hud.camera.Avatars() {
-			if flameobject.Equals(hud.Game().ActivePlayer().Targets()[0], av.Character) {
+			if objects.Equals(hud.Game().ActivePlayer().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
 			}
 		}
 		for _, ob := range hud.camera.AreaObjects() {
-			if flameobject.Equals(hud.Game().ActivePlayer().Targets()[0], ob.Object) {
+			if objects.Equals(hud.Game().ActivePlayer().Targets()[0], ob.Object) {
 				hud.tarFrame.SetObject(ob)
 			}
 		}
@@ -272,7 +272,7 @@ func (hud *HUD) SetActivePlayer(pc *game.Player) {
 	if hud.game == nil {
 		return
 	}
-	chapter := hud.game.Module().Chapter()
+	chapter := hud.game.Chapter()
 	pcArea := chapter.CharacterArea(hud.Game().ActivePlayer().Character)
 	if pcArea == nil {
 		log.Err.Printf("hud: set active pc: no pc area")
@@ -445,7 +445,7 @@ func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 // placed in ui/mural/chapters/[chapter]/areas/scripts/[area].
 func (hud *HUD) runAreaScripts(a *area.Area) {
 	// Retrive scripts.
-	mod := hud.Game().Module()
+	mod := hud.Game().Module
 	path := filepath.Join(mod.Conf().Path, data.GUIModulePath, "chapters",
 		mod.Chapter().ID(), "areas", a.ID(), "scripts")
 	scripts, err := data.ScriptsDir(path)
@@ -463,7 +463,7 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 
 // updateCurrentArea updates HUD area to active player area.
 func (hud *HUD) updateCurrentArea() {
-	chapter := hud.Game().Module().Chapter()
+	chapter := hud.Game().Chapter()
 	pcArea := chapter.CharacterArea(hud.Game().ActivePlayer().Character)
 	if pcArea != hud.Camera().Area() {
 		go hud.ChangeArea(pcArea)

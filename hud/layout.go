@@ -1,7 +1,7 @@
 /*
  * layout.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 package hud
 
 import (
-	flameobject "github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/core/object"
@@ -91,7 +91,7 @@ func (l *Layout) SaveBarSlot(ob interface{}, id int) {
 
 // InvSlotID returns saved inventory slot ID for specified
 // object.
-func (l *Layout) InvSlotID(ob flameobject.Object) int {
+func (l *Layout) InvSlotID(ob objects.Object) int {
 	id, ok := l.invSlots[ob.ID()+ob.Serial()]
 	if !ok {
 		return -1

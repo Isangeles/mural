@@ -29,9 +29,9 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/effect"
-	flameobject "github.com/isangeles/flame/module/object"
-	"github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/effect"
+	flameobject "github.com/isangeles/flame/object"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/mtk"
 

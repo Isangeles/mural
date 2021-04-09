@@ -24,8 +24,8 @@
 package game
 
 import (
-	"github.com/isangeles/flame/module/useaction"
-	"github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/useaction"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/mural/core/object"
 )

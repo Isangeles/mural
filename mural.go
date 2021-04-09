@@ -39,8 +39,7 @@ import (
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module"
-	"github.com/isangeles/flame/module/serial"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/burn"
 
@@ -62,7 +61,7 @@ import (
 var (
 	mainMenu   *mainmenu.MainMenu
 	pcHUD      *hud.HUD
-	mod        *module.Module
+	mod        *flame.Module
 	activeGame *game.Game
 	inGame     bool
 )
@@ -211,7 +210,7 @@ func EnterGame(g *game.Game) {
 	// Set HUD.
 	setHUD(hud)
 	// Load GUI data.
-	err := data.LoadChapterData(activeGame.Module().Chapter())
+	err := data.LoadChapterData(activeGame.Chapter())
 	if err != nil {
 		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
@@ -221,7 +220,7 @@ func EnterGame(g *game.Game) {
 	hud.SetGame(activeGame)
 	inGame = true
 	// Run module scripts.
-	modpath := activeGame.Module().Conf().Path
+	modpath := activeGame.Conf().Path
 	scriptsPath := filepath.Join(modpath, data.GUIModulePath, "scripts/run")
 	scripts, err := data.ScriptsDir(scriptsPath)
 	if err != nil {
@@ -248,9 +247,9 @@ func LoadSavedGame(saveName string) {
 	flameres.Clear()
 	serial.Reset()
 	flameres.TranslationBases = res.TranslationBases()
-	m := module.New()
+	m := flame.NewModule()
 	m.Apply(modData)
-	gameWrapper := game.New(flame.NewGame(m))
+	gameWrapper := game.New(m)
 	// Import saved HUD state.
 	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
 		saveName+data.SaveFileExt)
@@ -261,7 +260,7 @@ func LoadSavedGame(saveName string) {
 		return
 	}
 	for _, pcd := range guisav.Players {
-		char := gameWrapper.Module().Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
+		char := gameWrapper.Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
 		if char == nil {
 			log.Err.Printf("load saved game: unable to retrieve pc character: %s#%s",
 				pcd.Avatar.ID, pcd.Avatar.Serial)
@@ -291,7 +290,7 @@ func setHUD(h *hud.HUD) {
 
 // setModule sets specified module for UI.
 func setModule(data flameres.ModuleData) {
-	mod = module.New()
+	mod = flame.NewModule()
 	mod.Apply(data)
 	burn.Module = mod
 	if mainMenu != nil {

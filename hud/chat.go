@@ -36,7 +36,7 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 	flamelog "github.com/isangeles/flame/log"
-	"github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
@@ -156,7 +156,7 @@ func (c *Chat) Update(win *mtk.Window) {
 			messages = append(messages, m)
 		}
 		// Near objects chat & combat.
-		area := c.hud.Game().Module().Chapter().CharacterArea(pc.Character)
+		area := c.hud.Game().Chapter().CharacterArea(pc.Character)
 		if area == nil {
 			continue
 		}
@@ -302,7 +302,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 // executeScriptFile executes Ash script from file
 // with specified name in background.
 func (c *Chat) executeScriptFile(name string, args ...string) error {
-	modpath := c.hud.Game().Module().Conf().Path
+	modpath := c.hud.Game().Conf().Path
 	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
 	script, err := data.Script(path)
 	if err != nil {

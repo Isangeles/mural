@@ -30,7 +30,7 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/module/flag"
+	"github.com/isangeles/flame/flag"
 
 	"github.com/isangeles/ignite/ai"
 
@@ -43,17 +43,17 @@ const (
 
 // Wrapper struct for game.
 type Game struct {
-	*flame.Game
+	*flame.Module
 	players      []*Player
 	localAI      *ai.AI
 	activePlayer *Player
 	Pause        bool
 }
 
-// New creates new wrapper for specified game.
-func New(game *flame.Game) *Game {
-	g := Game{Game: game}
-	g.localAI = ai.New(ai.NewGame(game))
+// New creates new wrapper for specified module.
+func New(module *flame.Module) *Game {
+	g := Game{Module: module}
+	g.localAI = ai.New(ai.NewGame(module))
 	return &g
 }
 
@@ -62,7 +62,7 @@ func (g *Game) Update(delta int64) {
 	if g.Pause {
 		return
 	}
-	g.Game.Update(delta)
+	g.Module.Update(delta)
 	g.updateAIChars()
 	g.localAI.Update(delta)
 }
@@ -90,14 +90,14 @@ func (g *Game) ActivePlayer() *Player {
 // SpawnChar sets start area and position of current chapter for specified avatar.
 func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	// Set start position.
-	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
-		g.Module().Chapter().Conf().StartPosY)
+	startPos := pixel.V(g.Chapter().Conf().StartPosX,
+		g.Chapter().Conf().StartPosY)
 	avatar.SetPosition(startPos)
 	// Set start area.
-	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
+	startArea := g.Chapter().Area(g.Chapter().Conf().StartArea)
 	if startArea == nil {
 		return fmt.Errorf("chapter start area not found: %s",
-			g.Module().Chapter().Conf().StartArea)
+			g.Chapter().Conf().StartArea)
 	}
 	startArea.AddCharacter(avatar.Character)
 	return nil
@@ -106,7 +106,7 @@ func (g *Game) SpawnChar(avatar *object.Avatar) error {
 // updateAIChars updates list of characters controlled by the AI.
 func (g *Game) updateAIChars() {
 outer:
-	for _, c := range g.Module().Chapter().Characters() {
+	for _, c := range g.Chapter().Characters() {
 		for _, aic := range g.localAI.Game().Characters() {
 			if aic.ID() == c.ID() && aic.Serial() == c.Serial() {
 				continue outer

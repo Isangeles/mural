@@ -31,7 +31,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/quest"
+	"github.com/isangeles/flame/quest"
 
 	"github.com/isangeles/mtk"
 

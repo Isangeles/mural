@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ import (
 
 	"golang.org/x/image/colornames"
 
+	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module"
 
 	"github.com/isangeles/mtk"
 
@@ -64,7 +64,7 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
-	mod           *module.Module
+	mod           *flame.Module
 	playableChars []PlayableCharData
 	onGameCreated func(g *game.Game)
 	onSaveLoad    func(savename string)
@@ -80,7 +80,7 @@ type PlayableCharData struct {
 }
 
 // New creates new main menu
-func New(mod *module.Module) *MainMenu {
+func New(mod *flame.Module) *MainMenu {
 	mm := new(MainMenu)
 	mm.mod = mod
 	// Menus.
@@ -163,7 +163,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 }
 
 // SetMod sets module for main menu.
-func (mm *MainMenu) SetModule(mod *module.Module) {
+func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
 }
 

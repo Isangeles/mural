@@ -32,9 +32,9 @@ import (
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/module/area"
-	"github.com/isangeles/flame/module/character"
-	"github.com/isangeles/flame/module/objects"
+	"github.com/isangeles/flame/area"
+	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/stone"
 
@@ -217,7 +217,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 		return nil
 	}
 	// Set map.
-	chapter := c.hud.game.Module().Chapter()
+	chapter := c.hud.game.Chapter()
 	mapPath := filepath.Join(chapter.Module().Conf().Path, data.GUIModulePath,
 		"chapters", chapter.ID(), "areas", a.ID(), "map.tmx")
 	areaMap, err := stone.NewMap(mapPath)
@@ -570,7 +570,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Paused() && c.PassablePosition(destPos) && !c.hud.containsPos(pos) {
+	if !c.hud.game.Pause && c.PassablePosition(destPos) && !c.hud.containsPos(pos) {
 		c.hud.Game().ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

@@ -127,7 +127,7 @@ Description: Specified server host and port for remote game server.
 ```
   server-user:[login];[password]
 ```
-Description: Specifies user login and password for remote game server.
+Description: Specifies user login and password for auto-login to the remote game server.
 
 ## Module directory
 All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/mural` directory.

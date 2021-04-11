@@ -1,7 +1,7 @@
 /*
  * data.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame/module"
+	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 
@@ -68,7 +68,7 @@ var (
 // LoadModuleData loads graphic data for specified module.
 // Should be called by GUI before creating any
 // in-game elements.
-func LoadModuleData(mod *module.Module) (err error) {
+func LoadModuleData(mod *flame.Module) (err error) {
 	// Load data resource paths.
 	loadPaths(mod)
 	// GUI textures.
@@ -158,7 +158,7 @@ func LoadModuleData(mod *module.Module) (err error) {
 }
 
 // LoadChapterData loads all graphical data for chapter.
-func LoadChapterData(chapter *module.Chapter) error {
+func LoadChapterData(chapter *flame.Chapter) error {
 	// Avatars.
 	path := filepath.Join(chapter.Module().Conf().Path, GUIModulePath, "chapters",
 		chapter.Conf().ID, "avatars")
@@ -258,7 +258,7 @@ func Script(path string) (*ash.Script, error) {
 }
 
 // Load loads grpahic directories.
-func loadPaths(mod *module.Module) {
+func loadPaths(mod *flame.Module) {
 	modGraphicDirPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath)
 	modAudioDirPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath)
 	modGraphicArchPath = filepath.Join("data/modules", mod.Conf().ID, GUIModulePath, "graphic.zip")

@@ -1,7 +1,7 @@
 /*
  * savemenu.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Insert save names.
-	mod := sm.hud.Game().Module()
+	mod := sm.hud.Game().Module
 	pattern := fmt.Sprintf(".*%s", flamedata.ModuleFileExt)
 	saves, err := flamedata.DirFilesNames(mod.Conf().SavesPath(),
 		pattern)
@@ -249,7 +249,7 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 // savegames directory.
 func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
-	mod := sm.hud.Game().Module()
+	mod := sm.hud.Game().Module
 	path := filepath.Join(mod.Conf().SavesPath(),
 		saveName + flamedata.ModuleFileExt)
 	// Save current game.

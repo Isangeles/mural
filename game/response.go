@@ -48,7 +48,7 @@ func (g *Game) handleResponse(resp response.Response) {
 func (g *Game) handleUpdateResponse(resp response.Update) {
 	flameres.Clear()
 	flameres.TranslationBases = res.TranslationBases()
-	g.Module().Apply(resp.Module)
+	g.Apply(resp.Module)
 }
 
 // handleCharacterResponse handles new characters from server response.
@@ -58,7 +58,7 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 			return
 		}
 	}
-	char := g.Module().Chapter().Character(resp.ID, resp.Serial)
+	char := g.Chapter().Character(resp.ID, resp.Serial)
 	if char == nil {
 		log.Err.Printf("Game: character from new char response not found in current module: %s %s",
 			resp.ID, resp.Serial)

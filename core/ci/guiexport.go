@@ -1,7 +1,7 @@
 /*
  * guiexport.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ func guiexport(cmd burn.Command) (int, string) {
 		}
 		for _, av := range guiHUD.Camera().Avatars() {
 			if av.ID()+"#"+av.Serial() == cmd.TargetArgs()[0] {
-				conf := guiHUD.Game().Module().Conf()
+				conf := guiHUD.Game().Conf()
 				avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
 					"avatars", av.ID())
 				err := data.ExportAvatars(avatarsPath, av.Data())
@@ -69,7 +69,7 @@ func guiexport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
 		saveName := cmd.Args()[0]
-		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
+		savePath := filepath.Join(guiHUD.Game().Conf().Path,
 			data.SavesModulePath, saveName + data.SaveFileExt)
 		save := guiHUD.NewGUISave()
 		err := data.ExportGUISave(save, savePath)

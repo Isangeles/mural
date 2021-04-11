@@ -20,11 +20,17 @@ Get sources from git:
 ```
 go get -u github.com/isangeles/mural
 ```
-Build GUI:
+Install GUI:
 ```
-go build github.com/isangeles/mural
+go install github.com/isangeles/mural@latest
 ```
-Now, specify the ID of a valid Flame module in Flame configuration file:
+Or with GOPATH mode simply:
+```
+go install github.com/isangeles/mural
+```
+After that, the GUI executable will be placed in your GOBIN directory(e.g. ~/go/bin).
+## Run
+Before starting GUI specify the ID of a Flame module in `.mural` configuration file:
 
 Create file `.mural` in Mural executable directory(or run Mural to create it
 automatically) and add the following line:
@@ -39,7 +45,6 @@ Run Mural:
 ```
 ./mural
 ```
-
 ## Controls
 ### HUD:
 WSAD - move HUD camera

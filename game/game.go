@@ -30,9 +30,9 @@ import (
 	"github.com/faiface/pixel"
 
 	"github.com/isangeles/flame"
-	"github.com/isangeles/flame/module/dialog"
-	"github.com/isangeles/flame/module/item"
-	"github.com/isangeles/flame/module/flag"
+	"github.com/isangeles/flame/dialog"
+	"github.com/isangeles/flame/flag"
+	"github.com/isangeles/flame/item"
 
 	"github.com/isangeles/fire/request"
 
@@ -48,25 +48,29 @@ const (
 
 // Wrapper struct for game.
 type Game struct {
-	*flame.Game
+	*flame.Module
 	players              []*Player
 	activePlayer         *Player
 	server               *Server
 	localAI              *ai.AI
 	closing              bool
+	Pause                bool
 	onActivePlayerChange func(p *Player)
 }
 
-// New creates new wrapper for specified game.
-func New(game *flame.Game) *Game {
-	g := Game{Game: game}
-	g.localAI = ai.New(ai.NewGame(game))
+// New creates new wrapper for specified module.
+func New(module *flame.Module) *Game {
+	g := Game{Module: module}
+	g.localAI = ai.New(ai.NewGame(module))
 	return &g
 }
 
 // Update updates game.
 func (g *Game) Update(delta int64) {
-	g.Game.Update(delta)
+	if g.Pause {
+		return
+	}
+	g.Module.Update(delta)
 	if g.Server() != nil {
 		return
 	}
@@ -125,14 +129,14 @@ func (g *Game) SetOnActivePlayerChangeFunc(f func(p *Player)) {
 // SpawnChar sets start area and position of current chapter for specified avatar.
 func (g *Game) SpawnChar(avatar *object.Avatar) error {
 	// Set start position.
-	startPos := pixel.V(g.Module().Chapter().Conf().StartPosX,
-		g.Module().Chapter().Conf().StartPosY)
+	startPos := pixel.V(g.Chapter().Conf().StartPosX,
+		g.Chapter().Conf().StartPosY)
 	avatar.SetPosition(startPos)
 	// Set start area.
-	startArea := g.Module().Chapter().Area(g.Module().Chapter().Conf().StartArea)
+	startArea := g.Chapter().Area(g.Chapter().Conf().StartArea)
 	if startArea == nil {
 		return fmt.Errorf("chapter start area not found: %s",
-			g.Module().Chapter().Conf().StartArea)
+			g.Chapter().Conf().StartArea)
 	}
 	startArea.AddCharacter(avatar.Character)
 	return nil
@@ -180,7 +184,7 @@ func (g *Game) Trade(seller, buyer item.Container, sellItems, buyItems []item.It
 	for _, it := range sellItems {
 		buyer.Inventory().RemoveItem(it)
 		err := seller.Inventory().AddItem(it)
-		if err  != nil {
+		if err != nil {
 			log.Err.Printf("Game: trade items: unable to add sell item: %s %s: %v",
 				it.ID(), it.Serial(), err)
 		}
@@ -273,7 +277,7 @@ func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
 // updateAIChars updates list of characters controlled by the AI.
 func (g *Game) updateAIChars() {
 outer:
-	for _, c := range g.Module().Chapter().Characters() {
+	for _, c := range g.Chapter().Characters() {
 		for _, aic := range g.localAI.Game().Characters() {
 			if aic.ID() == c.ID() && aic.Serial() == c.Serial() {
 				continue outer

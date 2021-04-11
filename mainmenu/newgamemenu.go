@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,9 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/character"
+	"github.com/isangeles/flame/character"
 
 	"github.com/isangeles/fire/request"
 
@@ -246,7 +245,7 @@ func (ngm *NewGameMenu) startGame() {
 		return
 	}
 	// Create game.
-	gameWrapper := game.New(flame.NewGame(ngm.mainmenu.mod))
+	gameWrapper := game.New(ngm.mainmenu.mod)
 	gameWrapper.SetServer(ngm.mainmenu.server)
 	// Create player.
 	if gameWrapper.Server() != nil {

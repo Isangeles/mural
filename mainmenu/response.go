@@ -24,9 +24,9 @@
 package mainmenu
 
 import (
+	"github.com/isangeles/flame"
 	flameres "github.com/isangeles/flame/data/res"
-	"github.com/isangeles/flame/module"
-	"github.com/isangeles/flame/module/serial"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/fire/response"
 
@@ -70,7 +70,7 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {
 		serial.Reset()
-		mm.mod = module.New()
+		mm.mod = flame.NewModule()
 		mm.mod.Apply(resp.Module)
 		return
 	}

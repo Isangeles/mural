@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 package object
 
 import (
-	"github.com/isangeles/flame/module/effect"
-	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/effect"
+	"github.com/isangeles/flame/item"
 
 	"github.com/faiface/pixel"
 

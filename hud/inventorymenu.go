@@ -29,7 +29,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/item"
 
 	"github.com/isangeles/mtk"
 

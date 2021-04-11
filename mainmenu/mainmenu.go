@@ -33,10 +33,9 @@ import (
 	"golang.org/x/image/colornames"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/character"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module"
-	"github.com/isangeles/flame/module/character"
 
 	"github.com/isangeles/fire/request"
 
@@ -72,7 +71,7 @@ type MainMenu struct {
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	server        *game.Server
-	mod           *module.Module
+	mod           *flame.Module
 	playableChars []PlayableCharData
 	continueChars []*character.Character
 	onGameCreated func(g *game.Game)
@@ -174,7 +173,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 }
 
 // SetMod sets module for main menu.
-func (mm *MainMenu) SetModule(mod *module.Module) {
+func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
 	mm.menu.title.SetText(mod.Conf().ID)
 }
@@ -332,7 +331,7 @@ func (mm *MainMenu) continueGame() {
 	mm.OpenLoadingScreen(lang.Text("loading_game_info"))
 	defer mm.CloseLoadingScreen()
 	// Create game.
-	gameWrapper := game.New(flame.NewGame(mm.mod))
+	gameWrapper := game.New(mm.mod)
 	gameWrapper.SetServer(mm.server)
 	// Create players.
 	for _, c := range mm.continueChars {

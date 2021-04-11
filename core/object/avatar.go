@@ -31,12 +31,12 @@ import (
 
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/character"
-	"github.com/isangeles/flame/module/craft"
-	"github.com/isangeles/flame/module/effect"
-	"github.com/isangeles/flame/module/item"
-	flameobject "github.com/isangeles/flame/module/objects"
-	"github.com/isangeles/flame/module/skill"
+	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/craft"
+	"github.com/isangeles/flame/effect"
+	"github.com/isangeles/flame/item"
+	"github.com/isangeles/flame/objects"
+	"github.com/isangeles/flame/skill"
 
 	"github.com/isangeles/mtk"
 
@@ -67,8 +67,8 @@ type Avatar struct {
 	torsoName    string
 	headName     string
 	fullBodyName string
-	combatLog    *flameobject.Log
-	privateLog   *flameobject.Log
+	combatLog    *objects.Log
+	privateLog   *objects.Log
 }
 
 // Type for avatar animations
@@ -131,8 +131,8 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Logs.
-	av.combatLog = flameobject.NewLog()
-	av.privateLog = flameobject.NewLog()
+	av.combatLog = objects.NewLog()
+	av.privateLog = objects.NewLog()
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
 	av.SetOnModifierTakenFunc(av.onModifierTaken)
@@ -301,12 +301,12 @@ func (av *Avatar) Hovered() bool {
 }
 
 // CombatLog returns avatar combat log.
-func (av *Avatar) CombatLog() *flameobject.Log {
+func (av *Avatar) CombatLog() *objects.Log {
 	return av.combatLog
 }
 
 // PrivateLog returns avatar private log.
-func (av *Avatar) PrivateLog() *flameobject.Log {
+func (av *Avatar) PrivateLog() *objects.Log {
 	return av.privateLog
 }
 
@@ -317,7 +317,7 @@ func (av *Avatar) updateGraphic() {
 	for id, ig := range av.items {
 		found := false
 		for _, it := range av.Inventory().Items() {
-			found = flameobject.Equals(it, ig)
+			found = objects.Equals(it, ig)
 		}
 		if !found {
 			delete(av.items, id)
@@ -338,7 +338,7 @@ func (av *Avatar) updateGraphic() {
 	for id, eg := range av.effects {
 		found := false
 		for _, eff := range av.Character.Effects() {
-			found = flameobject.Equals(eg, eff)
+			found = objects.Equals(eg, eff)
 		}
 		if !found {
 			delete(av.effects, id)
@@ -474,7 +474,7 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 func (av *Avatar) onModifierTaken(m effect.Modifier) {
 	switch m := m.(type) {
 	case *effect.HealthMod:
-		msg := flameobject.Message{
+		msg := objects.Message{
 			Translated: true,
 			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
 				m.LastValue()),

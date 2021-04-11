@@ -1,7 +1,7 @@
 /*
  * guiimport.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ func guiimport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s: no HUD set", GUIImport)
 		}
 		saveName := cmd.Args()[0] + data.SaveFileExt
-		savePath := filepath.Join(guiHUD.Game().Module().Conf().Path,
+		savePath := filepath.Join(guiHUD.Game().Conf().Path,
 			data.SavesModulePath, saveName)
 		save, err := data.ImportGUISave(savePath)
 		if err != nil {

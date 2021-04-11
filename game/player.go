@@ -27,12 +27,12 @@ import (
 	"fmt"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/character"
-	"github.com/isangeles/flame/module/effect"
-	"github.com/isangeles/flame/module/item"
-	"github.com/isangeles/flame/module/objects"
-	"github.com/isangeles/flame/module/serial"
-	"github.com/isangeles/flame/module/useaction"
+	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/effect"
+	"github.com/isangeles/flame/item"
+	"github.com/isangeles/flame/objects"
+	"github.com/isangeles/flame/serial"
+	"github.com/isangeles/flame/useaction"
 
 	"github.com/isangeles/fire/request"
 

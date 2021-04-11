@@ -1,7 +1,7 @@
 /*
  * hudutils.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import (
 	"fmt"
 
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/module/item"
+	"github.com/isangeles/flame/item"
 
 	"github.com/isangeles/burn/ash"
 

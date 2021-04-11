@@ -181,9 +181,12 @@ func (mm *MainMenu) SetModule(mod *flame.Module) {
 // SetServer sets game server for main menu.
 func (mm *MainMenu) SetServer(server *game.Server) {
 	mm.server = server
+	if mm.server == nil {
+		return
+	}
 	mm.server.SetOnResponseFunc(mm.handleResponse)
 	// Auto-login.
-	if mm.server != nil && len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
+	if len(config.ServerLogin) > 0 && len(config.ServerPassword) > 0 {
 		loginReq := request.Login{config.ServerLogin, config.ServerPassword}
 		req := request.Request{Login: []request.Login{loginReq}}
 		err := mm.server.Send(req)

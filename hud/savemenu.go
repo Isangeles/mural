@@ -253,7 +253,7 @@ func (sm *SaveMenu) save(saveName string) error {
 	path := filepath.Join(mod.Conf().SavesPath(),
 		saveName + flamedata.ModuleFileExt)
 	// Save current game.
-	err := flamedata.ExportModuleFile(path, mod)
+	err := flamedata.ExportModuleFile(path, mod.Data())
 	if err != nil {
 		return fmt.Errorf("unable to export module: %v", err)
 	}

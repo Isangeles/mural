@@ -25,14 +25,16 @@ package hud
 
 import (
 	"fmt"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
+
+	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mtk"
 
@@ -90,13 +92,13 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.saveNameEdit.SetSize(saveNameSize)
 	// Buttons.
 	closeButtonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	saveButtonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeRectangle,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(closeButtonParams)
@@ -251,19 +253,28 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
 	mod := sm.hud.Game().Module
 	path := filepath.Join(mod.Conf().SavesPath(),
-		saveName + flamedata.ModuleFileExt)
-	// Save current game.
-	err := flamedata.ExportModuleFile(path, mod.Data())
-	if err != nil {
-		return fmt.Errorf("unable to export module: %v", err)
-	}
+		saveName+flamedata.ModuleFileExt)
 	// Save GUI state.
 	guisav := sm.hud.NewGUISave()
 	savePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
-		saveName + data.SaveFileExt)
-	err = data.ExportGUISave(guisav, savePath)
+		saveName+data.SaveFileExt)
+	err := data.ExportGUISave(guisav, savePath)
 	if err != nil {
 		return fmt.Errorf("unable to save gui: %v", err)
+	}
+	// Save current game.
+	if sm.hud.game.Server() != nil {
+		req := request.Request{Save: []string{saveName}}
+		err = sm.hud.game.Server().Send(req)
+		if err != nil {
+			return fmt.Errorf("unable to send save request: %v",
+				err)
+		}
+		return nil
+	}
+	err = flamedata.ExportModuleFile(path, mod.Data())
+	if err != nil {
+		return fmt.Errorf("unable to export module: %v", err)
 	}
 	return nil
 }

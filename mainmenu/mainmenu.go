@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"image/color"
 	"path/filepath"
+	"time"
 
 	"golang.org/x/image/colornames"
 
@@ -144,6 +145,14 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *mtk.Window) {
 	if mm.exiting {
+		if mm.server != nil {
+			req := request.Request{Close: time.Now().UnixNano()}
+			err := mm.server.Send(req)
+			if err != nil {
+				log.Err.Printf("Unable to send close request: %v",
+					err)
+			}
+		}
 		win.SetClosed(true)
 		return
 	}

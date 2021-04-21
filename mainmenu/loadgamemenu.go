@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,21 @@ package mainmenu
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
+
+	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/mtk"
 
@@ -145,6 +154,46 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	return nil
 }
 
+// loadSavedGame creates game and HUD from saved data.
+func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
+	// Import saved game.
+	savePath := filepath.Join(lgm.mainmenu.mod.Conf().SavesPath(),
+		saveName+flamedata.ModuleFileExt)
+	modData, err := flamedata.ImportModuleFile(savePath)
+	if err != nil {
+		return fmt.Errorf("unable to import module: %v", err)
+	}
+	flameres.Clear()
+	serial.Reset()
+	flameres.TranslationBases = res.TranslationBases()
+	m := flame.NewModule()
+	m.Apply(modData)
+	gameWrapper := game.New(m)
+	// Import saved HUD state.
+	guiSavePath := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath,
+		saveName+data.SaveFileExt)
+	layout, err := data.ImportGUISave(guiSavePath)
+	if err != nil {
+		return fmt.Errorf("unable to load GUI save: %v", err)
+	}
+	for _, pcd := range layout.Players {
+		char := gameWrapper.Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
+		if char == nil {
+			log.Err.Printf("Main menu: load game: unable to retrieve pc character: %s %s",
+				pcd.Avatar.ID, pcd.Avatar.Serial)
+			continue
+		}
+		av := object.NewAvatar(char, &pcd.Avatar)
+		pc := game.NewPlayer(av, gameWrapper)
+		gameWrapper.AddPlayer(pc)
+	}
+	// Enter game.
+	if lgm.mainmenu.onGameCreated != nil {
+		go lgm.mainmenu.onGameCreated(gameWrapper, layout)
+	}
+	return nil
+}
+
 // Triggered after back button clicked.
 func (lgm *LoadGameMenu) onBackButtonClicked(b *mtk.Button) {
 	lgm.mainmenu.OpenMenu()
@@ -152,18 +201,26 @@ func (lgm *LoadGameMenu) onBackButtonClicked(b *mtk.Button) {
 
 // Triggered after load button clicked.
 func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
+	// Retrieve selected save name from list.
 	if lgm.savesList.SelectedValue() == nil {
 		return
 	}
 	selection := lgm.savesList.SelectedValue()
-	filename, ok := selection.(string)
+	fileName, ok := selection.(string)
 	if !ok {
 		log.Err.Printf("main menu: load game: unable to retrieve save name from list value")
 		return
 	}
-	savename := strings.Replace(filename, flamedata.ModuleFileExt, "", 1)
-	if lgm.mainmenu.onSaveLoad != nil {
-		go lgm.mainmenu.onSaveLoad(savename)
+	// Show loading screen.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
+	defer lgm.mainmenu.CloseLoadingScreen()
+	// Load saved game.
+	saveName := strings.Replace(fileName, flamedata.ModuleFileExt, "", 1)
+	err := lgm.loadSavedGame(saveName)
+	if err != nil {
+		log.Err.Printf("Main menu: load game: unable to load saved game: %v", err)
+		lgm.mainmenu.ShowMessage(lang.Text("load_game_err"))
 	}
+	// Back to main menu.
 	lgm.mainmenu.OpenMenu()
 }

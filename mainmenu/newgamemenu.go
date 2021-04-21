@@ -251,7 +251,7 @@ func (ngm *NewGameMenu) startGame() {
 	if ngm.mainmenu.onGameCreated == nil {
 		return
 	}
-	ngm.mainmenu.onGameCreated(gameWrapper)
+	ngm.mainmenu.onGameCreated(gameWrapper, nil)
 }
 
 // Triggered after start button clicked.

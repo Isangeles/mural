@@ -39,7 +39,6 @@ import (
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/burn"
 
@@ -51,7 +50,6 @@ import (
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/audio"
 	"github.com/isangeles/mural/core/data/res/graphic"
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -142,7 +140,6 @@ func run() {
 	// Create main menu.
 	mainMenu = mainmenu.New(mod)
 	mainMenu.SetOnGameCreatedFunc(EnterGame)
-	mainMenu.SetOnSaveLoadFunc(LoadSavedGame)
 	err = mainMenu.ImportPlayableChars()
 	if err != nil {
 		log.Err.Printf("init run: unable to import playable characters: %v",
@@ -201,7 +198,7 @@ func run() {
 }
 
 // EnterGame creates HUD for specified game.
-func EnterGame(g *game.Game) {
+func EnterGame(g *game.Game, layout *res.GUISave) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	activeGame = g
@@ -218,6 +215,12 @@ func EnterGame(g *game.Game) {
 	}
 	// Set game for HUD.
 	hud.SetGame(activeGame)
+	if layout != nil {
+		err = pcHUD.LoadGUISave(layout)
+		if err != nil {
+			log.Err.Printf("enter game: unable to load HUD layout: %v", err)
+		}
+	}
 	inGame = true
 	// Run module scripts.
 	modpath := activeGame.Conf().Path
@@ -228,56 +231,6 @@ func EnterGame(g *game.Game) {
 	}
 	for _, s := range scripts {
 		go ci.RunScript(s)
-	}
-}
-
-// LoadSavedGame creates game and HUD from saved data.
-func LoadSavedGame(saveName string) {
-	mainMenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
-	defer mainMenu.CloseLoadingScreen()
-	// Import saved game.
-	savePath := filepath.Join(mod.Conf().SavesPath(),
-		saveName+flamedata.ModuleFileExt)
-	modData, err := flamedata.ImportModuleFile(savePath)
-	if err != nil {
-		log.Err.Printf("load saved game: unable to import module: %v", err)
-		mainMenu.ShowMessage(lang.Text("load_game_err"))
-		return
-	}
-	flameres.Clear()
-	serial.Reset()
-	flameres.TranslationBases = res.TranslationBases()
-	m := flame.NewModule()
-	m.Apply(modData)
-	gameWrapper := game.New(m)
-	// Import saved HUD state.
-	guiSavePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
-		saveName+data.SaveFileExt)
-	guisav, err := data.ImportGUISave(guiSavePath)
-	if err != nil {
-		log.Err.Printf("load saved game: unable to load gui save: %v", err)
-		mainMenu.ShowMessage(lang.Text("load_game_err"))
-		return
-	}
-	for _, pcd := range guisav.Players {
-		char := gameWrapper.Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
-		if char == nil {
-			log.Err.Printf("load saved game: unable to retrieve pc character: %s#%s",
-				pcd.Avatar.ID, pcd.Avatar.Serial)
-			continue
-		}
-		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewPlayer(av, gameWrapper)
-		gameWrapper.AddPlayer(pc)
-	}
-	// Enter game.
-	EnterGame(gameWrapper)
-	// Load HUD state.
-	err = pcHUD.LoadGUISave(guisav)
-	if err != nil {
-		log.Err.Printf("load saved game: unable to set hud layout: %v", err)
-		mainMenu.ShowMessage(lang.Text("load_game_err"))
-		return
 	}
 }
 

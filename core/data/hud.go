@@ -1,7 +1,7 @@
 /*
- * save.go
+ * hud.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,71 +36,71 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
-// ImportGUISave imports GUI save file from specified path.
-func ImportGUISave(path string) (*res.GUISave, error) {
+// ImportHUD imports HUD data file from specified path.
+func ImportHUD(path string) (res.HUDData, error) {
+	var data res.HUDData
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to open save file: %v",
+		return data, fmt.Errorf("unable to open data file: %v",
 			err)
 	}
 	defer file.Close()
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read save file: %v",
+		return data, fmt.Errorf("unable to read data file: %v",
 			err)
 	}
-	data := new(res.GUISave)
-	err = xml.Unmarshal(buf, data)
+	err = xml.Unmarshal(buf, &data)
 	if err != nil {
-		return nil, fmt.Errorf("unable to unmarshal save data: %v",
+		return data, fmt.Errorf("unable to unmarshal data: %v",
 			err)
 	}
 	return data, nil
 }
 
-// ImportsGUISavesDir imports all saved GUIs from save files in
-// directory with specified path.
-func ImportGUISavesDir(dirPath string) ([]*res.GUISave, error) {
+// ImportHUDDir imports all HUD data files in directory with
+// specified path.
+func ImportHUDDir(dirPath string) ([]res.HUDData, error) {
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	saves := make([]*res.GUISave, 0)
+	data := make([]res.HUDData, 0)
 	for _, f := range files {
-		if !strings.HasSuffix(f.Name(), SaveFileExt) {
+		if !strings.HasSuffix(f.Name(), HUDFileExt) {
 			continue
 		}
-		savePath := filepath.Join(dirPath, f.Name())
-		sav, err := ImportGUISave(savePath)
+		path := filepath.Join(dirPath, f.Name())
+		hud, err := ImportHUD(path)
 		if err != nil {
-			log.Err.Printf("data saves import: unable to load save: %v",
+			log.Err.Printf("data: import hud dir: unable to import data file: %v",
 				err)
 			continue
 		}
-		saves = append(saves, sav)
+		data = append(data, hud)
 	}
-	return saves, nil
+	return data, nil
 }
 
-// ExportGUISave saves GUI state to file with specified name
+// ExportHUD exports HUD data to file with specified name
 // in directory with specified path.
-func ExportGUISave(gui *res.GUISave, path string) error {
+func ExportHUD(hud res.HUDData, path string) error {
 	// Marshal GUI.
-	gui.Name = filepath.Base(path)
-	xml, err := xml.Marshal(gui)
+	hud.Name = filepath.Base(path)
+	xml, err := xml.Marshal(&hud)
 	if err != nil {
-		return fmt.Errorf("unable to marshal save: %v",
+		return fmt.Errorf("unable to marshal hud: %v",
 			err)
 	}
 	// Create save file.
 	err = os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
-		return fmt.Errorf("unable to create save directory: %v",
+		return fmt.Errorf("unable to create hud directory: %v",
 			err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("unable to create save file: %v",
+		return fmt.Errorf("unable to create hud file: %v",
 			err)
 	}
 	defer file.Close()
@@ -108,6 +108,6 @@ func ExportGUISave(gui *res.GUISave, path string) error {
 	w := bufio.NewWriter(file)
 	w.Write(xml)
 	w.Flush()
-	log.Dbg.Printf("gui state saved in: %s", path)
+	log.Dbg.Printf("HUD exported to: %s", path)
 	return nil
 }

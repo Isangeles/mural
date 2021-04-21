@@ -25,8 +25,8 @@ package hud
 
 import (
 	"fmt"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -90,13 +90,13 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	sm.saveNameEdit.SetSize(saveNameSize)
 	// Buttons.
 	closeButtonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeSquare,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeSquare,
 		MainColor: accentColor,
 	}
 	saveButtonParams := mtk.Params{
-		Size: mtk.SizeMedium,
-		Shape: mtk.ShapeRectangle,
+		Size:      mtk.SizeMedium,
+		Shape:     mtk.ShapeRectangle,
 		MainColor: accentColor,
 	}
 	sm.closeButton = mtk.NewButton(closeButtonParams)
@@ -251,19 +251,19 @@ func (sm *SaveMenu) save(saveName string) error {
 	// Retrieve saves path.
 	mod := sm.hud.Game().Module
 	path := filepath.Join(mod.Conf().SavesPath(),
-		saveName + flamedata.ModuleFileExt)
+		saveName+flamedata.ModuleFileExt)
 	// Save current game.
 	err := flamedata.ExportModuleFile(path, mod.Data())
 	if err != nil {
 		return fmt.Errorf("unable to export module: %v", err)
 	}
-	// Save GUI state.
-	guisav := sm.hud.NewGUISave()
-	savePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
-		saveName + data.SaveFileExt)
-	err = data.ExportGUISave(guisav, savePath)
+	// Save HUD.
+	hudData := sm.hud.Data()
+	hudPath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
+		saveName+data.HUDFileExt)
+	err = data.ExportHUD(hudData, hudPath)
 	if err != nil {
-		return fmt.Errorf("unable to save gui: %v", err)
+		return fmt.Errorf("unable to export hud: %v", err)
 	}
 	return nil
 }

@@ -38,7 +38,7 @@ func guiimport(cmd burn.Command) (int, string) {
 		return 2, fmt.Sprintf("%s: no option args", GUIImport)
 	}
 	switch cmd.OptionArgs()[0] {
-	case "gui", "gui-state":
+	case "hud", "hud-state":
 		if len(cmd.Args()) < 1 {
 			return 3, fmt.Sprintf("%s: no enought args for: %s",
 				GUIImport, cmd.OptionArgs()[0])
@@ -46,17 +46,17 @@ func guiimport(cmd burn.Command) (int, string) {
 		if guiHUD == nil {
 			return 3, fmt.Sprintf("%s: no HUD set", GUIImport)
 		}
-		saveName := cmd.Args()[0] + data.SaveFileExt
-		savePath := filepath.Join(guiHUD.Game().Conf().Path,
-			data.SavesModulePath, saveName)
-		save, err := data.ImportGUISave(savePath)
+		name := cmd.Args()[0] + data.HUDFileExt
+		path := filepath.Join(guiHUD.Game().Conf().Path,
+			data.SavesModulePath, name)
+		data, err := data.ImportHUD(path)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: unable to load save file: %v",
+			return 3, fmt.Sprintf("%s: unable to import HUD: %v",
 				GUIImport, err)
 		}
-		err = guiHUD.LoadGUISave(save)
+		err = guiHUD.Apply(data)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: unable to load gui state save: %v",
+			return 3, fmt.Sprintf("%s: unable to apply HUD data: %v",
 				GUIImport, err)
 		}
 		return 0, ""

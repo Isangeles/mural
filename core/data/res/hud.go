@@ -1,7 +1,7 @@
 /*
- * guisave.go
+ * hud.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,30 +27,29 @@ import (
 	"encoding/xml"
 )
 
-// Struct for GUI state save.
-type GUISave struct {
-	XMLName xml.Name     `xml:"save" json:"-"`
-	Name    string       `xml:"name,attr" json:"name,attr"`
-	Players []PlayerSave `xml:"players>player" json:"players"`
-	Camera  CameraSave   `xml:"camera" json:"camera"`
+// Struct for HUD data.
+type HUDData struct {
+	XMLName xml.Name `xml:"hud" json:"-"`
+	Name    string   `xml:"name,attr" json:"name,attr"`
+	Players []Player `xml:"players>player" json:"players"`
+	Camera  Camera   `xml:"camera" json:"camera"`
 }
 
-// Struct for saved camera data.
-type CameraSave struct {
+// Struct for HUD camera data.
+type Camera struct {
 	X float64 `xml:"x,attr" json:"x"`
 	Y float64 `xml:"y,attr" json:"y"`
 }
 
-// Struct for saved GUI user data
-// (avatar, inventory layout, etc.).
-type PlayerSave struct {
+// Struct for HUD player data (avatar, inventory layout, etc.).
+type Player struct {
 	Avatar   AvatarData `xml:"avatar" json:"avatar"`
-	InvSlots []SlotSave `xml:"inventory>slot" json:"inv-slots"`
-	BarSlots []SlotSave `xml:"bar>slot" json:"bar-slots"`
+	InvSlots []Slot     `xml:"inventory>slot" json:"inv-slots"`
+	BarSlots []Slot     `xml:"bar>slot" json:"bar-slots"`
 }
 
-// Struct for saved slot.
-type SlotSave struct {
+// Struct for HUD slot data.
+type Slot struct {
 	ID      int    `xml:"id,attr"`
 	Content string `xml:"content,attr"`
 }

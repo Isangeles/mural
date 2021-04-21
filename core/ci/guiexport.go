@@ -60,7 +60,7 @@ func guiexport(cmd burn.Command) (int, string) {
 		}
 		return 3, fmt.Sprintf("%s: avatar not found: %s", GUIExport,
 			cmd.TargetArgs()[0])
-	case "gui", "gui-state":
+	case "hud", "hud-state":
 		if len(cmd.Args()) < 1 {
 			return 3, fmt.Sprintf("%s: no enought args for: %s",
 				GUIExport, cmd.OptionArgs()[0])
@@ -68,13 +68,13 @@ func guiexport(cmd burn.Command) (int, string) {
 		if guiHUD == nil {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
-		saveName := cmd.Args()[0]
-		savePath := filepath.Join(guiHUD.Game().Conf().Path,
-			data.SavesModulePath, saveName + data.SaveFileExt)
-		save := guiHUD.NewGUISave()
-		err := data.ExportGUISave(save, savePath)
+		name := cmd.Args()[0]
+		path := filepath.Join(guiHUD.Game().Conf().Path,
+			data.SavesModulePath, name + data.HUDFileExt)
+		hudData := guiHUD.Data()
+		err := data.ExportHUD(hudData, path)
 		if err != nil {
-			return 3, fmt.Sprintf("%s: unable to save gui state: %v",
+			return 3, fmt.Sprintf("%s: unable to export HUD state: %v",
 				GUIExport, err)
 		}
 		return 0, ""

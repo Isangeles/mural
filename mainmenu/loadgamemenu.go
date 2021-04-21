@@ -169,14 +169,14 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	m := flame.NewModule()
 	m.Apply(modData)
 	gameWrapper := game.New(m)
-	// Import saved HUD state.
-	guiSavePath := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath,
-		saveName+data.SaveFileExt)
-	layout, err := data.ImportGUISave(guiSavePath)
+	// Import HUD state.
+	hudPath := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath,
+		saveName+data.HUDFileExt)
+	hud, err := data.ImportHUD(hudPath)
 	if err != nil {
-		return fmt.Errorf("unable to load GUI save: %v", err)
+		return fmt.Errorf("unable to import HUD: %v", err)
 	}
-	for _, pcd := range layout.Players {
+	for _, pcd := range hud.Players {
 		char := gameWrapper.Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
 		if char == nil {
 			log.Err.Printf("Main menu: load game: unable to retrieve pc character: %s %s",
@@ -189,7 +189,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	}
 	// Enter game.
 	if lgm.mainmenu.onGameCreated != nil {
-		go lgm.mainmenu.onGameCreated(gameWrapper, layout)
+		go lgm.mainmenu.onGameCreated(gameWrapper, &hud)
 	}
 	return nil
 }

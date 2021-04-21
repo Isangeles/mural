@@ -197,8 +197,11 @@ func run() {
 	}
 }
 
-// EnterGame creates HUD for specified game.
-func EnterGame(g *game.Game, layout *res.GUISave) {
+// EnterGame creates HUD and enters game.
+// The second parameter is used to apply data on newly
+// created HUD, if nil the HUD will be left in its
+// default state after creation.
+func EnterGame(g *game.Game, hudData *res.HUDData) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	activeGame = g
@@ -215,8 +218,8 @@ func EnterGame(g *game.Game, layout *res.GUISave) {
 	}
 	// Set game for HUD.
 	hud.SetGame(activeGame)
-	if layout != nil {
-		err = pcHUD.LoadGUISave(layout)
+	if hudData != nil {
+		err = pcHUD.Apply(*hudData)
 		if err != nil {
 			log.Err.Printf("enter game: unable to load HUD layout: %v", err)
 		}

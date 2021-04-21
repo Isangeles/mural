@@ -66,7 +66,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	mod           *flame.Module
 	playableChars []PlayableCharData
-	onGameCreated func(g *game.Game, layout *res.GUISave)
+	onGameCreated func(g *game.Game, h *res.HUDData)
 	loading       bool
 	exiting       bool
 }
@@ -173,7 +173,7 @@ func (mm *MainMenu) Exit() {
 
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
-func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game, l *res.GUISave)) {
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game, h *res.HUDData)) {
 	mm.onGameCreated = f
 }
 

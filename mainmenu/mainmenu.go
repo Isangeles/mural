@@ -75,8 +75,7 @@ type MainMenu struct {
 	mod           *flame.Module
 	playableChars []PlayableCharData
 	continueChars []*character.Character
-	onGameCreated func(g *game.Game)
-	onSaveLoad    func(savename string)
+	onGameCreated func(g *game.Game, h *res.HUDData)
 	loading       bool
 	exiting       bool
 }
@@ -212,14 +211,8 @@ func (mm *MainMenu) Exit() {
 
 // SetOnGameCreatedFunc sets specified function as function
 // triggered after new game created.
-func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game)) {
+func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game, h *res.HUDData)) {
 	mm.onGameCreated = f
-}
-
-// SetOnSaveImportedFunc sets specified function as function
-// triggered after save game imported.
-func (mm *MainMenu) SetOnSaveLoadFunc(f func(savename string)) {
-	mm.onSaveLoad = f
 }
 
 // OpenMenu opens menu.
@@ -358,6 +351,6 @@ func (mm *MainMenu) continueGame() {
 	}
 	// Trigger game created function.
 	if mm.onGameCreated != nil {
-		mm.onGameCreated(gameWrapper)
+		mm.onGameCreated(gameWrapper, nil)
 	}
 }

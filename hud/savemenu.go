@@ -254,13 +254,13 @@ func (sm *SaveMenu) save(saveName string) error {
 	mod := sm.hud.Game().Module
 	path := filepath.Join(mod.Conf().SavesPath(),
 		saveName+flamedata.ModuleFileExt)
-	// Save GUI state.
-	guisav := sm.hud.NewGUISave()
-	savePath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
-		saveName+data.SaveFileExt)
-	err := data.ExportGUISave(guisav, savePath)
+	// Save HUD.
+	hudData := sm.hud.Data()
+	hudPath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
+		saveName+data.HUDFileExt)
+	err := data.ExportHUD(hudData, hudPath)
 	if err != nil {
-		return fmt.Errorf("unable to save gui: %v", err)
+		return fmt.Errorf("unable to export hud: %v", err)
 	}
 	// Save current game.
 	if sm.hud.game.Server() != nil {

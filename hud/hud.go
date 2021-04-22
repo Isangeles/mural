@@ -386,36 +386,36 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 	return nil
 }
 
-// Saves GUI to save struct.
-func (hud *HUD) NewGUISave() *res.GUISave {
-	sav := new(res.GUISave)
+// Data returns data struct for HUD.
+func (hud *HUD) Data() res.HUDData {
+	var data res.HUDData
 	// Players.
 	for _, pc := range hud.Game().Players() {
-		pcData := res.PlayerSave{Avatar: pc.Data()}
+		pcData := res.Player{Avatar: pc.Data()}
 		// Layout.
 		layout := hud.layouts[pc.ID()+pc.Serial()]
 		if layout != nil {
 			for serialID, slot := range layout.InvSlots() {
-				slotSave := res.SlotSave{slot, serialID}
-				pcData.InvSlots = append(pcData.InvSlots, slotSave)
+				slot := res.Slot{slot, serialID}
+				pcData.InvSlots = append(pcData.InvSlots, slot)
 			}
 			for serialID, slot := range layout.BarSlots() {
-				slotSave := res.SlotSave{slot, serialID}
-				pcData.BarSlots = append(pcData.BarSlots, slotSave)
+				slot := res.Slot{slot, serialID}
+				pcData.BarSlots = append(pcData.BarSlots, slot)
 			}
 		}
-		sav.Players = append(sav.Players, pcData)
+		data.Players = append(data.Players, pcData)
 	}
 	// Camera XY position.
-	sav.Camera.X = hud.Camera().Position().X
-	sav.Camera.Y = hud.Camera().Position().Y
-	return sav
+	data.Camera.X = hud.Camera().Position().X
+	data.Camera.Y = hud.Camera().Position().Y
+	return data
 }
 
-// LoadGUISave load specified saved GUI state.
-func (hud *HUD) LoadGUISave(save *res.GUISave) error {
+// Apply applies specified data on the HUD.
+func (hud *HUD) Apply(data res.HUDData) error {
 	// Players.
-	for _, pcd := range save.Players {
+	for _, pcd := range data.Players {
 		layout := NewLayout()
 		slotsLayout := make(map[string]int)
 		for _, s := range pcd.InvSlots {
@@ -431,7 +431,7 @@ func (hud *HUD) LoadGUISave(save *res.GUISave) error {
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.
-	hud.camera.SetPosition(pixel.V(save.Camera.X, save.Camera.Y))
+	hud.camera.SetPosition(pixel.V(data.Camera.X, data.Camera.Y))
 	// Reload UI.
 	hud.Reload()
 	return nil

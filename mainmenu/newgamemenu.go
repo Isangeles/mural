@@ -272,7 +272,7 @@ func (ngm *NewGameMenu) startGame() {
 	}
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated != nil {
-		ngm.mainmenu.onGameCreated(gameWrapper)
+		ngm.mainmenu.onGameCreated(gameWrapper, nil)
 	}
 }
 

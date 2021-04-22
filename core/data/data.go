@@ -51,7 +51,7 @@ import (
 const (
 	GUIModulePath   = "mural"
 	SavesModulePath = GUIModulePath + "/saves"
-	SaveFileExt     = ".savegui"
+	HUDFileExt      = ".hud"
 	ErrorIcon       = "unknown.png"
 )
 

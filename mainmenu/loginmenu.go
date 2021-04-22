@@ -109,7 +109,6 @@ func (lm *LoginMenu) Draw(win *mtk.Window) {
 // Update updates all menu elements.
 func (lm *LoginMenu) Update(win *mtk.Window) {
 	if lm.mainmenu.server != nil && lm.mainmenu.server.Authorized() {
-		lm.mainmenu.server.SetOnResponseFunc(nil)
 		lm.mainmenu.ShowMessage(lang.Text("login_logged_in_msg"))
 		lm.mainmenu.OpenMenu()
 		return

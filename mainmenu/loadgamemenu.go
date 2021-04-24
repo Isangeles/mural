@@ -30,19 +30,20 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
-	"github.com/isangeles/mural/game"
-
 	"github.com/isangeles/flame"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/serial"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
 
@@ -142,9 +143,9 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	// Clear list.
 	lgm.savesList.Clear()
 	// Insert save names.
-	pattern := fmt.Sprintf(".*%s", flamedata.ModuleFileExt)
-	saves, err := flamedata.DirFilesNames(lgm.mainmenu.mod.Conf().SavesPath(),
-		pattern)
+	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
+	path := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath)
+	saves, err := flamedata.DirFilesNames(path, pattern)
 	if err != nil {
 		return fmt.Errorf("unable to read saved games dir: %v", err)
 	}
@@ -156,6 +157,17 @@ func (lgm *LoadGameMenu) loadSaves() error {
 
 // loadSavedGame creates game and HUD from saved data.
 func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
+	// Handle game server.
+	if lgm.mainmenu.server != nil {
+		saveName = strings.ReplaceAll(saveName, data.HUDFileExt, "")
+		req := request.Request{Load: saveName}
+		err := lgm.mainmenu.server.Send(req)
+		if err != nil {
+			return fmt.Errorf("unable to send load request: %v",
+				err)
+		}
+		return nil
+	}
 	// Import saved game.
 	savePath := filepath.Join(lgm.mainmenu.mod.Conf().SavesPath(),
 		saveName+flamedata.ModuleFileExt)

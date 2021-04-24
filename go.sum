@@ -33,8 +33,8 @@ github.com/isangeles/burn v0.0.0-20210330160012-1ca7bde1dd39/go.mod h1:oN1ykhbr+
 github.com/isangeles/burn v0.0.0-20210412165905-27b826c5c193 h1:BMRtWdGpssfoMQi48++B1jhzcurjKQ/Ef8UJwyc4SP8=
 github.com/isangeles/burn v0.0.0-20210412165905-27b826c5c193/go.mod h1:wpu/qgqq5JQ7LwfXS9dv2S1vuSy71pHtDmsMxQRNeo0=
 github.com/isangeles/fire v0.0.0-20210330160153-d63798a7f2a8/go.mod h1:e9iRBc9Ol/stBy/aJa7ZsbX3fg6Txlk7WYKOw0r2e+M=
-github.com/isangeles/fire v0.0.0-20210420185954-59b20355e9ba h1:IEnsdVT5stzrrzpWDuf3kJVwBqyQLc6CcHB2n0QVOQ4=
-github.com/isangeles/fire v0.0.0-20210420185954-59b20355e9ba/go.mod h1:hw/3KCJvWhOugBlm/nIuABM7yvsn6rXZf8SH35sj51E=
+github.com/isangeles/fire v0.0.0-20210424153603-03ec004824ab h1:T7j0mr1xPmkQYdJzzK8UM3557ap8nqbmlbSgGMhBZCk=
+github.com/isangeles/fire v0.0.0-20210424153603-03ec004824ab/go.mod h1:hw/3KCJvWhOugBlm/nIuABM7yvsn6rXZf8SH35sj51E=
 github.com/isangeles/flame v0.0.0-20210330155715-3a82bbee8cae/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/flame v0.0.0-20210409194627-725c1087950f/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/flame v0.0.0-20210412164743-ae436fe50016 h1:O0oyl39//dYpOUbUqk3iDaTiKxyWEg3fJOkbIss2EQA=
@@ -43,8 +43,8 @@ github.com/isangeles/ignite v0.0.0-20210411175223-fb65bcc3bf2e h1:EM57EOeRQWho8g
 github.com/isangeles/ignite v0.0.0-20210411175223-fb65bcc3bf2e/go.mod h1:JUhfsqWpdB8BOYlsGTbCBwhMLDv5664AMyZ3MUA6/lg=
 github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24 h1:/YgTUY1D9HeX0wtWcOWUn8Gp1iROWyL61AiqVhB3R5s=
 github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24/go.mod h1:GblCzOUrdAhMvXY+6rYFXCjgdhS+hhf/3Afmlk46tdw=
-github.com/isangeles/stone v0.0.0-20210330160925-6c3b26c13058 h1:9HWpMgYksPA5ylTYC0AoaogvAw1fETeXj84IwyzBq/c=
-github.com/isangeles/stone v0.0.0-20210330160925-6c3b26c13058/go.mod h1:PcBC2H/5jJUhO4iqtARChGqCFmEq+zTu6yiclVE6kBs=
+github.com/isangeles/stone v0.1.0 h1:yveQBGIksVlwjv+UBEAHgXiYid+hl2pjIFBrsb/C6j0=
+github.com/isangeles/stone v0.1.0/go.mod h1:PcBC2H/5jJUhO4iqtARChGqCFmEq+zTu6yiclVE6kBs=
 github.com/jfreymuth/oggvorbis v1.0.0 h1:aOpiihGrFLXpsh2osOlEvTcg5/aluzGQeC7m3uYWOZ0=
 github.com/jfreymuth/oggvorbis v1.0.0/go.mod h1:abe6F9QRjuU9l+2jek3gj46lu40N4qlYxh2grqkLEDM=
 github.com/jfreymuth/vorbis v1.0.0 h1:SmDf783s82lIjGZi8EGUUaS7YxPHgRj4ZXW/h7rUi7U=

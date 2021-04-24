@@ -24,19 +24,26 @@
 package mainmenu
 
 import (
+	"path/filepath"
+
 	"github.com/isangeles/flame"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/fire/response"
 
+	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
 
 // handleResponse handles specified response from Fire server.
 func (mm *MainMenu) handleResponse(resp response.Response) {
 	if !resp.Logon {
+		if len(resp.Load.Save) > 0 {
+			mm.handleLoadResponse(resp.Load)
+		}
 		mm.handleUpdateResponse(resp.Update)
 		for _, r := range resp.Character {
 			mm.handleCharacterResponse(r)
@@ -61,6 +68,30 @@ func (mm *MainMenu) handleCharacterResponse(resp response.Character) {
 		if c.ID() == resp.ID && c.Serial() == resp.Serial {
 			mm.continueChars = append(mm.continueChars, c)
 		}
+	}
+}
+
+// handleLoadResponse handles load response.
+func (mm *MainMenu) handleLoadResponse(resp response.Load) {
+	// Recreate saved game.
+	flameres.Clear()
+	serial.Reset()
+	flameres.TranslationBases = res.TranslationBases()
+	m := flame.NewModule()
+	m.Apply(resp.Module)
+	gameWrapper := game.New(m)
+	gameWrapper.SetServer(mm.server)
+	// Import saved HUD state.
+	hudPath := filepath.Join(mm.mod.Conf().Path, data.SavesModulePath,
+		resp.Save+data.HUDFileExt)
+	hud, err := data.ImportHUD(hudPath)
+	if err != nil {
+		log.Err.Printf("Main menu: handle load response: unable to import HUD: %v", err)
+		return
+	}
+	// Run on game created function.
+	if mm.onGameCreated != nil {
+		mm.onGameCreated(gameWrapper, &hud)
 	}
 }
 

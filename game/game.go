@@ -252,7 +252,7 @@ func (g *Game) StartDialog(dialog *dialog.Dialog, target dialog.Talker) {
 
 // AnswerDialog answers dialog with specified answer.
 func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
-	if g.Server() != nil || dialog.Owner() != nil || dialog.Target() != nil {
+	if g.Server() != nil && dialog.Owner() != nil && dialog.Target() != nil {
 		dialogReq := request.Dialog{
 			TargetID:     dialog.Target().ID(),
 			TargetSerial: dialog.Target().Serial(),

@@ -137,15 +137,13 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 // Show shows menu.
 func (ngm *NewGameMenu) Show() {
 	ngm.opened = true
-	ngm.updateCharInfo()
-	ngm.updateCharSwitch()
-	if ngm.Opened() {
-		err := ngm.mainmenu.ImportPlayableChars()
-		if err != nil {
-			log.Err.Printf("New game menu: unable to import playable characters: %v",
-				err)
-		}
+	err := ngm.mainmenu.ImportPlayableChars()
+	if err != nil {
+		log.Err.Printf("New game menu: unable to import playable characters: %v",
+			err)
 	}
+	ngm.SetCharacters(ngm.mainmenu.PlayableChars())
+	ngm.updateCharInfo()
 }
 
 // Hide hides menu.
@@ -167,6 +165,7 @@ func (ngm *NewGameMenu) SetCharacters(chars []PlayableCharData) {
 		values[i] = mtk.SwitchValue{portrait, c}
 	}
 	ngm.charSwitch.SetValues(values...)
+	ngm.updateCharInfo()
 }
 
 // updateCharInfo updates textbox with character informations.
@@ -195,12 +194,6 @@ Attributes: %d, %d, %d, %d, %d`
 		c.CharData.Attributes.Wis)
 	ngm.charInfo.SetText(info)
 	return
-}
-
-// updateCharSwitch updates menu character switch.
-func (ngm *NewGameMenu) updateCharSwitch() {
-	ngm.charSwitch.SetValues(make([]mtk.SwitchValue, 0)...)
-	ngm.SetCharacters(ngm.mainmenu.PlayableChars())
 }
 
 // exportChar exports currently selected character.
@@ -299,7 +292,6 @@ func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 }
 
 // Triggered after character switch change.
-func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch,
-	old, new *mtk.SwitchValue) {
+func (ngm *NewGameMenu) onCharSwitchChanged(s *mtk.Switch, old, new *mtk.SwitchValue) {
 	ngm.updateCharInfo()
 }

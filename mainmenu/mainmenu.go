@@ -73,7 +73,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	server        *game.Server
 	mod           *flame.Module
-	playableChars []PlayableCharData
+	playableChars map[string]PlayableCharData
 	continueChars []*character.Character
 	onGameCreated func(g *game.Game, h *res.HUDData)
 	loading       bool
@@ -90,6 +90,7 @@ type PlayableCharData struct {
 // New creates new main menu
 func New() *MainMenu {
 	mm := new(MainMenu)
+	mm.playableChars = make(map[string]PlayableCharData)
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.loginmenu = newLoginMenu(mm)
@@ -296,14 +297,17 @@ func (mm *MainMenu) Console() *Console {
 }
 
 // PlayableChars returns all playable characters.
-func (mm *MainMenu) PlayableChars() []PlayableCharData {
-	return mm.playableChars
+func (mm *MainMenu) PlayableChars() (chars []PlayableCharData) {
+	for _, c := range mm.playableChars {
+		chars = append(chars, c)
+	}
+	return
 }
 
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
-	mm.playableChars = append(mm.playableChars, c)
+	mm.playableChars[c.CharData.ID+c.CharData.Serial] = c
 }
 
 // ImportPlayableChars import all characters from current module.
@@ -319,13 +323,13 @@ func (mm *MainMenu) ImportPlayableChars() error {
 				continue
 			}
 			pc := PlayableCharData{&charData, &avData}
-			mm.playableChars = append(mm.playableChars, pc)
+			mm.playableChars[charData.ID+charData.Serial] = pc
 			// Add translation for character name.
 			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}
 			lang.AddTranslation(nameTrans)
+			break
 		}
 	}
-	mm.newgamemenu.SetCharacters(mm.playableChars)
 	return nil
 }
 

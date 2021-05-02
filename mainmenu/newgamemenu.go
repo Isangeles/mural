@@ -176,7 +176,7 @@ func (ngm *NewGameMenu) updateCharInfo() {
 	}
 	c, ok := switchVal.Value.(PlayableCharData)
 	if !ok {
-		log.Err.Printf("unable to retrieve character data from switch")
+		log.Err.Printf("New game menu: unable to retrieve character data from switch")
 		return
 	}
 	charInfoForm := `Name:       %s
@@ -284,7 +284,7 @@ func (ngm *NewGameMenu) onBackButtonClicked(b *mtk.Button) {
 func (ngm *NewGameMenu) onExportButtonClicked(b *mtk.Button) {
 	err := ngm.exportChar()
 	if err != nil {
-		log.Err.Printf("main menu: new game: unable to export character: %v", err)
+		log.Err.Printf("New game menu: unable to export character: %v", err)
 		return
 	}
 	msg := lang.Text("newgame_export_msg")

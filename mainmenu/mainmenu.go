@@ -83,8 +83,8 @@ type MainMenu struct {
 // Struct with character and avatar data
 // for playable characters.
 type PlayableCharData struct {
-	CharData   *flameres.CharacterData
-	AvatarData *res.AvatarData
+	flameres.CharacterData
+	Avatar res.AvatarData
 }
 
 // New creates new main menu
@@ -307,7 +307,7 @@ func (mm *MainMenu) PlayableChars() (chars []PlayableCharData) {
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
-	mm.playableChars[c.CharData.ID+c.CharData.Serial] = c
+	mm.playableChars[c.ID+c.Serial] = c
 }
 
 // ImportPlayableChars import all characters from current module.
@@ -322,7 +322,7 @@ func (mm *MainMenu) ImportPlayableChars() error {
 			if avData.ID != charData.ID {
 				continue
 			}
-			pc := PlayableCharData{&charData, &avData}
+			pc := PlayableCharData{charData, avData}
 			mm.playableChars[charData.ID+charData.Serial] = pc
 			// Add translation for character name.
 			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}

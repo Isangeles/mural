@@ -161,7 +161,7 @@ func (ngm *NewGameMenu) Opened() bool {
 func (ngm *NewGameMenu) SetCharacters(chars []PlayableCharData) {
 	values := make([]mtk.SwitchValue, len(chars))
 	for i, c := range chars {
-		portrait := graphic.Portraits[c.AvatarData.Portrait]
+		portrait := graphic.Portraits[c.Avatar.Portrait]
 		values[i] = mtk.SwitchValue{portrait, c}
 	}
 	ngm.charSwitch.SetValues(values...)
@@ -185,13 +185,10 @@ Gender:     %s
 Race:       %s
 Alignment   %s
 Attributes: %d, %d, %d, %d, %d`
-	info := fmt.Sprintf(charInfoForm, lang.Text(c.CharData.ID), c.CharData.Level,
-		lang.Text(c.CharData.Sex),
-		lang.Text(c.CharData.Race),
-		lang.Text(c.CharData.Alignment),
-		c.CharData.Attributes.Str, c.CharData.Attributes.Con,
-		c.CharData.Attributes.Dex, c.CharData.Attributes.Int,
-		c.CharData.Attributes.Wis)
+	info := fmt.Sprintf(charInfoForm, lang.Text(c.ID), c.Level,
+		lang.Text(c.Sex), lang.Text(c.Race), lang.Text(c.Alignment),
+		c.Attributes.Str, c.Attributes.Con, c.Attributes.Dex,
+		c.Attributes.Int, c.Attributes.Wis)
 	ngm.charInfo.SetText(info)
 	return
 }
@@ -207,14 +204,14 @@ func (ngm *NewGameMenu) exportChar() error {
 		return fmt.Errorf("unable to retrieve character data from switch")
 	}
 	conf := ngm.mainmenu.mod.Conf()
-	path := filepath.Join(conf.CharactersPath(), pcData.CharData.ID)
-	err := flamedata.ExportCharacters(path, *pcData.CharData)
+	path := filepath.Join(conf.CharactersPath(), pcData.ID)
+	err := flamedata.ExportCharacters(path, pcData.CharacterData)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
 	avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
-		"avatars", pcData.CharData.ID)
-	err = data.ExportAvatars(avatarsPath, *pcData.AvatarData)
+		"avatars", pcData.ID)
+	err = data.ExportAvatars(avatarsPath, pcData.Avatar)
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
 	}
@@ -242,8 +239,8 @@ func (ngm *NewGameMenu) startGame() {
 	gameWrapper.SetServer(ngm.mainmenu.server)
 	// Create player.
 	if gameWrapper.Server() != nil {
-		res.SetAvatars(append(res.Avatars(), *pcd.AvatarData))
-		newCharReq := request.NewChar{lang.Text(pcd.CharData.ID), *pcd.CharData}
+		res.SetAvatars(append(res.Avatars(), pcd.Avatar))
+		newCharReq := request.NewChar{lang.Text(pcd.ID), pcd.CharacterData}
 		req := request.Request{NewChar: []request.NewChar{newCharReq}}
 		err := gameWrapper.Server().Send(req)
 		if err != nil {
@@ -252,8 +249,8 @@ func (ngm *NewGameMenu) startGame() {
 			return
 		}
 	} else {
-		char := character.New(*pcd.CharData)
-		av := object.NewAvatar(char, pcd.AvatarData)
+		char := character.New(pcd.CharacterData)
+		av := object.NewAvatar(char, &pcd.Avatar)
 		pc := game.NewPlayer(av, gameWrapper)
 		err := gameWrapper.SpawnChar(pc.Avatar)
 		if err != nil {

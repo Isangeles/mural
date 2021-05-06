@@ -29,14 +29,15 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame/character"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/character"
 
 	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/core/data"
 	"github.com/isangeles/mural/core/data/res"
 	"github.com/isangeles/mural/core/data/res/graphic"
@@ -203,17 +204,30 @@ func (ngm *NewGameMenu) exportChar() error {
 	if !ok {
 		return fmt.Errorf("unable to retrieve character data from switch")
 	}
+	// Character.
 	conf := ngm.mainmenu.mod.Conf()
 	path := filepath.Join(conf.CharactersPath(), pcData.ID)
 	err := flamedata.ExportCharacters(path, pcData.CharacterData)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
+	// Avatar.
 	avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
 		"avatars", pcData.ID)
 	err = data.ExportAvatars(avatarsPath, pcData.Avatar)
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
+	}
+	// Name.
+	langPath := filepath.Join(conf.LangPath(), config.Lang, pcData.ID)
+	name, ok := lang.Translation(pcData.ID)
+	if !ok {
+		return nil
+	}
+	err = flamedata.ExportLang(langPath, name)
+	if err != nil {
+		return fmt.Errorf("unable to export name translation: %v",
+			err)
 	}
 	return nil
 }

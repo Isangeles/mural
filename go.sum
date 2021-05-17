@@ -32,12 +32,13 @@ github.com/hajimehoshi/oto v0.3.1/go.mod h1:e9eTLBB9iZto045HLbzfHJIc+jP3xaKrjZTg
 github.com/isangeles/burn v0.0.0-20210412165905-27b826c5c193 h1:BMRtWdGpssfoMQi48++B1jhzcurjKQ/Ef8UJwyc4SP8=
 github.com/isangeles/burn v0.0.0-20210412165905-27b826c5c193/go.mod h1:wpu/qgqq5JQ7LwfXS9dv2S1vuSy71pHtDmsMxQRNeo0=
 github.com/isangeles/fire v0.0.0-20210428174458-61f6055a99d0/go.mod h1:hw/3KCJvWhOugBlm/nIuABM7yvsn6rXZf8SH35sj51E=
-github.com/isangeles/fire v0.0.0-20210501192525-d8e0689b5e11 h1:iQ3ebiHuJu7CsxpwmkvEyh1NUcx2lovl03HGsetIIdU=
-github.com/isangeles/fire v0.0.0-20210501192525-d8e0689b5e11/go.mod h1:hw/3KCJvWhOugBlm/nIuABM7yvsn6rXZf8SH35sj51E=
+github.com/isangeles/fire v0.0.0-20210515133918-41eeb3b2280c h1:VT34w/AdeA+CTCv5jxdmrOcUVHwpoJp0JShuuhFx8u0=
+github.com/isangeles/fire v0.0.0-20210515133918-41eeb3b2280c/go.mod h1:lb6ILyB47iQnZdAijdujD42f5BCtQqOSZvN+sxAYf4w=
 github.com/isangeles/flame v0.0.0-20210412164743-ae436fe50016/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/flame v0.0.0-20210426165814-9613ee4f9de3/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
-github.com/isangeles/flame v0.0.0-20210504175848-989fb5f428d5 h1:d1iJB3DnOx4r1FUQ+7IYd3PpsBM6zUiZilcqNYW7xOc=
-github.com/isangeles/flame v0.0.0-20210504175848-989fb5f428d5/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
+github.com/isangeles/flame v0.0.0-20210510175203-24e5c5fe8b74/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
+github.com/isangeles/flame v0.0.0-20210516103327-9a298035c80f h1:weI9NPE3EF44r6RW3VgFaig7O/h9vzngWQEf+I4ZN0Q=
+github.com/isangeles/flame v0.0.0-20210516103327-9a298035c80f/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/ignite v0.0.0-20210428174705-28661b48f87a h1:qpXn4jlnDbIM3nxQbQ6r5cTe5VVw5bTsFDv8kAHNLLk=
 github.com/isangeles/ignite v0.0.0-20210428174705-28661b48f87a/go.mod h1:Mzg9+FEoX+Vs8LT4KNGSnmAdI+7B+TH3i33P8iXcwn4=
 github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24 h1:/YgTUY1D9HeX0wtWcOWUn8Gp1iROWyL61AiqVhB3R5s=

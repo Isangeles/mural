@@ -26,11 +26,12 @@ package game
 import (
 	"fmt"
 
-	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
 	"github.com/isangeles/flame/objects"
+	"github.com/isangeles/flame/req"
 	"github.com/isangeles/flame/serial"
 	"github.com/isangeles/flame/useaction"
 
@@ -108,6 +109,10 @@ func (p *Player) Use(ob useaction.Usable) {
 	err := p.Character.Use(ob)
 	if err != nil {
 		p.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
+		if !p.meetTargetRangeReqs(ob.UseAction().Requirements()...) {
+			tar := p.Targets()[0]
+			p.SetDestPoint(tar.Position())
+		}
 		return
 	}
 	if p.game.Server() == nil {
@@ -200,4 +205,18 @@ func (p *Player) Unequip(it item.Equiper) {
 		log.Err.Printf("Player: %s %s: unable to send unequip request: %v",
 			p.ID(), p.Serial(), err)
 	}
+}
+
+// meetTargetRangeReqs check if all target range requirements are meet.
+// Returns true, if none of specified requirements is a target range
+// requirement.
+func (p *Player) meetTargetRangeReqs(reqs ...req.Requirement) bool {
+	for _, r := range reqs {
+		if r, ok := r.(*req.TargetRange); ok {
+			if !p.MeetReq(r) {
+				return false
+			}
+		}
+	}
+	return true
 }

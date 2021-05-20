@@ -29,7 +29,7 @@ import (
 
 	"github.com/faiface/pixel"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 )
 
 // Interface for all objects with

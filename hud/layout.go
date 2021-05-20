@@ -27,7 +27,7 @@ import (
 	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/object"
 )
 
 // Struct for HUD layout.

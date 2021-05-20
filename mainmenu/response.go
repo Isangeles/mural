@@ -32,8 +32,8 @@ import (
 
 	"github.com/isangeles/fire/response"
 
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )

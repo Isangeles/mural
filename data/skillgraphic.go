@@ -1,7 +1,7 @@
 /*
- * effectgraphic.go
+ * skillgraphic.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 )
 
 var (
-	EffectGraphicsFileExt = ".graphic"
+	SkillGraphicsFileExt = ".graphic"
 )
 
-// ImportEffectsGraphics imports all effects graphics from
+// ImportSkillsGraphics imports all skills graphics from
 // data file with specified path.
-func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
+func ImportSkillsGraphics(path string) ([]res.SkillGraphicData, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open data file: %v", err)
@@ -51,34 +51,34 @@ func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	data := new(res.EffectGraphicsData)
+	data := new(res.SkillGraphicsData)
 	err = xml.Unmarshal(buf, data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
 	}
-	return data.Effects, nil
+	return data.Skills, nil
 }
 
-// ImportEffectsGraphicsDir imports all files with effects graphics from
+// ImportSkillsGraphicsDir imports all files with skills graphics from
 // directory with specified path.
-func ImportEffectsGraphicsDir(path string) ([]res.EffectGraphicData, error) {
+func ImportSkillsGraphicsDir(path string) ([]res.SkillGraphicData, error) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	effects := make([]res.EffectGraphicData, 0)
+	skills := make([]res.SkillGraphicData, 0)
 	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), EffectGraphicsFileExt) {
+		if !strings.HasSuffix(finfo.Name(), SkillGraphicsFileExt) {
 			continue
 		}
 		basePath := filepath.FromSlash(path + "/" + finfo.Name())
-		impEffects, err := ImportEffectsGraphics(basePath)
+		impSkills, err := ImportSkillsGraphics(basePath)
 		if err != nil {
-			log.Err.Printf("data effects graphic import: %s: unable to parse file: %v",
+			log.Err.Printf("data skills graphic import: %s: unable to parse file: %v",
 				basePath, err)
 			continue
 		}
-		effects = append(effects, impEffects...)
+		skills = append(skills, impSkills...)
 	}
-	return effects, nil
+	return skills, nil
 }

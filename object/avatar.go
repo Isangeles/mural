@@ -41,9 +41,9 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/graphic"
-	"github.com/isangeles/mural/core/object/internal"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/graphic"
+	"github.com/isangeles/mural/object/internal"
 	"github.com/isangeles/mural/log"
 )
 

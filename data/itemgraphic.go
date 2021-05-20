@@ -1,7 +1,7 @@
 /*
- * skillgraphic.go
+ * itemgraphic.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 )
 
 var (
-	SkillGraphicsFileExt = ".graphic"
+	ItemGraphicsFileExt = ".graphic"
 )
 
-// ImportSkillsGraphics imports all skills graphics from
+// ImportItemsGraphics imports all items grpahics from
 // data file with specified path.
-func ImportSkillsGraphics(path string) ([]res.SkillGraphicData, error) {
+func ImportItemsGraphics(path string) ([]res.ItemGraphicData, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open data file: %v", err)
@@ -51,34 +51,36 @@ func ImportSkillsGraphics(path string) ([]res.SkillGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	data := new(res.SkillGraphicsData)
+	data := new(res.ItemGraphicsData)
 	err = xml.Unmarshal(buf, data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
 	}
-	return data.Skills, nil
+	return data.Items, nil
 }
 
-// ImportSkillsGraphicsDir imports all files with skills graphics from
+// ImportItemsGraphicsDir imports all files with items graphics from
 // directory with specified path.
-func ImportSkillsGraphicsDir(path string) ([]res.SkillGraphicData, error) {
-	files, err := ioutil.ReadDir(path)
+func ImportItemsGraphicsDir(dirPath string) ([]res.ItemGraphicData, error) {
+	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read dir: %v", err)
+		return nil, fmt.Errorf("unable to read dir:%v", err)
 	}
-	skills := make([]res.SkillGraphicData, 0)
-	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), SkillGraphicsFileExt) {
+	items := make([]res.ItemGraphicData, 0)
+	for _, fInfo := range files {
+		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
 			continue
 		}
-		basePath := filepath.FromSlash(path + "/" + finfo.Name())
-		impSkills, err := ImportSkillsGraphics(basePath)
+		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
+		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
 		if err != nil {
-			log.Err.Printf("data skills graphic import: %s: unable to parse file: %v",
-				basePath, err)
+			log.Err.Printf("data items graphic import: %s: unable to parse file: %v",
+				itemsGraphicFilePath, err)
 			continue
 		}
-		skills = append(skills, impSkills...)
+		for _, it := range impItems {
+			items = append(items, it)
+		}
 	}
-	return skills, nil
+	return items, nil
 }

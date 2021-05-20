@@ -42,9 +42,9 @@ import (
 
 	"github.com/isangeles/burn/ash"
 
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/audio"
-	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/audio"
+	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 

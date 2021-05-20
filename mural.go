@@ -44,12 +44,12 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/ci"
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/ci"
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/audio"
-	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/data"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/audio"
+	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
@@ -139,7 +139,7 @@ func run() {
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
 	// Fire mode.
 	var server *game.Server
-	if len(config.ServerHost + config.ServerPort) > 1 {
+	if len(config.ServerHost+config.ServerPort) > 1 {
 		s, err := game.NewServer(config.ServerHost, config.ServerPort)
 		if err != nil {
 			log.Err.Printf("Init run: Unable to connect to the game server: %v",

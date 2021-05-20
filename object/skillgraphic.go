@@ -30,9 +30,9 @@ import (
 
 	"github.com/isangeles/flame/skill"
 
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/audio"
-	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/audio"
+	"github.com/isangeles/mural/data/res/graphic"
 )
 
 // Graphical wrapper for skills.

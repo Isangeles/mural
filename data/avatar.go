@@ -34,7 +34,7 @@ import (
 
 	"github.com/isangeles/flame/character"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 )
 

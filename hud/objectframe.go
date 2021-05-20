@@ -1,7 +1,7 @@
 /*
  * objectframe.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data/res/graphic"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/data/res/graphic"
+	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/log"
 )
 

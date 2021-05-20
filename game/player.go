@@ -37,7 +37,7 @@ import (
 
 	"github.com/isangeles/fire/request"
 
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/log"
 )
 

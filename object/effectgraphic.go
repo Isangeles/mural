@@ -34,8 +34,8 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/data/res/graphic"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/log"
 )
 

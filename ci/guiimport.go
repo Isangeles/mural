@@ -29,7 +29,7 @@ import (
 	
 	"github.com/isangeles/burn"
 
-	"github.com/isangeles/mural/core/data"
+	"github.com/isangeles/mural/data"
 )
 
 // guiimport handles guiimport command.

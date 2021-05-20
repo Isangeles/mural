@@ -40,9 +40,9 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/data"
+	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )

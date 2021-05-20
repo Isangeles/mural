@@ -33,8 +33,8 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 
-	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/area"
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/burn/ash"
@@ -42,8 +42,8 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/core/data"
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )

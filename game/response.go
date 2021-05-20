@@ -28,9 +28,9 @@ import (
 
 	"github.com/isangeles/fire/response"
 
-	"github.com/isangeles/mural/core/data/res"
-	"github.com/isangeles/mural/core/object"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 // handleResponse handles specified response from Fire server.

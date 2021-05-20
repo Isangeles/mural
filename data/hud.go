@@ -32,7 +32,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 )
 

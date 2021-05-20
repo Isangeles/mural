@@ -38,8 +38,8 @@ import (
 
 	"github.com/isangeles/ignite/ai"
 
-	"github.com/isangeles/mural/core/object"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 const (

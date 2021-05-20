@@ -1,7 +1,7 @@
 /*
- * itemgraphic.go
+ * effectgraphic.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/isangeles/mural/core/data/res"
+	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 )
 
 var (
-	ItemGraphicsFileExt = ".graphic"
+	EffectGraphicsFileExt = ".graphic"
 )
 
-// ImportItemsGraphics imports all items grpahics from
+// ImportEffectsGraphics imports all effects graphics from
 // data file with specified path.
-func ImportItemsGraphics(path string) ([]res.ItemGraphicData, error) {
+func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to open data file: %v", err)
@@ -51,36 +51,34 @@ func ImportItemsGraphics(path string) ([]res.ItemGraphicData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
-	data := new(res.ItemGraphicsData)
+	data := new(res.EffectGraphicsData)
 	err = xml.Unmarshal(buf, data)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal XML data: %v", err)
 	}
-	return data.Items, nil
+	return data.Effects, nil
 }
 
-// ImportItemsGraphicsDir imports all files with items graphics from
+// ImportEffectsGraphicsDir imports all files with effects graphics from
 // directory with specified path.
-func ImportItemsGraphicsDir(dirPath string) ([]res.ItemGraphicData, error) {
-	files, err := ioutil.ReadDir(dirPath)
+func ImportEffectsGraphicsDir(path string) ([]res.EffectGraphicData, error) {
+	files, err := ioutil.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read dir:%v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
-	items := make([]res.ItemGraphicData, 0)
-	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
+	effects := make([]res.EffectGraphicData, 0)
+	for _, finfo := range files {
+		if !strings.HasSuffix(finfo.Name(), EffectGraphicsFileExt) {
 			continue
 		}
-		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
-		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
+		basePath := filepath.FromSlash(path + "/" + finfo.Name())
+		impEffects, err := ImportEffectsGraphics(basePath)
 		if err != nil {
-			log.Err.Printf("data items graphic import: %s: unable to parse file: %v",
-				itemsGraphicFilePath, err)
+			log.Err.Printf("data effects graphic import: %s: unable to parse file: %v",
+				basePath, err)
 			continue
 		}
-		for _, it := range impItems {
-			items = append(items, it)
-		}
+		effects = append(effects, impEffects...)
 	}
-	return items, nil
+	return effects, nil
 }

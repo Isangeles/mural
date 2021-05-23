@@ -209,10 +209,10 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Insert save names.
-	mod := sm.hud.Game().Module
-	pattern := fmt.Sprintf(".*%s", flamedata.ModuleFileExt)
-	saves, err := flamedata.DirFilesNames(mod.Conf().SavesPath(),
-		pattern)
+	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
+	path := filepath.Join(sm.hud.Game().Conf().Path,
+		data.SavesModulePath)
+	saves, err := flamedata.DirFilesNames(path, pattern)
 	if err != nil {
 		return fmt.Errorf("unable to read saved games dir: %v", err)
 	}

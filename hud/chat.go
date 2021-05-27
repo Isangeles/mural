@@ -41,6 +41,8 @@ import (
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/data"
@@ -273,9 +275,18 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	// Execute command.
 	if strings.HasPrefix(input, chatCommandPrefix) {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
+		if c.hud.Game().Server() != nil {
+			req := request.Request{Command: []string{cmdInput}}
+			err := c.hud.Game().Server().Send(req)
+			if err != nil {
+				log.Err.Printf("Unable to send command request: %v",
+					err)
+			}
+			return
+		}
 		res, out, err := executeCommand(cmdInput)
 		if err != nil {
-			log.Err.Printf("unable to execute command: %v", err)
+			log.Err.Printf("Unable to execute command: %v", err)
 		}
 		// Echo command result to log.
 		log.Cli.Printf("[%d]:%s", res, out)
@@ -287,7 +298,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 		args := strings.Split(input, " ")
 		err := c.executeScriptFile(args[0], args...)
 		if err != nil {
-			log.Err.Printf("unable to execute script: %v", err)
+			log.Err.Printf("Unable to execute script: %v", err)
 		}
 		return
 	}

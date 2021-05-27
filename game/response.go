@@ -39,8 +39,11 @@ func (g *Game) handleResponse(resp response.Response) {
 	for _, r := range resp.Character {
 		g.handleCharacterResponse(r)
 	}
+	for _, r := range resp.Command {
+		log.Inf.Printf("[%d]: %s", r.Result, r.Out)
+	}
 	for _, r := range resp.Error {
-		log.Err.Printf("Game: server error response: %s", r)
+		log.Err.Printf("Game server: error response: %s", r)
 	}
 }
 

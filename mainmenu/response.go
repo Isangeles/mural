@@ -106,4 +106,9 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 		return
 	}
 	mm.mod.Apply(resp.Module)
+	err := mm.ImportPlayableChars()
+	if err != nil {
+		log.Err.Printf("Main menu: unable to import playable characters: %v",
+			err)
+	}
 }

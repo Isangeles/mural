@@ -138,11 +138,6 @@ func (ngm *NewGameMenu) Update(win *mtk.Window) {
 // Show shows menu.
 func (ngm *NewGameMenu) Show() {
 	ngm.opened = true
-	err := ngm.mainmenu.ImportPlayableChars()
-	if err != nil {
-		log.Err.Printf("New game menu: unable to import playable characters: %v",
-			err)
-	}
 	ngm.SetCharacters(ngm.mainmenu.PlayableChars())
 	ngm.updateCharInfo()
 }

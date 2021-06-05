@@ -185,6 +185,11 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
 	mm.menu.title.SetText(mod.Conf().ID)
+	err := mm.ImportPlayableChars()
+	if err != nil {
+		log.Err.Printf("Main menu: unable to import playable characters: %v",
+			err)
+	}
 }
 
 // SetServer sets game server for main menu.

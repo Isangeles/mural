@@ -120,11 +120,10 @@ func (m *Menu) Draw(win *mtk.Window) {
 
 // Update updates all menu elements.
 func (m *Menu) Update(win *mtk.Window) {
-	m.newgameB.Active(len(m.mainmenu.playableChars) > 0)
 	m.continueButton.Active(len(m.mainmenu.continueChars) > 0)
 	if m.mainmenu.server == nil || m.mainmenu.server.Authorized() {
 		m.loginButton.Active(false)
-		m.newgameB.Active(true)
+		m.newgameB.Active(len(m.mainmenu.PlayableChars()) > 0)
 		m.newcharB.Active(true)
 		m.loadgameB.Active(true)
 	} else {

@@ -198,7 +198,7 @@ You can easily view documentation pages with `man` command.
 
 For example to display documentation page for guiset command:
 ```
-$ man doc/command/guiset
+man doc/command/guiset
 ```
 
 Note that documentation of Burn commands is still incomplete.

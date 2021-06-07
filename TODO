@@ -21,6 +21,8 @@ MINOR:
 * Dialog: on smaller resolution(e.g. 1280x1024) answer labels are not aligned to right
 * HUD save menu: lock camera while menu is open
 * Handling game server in main menu console
+* Exporting character via flame data package exports also quests, effects, items, etc., those
+  should be deleted when exporting character to use in different game
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

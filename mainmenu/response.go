@@ -49,6 +49,9 @@ func (mm *MainMenu) handleResponse(resp response.Response) {
 			mm.handleCharacterResponse(r)
 		}
 	}
+	for _, r := range resp.Command {
+		log.Inf.Printf("[%d]: %s", r.Result, r.Out)
+	}
 	for _, r := range resp.Error {
 		log.Err.Printf("Main menu: server error: %v", r)
 	}

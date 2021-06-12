@@ -1,7 +1,7 @@
 /*
  * console.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ import (
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/syntax"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/log"
@@ -42,6 +44,7 @@ import (
 
 // Struct for game console.
 type Console struct {
+	mainmenu  *MainMenu
 	textbox   *mtk.Textbox
 	textedit  *mtk.Textedit
 	msgs      map[string]*flamelog.Message
@@ -52,8 +55,9 @@ type Console struct {
 }
 
 // newConsole creates game console.
-func newConsole() *Console {
+func newConsole(mainmenu *MainMenu) *Console {
 	c := new(Console)
+	c.mainmenu = mainmenu
 	c.msgs = make(map[string]*flamelog.Message)
 	// Text box.
 	textboxParams := mtk.Params{
@@ -137,6 +141,15 @@ func (c *Console) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
+	if c.mainmenu.server != nil {
+		req := request.Request{Command: []string{input}}
+		err := c.mainmenu.server.Send(req)
+		if err != nil {
+			log.Err.Printf("Main menu: unable to send command request: %v",
+				err)
+		}
+		return
+	}
 	res, out, err := executeCommand(input) 
 	if err != nil {
 		log.Err.Printf("fail to execute command: '%s'", input)

@@ -99,7 +99,7 @@ func New() *MainMenu {
 	mm.loadgamemenu = newLoadGameMenu(mm)
 	mm.settings = newSettings(mm)
 	// Console.
-	mm.console = newConsole()
+	mm.console = newConsole(mm)
 	// Loading screen.
 	mm.loadscreen = newLoadingScreen(mm)
 	// Messages & focus.

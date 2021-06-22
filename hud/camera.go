@@ -510,6 +510,9 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 
 // Triggered after left mouse button was pressed.
 func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
+	if c.hud.containsPos(pos) {
+		return
+	}
 	pc := c.hud.Game().ActivePlayer()
 	// Action.
 	for _, ob := range c.AreaObjects() {
@@ -579,7 +582,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Pause && c.PassablePosition(destPos) && !c.hud.containsPos(pos) {
+	if !c.hud.game.Pause && c.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayer().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

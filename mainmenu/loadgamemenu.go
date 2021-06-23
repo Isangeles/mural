@@ -40,11 +40,12 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
-	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 // LoadGameMenu struct represents load game
@@ -159,7 +160,6 @@ func (lgm *LoadGameMenu) loadSaves() error {
 func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	// Handle game server.
 	if lgm.mainmenu.server != nil {
-		saveName = strings.ReplaceAll(saveName, data.HUDFileExt, "")
 		req := request.Request{Load: saveName}
 		err := lgm.mainmenu.server.Send(req)
 		if err != nil {
@@ -169,8 +169,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 		return nil
 	}
 	// Import saved game.
-	savePath := filepath.Join(lgm.mainmenu.mod.Conf().SavesPath(),
-		saveName+flamedata.ModuleFileExt)
+	savePath := filepath.Join(config.ModulesPath, saveName+flamedata.ModuleFileExt)
 	modData, err := flamedata.ImportModuleFile(savePath)
 	if err != nil {
 		return fmt.Errorf("unable to import module: %v", err)
@@ -227,7 +226,7 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 	lgm.mainmenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	defer lgm.mainmenu.CloseLoadingScreen()
 	// Load saved game.
-	saveName := strings.Replace(fileName, flamedata.ModuleFileExt, "", 1)
+	saveName := strings.ReplaceAll(fileName, data.HUDFileExt, "")
 	err := lgm.loadSavedGame(saveName)
 	if err != nil {
 		log.Err.Printf("Main menu: load game: unable to load saved game: %v", err)

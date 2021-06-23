@@ -38,6 +38,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/log"
@@ -203,8 +204,8 @@ func (sm *SaveMenu) Focus(focus bool) {
 	sm.focused = focus
 }
 
-// loadSaves updates saves list with
-// current saves from saves dir.
+// loadSaves updates saves list with current
+// saves from the saves dir.
 func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
@@ -247,18 +248,12 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 	}
 }
 
-// Save saves GUI and game state to
-// savegames directory.
+// Save saves GUI and module state.
 func (sm *SaveMenu) save(saveName string) error {
-	// Retrieve saves path.
-	mod := sm.hud.Game().Module
-	path := filepath.Join(mod.Conf().SavesPath(),
-		saveName+flamedata.ModuleFileExt)
 	// Save HUD.
-	hudData := sm.hud.Data()
-	hudPath := filepath.Join(mod.Conf().Path, data.SavesModulePath,
+	hudPath := filepath.Join(sm.hud.Game().Conf().Path, data.SavesModulePath,
 		saveName+data.HUDFileExt)
-	err := data.ExportHUD(hudData, hudPath)
+	err := data.ExportHUD(sm.hud.Data(), hudPath)
 	if err != nil {
 		return fmt.Errorf("unable to export hud: %v", err)
 	}
@@ -272,7 +267,8 @@ func (sm *SaveMenu) save(saveName string) error {
 		}
 		return nil
 	}
-	err = flamedata.ExportModuleFile(path, mod.Data())
+	modPath := filepath.Join(config.ModulesPath, saveName)
+	err = flamedata.ExportModuleFile(modPath, sm.hud.Game().Data())
 	if err != nil {
 		return fmt.Errorf("unable to export module: %v", err)
 	}

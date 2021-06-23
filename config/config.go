@@ -46,6 +46,7 @@ const (
 var (
 	Lang             = "english"
 	Module           = ""
+	ModulesPath      = "data/modules"
 	Debug            = true
 	Fullscreen       = false
 	MapFOW           = true
@@ -183,7 +184,7 @@ func LangPath() string {
 
 // ModulePath returns path to directory of the current module.
 func ModulePath() string {
-	return filepath.Join("data/modules", Module)
+	return filepath.Join(ModulesPath, Module)
 }
 
 // SupportedResolutions returns all resolutions

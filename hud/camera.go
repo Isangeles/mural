@@ -149,23 +149,20 @@ func (c *Camera) Update(win *mtk.Window) {
 		offset := pixel.V(mTileSize.X*16, mTileSize.Y*16)
 		mapSizePlus := pixel.V(mSize.X+offset.X, mSize.Y+offset.Y)
 		// Key events.
-		if c.position.Y < mapSizePlus.Y &&
-			(win.JustPressed(pixelgl.KeyW) ||
-				win.JustPressed(pixelgl.KeyUp)) {
+		if c.position.Y < mapSizePlus.Y && win.Pressed(pixelgl.KeyW) ||
+			win.Pressed(pixelgl.KeyUp) {
 			c.position.Y += mTileSize.Y
 		}
-		if c.position.X < mapSizePlus.X && (win.JustPressed(pixelgl.KeyD) ||
-			win.JustPressed(pixelgl.KeyRight)) {
+		if c.position.X < mapSizePlus.X && win.Pressed(pixelgl.KeyD) ||
+			win.Pressed(pixelgl.KeyRight) {
 			c.position.X += mTileSize.X
 		}
-		if c.position.Y > 0-offset.Y &&
-			(win.JustPressed(pixelgl.KeyS) ||
-				win.JustPressed(pixelgl.KeyDown)) {
+		if c.position.Y > 0-offset.Y && win.Pressed(pixelgl.KeyS) ||
+			win.Pressed(pixelgl.KeyDown) {
 			c.position.Y -= mTileSize.Y
 		}
-		if c.position.X > 0-offset.X &&
-			win.JustPressed(pixelgl.KeyA) ||
-			win.JustPressed(pixelgl.KeyLeft) {
+		if c.position.X > 0-offset.X && win.Pressed(pixelgl.KeyA) ||
+			win.Pressed(pixelgl.KeyLeft) {
 			c.position.X -= mTileSize.X
 		}
 	}

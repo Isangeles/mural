@@ -30,7 +30,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/salviati/go-tmx/tmx"
 
@@ -40,12 +39,9 @@ import (
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 
-	"github.com/isangeles/burn/ash"
-
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/audio"
 	"github.com/isangeles/mural/data/res/graphic"
-	"github.com/isangeles/mural/log"
 )
 
 const (
@@ -61,8 +57,6 @@ var (
 	modGraphicDirPath  string
 	modGraphicArchPath string
 	modAudioArchPath   string
-	// Scritps.
-	ashScriptExt = ".ash"
 )
 
 // LoadModuleData loads graphic data for specified module.
@@ -212,49 +206,6 @@ func Map(areaDir string) (*tmx.Map, error) {
 		return nil, fmt.Errorf("unable to read tmx file: %v", err)
 	}
 	return tmxMap, nil
-}
-
-// ScriptsDir returns all scripts from directory with
-// specified path.
-func ScriptsDir(path string) ([]*ash.Script, error) {
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read dir: %v", err)
-	}
-	scripts := make([]*ash.Script, 0)
-	for _, info := range files {
-		if !strings.HasSuffix(info.Name(), ashScriptExt) {
-			continue
-		}
-		scriptPath := filepath.FromSlash(path + "/" + info.Name())
-		s, err := Script(scriptPath)
-		if err != nil {
-			log.Err.Printf("data scripts dir: %s: unable to retrieve script: %v",
-				path, err)
-			continue
-		}
-		scripts = append(scripts, s)
-	}
-	return scripts, nil
-}
-
-// Script parses file with specified path to
-// Ash scirpt.
-func Script(path string) (*ash.Script, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("unable to open file: %v", err)
-	}
-	text, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read file: %v", err)
-	}
-	scriptName := filepath.Base(path)
-	script, err := ash.NewScript(scriptName, fmt.Sprintf("%s", text))
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse script text: %v", err)
-	}
-	return script, nil
 }
 
 // Load loads grpahic directories.

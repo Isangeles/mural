@@ -27,9 +27,9 @@ package data
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/salviati/go-tmx/tmx"
 
@@ -176,7 +176,7 @@ func LoadChapterData(chapter *flame.Chapter) error {
 // and portraits pictures as values avalible for player character.
 func PlayablePortraits() (map[string]pixel.Picture, error) {
 	path := filepath.Join(modGraphicDirPath, "portraits")
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
@@ -206,6 +206,26 @@ func Map(areaDir string) (*tmx.Map, error) {
 		return nil, fmt.Errorf("unable to read tmx file: %v", err)
 	}
 	return tmxMap, nil
+}
+
+// DirFiles returns names of all files matching specified
+// file name pattern in directory with specified path.
+func DirFiles(path, pattern string) ([]string, error) {
+	files, err := os.ReadDir(path)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read dir: %v", err)
+	}
+	names := make([]string, 0)
+	for _, file := range files {
+		match, err := regexp.MatchString(pattern, file.Name())
+		if err != nil {
+			return nil, fmt.Errorf("unable to execute pattern: %v", err)
+		}
+		if match {
+			names = append(names, file.Name())
+		}
+	}
+	return names, nil
 }
 
 // Load loads grpahic directories.

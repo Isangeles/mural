@@ -25,6 +25,7 @@ package mainmenu
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -143,13 +144,19 @@ func (lgm *LoadGameMenu) Opened() bool {
 func (lgm *LoadGameMenu) loadSaves() error {
 	// Clear list.
 	lgm.savesList.Clear()
-	// Insert save names.
-	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
+	// Check if saves dir exists.
 	path := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath)
-	saves, err := flamedata.DirFilesNames(path, pattern)
+	_, err := os.ReadDir(path)
 	if err != nil {
-		return fmt.Errorf("unable to read saved games dir: %v", err)
+		return nil
 	}
+	// Retrive save names.
+	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
+	saves, err := data.DirFiles(path, pattern)
+	if err != nil {
+		return fmt.Errorf("unable to retrieve save files: %v", err)
+	}
+	// Add save names to the list.
 	for _, s := range saves {
 		lgm.savesList.AddItem(s, s)
 	}

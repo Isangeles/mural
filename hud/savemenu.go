@@ -25,6 +25,7 @@ package hud
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -209,14 +210,19 @@ func (sm *SaveMenu) Focus(focus bool) {
 func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
-	// Insert save names.
-	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
-	path := filepath.Join(sm.hud.Game().Conf().Path,
-		data.SavesModulePath)
-	saves, err := flamedata.DirFilesNames(path, pattern)
+	// Check if saves dir exists.
+	path := filepath.Join(sm.hud.Game().Conf().Path, data.SavesModulePath)
+	_, err := os.ReadDir(path)
 	if err != nil {
-		return fmt.Errorf("unable to read saved games dir: %v", err)
+		return nil
 	}
+	// Retrive save names.
+	pattern := fmt.Sprintf(".*%s", data.HUDFileExt)
+	saves, err := data.DirFiles(path, pattern)
+	if err != nil {
+		return fmt.Errorf("unable to retrieve save files: %v", err)
+	}
+	// Add save names to the list.
 	for _, s := range saves {
 		sm.savesList.AddItem(s, s)
 	}

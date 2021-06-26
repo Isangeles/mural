@@ -1,7 +1,7 @@
 /*
  * graphic.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import (
 	"fmt"
 	"image"
 	_ "image/png"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -86,7 +86,7 @@ func loadFontsFromArch(archPath, dir string) (map[string]*truetype.Font, error) 
 			return nil, fmt.Errorf("unable to open arch file: %v", err)
 		}
 		defer rc.Close()
-		bytes, err := ioutil.ReadAll(rc)
+		bytes, err := io.ReadAll(rc)
 		if err != nil {
 			return nil, fmt.Errorf("unable to read arch file: %v", err)
 		}
@@ -143,7 +143,7 @@ func loadFontFromArch(archPath, filePath string) (*truetype.Font, error) {
 			return nil, fmt.Errorf("unable to open arch file: %v", err)
 		}
 		defer rc.Close()
-		bytes, err := ioutil.ReadAll(rc)
+		bytes, err := io.ReadAll(rc)
 		if err != nil {
 			return nil, fmt.Errorf("unable to read arch file: %v", err)
 		}
@@ -172,9 +172,9 @@ func loadPictureFromDir(path string) (pixel.Picture, error) {
 }
 
 // loadPicturesFromDir loads all pictures from speicified
-// directory.x
+// directory.
 func loadPicturesFromDir(path string) ([]pixel.Picture, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
@@ -200,7 +200,7 @@ func loadFontFromDir(path string) (*truetype.Font, error) {
 		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
 	defer file.Close()
-	bytes, err := ioutil.ReadAll(file)
+	bytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read file: %v", err)
 	}

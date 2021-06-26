@@ -26,7 +26,7 @@ package data
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -47,7 +47,7 @@ func ImportObjectsGraphics(path string) ([]res.ObjectGraphicData, error) {
 		return nil, fmt.Errorf("unable to open data file: %s", err)
 	}
 	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
+	buf, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
@@ -62,7 +62,7 @@ func ImportObjectsGraphics(path string) ([]res.ObjectGraphicData, error) {
 // ImportObjectsGraphicsDir imports all files with objects graphics from
 // directory with specified path.
 func ImportObjectsGraphicsDir(dirPath string) ([]res.ObjectGraphicData, error) {
-	files, err := ioutil.ReadDir(dirPath)
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}

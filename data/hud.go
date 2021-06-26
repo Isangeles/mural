@@ -27,8 +27,8 @@ import (
 	"bufio"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"os"
-	"io/ioutil"
 	"path/filepath"
 	"strings"
 
@@ -45,7 +45,7 @@ func ImportHUD(path string) (res.HUDData, error) {
 			err)
 	}
 	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
+	buf, err := io.ReadAll(file)
 	if err != nil {
 		return data, fmt.Errorf("unable to read data file: %v",
 			err)
@@ -61,7 +61,7 @@ func ImportHUD(path string) (res.HUDData, error) {
 // ImportHUDDir imports all HUD data files in directory with
 // specified path.
 func ImportHUDDir(dirPath string) ([]res.HUDData, error) {
-	files, err := ioutil.ReadDir(dirPath)
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}

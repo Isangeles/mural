@@ -27,7 +27,7 @@ import (
 	"bufio"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,7 +50,7 @@ func ImportAvatars(path string) ([]res.AvatarData, error) {
 		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
 	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
+	buf, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
@@ -66,7 +66,7 @@ func ImportAvatars(path string) ([]res.AvatarData, error) {
 // ImportAvatarsDir imports all avatars data from avatars files
 // in directory with specified path.
 func ImportAvatarsDir(dirPath string) ([]res.AvatarData, error) {
-	files, err := ioutil.ReadDir(dirPath)
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}

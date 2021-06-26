@@ -27,7 +27,7 @@ package data
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -44,7 +44,7 @@ var (
 // ScriptsDir returns all scripts from directory with
 // specified path.
 func ScriptsDir(path string) ([]*ash.Script, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
@@ -72,7 +72,7 @@ func Script(path string) (*ash.Script, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to open file: %v", err)
 	}
-	text, err := ioutil.ReadAll(file)
+	text, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read file: %v", err)
 	}

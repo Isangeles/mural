@@ -26,7 +26,7 @@ package data
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -47,7 +47,7 @@ func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
 		return nil, fmt.Errorf("unable to open data file: %v", err)
 	}
 	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
+	buf, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
@@ -62,7 +62,7 @@ func ImportEffectsGraphics(path string) ([]res.EffectGraphicData, error) {
 // ImportEffectsGraphicsDir imports all files with effects graphics from
 // directory with specified path.
 func ImportEffectsGraphicsDir(path string) ([]res.EffectGraphicData, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}

@@ -40,8 +40,8 @@ github.com/isangeles/flame v0.0.0-20210510175203-24e5c5fe8b74/go.mod h1:SnqHiRyV
 github.com/isangeles/flame v0.0.0-20210516103327-9a298035c80f/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/flame v0.0.0-20210608201501-f6a8714653f4/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/flame v0.0.0-20210615183829-ad0bb2d6d3cb/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
-github.com/isangeles/flame v0.0.0-20210621181800-8886fc11da7a h1:zdSMG2Rhm6NC+zwd8EqacnO+8/BToYkF/7FIDMyLDmU=
-github.com/isangeles/flame v0.0.0-20210621181800-8886fc11da7a/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
+github.com/isangeles/flame v0.0.0-20210628185212-7943d84d3da5 h1:VB59jHEkK9hh//u8H1r6JqORrFeUuM7glZdaXhewbxM=
+github.com/isangeles/flame v0.0.0-20210628185212-7943d84d3da5/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/ignite v0.0.0-20210519190640-1fa707b70418 h1:HhrcfGatFVymVYzrOdDyMCq5MyCc78cTCrRVsN/MBpY=
 github.com/isangeles/ignite v0.0.0-20210519190640-1fa707b70418/go.mod h1:J484q2jdu2FaI4VnFZQ8KcvjuY5bziwSfF8Utb9gQJ4=
 github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24 h1:/YgTUY1D9HeX0wtWcOWUn8Gp1iROWyL61AiqVhB3R5s=
@@ -70,8 +70,8 @@ golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81/go.mod h1:ux5Hcp/YLpHSI86h
 golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190523035834-f03afa92d3ff/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
-golang.org/x/image v0.0.0-20210622092929-e6eecd499c2c h1:FRR4fGZm/CMwZka5baQ4z8c8StbxJOMjS/45e0BAxK0=
-golang.org/x/image v0.0.0-20210622092929-e6eecd499c2c/go.mod h1:023OzeP/+EPmXeapQh35lcL3II3LrY8Ic+EFFKVhULM=
+golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d h1:RNPAfi2nHY7C2srAV8A49jpsYr0ADedCk1wq6fTMTvs=
+golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d/go.mod h1:023OzeP/+EPmXeapQh35lcL3II3LrY8Ic+EFFKVhULM=
 golang.org/x/mobile v0.0.0-20180806140643-507816974b79 h1:t2JRgCWkY7Qaa1J2jal+wqC9OjbyHCHwIA9rVlRUSMo=
 golang.org/x/mobile v0.0.0-20180806140643-507816974b79/go.mod h1:z+o9i4GpDbdi3rU15maQ/Ox0txvL9dWGYEHz965HBQE=
 golang.org/x/sys v0.0.0-20181228144115-9a3f9b0469bb h1:pf3XwC90UUdNPYWZdFjhGBE7DUFuK3Ct1zWmZ65QN30=

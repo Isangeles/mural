@@ -184,8 +184,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	flameres.Clear()
 	serial.Reset()
 	flameres.TranslationBases = res.TranslationBases()
-	m := flame.NewModule()
-	m.Apply(modData)
+	m := flame.NewModule(modData)
 	gameWrapper := game.New(m)
 	// Import HUD state.
 	hudPath := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath,

@@ -255,8 +255,7 @@ func setHUD(h *hud.HUD) {
 
 // setModule sets specified module for UI.
 func setModule(data flameres.ModuleData) {
-	mod = flame.NewModule()
-	mod.Apply(data)
+	mod = flame.NewModule(data)
 	burn.Module = mod
 	if mainMenu != nil {
 		mainMenu.SetModule(mod)

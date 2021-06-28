@@ -80,8 +80,7 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 	flameres.Clear()
 	serial.Reset()
 	flameres.TranslationBases = res.TranslationBases()
-	m := flame.NewModule()
-	m.Apply(resp.Module)
+	m := flame.NewModule(resp.Module)
 	gameWrapper := game.New(m)
 	gameWrapper.SetServer(mm.server)
 	// Import saved HUD state.
@@ -104,8 +103,7 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {
 		serial.Reset()
-		mm.mod = flame.NewModule()
-		mm.mod.Apply(resp.Module)
+		mm.mod = flame.NewModule(resp.Module)
 		return
 	}
 	mm.mod.Apply(resp.Module)

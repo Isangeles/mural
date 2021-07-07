@@ -24,6 +24,8 @@
 package game
 
 import (
+	"sync"
+
 	flameres "github.com/isangeles/flame/data/res"
 
 	"github.com/isangeles/fire/response"
@@ -32,6 +34,8 @@ import (
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/object"
 )
+
+var addPlayerMutex sync.Mutex
 
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
@@ -56,6 +60,8 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 
 // handleCharacterResponse handles new characters from server response.
 func (g *Game) handleCharacterResponse(resp response.Character) {
+	addPlayerMutex.Lock()
+	defer addPlayerMutex.Unlock()
 	for _, p := range g.Players() {
 		if p.ID() == resp.ID && p.Serial() == resp.Serial {
 			return
@@ -75,6 +81,5 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 	}
 	avatar := object.NewAvatar(char, avData)
 	player := Player{avatar, g}
-	g.players = append(g.players, &player)
-	g.SetActivePlayer(&player)
+	g.AddPlayer(&player)
 }

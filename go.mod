@@ -6,10 +6,10 @@ require (
 	github.com/faiface/beep v1.0.2
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/isangeles/burn v0.0.0-20210717201736-674d88fca98a
-	github.com/isangeles/fire v0.0.0-20210729175846-b38d0fe72779
-	github.com/isangeles/flame v0.0.0-20210728174855-49023e140b39
-	github.com/isangeles/ignite v0.0.0-20210729175951-05f1ce26785d
+	github.com/isangeles/burn v0.0.0-20210812173120-fb9ce1f8d0fa
+	github.com/isangeles/fire v0.0.0-20210812173222-6b6076302173
+	github.com/isangeles/flame v0.0.0-20210808105931-775af127aa02
+	github.com/isangeles/ignite v0.0.0-20210812173324-07698e703eff
 	github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24
 	github.com/isangeles/stone v0.1.0
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb

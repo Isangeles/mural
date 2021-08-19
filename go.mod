@@ -9,7 +9,7 @@ require (
 	github.com/isangeles/burn v0.0.0-20210812173120-fb9ce1f8d0fa
 	github.com/isangeles/fire v0.0.0-20210812173222-6b6076302173
 	github.com/isangeles/flame v0.0.0-20210808105931-775af127aa02
-	github.com/isangeles/ignite v0.0.0-20210812173324-07698e703eff
+	github.com/isangeles/ignite v0.0.0-20210819180516-9874af32cefc
 	github.com/isangeles/mtk v0.0.0-20210330160814-eabb808fde24
 	github.com/isangeles/stone v0.1.0
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb

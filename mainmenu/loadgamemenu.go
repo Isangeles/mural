@@ -177,7 +177,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	}
 	// Import saved game.
 	savePath := filepath.Join(config.ModulesPath, saveName+flamedata.ModuleFileExt)
-	modData, err := flamedata.ImportModuleFile(savePath)
+	modData, err := flamedata.ImportModule(savePath)
 	if err != nil {
 		return fmt.Errorf("unable to import module: %v", err)
 	}

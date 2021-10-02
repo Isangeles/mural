@@ -74,7 +74,7 @@ func main() {
 	}
 	log.PrintStdOut(config.Debug)
 	// Import module.
-	modData, err := flamedata.ImportModule(config.ModulePath())
+	modData, err := flamedata.ImportModuleDir(config.ModulePath())
 	if err != nil {
 		panic(fmt.Errorf("unable to import module: %v", err))
 	}
@@ -193,7 +193,7 @@ func run() {
 		if pcHUD.Exiting() || activeGame.Closing() {
 			inGame = false
 			// Reimport module.
-			modData, err := flamedata.ImportModule(config.ModulePath())
+			modData, err := flamedata.ImportModuleDir(config.ModulePath())
 			if err != nil {
 				log.Err.Printf("unable to reimport module: %v", err)
 			}

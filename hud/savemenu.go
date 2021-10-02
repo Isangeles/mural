@@ -274,7 +274,7 @@ func (sm *SaveMenu) save(saveName string) error {
 		return nil
 	}
 	modPath := filepath.Join(config.ModulesPath, saveName)
-	err = flamedata.ExportModuleFile(modPath, sm.hud.Game().Data())
+	err = flamedata.ExportModule(modPath, sm.hud.Game().Data())
 	if err != nil {
 		return fmt.Errorf("unable to export module: %v", err)
 	}

@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"image/color"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"golang.org/x/image/colornames"
@@ -323,6 +324,9 @@ func (mm *MainMenu) ImportPlayableChars() error {
 		return fmt.Errorf("unable to import avatars: %v", err)
 	}
 	for _, avData := range avsData {
+		if strings.HasSuffix(avData.ID, "player_") {
+			continue
+		}
 		for _, charData := range mm.mod.Resources().Characters {
 			if avData.ID != charData.ID {
 				continue

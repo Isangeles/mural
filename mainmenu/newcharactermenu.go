@@ -43,7 +43,7 @@ import (
 )
 
 var (
-	newCharIDForm = `player_%s` // player_[name]
+	playerIDPrefix = "player_"
 )
 
 // NewCharacterMenu struct represents new game character
@@ -347,7 +347,7 @@ func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
 	}
 	// ID.
 	name = strings.ReplaceAll(name, " ", "_")
-	id := fmt.Sprintf(newCharIDForm, strings.ToLower(name))
+	id := fmt.Sprintf("%s%s", playerIDPrefix, strings.ToLower(name))
 	charData := flameres.CharacterData{
 		ID:        id,
 		Level:     1,

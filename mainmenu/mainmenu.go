@@ -30,6 +30,7 @@ import (
 	"image/color"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/image/colornames"
@@ -74,7 +75,7 @@ type MainMenu struct {
 	msgs          *mtk.MessagesQueue
 	server        *game.Server
 	mod           *flame.Module
-	playableChars map[string]PlayableCharData
+	playableChars *sync.Map
 	continueChars []*character.Character
 	onGameCreated func(g *game.Game, h *res.HUDData)
 	loading       bool
@@ -91,7 +92,7 @@ type PlayableCharData struct {
 // New creates new main menu
 func New() *MainMenu {
 	mm := new(MainMenu)
-	mm.playableChars = make(map[string]PlayableCharData)
+	mm.playableChars = new(sync.Map)
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.loginmenu = newLoginMenu(mm)
@@ -304,16 +305,21 @@ func (mm *MainMenu) Console() *Console {
 
 // PlayableChars returns all playable characters.
 func (mm *MainMenu) PlayableChars() (chars []PlayableCharData) {
-	for _, c := range mm.playableChars {
-		chars = append(chars, c)
+	addChar := func(k, v interface{}) bool {
+		c, ok := v.(PlayableCharData)
+		if ok {
+			chars = append(chars, c)
+		}
+		return true
 	}
+	mm.playableChars.Range(addChar)
 	return
 }
 
 // AddPlaybaleChar adds new playable character to playable
 // characters list.
 func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
-	mm.playableChars[c.ID+c.Serial] = c
+	mm.playableChars.Store(c.ID+c.Serial, c)
 }
 
 // ImportPlayableChars import all characters from current module.
@@ -332,7 +338,7 @@ func (mm *MainMenu) ImportPlayableChars() error {
 				continue
 			}
 			pc := PlayableCharData{charData, avData}
-			mm.playableChars[charData.ID+charData.Serial] = pc
+			mm.playableChars.Store(charData.ID+charData.Serial, pc)
 			// Add translation for character name.
 			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}
 			lang.AddTranslation(nameTrans)

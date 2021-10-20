@@ -32,10 +32,9 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/graphic"
-	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 // Struct for HUD loot window.
@@ -55,7 +54,7 @@ type LootWindow struct {
 // Interface for 'lootable' objects.
 type LootTarget interface {
 	item.Container
-	Items() []*object.ItemGraphic
+	LootItems() []*object.ItemGraphic
 }
 
 var (
@@ -188,11 +187,11 @@ func (lw *LootWindow) DrawArea() pixel.Rect {
 func (lw *LootWindow) SetTarget(t LootTarget) {
 	lw.target = t
 	lw.slots.Clear()
-	lw.insertItems(lw.target.Inventory().LootItems()...)
+	lw.insertItems(lw.target.LootItems()...)
 }
 
-// insert inserts specified items in window slots.
-func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
+// insertItems inserts specified items in window slots.
+func (lw *LootWindow) insertItems(items ...*object.ItemGraphic) {
 	for _, it := range items {
 		slot := lw.slots.EmptySlot()
 		if slot == nil {
@@ -200,27 +199,6 @@ func (lw *LootWindow) insert(items ...*object.ItemGraphic) {
 			lw.slots.Add(slot)
 		}
 		lw.hud.insertSlotItem(it, slot)
-	}
-}
-
-// insertItems inserts specified items in window slots.
-func (lw *LootWindow) insertItems(items ...item.Item) {
-	for _, it := range items {
-		// Retrieve item graphic.
-		data := res.Item(it.ID())
-		if data == nil {
-			log.Err.Printf("hud loot window: item graphic not found: %s",
-				it.ID())
-			continue
-		}
-		ig := object.NewItemGraphic(it, data)
-		// Find empty slot.
-		slot := lw.slots.EmptySlot()
-		if slot == nil {
-			slot = lw.createSlot()
-			lw.slots.Add(slot)
-		}
-		lw.hud.insertSlotItem(ig, slot)
 	}
 }
 

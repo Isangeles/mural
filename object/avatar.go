@@ -252,6 +252,17 @@ func (av *Avatar) Items() (items []*ItemGraphic) {
 	return
 }
 
+// LootItems returns all 'lootable' items(in form of
+// graphical wrappers).
+func (av *Avatar) LootItems() (items []*ItemGraphic) {
+	for _, ig := range av.items {
+		if av.Inventory().LootItem(ig.ID(), ig.Serial()) != nil {
+			items = append(items, ig)
+		}
+	}
+	return
+}
+
 // Effects returns all visible effects active on
 // avatar character.
 func (av *Avatar) Effects() (effects []*EffectGraphic) {

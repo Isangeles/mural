@@ -143,6 +143,17 @@ func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 	return
 }
 
+// LootItems returns all 'lootable' items(in form of
+// graphical wrappers).
+func (og *ObjectGraphic) LootItems() (items []*ItemGraphic) {
+	for _, ig := range og.items {
+		if og.Inventory().LootItem(ig.ID(), ig.Serial()) != nil {
+			items = append(items, ig)
+		}
+	}
+	return
+}
+
 // MaxMana returns 0, object do not have mana.
 // Function to satify frame target interface.
 func (og *ObjectGraphic) MaxMana() int {

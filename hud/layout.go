@@ -24,7 +24,7 @@
 package hud
 
 import (
-	"github.com/isangeles/flame/objects"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/object"
@@ -91,7 +91,7 @@ func (l *Layout) SaveBarSlot(ob interface{}, id int) {
 
 // InvSlotID returns saved inventory slot ID for specified
 // object.
-func (l *Layout) InvSlotID(ob objects.Object) int {
+func (l *Layout) InvSlotID(ob serial.Serialer) int {
 	id, ok := l.invSlots[ob.ID()+ob.Serial()]
 	if !ok {
 		return -1

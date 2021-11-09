@@ -35,6 +35,10 @@ import (
 	"github.com/isangeles/mural/data/res/graphic"
 )
 
+var (
+	defaultSkillIcon = "unknown.png"
+)
+
 // Graphical wrapper for skills.
 type SkillGraphic struct {
 	*skill.Skill

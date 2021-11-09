@@ -26,6 +26,7 @@ package object
 import (
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
+	"github.com/isangeles/flame/skill"
 
 	"github.com/faiface/pixel"
 
@@ -53,5 +54,13 @@ func DefaultItemGraphic(it item.Item) *res.ItemGraphicData {
 		ItemID:   it.ID(),
 		Icon:     defaultItemIcon,
 		MaxStack: 100,
+	}
+}
+
+// DefaultSkillGraphic returns default graphic for specified skill.
+func DefaultSkillGraphic(skill *skill.Skill) *res.SkillGraphicData {
+	return &res.SkillGraphicData{
+		SkillID: skill.ID(),
+		Icon:    defaultSkillIcon,
 	}
 }

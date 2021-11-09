@@ -413,7 +413,7 @@ func (av *Avatar) updateGraphic() {
 		}
 		data := res.Skill(s.ID())
 		if data == nil {
-			continue
+			data = DefaultSkillGraphic(s)
 		}
 		skillGraphic := NewSkillGraphic(s, data)
 		av.skills[s.ID()] = skillGraphic

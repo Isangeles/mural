@@ -1,7 +1,7 @@
 /*
  * avatarsprite.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ package internal
 
 import (
 	"github.com/faiface/pixel"
-	
+
 	"github.com/isangeles/mtk"
 )
 
@@ -177,6 +177,7 @@ func (as *AvatarSprite) Melee() {
 	as.head.Melee()
 	as.torso.Melee()
 }
+
 // Shoot sets shoot animations as current
 // draw animations.
 func (as *AvatarSprite) Shoot() {
@@ -203,6 +204,20 @@ func (as *AvatarSprite) SpellCast() {
 	}
 	as.head.SpellCast()
 	as.torso.SpellCast()
+}
+
+// Lie sets lie animations as current draw
+// animtaions.
+func (as *AvatarSprite) Lie() {
+	if as.weapon != nil {
+		as.weapon.Lie()
+	}
+	if as.fullBody != nil {
+		as.fullBody.Lie()
+		return
+	}
+	as.head.Lie()
+	as.torso.Lie()
 }
 
 // CraftCast sets craft cast animations as
@@ -292,4 +307,3 @@ func (as *AvatarSprite) DrawArea() pixel.Rect {
 	}
 	return as.torso.DrawArea()
 }
-

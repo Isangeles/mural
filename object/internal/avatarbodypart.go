@@ -1,7 +1,7 @@
 /*
  * avatarbodypart.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ type AvatarBodyPart struct {
 	shootAnim     *mtk.MultiAnimation
 	spellCastAnim *mtk.MultiAnimation
 	craftCastAnim *mtk.MultiAnimation
+	lieAnim       *mtk.MultiAnimation
 }
 
 const (
@@ -57,6 +58,7 @@ func newAvatarBodyPart(spritesheet pixel.Picture) *AvatarBodyPart {
 	abp.shootAnim = buildShootAnim(spritesheet)
 	abp.spellCastAnim = buildCastAnim(spritesheet)
 	abp.craftCastAnim = buildCastAnim(spritesheet)
+	abp.lieAnim = buildLieAnim(spritesheet)
 	abp.drawAnim = abp.idleAnim
 	return abp
 }
@@ -151,6 +153,12 @@ func (abp *AvatarBodyPart) Shoot() {
 // current draw animation.
 func (abp *AvatarBodyPart) SpellCast() {
 	abp.drawAnim = abp.spellCastAnim
+}
+
+// Lie sets lie animation as current draw
+// animation.
+func (abp *AvatarBodyPart) Lie() {
+	abp.drawAnim = abp.lieAnim
 }
 
 // MeleeOnce restarts and sets melee animation
@@ -299,6 +307,29 @@ func buildCastAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(560, 0, 640, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 0, 720, 90)),
+	}
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
+	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
+	return anim
+}
+
+// buildLieAnim creates lie animations for each directions with frames
+// form specified spritesheet.
+func buildLieAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
+	framesUp := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(800, 270, 880, 360)),
+	}
+	animUp := mtk.NewAnimation(framesUp, animFPS)
+	framesRight := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(800, 180, 880, 270)),
+	}
+	animRight := mtk.NewAnimation(framesRight, animFPS)
+	framesDown := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(800, 90, 880, 180)),
+	}
+	animDown := mtk.NewAnimation(framesDown, animFPS)
+	framesLeft := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(800, 0, 880, 90)),
 	}
 	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)

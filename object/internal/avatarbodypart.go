@@ -41,6 +41,7 @@ type AvatarBodyPart struct {
 	shootAnim     *mtk.MultiAnimation
 	spellCastAnim *mtk.MultiAnimation
 	craftCastAnim *mtk.MultiAnimation
+	kneelAnim     *mtk.MultiAnimation
 	lieAnim       *mtk.MultiAnimation
 }
 
@@ -58,6 +59,7 @@ func newAvatarBodyPart(spritesheet pixel.Picture) *AvatarBodyPart {
 	abp.shootAnim = buildShootAnim(spritesheet)
 	abp.spellCastAnim = buildCastAnim(spritesheet)
 	abp.craftCastAnim = buildCastAnim(spritesheet)
+	abp.kneelAnim = buildKneelAnim(spritesheet)
 	abp.lieAnim = buildLieAnim(spritesheet)
 	abp.drawAnim = abp.idleAnim
 	return abp
@@ -93,6 +95,7 @@ func (abp *AvatarBodyPart) Up() {
 	abp.shootAnim.Up()
 	abp.spellCastAnim.Up()
 	abp.craftCastAnim.Up()
+	abp.kneelAnim.Up()
 }
 
 // Right turns current animataion right.
@@ -103,6 +106,7 @@ func (abp *AvatarBodyPart) Right() {
 	abp.shootAnim.Right()
 	abp.spellCastAnim.Right()
 	abp.craftCastAnim.Right()
+	abp.kneelAnim.Right()
 }
 
 // Down turns current animataion down.
@@ -113,6 +117,7 @@ func (abp *AvatarBodyPart) Down() {
 	abp.shootAnim.Down()
 	abp.spellCastAnim.Down()
 	abp.craftCastAnim.Down()
+	abp.kneelAnim.Down()
 }
 
 // Left turns current animataion left.
@@ -123,6 +128,7 @@ func (abp *AvatarBodyPart) Left() {
 	abp.shootAnim.Left()
 	abp.spellCastAnim.Left()
 	abp.craftCastAnim.Left()
+	abp.kneelAnim.Left()
 }
 
 // Idle sets idle animation as current
@@ -153,6 +159,12 @@ func (abp *AvatarBodyPart) Shoot() {
 // current draw animation.
 func (abp *AvatarBodyPart) SpellCast() {
 	abp.drawAnim = abp.spellCastAnim
+}
+
+// Kneel sets kneel animtaion as current
+// draw animation.
+func (abp *AvatarBodyPart) Kneel() {
+	abp.drawAnim = abp.kneelAnim
 }
 
 // Lie sets lie animation as current draw
@@ -307,6 +319,29 @@ func buildCastAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
 	framesLeft := []*pixel.Sprite{
 		pixel.NewSprite(spritesheet, pixel.R(560, 0, 640, 90)),
 		pixel.NewSprite(spritesheet, pixel.R(640, 0, 720, 90)),
+	}
+	animLeft := mtk.NewAnimation(framesLeft, animFPS)
+	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)
+	return anim
+}
+
+// buildKneelAnim creates kneel animations for each directions with frames
+// form specified spritesheet.
+func buildKneelAnim(spritesheet pixel.Picture) *mtk.MultiAnimation {
+	framesUp := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(720, 270, 800, 360)),
+	}
+	animUp := mtk.NewAnimation(framesUp, animFPS)
+	framesRight := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(720, 180, 800, 270)),
+	}
+	animRight := mtk.NewAnimation(framesRight, animFPS)
+	framesDown := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(720, 90, 800, 180)),
+	}
+	animDown := mtk.NewAnimation(framesDown, animFPS)
+	framesLeft := []*pixel.Sprite{
+		pixel.NewSprite(spritesheet, pixel.R(720, 0, 800, 90)),
 	}
 	animLeft := mtk.NewAnimation(framesLeft, animFPS)
 	anim := mtk.NewMultiAnimation(animUp, animRight, animDown, animLeft)

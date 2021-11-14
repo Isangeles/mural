@@ -173,6 +173,8 @@ func (av *Avatar) Update(win *mtk.Window) {
 		case pos.Y > dest.Y:
 			av.sprite.Down()
 		}
+	case av.Live() && av.Agony():
+		av.sprite.Kneel()
 	case !av.Live():
 		av.sprite.Lie()
 	default:

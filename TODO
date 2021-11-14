@@ -1,7 +1,6 @@
 MAJOR:
 * HUD: map window
 * Graphical effects
-* Avatar: animations for kneel and lie
 * Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation
@@ -24,7 +23,7 @@ MINOR:
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment
-* Avatar: animations for idle, move, melee, range shoot and spell cast
+* Avatar animations
 * HUD: skills window
 * HUD: inventory window
 * HUD: menu bar

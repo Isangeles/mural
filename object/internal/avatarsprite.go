@@ -206,6 +206,20 @@ func (as *AvatarSprite) SpellCast() {
 	as.torso.SpellCast()
 }
 
+// Kneel sets kneel animations as current draw
+// animtaions.
+func (as *AvatarSprite) Kneel() {
+	if as.weapon != nil {
+		as.weapon.Kneel()
+	}
+	if as.fullBody != nil {
+		as.fullBody.Kneel()
+		return
+	}
+	as.head.Kneel()
+	as.torso.Kneel()
+}
+
 // Lie sets lie animations as current draw
 // animtaions.
 func (as *AvatarSprite) Lie() {

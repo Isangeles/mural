@@ -96,6 +96,7 @@ func (abp *AvatarBodyPart) Up() {
 	abp.spellCastAnim.Up()
 	abp.craftCastAnim.Up()
 	abp.kneelAnim.Up()
+	abp.lieAnim.Up()
 }
 
 // Right turns current animataion right.
@@ -107,6 +108,7 @@ func (abp *AvatarBodyPart) Right() {
 	abp.spellCastAnim.Right()
 	abp.craftCastAnim.Right()
 	abp.kneelAnim.Right()
+	abp.lieAnim.Right()
 }
 
 // Down turns current animataion down.
@@ -118,6 +120,7 @@ func (abp *AvatarBodyPart) Down() {
 	abp.spellCastAnim.Down()
 	abp.craftCastAnim.Down()
 	abp.kneelAnim.Down()
+	abp.lieAnim.Down()
 }
 
 // Left turns current animataion left.
@@ -129,6 +132,7 @@ func (abp *AvatarBodyPart) Left() {
 	abp.spellCastAnim.Left()
 	abp.craftCastAnim.Left()
 	abp.kneelAnim.Left()
+	abp.lieAnim.Left()
 }
 
 // Idle sets idle animation as current

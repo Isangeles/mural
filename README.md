@@ -162,15 +162,15 @@ Description: exits program.
 
   Save HUD state:
 ```
-guiimport -o gui-state -a [save name]
+guiimport -o hud -a [save name]
 ```
-Description: saves current HUD state to file in current `/savegames` directory(`/savegames/[module]`).
+Description: saves current HUD state to file in `data/[module]/mural/saves` directory.
 
   Load HUD state:
 ```
-guiexport -o gui-state -a [save name]
+guiexport -o hud -a [save name]
 ```
-Description: load HUD state from file in current `/savegames` directory(`/savegames/[module]`).
+Description: load HUD state from file in `data/[module]/mural/saves` directory.
 
 Mute music:
 ```
@@ -180,7 +180,7 @@ Description: mutes/unmutes GUI music player.
 
 Set music volume:
 ```
-guiaudio -o set-volue -a [value]
+guiaudio -o set-volume -a [value]
 ```
 Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
@@ -215,7 +215,7 @@ After you finish, open a pull request to merge your changes with master branch.
 * Isangeles <<dev@isangeles.pl>>
 
 ## License
-Copyright 2018-2021 Dariusz Sikora <<dev@isangeles.pl>>
+Copyright 2018-2022 Dariusz Sikora <<dev@isangeles.pl>>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

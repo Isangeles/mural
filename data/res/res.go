@@ -1,7 +1,7 @@
 /*
  * res.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,14 @@
 package res
 
 import (
+	"sync"
+
 	flameres "github.com/isangeles/flame/data/res"
 )
 
 var (
-	avatars          map[string]*AvatarData
-	objects          map[string]*ObjectGraphicData
+	avatars          *sync.Map
+	objects          *sync.Map
 	items            map[string]*ItemGraphicData
 	effects          map[string]*EffectGraphicData
 	skills           map[string]*SkillGraphicData
@@ -40,8 +42,8 @@ var (
 
 // On init.
 func init() {
-	avatars = make(map[string]*AvatarData)
-	objects = make(map[string]*ObjectGraphicData)
+	avatars = new(sync.Map)
+	objects = new(sync.Map)
 	items = make(map[string]*ItemGraphicData)
 	effects = make(map[string]*EffectGraphicData)
 	skills = make(map[string]*SkillGraphicData)
@@ -51,13 +53,21 @@ func init() {
 // Avatar returns avatar data for character
 // with specified ID.
 func Avatar(id string) *AvatarData {
-	return avatars[id]
+	ad, ok := avatars.Load(id)
+	if !ok {
+		return nil
+	}
+	return ad.(*AvatarData)
 }
 
 // Object returns object graphic data for
 // object with specified ID.
 func Object(id string) *ObjectGraphicData {
-	return objects[id]
+	ogd, ok := objects.Load(id)
+	if !ok {
+		return nil
+	}
+	return ogd.(*ObjectGraphicData)
 }
 
 // Item returns graphic data for item
@@ -80,17 +90,27 @@ func Skill(id string) *SkillGraphicData {
 
 // Avatars returns all avatars resources.
 func Avatars() (data []AvatarData) {
-	for _, ad := range avatars {
-		data = append(data, *ad)
+	addAvatar := func(k, v interface{}) bool {
+		ad, ok := v.(*AvatarData)
+		if ok {
+			data = append(data, *ad)
+		}
+		return true
 	}
+	avatars.Range(addAvatar)
 	return
 }
 
 // Objects returns all object graphic resources.
 func Objects() (data []ObjectGraphicData) {
-	for _, od := range objects {
-		data = append(data, *od)
+	addObject := func(k, v interface{}) bool {
+		ogd, ok := v.(*ObjectGraphicData)
+		if ok {
+			data = append(data, *ogd)
+		}
+		return true
 	}
+	objects.Range(addObject)
 	return
 }
 
@@ -130,7 +150,7 @@ func TranslationBases() (data []*flameres.TranslationBaseData) {
 // avatars resources.
 func SetAvatars(data []AvatarData) {
 	for i, _ := range data {
-		avatars[data[i].ID] = &data[i]
+		avatars.Store(data[i].ID, &data[i])
 	}
 }
 
@@ -138,7 +158,7 @@ func SetAvatars(data []AvatarData) {
 // recources data.
 func SetObjects(data []ObjectGraphicData) {
 	for i, _ := range data {
-		objects[data[i].ID] = &data[i]
+		objects.Store(data[i].ID, &data[i])
 	}
 }
 

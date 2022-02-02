@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ import (
 
 	"github.com/isangeles/mtk"
 
-	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
@@ -90,12 +89,12 @@ type HUD struct {
 }
 
 // New creates new HUD instance.
-func New() *HUD {
+func New(win *mtk.Window) *HUD {
 	hud := new(HUD)
 	// Loading screen.
 	hud.loadScreen = newLoadingScreen(hud)
 	// Camera.
-	hud.camera = newCamera(hud, config.Resolution)
+	hud.camera = newCamera(hud, win.Bounds().Size())
 	// Active player & target frames.
 	hud.pcFrame = newObjectFrame(hud)
 	hud.tarFrame = newObjectFrame(hud)

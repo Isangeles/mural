@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ import (
 )
 
 var (
+	win        *mtk.Window
 	mainMenu   *mainmenu.MainMenu
 	pcHUD      *hud.HUD
 	mod        *flame.Module
@@ -121,7 +122,8 @@ func run() {
 	if config.Fullscreen {
 		winConfig.Monitor = pixelgl.PrimaryMonitor()
 	}
-	win, err := mtk.NewWindow(winConfig)
+	var err error
+	win, err = mtk.NewWindow(winConfig)
 	if err != nil {
 		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
@@ -215,7 +217,7 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	defer mainMenu.CloseLoadingScreen()
 	activeGame = g
 	// Create HUD.
-	hud := hud.New()
+	hud := hud.New(win)
 	// Set HUD.
 	setHUD(hud)
 	// Load GUI data.

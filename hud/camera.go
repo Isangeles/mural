@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +142,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	if c.areaMap == nil {
 		return
 	}
+	c.size = win.Bounds().Size()
 	c.updateAreaObjects()
 	if !c.locked {
 		mSize := c.areaMap.Size()

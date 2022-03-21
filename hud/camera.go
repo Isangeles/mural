@@ -216,7 +216,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	}
 	// Set map.
 	chapter := c.hud.game.Chapter()
-	mapPath := filepath.Join(chapter.Module().Conf().Path, data.GUIModulePath,
+	mapPath := filepath.Join(chapter.Module().Conf().Path, config.ModuleGUIDir,
 		"chapters", chapter.ID(), "areas", a.ID(), "map.tmx")
 	areaMap, err := stone.NewMap(mapPath)
 	if err != nil {

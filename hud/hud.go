@@ -41,6 +41,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
@@ -446,7 +447,7 @@ func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 func (hud *HUD) runAreaScripts(a *area.Area) {
 	// Retrive scripts.
 	mod := hud.Game().Module
-	path := filepath.Join(mod.Conf().Path, data.GUIModulePath, "chapters",
+	path := filepath.Join(mod.Conf().Path, config.ModuleGUIDir, "chapters",
 		mod.Chapter().ID(), "areas", a.ID(), "scripts")
 	scripts, err := data.ScriptsDir(path)
 	if err != nil {

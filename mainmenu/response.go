@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import (
 
 	"github.com/isangeles/fire/response"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
@@ -84,7 +85,7 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 	gameWrapper := game.New(m)
 	gameWrapper.SetServer(mm.server)
 	// Import saved HUD state.
-	hudPath := filepath.Join(mm.mod.Conf().Path, data.SavesModulePath,
+	hudPath := filepath.Join(mm.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir,
 		resp.Save+data.HUDFileExt)
 	hud, err := data.ImportHUD(hudPath)
 	if err != nil {

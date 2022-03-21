@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	// Clear list.
 	lgm.savesList.Clear()
 	// Check if saves dir exists.
-	path := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath)
+	path := filepath.Join(lgm.mainmenu.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir)
 	_, err := os.ReadDir(path)
 	if err != nil {
 		return nil
@@ -187,7 +187,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	m := flame.NewModule(modData)
 	gameWrapper := game.New(m)
 	// Import HUD state.
-	hudPath := filepath.Join(lgm.mainmenu.mod.Conf().Path, data.SavesModulePath,
+	hudPath := filepath.Join(lgm.mainmenu.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir,
 		saveName+data.HUDFileExt)
 	hud, err := data.ImportHUD(hudPath)
 	if err != nil {

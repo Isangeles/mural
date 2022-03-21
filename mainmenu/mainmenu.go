@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,7 +324,7 @@ func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 
 // ImportPlayableChars import all characters from current module.
 func (mm *MainMenu) ImportPlayableChars() error {
-	avatarsPath := filepath.Join("data/modules", mm.mod.Conf().ID, data.GUIModulePath, "avatars")
+	avatarsPath := filepath.Join("data/modules", mm.mod.Conf().ID, config.ModuleGUIDir, "avatars")
 	avsData, err := data.ImportAvatarsDir(avatarsPath)
 	if err != nil {
 		return fmt.Errorf("unable to import avatars: %v", err)

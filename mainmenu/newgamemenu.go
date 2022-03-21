@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,21 +200,21 @@ func (ngm *NewGameMenu) exportChar() error {
 		return fmt.Errorf("unable to retrieve character data from switch")
 	}
 	// Character.
-	conf := ngm.mainmenu.mod.Conf()
-	path := filepath.Join(conf.CharactersPath(), pcData.ID)
+	modConf := ngm.mainmenu.mod.Conf()
+	path := filepath.Join(modConf.CharactersPath(), pcData.ID)
 	err := flamedata.ExportCharacters(path, pcData.CharacterData)
 	if err != nil {
 		return fmt.Errorf("unable to export characters: %v", err)
 	}
 	// Avatar.
-	avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
+	avatarsPath := filepath.Join(modConf.Path, config.ModuleGUIDir,
 		"avatars", pcData.ID)
 	err = data.ExportAvatars(avatarsPath, pcData.Avatar)
 	if err != nil {
 		return fmt.Errorf("unable to export avatar: %v", err)
 	}
 	// Name.
-	langPath := filepath.Join(conf.LangPath(), config.Lang, pcData.ID)
+	langPath := filepath.Join(modConf.LangPath(), config.Lang, pcData.ID)
 	name, ok := lang.Translation(pcData.ID)
 	if !ok {
 		return nil

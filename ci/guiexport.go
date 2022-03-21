@@ -1,7 +1,7 @@
 /*
  * guiexport.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import (
 	
 	"github.com/isangeles/burn"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 )
 
@@ -48,8 +49,8 @@ func guiexport(cmd burn.Command) (int, string) {
 		}
 		for _, av := range guiHUD.Camera().Avatars() {
 			if av.ID()+"#"+av.Serial() == cmd.TargetArgs()[0] {
-				conf := guiHUD.Game().Conf()
-				avatarsPath := filepath.Join(conf.Path, data.GUIModulePath,
+				gameConf := guiHUD.Game().Conf()
+				avatarsPath := filepath.Join(gameConf.Path, config.ModuleGUIDir,
 					"avatars", av.ID())
 				err := data.ExportAvatars(avatarsPath, av.Data())
 				if err != nil {
@@ -69,8 +70,8 @@ func guiexport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
 		name := cmd.Args()[0]
-		path := filepath.Join(guiHUD.Game().Conf().Path,
-			data.SavesModulePath, name + data.HUDFileExt)
+		path := filepath.Join(guiHUD.Game().Conf().Path, config.ModuleGUIDir,
+			data.SavesDir, name + data.HUDFileExt)
 		hudData := guiHUD.Data()
 		err := data.ExportHUD(hudData, path)
 		if err != nil {

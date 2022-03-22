@@ -47,7 +47,7 @@ var (
 	Lang             = "english"
 	Module           = ""
 	ModulesPath      = "data/modules"
-	ModuleGUIDir     = "mural"
+	GUIPath          = ""
 	Debug            = true
 	Fullscreen       = false
 	MapFOW           = true
@@ -81,6 +81,7 @@ func Load() error {
 	// Module.
 	if len(conf["module"]) > 0 {
 		Module = conf["module"][0]
+		GUIPath = filepath.Join(ModulesPath, Module, "mural")
 	}
 	// Debug.
 	if len(conf["debug"]) > 0 {

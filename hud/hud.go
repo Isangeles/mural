@@ -447,8 +447,8 @@ func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 func (hud *HUD) runAreaScripts(a *area.Area) {
 	// Retrive scripts.
 	mod := hud.Game().Module
-	path := filepath.Join(mod.Conf().Path, config.ModuleGUIDir, "chapters",
-		mod.Chapter().ID(), "areas", a.ID(), "scripts")
+	path := filepath.Join(config.GUIPath, "chapters", mod.Chapter().ID(), "areas", a.ID(),
+		"scripts")
 	scripts, err := data.ScriptsDir(path)
 	if err != nil {
 		log.Err.Printf("hud: run area scripts: fail to retrieve scripts: %v", err)

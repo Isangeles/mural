@@ -324,7 +324,7 @@ func (mm *MainMenu) AddPlayableChar(c PlayableCharData) {
 
 // ImportPlayableChars import all characters from current module.
 func (mm *MainMenu) ImportPlayableChars() error {
-	avatarsPath := filepath.Join("data/modules", mm.mod.Conf().ID, config.ModuleGUIDir, "avatars")
+	avatarsPath := filepath.Join(config.GUIPath, "avatars")
 	avsData, err := data.ImportAvatarsDir(avatarsPath)
 	if err != nil {
 		return fmt.Errorf("unable to import avatars: %v", err)

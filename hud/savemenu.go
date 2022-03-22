@@ -211,7 +211,7 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Check if saves dir exists.
-	path := filepath.Join(sm.hud.Game().Conf().Path, config.ModuleGUIDir, data.SavesDir)
+	path := filepath.Join(config.GUIPath, data.SavesDir)
 	_, err := os.ReadDir(path)
 	if err != nil {
 		return nil
@@ -257,7 +257,7 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 // Save saves GUI and module state.
 func (sm *SaveMenu) save(saveName string) error {
 	// Save HUD.
-	hudPath := filepath.Join(sm.hud.Game().Conf().Path, config.ModuleGUIDir, data.SavesDir,
+	hudPath := filepath.Join(config.GUIPath, data.SavesDir,
 		saveName+data.HUDFileExt)
 	err := data.ExportHUD(sm.hud.Data(), hudPath)
 	if err != nil {

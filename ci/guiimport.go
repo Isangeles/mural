@@ -48,8 +48,7 @@ func guiimport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s: no HUD set", GUIImport)
 		}
 		name := cmd.Args()[0] + data.HUDFileExt
-		path := filepath.Join(guiHUD.Game().Conf().Path, config.ModuleGUIDir,
-			data.SavesDir, name)
+		path := filepath.Join(config.GUIPath, data.SavesDir, name)
 		data, err := data.ImportHUD(path)
 		if err != nil {
 			return 3, fmt.Sprintf("%s: unable to import HUD: %v",

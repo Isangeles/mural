@@ -85,8 +85,7 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 	gameWrapper := game.New(m)
 	gameWrapper.SetServer(mm.server)
 	// Import saved HUD state.
-	hudPath := filepath.Join(mm.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir,
-		resp.Save+data.HUDFileExt)
+	hudPath := filepath.Join(config.GUIPath, data.SavesDir, resp.Save+data.HUDFileExt)
 	hud, err := data.ImportHUD(hudPath)
 	if err != nil {
 		log.Err.Printf("Main menu: handle load response: unable to import HUD: %v", err)

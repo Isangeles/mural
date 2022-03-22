@@ -81,8 +81,7 @@ func main() {
 	}
 	setModule(modData)
 	// Load GUI graphic data.
-	guiPath := filepath.Join(mod.Conf().Path, config.ModuleGUIDir)
-	err = data.LoadModuleData(guiPath)
+	err = data.LoadModuleData(config.GUIPath)
 	if err != nil {
 		panic(fmt.Errorf("unable to load game graphic data: %v", err))
 	}
@@ -222,8 +221,7 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	// Set HUD.
 	setHUD(hud)
 	// Load GUI data.
-	guiPath := filepath.Join(activeGame.Conf().Path, config.ModuleGUIDir)
-	chapterGUIPath := filepath.Join(guiPath, "chapters", activeGame.Chapter().Conf().ID)
+	chapterGUIPath := filepath.Join(config.GUIPath, "chapters", activeGame.Chapter().Conf().ID)
 	err := data.LoadChapterData(chapterGUIPath)
 	if err != nil {
 		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
@@ -240,7 +238,7 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	}
 	inGame = true
 	// Run module scripts.
-	scriptsPath := filepath.Join(guiPath, "scripts/run")
+	scriptsPath := filepath.Join(config.GUIPath, "scripts/run")
 	scripts, err := data.ScriptsDir(scriptsPath)
 	if err != nil {
 		log.Err.Printf("enter game: unable to retrieve module scripts: %v", err)

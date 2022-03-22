@@ -145,7 +145,7 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	// Clear list.
 	lgm.savesList.Clear()
 	// Check if saves dir exists.
-	path := filepath.Join(lgm.mainmenu.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir)
+	path := filepath.Join(config.GUIPath, data.SavesDir)
 	_, err := os.ReadDir(path)
 	if err != nil {
 		return nil
@@ -187,8 +187,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 	m := flame.NewModule(modData)
 	gameWrapper := game.New(m)
 	// Import HUD state.
-	hudPath := filepath.Join(lgm.mainmenu.mod.Conf().Path, config.ModuleGUIDir, data.SavesDir,
-		saveName+data.HUDFileExt)
+	hudPath := filepath.Join(config.GUIPath, data.SavesDir, saveName+data.HUDFileExt)
 	hud, err := data.ImportHUD(hudPath)
 	if err != nil {
 		return fmt.Errorf("unable to import HUD: %v", err)

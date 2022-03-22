@@ -49,9 +49,7 @@ func guiexport(cmd burn.Command) (int, string) {
 		}
 		for _, av := range guiHUD.Camera().Avatars() {
 			if av.ID()+"#"+av.Serial() == cmd.TargetArgs()[0] {
-				gameConf := guiHUD.Game().Conf()
-				avatarsPath := filepath.Join(gameConf.Path, config.ModuleGUIDir,
-					"avatars", av.ID())
+				avatarsPath := filepath.Join(config.GUIPath, "avatars", av.ID())
 				err := data.ExportAvatars(avatarsPath, av.Data())
 				if err != nil {
 					return 3, fmt.Sprintf("unable to export avatar: %v", err)
@@ -70,8 +68,7 @@ func guiexport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
 		name := cmd.Args()[0]
-		path := filepath.Join(guiHUD.Game().Conf().Path, config.ModuleGUIDir,
-			data.SavesDir, name + data.HUDFileExt)
+		path := filepath.Join(config.GUIPath, data.SavesDir, name + data.HUDFileExt)
 		hudData := guiHUD.Data()
 		err := data.ExportHUD(hudData, path)
 		if err != nil {

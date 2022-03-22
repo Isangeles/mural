@@ -1,7 +1,7 @@
 /*
  * newcharactermenu.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,17 +26,19 @@ package mainmenu
 import (
 	"fmt"
 	"math/rand"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame/character"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/character"
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
@@ -106,7 +108,8 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	}
 	ncm.faceSwitch = mtk.NewSwitch(faceSwitchParams)
 	ncm.faceSwitch.SetLabel(lang.Text("newchar_face_switch_label"))
-	faces, err := data.PlayablePortraits()
+	portraitsPath := filepath.Join(config.GUIPath, "portraits")
+	faces, err := data.Pictures(portraitsPath)
 	if err != nil {
 		log.Err.Printf("new char menu: unable to retrieve player portraits: %v", err)
 

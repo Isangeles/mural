@@ -41,6 +41,7 @@ import (
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/audio"
 	"github.com/isangeles/mural/data/res/graphic"
+	"github.com/isangeles/mural/log"
 )
 
 const (
@@ -49,13 +50,10 @@ const (
 	ErrorIcon  = "unknown.png"
 )
 
-var guiPath string
-
 // LoadModuleData loads graphic data from specified path.
 // Should be called by GUI before creating any
 // in-game elements.
 func LoadModuleData(path string) (err error) {
-	guiPath = path
 	// GUI textures.
 	graphicArchPath := filepath.Join(path, "graphic.zip")
 	graphic.Textures, err = loadPicturesFromArch(graphicArchPath, "texture")
@@ -155,23 +153,24 @@ func LoadChapterData(path string) error {
 	return nil
 }
 
-// PlayablePortraits returns map with names of portraits as keys
-// and portraits pictures as values avalible for player character.
-func PlayablePortraits() (map[string]pixel.Picture, error) {
-	files, err := os.ReadDir(filepath.Join(guiPath, "portraits"))
+// Pictures loads all pictures from specified path and returns
+// map with file names as keys and pictures as values.
+func Pictures(path string) (map[string]pixel.Picture, error) {
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	portraits := make(map[string]pixel.Picture)
-	for _, f := range files {
-		if !f.IsDir() {
-			img, err := loadPictureFromDir(filepath.FromSlash(
-				guiPath + "/" + f.Name()))
-			if err != nil {
-				continue
-			}
-			portraits[f.Name()] = img
+	for _, file := range files {
+		if file.IsDir() {
+			continue
 		}
+		img, err := loadPictureFromDir(filepath.Join(path, file.Name()))
+		if err != nil {
+			log.Err.Printf("Data pictures: unable to load picture: %v", err)
+			continue
+		}
+		portraits[file.Name()] = img
 	}
 	return portraits, nil
 }

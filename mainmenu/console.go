@@ -1,7 +1,7 @@
 /*
  * console.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ package mainmenu
 
 import (
 	"fmt"
-	
+	"strings"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
@@ -41,6 +42,8 @@ import (
 
 	"github.com/isangeles/mural/log"
 )
+
+var guiCommandPrefix = "gui"
 
 // Struct for game console.
 type Console struct {
@@ -141,7 +144,7 @@ func (c *Console) onTexteditInput(t *mtk.Textedit) {
 	c.lastInput = input
 	defer t.Clear()
 	// Execute command.
-	if c.mainmenu.server != nil {
+	if !strings.HasPrefix(input, guiCommandPrefix) && c.mainmenu.server != nil {
 		req := request.Request{Command: []string{input}}
 		err := c.mainmenu.server.Send(req)
 		if err != nil {
@@ -150,7 +153,7 @@ func (c *Console) onTexteditInput(t *mtk.Textedit) {
 		}
 		return
 	}
-	res, out, err := executeCommand(input) 
+	res, out, err := executeCommand(input)
 	if err != nil {
 		log.Err.Printf("fail to execute command: '%s'", input)
 	}

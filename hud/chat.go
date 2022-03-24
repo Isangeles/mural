@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ import (
 var (
 	chatKey           = pixelgl.KeyGraveAccent
 	chatCommandPrefix = "$"
+	guiCommandPrefix  = "gui"
 	chatScriptPrefix  = "%"
 )
 
@@ -275,7 +276,7 @@ func (c *Chat) onTexteditInput(t *mtk.Textedit) {
 	// Execute command.
 	if strings.HasPrefix(input, chatCommandPrefix) {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)
-		if c.hud.Game().Server() != nil {
+		if !strings.HasPrefix(cmdInput, guiCommandPrefix) && c.hud.Game().Server() != nil {
 			req := request.Request{Command: []string{cmdInput}}
 			err := c.hud.Game().Server().Send(req)
 			if err != nil {

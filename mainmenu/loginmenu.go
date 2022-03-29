@@ -1,7 +1,7 @@
 /*
  * loginmenu.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,12 @@ func newLoginMenu(mainmenu *MainMenu) *LoginMenu {
 	lm.passLabel = mtk.NewText(labelParams)
 	lm.passLabel.SetText(lang.Text("login_menu_pass_label"))
 	// Text edit fields.
-	lm.loginEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
-	lm.passEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
+	texteditParams := mtk.Params{
+		FontSize:  mtk.SizeMedium,
+		MainColor: mainColor,
+	}
+	lm.loginEdit = mtk.NewTextedit(texteditParams)
+	lm.passEdit = mtk.NewTextedit(texteditParams)
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,

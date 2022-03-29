@@ -93,7 +93,11 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.nameLabel = mtk.NewText(labelParams)
 	nameLabelText := lang.Text("newchar_name_edit_label")
 	ncm.nameLabel.SetText(fmt.Sprintf("%s", nameLabelText))
-	ncm.nameEdit = mtk.NewTextedit(mtk.SizeMedium, mainColor)
+	texteditParams := mtk.Params{
+		FontSize:  mtk.SizeMedium,
+		MainColor: mainColor,
+	}
+	ncm.nameEdit = mtk.NewTextedit(texteditParams)
 	// Points box.
 	pointsBoxSize := mtk.SizeMedium.ButtonSize(mtk.ShapeRectangle)
 	pointsBoxParams := mtk.Params{

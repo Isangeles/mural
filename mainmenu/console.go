@@ -29,7 +29,6 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 
 	flamelog "github.com/isangeles/flame/log"
 
@@ -70,7 +69,7 @@ func newConsole(mainmenu *MainMenu) *Console {
 	}
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Text input.
-	c.textedit = mtk.NewTextedit(mtk.SizeMedium, colornames.Grey)
+	c.textedit = mtk.NewTextedit(textboxParams)
 	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }

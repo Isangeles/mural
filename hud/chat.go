@@ -114,7 +114,6 @@ func newChat(hud *HUD) *Chat {
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Textedit.
 	c.textedit = mtk.NewTextedit(textboxParams)
-	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }
 
@@ -137,8 +136,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (c *Chat) Update(win *mtk.Window) {
 	// Key events.
 	if win.JustPressed(chatKey) {
-		// Toggle chat activity.
-		c.Activate(!c.Activated())
+		c.onEnterPressed()
 	}
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
@@ -267,12 +265,19 @@ func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
 	return nil
 }
 
-// Triggered after accepting input in text edit.
-func (c *Chat) onTexteditInput(t *mtk.Textedit) {
+// Triggered after pressing the enter key.
+func (c *Chat) onEnterPressed() {
+	if !c.Activated() {
+		c.Activate(true)
+		return
+	} else if len(c.textedit.Text()) < 1 {
+		c.Activate(false)
+		return
+	}
 	// Save last input.
-	input := t.Text()
+	input := c.textedit.Text()
 	c.lastInput = input
-	defer t.Clear()
+	defer c.textedit.Clear()
 	// Execute command.
 	if strings.HasPrefix(input, chatCommandPrefix) {
 		cmdInput := strings.TrimPrefix(input, chatCommandPrefix)

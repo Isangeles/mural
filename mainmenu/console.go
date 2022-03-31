@@ -70,7 +70,6 @@ func newConsole(mainmenu *MainMenu) *Console {
 	c.textbox = mtk.NewTextbox(textboxParams)
 	// Text input.
 	c.textedit = mtk.NewTextedit(textboxParams)
-	c.textedit.SetOnInputFunc(c.onTexteditInput)
 	return c
 }
 
@@ -99,6 +98,9 @@ func (c *Console) Update(win *mtk.Window) {
 	}
 	if win.JustPressed(pixelgl.KeyUp) {
 		c.textedit.SetText(c.lastInput)
+	}
+	if win.JustPressed(pixelgl.KeyEnter) {
+		c.onEnterPressed()
 	}
 	// Textbox size & width.
 	boxSize := pixel.V(win.Bounds().W(), win.Bounds().H()/2)
@@ -135,13 +137,13 @@ func (c *Console) Echo(text string) {
 	log.Cli.Printf("%s", text)
 }
 
-// Triggered after accepting input in text edit.
-func (c *Console) onTexteditInput(t *mtk.Textedit) {
+// Triggered after pressing the enter key.
+func (c *Console) onEnterPressed() {
 	// Echo input to log.
-	input := t.Text()
+	input := c.textedit.Text()
 	c.Echo(input)
 	c.lastInput = input
-	defer t.Clear()
+	defer c.textedit.Clear()
 	// Execute command.
 	if !strings.HasPrefix(input, guiCommandPrefix) && c.mainmenu.server != nil {
 		req := request.Request{Command: []string{input}}

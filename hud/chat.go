@@ -51,7 +51,7 @@ import (
 )
 
 var (
-	chatKey           = pixelgl.KeyGraveAccent
+	chatKey           = pixelgl.KeyEnter
 	chatCommandPrefix = "$"
 	guiCommandPrefix  = "gui"
 	chatScriptPrefix  = "%"

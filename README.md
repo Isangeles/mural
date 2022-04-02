@@ -57,7 +57,7 @@ SPACE - pause game
 
 ESCAPE - open in-game menu
 
-~ - activate chat
+ENTER - activate/deactivate chat
 
 B - open inventory
 

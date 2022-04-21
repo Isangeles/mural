@@ -1,7 +1,7 @@
 /*
  * player.go
  *
- * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ import (
 
 	"github.com/isangeles/fire/request"
 
-	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 // Struct for game player.
@@ -211,12 +211,14 @@ func (p *Player) Unequip(it item.Equiper) {
 // Returns true, if none of specified requirements is a target range
 // requirement.
 func (p *Player) meetTargetRangeReqs(reqs ...req.Requirement) bool {
+	tarRangeReqs := make([]req.Requirement, 0)
 	for _, r := range reqs {
 		if r, ok := r.(*req.TargetRange); ok {
-			if !p.MeetReq(r) {
-				return false
-			}
+			tarRangeReqs = append(tarRangeReqs, r)
 		}
+	}
+	if !p.MeetReqs(tarRangeReqs...) {
+		return false
 	}
 	return true
 }

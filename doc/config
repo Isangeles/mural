@@ -1,8 +1,8 @@
-.TH .mural
-.SH NAME
-\[char46]mural - file for the interface configuration.
+.TH config
 .SH DESCRIPTION
-This file contains the interface configuration values.
+Mural offers many configuration values to customize GUI.
+.br
+Configuration values are loaded from `.mural` file in Mural executable directory.
 .br
 The configuration file is loaded by the interface on startup.
 .SH VALUES
@@ -33,7 +33,7 @@ Value 'true' enables fullscreen, everything else sets windowed mode.
 .P
 * resolution
 .br
-Specified current resolution.
+Specifies current resolution.
 .br
 Values are resolution width and height.
 .P

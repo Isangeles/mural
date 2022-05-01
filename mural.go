@@ -127,6 +127,7 @@ func run() {
 	if err != nil {
 		panic(fmt.Errorf("unable to create mtk window: %v", err))
 	}
+	win.SetMaxFPS(config.MaxFPS)
 	// UI Font.
 	uiFont := graphic.Fonts[config.MainFont]
 	if uiFont != nil {

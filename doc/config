@@ -37,6 +37,12 @@ Specifies current resolution.
 .br
 Values are resolution width and height.
 .P
+* max-fps
+.br
+Specifies maximal amount of FPS for GUI window.
+.br
+Value lower or equal to 0 will remove FPS limit.
+.P
 * map-fow
 .br
 Enables 'Fog of War' effect for an area map.

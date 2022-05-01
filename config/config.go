@@ -53,6 +53,7 @@ var (
 	MapFOW           = true
 	MapFull          = true
 	Resolution       pixel.Vec
+	MaxFPS           = 60
 	MainFont         = ""
 	MenuMusic        = ""
 	ButtonClickSound = ""
@@ -100,6 +101,13 @@ func Load() error {
 		Resolution.Y, err = strconv.ParseFloat(conf["resolution"][1], 64)
 		if err != nil {
 			log.Err.Printf("config: unable to set resolution y: %v", err)
+		}
+	}
+	// Max FPS.
+	if len(conf["max-fps"]) > 1 {
+		MaxFPS, err = strconv.Atoi(conf["max-fps"][0])
+		if err != nil {
+			log.Err.Printf("config: unable to set max FPS: %v", err)
 		}
 	}
 	// Graphic effects.
@@ -160,6 +168,7 @@ func Save() error {
 		fmt.Sprintf("%f", Resolution.X),
 		fmt.Sprintf("%f", Resolution.Y),
 	}
+	conf["max-fps"] = []string{fmt.Sprintf("%v", MaxFPS)}
 	conf["map-fow"] = []string{fmt.Sprintf("%v", MapFOW)}
 	conf["map-full"] = []string{fmt.Sprintf("%v", MapFull)}
 	conf["main-font"] = []string{MainFont}

@@ -88,51 +88,55 @@ Configuration values are loaded from `.mural` file in Mural executable directory
 ```
   lang:[language ID]
 ```
-Description: specifies game language, language ID is name of directory with translation files in lang directories.
+Specifies game language, language ID is name of directory with translation files in lang directories.
 ```
   module:[module ID]
 ```
-Description: specifies module from `data/modules` directory to load at start, module ID is ID specified in `.module` file inside main module directory.
+Specifies module from `data/modules` directory to load at start, module ID is ID specified in `.module` file inside main module directory.
 ```
   debug:[true/false]
 ```
-Description: enables engine debug mode(shows debug messages in engine log), 'true' enables mode, everything else sets mode disabled.
+Enables engine debug mode(shows debug messages in engine log), 'true' enables mode, everything else sets mode disabled.
 ```
   fullscreen:[true/false]
 ```
-Description: enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
+Enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
 ```
   resolution:[width];[height]
 ```
-Description: specifies current resolution.
+Specifies current resolution.
+```
+max-fps[FPS value]
+```
+Specifies maximal FPS for the window.
 ```
   map-fow:[true/false]
 ```
-Description: enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else sets FOW disabled.
+Enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else sets FOW disabled.
 ```
   main-font:[file name]
 ```
-Description: specifies name of font file(located in graphic archive) for main UI font.
+Specifies name of font file(located in graphic archive) for main UI font.
 ```
   music-volume:[int]
 ```
-Description: specifies game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
+Specifies game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
 ```
   menu-music:[file name]
 ```
-Description: specifies name of audio file(located in audio archive) for main menu music theme.
+Specifies name of audio file(located in audio archive) for main menu music theme.
 ```
   button-click-sound:[file name]
 ```
-Description: specifies name of audio file(located in audio archive) for button click sound.
+Specifies name of audio file(located in audio archive) for button click sound.
 ```
   server:[host];[port]
 ```
-Description: Specified server host and port for remote game server.
+Specified server host and port for remote game server.
 ```
   server-user:[login];[password]
 ```
-Description: Specifies user login and password for auto-login to the remote game server.
+Specifies user login and password for auto-login to the remote game server.
 
 ## Module directory
 All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/mural` directory.

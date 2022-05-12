@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,8 +330,8 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 		Info:      msg,
 	}
 	dlg := mtk.NewDialogWindow(dlgParams)
-	dlg.SetAcceptLabel(lang.Text("accept_b_label"))
-	dlg.SetCancelLabel(lang.Text("cancel_b_label"))
+	dlg.SetAcceptLabel(lang.Text("accept_button_label"))
+	dlg.SetCancelLabel(lang.Text("cancel_button_label"))
 	rmFunc := func(mw *mtk.MessageWindow) {
 		im.removeSlotItem(s)
 	}

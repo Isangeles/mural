@@ -31,11 +31,13 @@ import (
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/item"
 
+	"github.com/isangeles/fire/request"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/data/res/graphic"
-	"github.com/isangeles/mural/object"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 var (
@@ -304,17 +306,34 @@ func (im *InventoryMenu) draggedSlot() *mtk.Slot {
 	return nil
 }
 
-// removeSlotItem removes item from specified slot and
+// removeSlotItems removes all items from specified slot and
 // from PC inventory.
-func (im *InventoryMenu) removeSlotItem(s *mtk.Slot) {
+func (im *InventoryMenu) removeSlotItems(s *mtk.Slot) {
+	items := make(map[string][]string, 0)
 	for _, v := range s.Values() {
 		it, ok := v.(item.Item)
 		if !ok {
 			continue
 		}
+		items[it.ID()] = append(items[it.ID()], it.Serial())
 		im.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
 	}
 	s.Clear()
+	// Server request to remove items.
+	if im.hud.Game().Server() != nil {
+		pc := im.hud.Game().ActivePlayer()
+		throwItemsReq := request.ThrowItems{
+			ObjectID:     pc.ID(),
+			ObjectSerial: pc.Serial(),
+			Items:        items,
+		}
+		req := request.Request{ThrowItems: []request.ThrowItems{throwItemsReq}}
+		err := im.hud.Game().Server().Send(req)
+		if err != nil {
+			log.Err.Printf("HUD: Inventory Menu: unable to send throw items request: %v",
+				err)
+		}
+	}
 }
 
 // confirmRemove shows warning message and removes content
@@ -333,7 +352,7 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 	dlg.SetAcceptLabel(lang.Text("accept_button_label"))
 	dlg.SetCancelLabel(lang.Text("cancel_button_label"))
 	rmFunc := func(mw *mtk.MessageWindow) {
-		im.removeSlotItem(s)
+		im.removeSlotItems(s)
 	}
 	dlg.SetOnAcceptFunc(rmFunc)
 	im.hud.ShowMessage(dlg)

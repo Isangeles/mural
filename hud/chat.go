@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,6 @@ type Chat struct {
 	drawArea     pixel.Rect
 	textbox      *mtk.Textbox
 	textedit     *mtk.Textedit
-	msgs         map[string]*flamelog.Message
 	activated    bool
 	lastInput    string
 	onScriptName func(name string, args ...string) error
@@ -95,7 +94,6 @@ func (mbt MessagesByTime) Less(i, j int) bool { return mbt[i].time.UnixNano() < 
 func newChat(hud *HUD) *Chat {
 	c := new(Chat)
 	c.hud = hud
-	c.msgs = make(map[string]*flamelog.Message)
 	// Background.
 	c.bgDraw = imdraw.New(nil)
 	bg := graphic.Textures["chatbg.png"]

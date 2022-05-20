@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.dev>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,56 +139,8 @@ func (c *Chat) Update(win *mtk.Window) {
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
 	c.textbox.Clear()
-	// Add messages from players and nearby objects.
-	messages := make([]Message, 0)
-	for _, pc := range c.hud.Game().Players() {
-		// PC's private messages.
-		for _, lm := range pc.PrivateLog().Messages() {
-			m := Message{
-				author: pc.ID(),
-				time:   lm.Time(),
-				text:   fmt.Sprintf("%s\n", lm.String()),
-			}
-			if !lm.Translated {
-				m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
-			}
-			messages = append(messages, m)
-		}
-		// Near objects chat & combat.
-		area := c.hud.Game().Chapter().CharacterArea(pc.Character)
-		if area == nil {
-			continue
-		}
-		for _, tar := range area.NearTargets(pc.Character, pc.SightRange()) {
-			log, ok := tar.(objects.Logger)
-			if !ok {
-				continue
-			}
-			for _, lm := range log.ChatLog().Messages() {
-				m := Message{
-					author: log.ID(),
-					time:   lm.Time(),
-					text:   fmt.Sprintf("%s\n", lm.String()),
-				}
-				if !lm.Translated {
-					m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
-				}
-				messages = append(messages, m)
-			}
-			cmbLog := c.combatLogger(log)
-			if cmbLog == nil {
-				continue
-			}
-			for _, m := range cmbLog.CombatLog().Messages() {
-				m := Message{
-					author: log.ID(),
-					time:   m.Time(),
-					text:   fmt.Sprintf("%s\n", m.String()),
-				}
-				messages = append(messages, m)
-			}
-		}
-	}
+	// Get messages from players and nearby objects.
+	messages := c.nearMessages()
 	// Add engine log messages.
 	for _, m := range flamelog.Messages() {
 		m := Message{
@@ -244,6 +196,61 @@ func (c *Chat) Activate(active bool) {
 // Echo displays specified text in chat log.
 func (c *Chat) Echo(text string) {
 	log.Inf.Printf("%s", text)
+}
+
+// nearMessages returns all messages from the player
+// characters and objects near to any of the player
+// characters.
+func (c *Chat) nearMessages() (messages []Message) {
+	for _, pc := range c.hud.Game().Players() {
+		// PC's private messages.
+		for _, lm := range pc.PrivateLog().Messages() {
+			m := Message{
+				author: pc.ID(),
+				time:   lm.Time(),
+				text:   fmt.Sprintf("%s\n", lm.String()),
+			}
+			if !lm.Translated {
+				m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
+			}
+			messages = append(messages, m)
+		}
+		// Near objects chat & combat.
+		area := c.hud.Game().Chapter().CharacterArea(pc.Character)
+		if area == nil {
+			continue
+		}
+		for _, tar := range area.NearTargets(pc.Character, pc.SightRange()) {
+			log, ok := tar.(objects.Logger)
+			if !ok {
+				continue
+			}
+			for _, lm := range log.ChatLog().Messages() {
+				m := Message{
+					author: log.ID(),
+					time:   lm.Time(),
+					text:   fmt.Sprintf("%s\n", lm.String()),
+				}
+				if !lm.Translated {
+					m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
+				}
+				messages = append(messages, m)
+			}
+			cmbLog := c.combatLogger(log)
+			if cmbLog == nil {
+				continue
+			}
+			for _, m := range cmbLog.CombatLog().Messages() {
+				m := Message{
+					author: log.ID(),
+					time:   m.Time(),
+					text:   fmt.Sprintf("%s\n", m.String()),
+				}
+				messages = append(messages, m)
+			}
+		}
+	}
+	return
 }
 
 // combatLogger retruns returns object with combat

@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,10 @@ func main() {
 	// Load GUI config.
 	err := config.Load()
 	if err != nil {
-		log.Err.Printf("unable to load config file: %v", err)
-		config.Save() // save default config to the config file
+		err = config.Save() // save default config
+		if err != nil {
+			log.Err.Printf("Unable to save default config: %v", err)
+		}
 	}
 	log.PrintStdOut(config.Debug)
 	// Import module.

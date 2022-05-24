@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +84,9 @@ func Load() error {
 		Module = conf["module"][0]
 		GUIPath = filepath.Join(ModulesPath, Module, "mural")
 	}
+	if len(conf["gui-path"]) > 0 {
+		GUIPath = conf["gui-path"][0]
+	}
 	// Debug.
 	if len(conf["debug"]) > 0 {
 		Debug = conf["debug"][0] == "true"
@@ -162,6 +165,7 @@ func Save() error {
 	conf := make(map[string][]string)
 	conf["lang"] = []string{Lang}
 	conf["module"] = []string{Module}
+	conf["gui-path"] = []string{GUIPath}
 	conf["debug"] = []string{fmt.Sprintf("%v", Debug)}
 	conf["fullscreen"] = []string{fmt.Sprintf("%v", Fullscreen)}
 	conf["resolution"] = []string{

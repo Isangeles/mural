@@ -19,6 +19,12 @@ Specifies module from `data/modules` directory to load at start.
 .br
 Value is an ID specified in `.module` file inside main module directory.
 .P
+* gui-path
+.br
+Specifies path to the directory with GUI data files.
+.br
+Path is relative path to the GUI executable file.
+.P
 * debug
 .br
 Enables engine debug mode(shows debug messages in engine log).
@@ -86,6 +92,7 @@ First value is for login, second for password.
 .nf
 lang:english
 module:test
+gui-path:data/modules/test/mural
 debug:false
 fullscreen:true
 resolution:1920;1080

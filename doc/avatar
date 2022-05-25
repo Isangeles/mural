@@ -1,0 +1,7 @@
+.TH Avatar
+.SH DESCRIPTION
+Avatar is a graphical representation of the game character.
+.br
+Avatars are stored in the 'avatars' directories inside GUI data directory, one directory for module and one for each chapter.
+.br
+Avatars for exported characters(export from new game menu) are saved inside the module 'avatars' directory.

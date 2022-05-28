@@ -1,7 +1,7 @@
 /*
  * dialogwindow.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,11 +109,13 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
 		dw.answersList.SetUpButtonBackground(upBG)
+		dw.chatBox.SetUpButtonBackground(upBG)
 	}
 	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
 		dw.answersList.SetDownButtonBackground(downBG)
+		dw.chatBox.SetDownButtonBackground(downBG)
 	}
 	dw.answersList.SetOnItemSelectFunc(dw.onAnswerSelected)
 	return dw

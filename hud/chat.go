@@ -110,6 +110,16 @@ func newChat(hud *HUD) *Chat {
 		AccentColor: accentColor,
 	}
 	c.textbox = mtk.NewTextbox(textboxParams)
+	upButtonTex := graphic.Textures["scrollup.png"]
+	if upButtonTex != nil {
+		upSprite := pixel.NewSprite(upButtonTex, upButtonTex.Bounds())
+		c.textbox.SetUpButtonBackground(upSprite)
+	}
+	downButtonTex := graphic.Textures["scrolldown.png"]
+	if downButtonTex != nil {
+		downSprite := pixel.NewSprite(downButtonTex, downButtonTex.Bounds())
+		c.textbox.SetDownButtonBackground(downSprite)
+	}
 	// Textedit.
 	c.textedit = mtk.NewTextedit(textboxParams)
 	return c

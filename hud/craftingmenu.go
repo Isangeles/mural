@@ -1,7 +1,7 @@
 /*
  * craftingmenu.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,15 +128,18 @@ func newCraftingMenu(hud *HUD) *CraftingMenu {
 		SecColor:    secColor,
 		AccentColor: accentColor,
 	}
+	// Buttons.
 	cm.recipesList = mtk.NewList(recipesParams)
 	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG, upButtonBG.Bounds())
+		cm.recipeInfo.SetUpButtonBackground(upBG)
 		cm.recipesList.SetUpButtonBackground(upBG)
 	}
 	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG, downButtonBG.Bounds())
+		cm.recipeInfo.SetDownButtonBackground(downBG)
 		cm.recipesList.SetDownButtonBackground(downBG)
 	}
 	cm.recipesList.SetOnItemSelectFunc(cm.onRecipeSelected)

@@ -1,7 +1,7 @@
 /*
  * journalwindow.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,16 +110,19 @@ func newJournalWindow(hud *HUD) *JournalWindow {
 		AccentColor: accentColor,
 	}
 	jw.questsList = mtk.NewList(questsParams)
+	// Buttons.
 	upButtonBG := graphic.Textures["scrollup.png"]
 	if upButtonBG != nil {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
+		jw.questInfo.SetUpButtonBackground(upBG)
 		jw.questsList.SetUpButtonBackground(upBG)
 	}
 	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())
+		jw.questInfo.SetDownButtonBackground(downBG)
 		jw.questsList.SetDownButtonBackground(downBG)
 	}
 	jw.questsList.SetOnItemSelectFunc(jw.onQuestSelected)

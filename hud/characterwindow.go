@@ -1,7 +1,7 @@
 /*
  * characterwindow.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,16 @@ func newCharacterWindow(hud *HUD) *CharacterWindow {
 		AccentColor: accentColor,
 	}
 	cw.charInfo = mtk.NewTextbox(charInfoParams)
+	upButtonTex := graphic.Textures["scrollup.png"]
+	if upButtonTex != nil {
+		upSprite := pixel.NewSprite(upButtonTex, upButtonTex.Bounds())
+		cw.charInfo.SetUpButtonBackground(upSprite)
+	}
+	downButtonTex := graphic.Textures["scrolldown.png"]
+	if downButtonTex != nil {
+		downSprite := pixel.NewSprite(downButtonTex, downButtonTex.Bounds())
+		cw.charInfo.SetDownButtonBackground(downSprite)
+	}
 	return cw
 }
 

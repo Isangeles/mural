@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ type MenuBar struct {
 	journalButton *mtk.Button
 	charButton    *mtk.Button
 	slots         []*mtk.Slot
+	lock          bool
 }
 
 var (
@@ -173,47 +174,8 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates menu bar.
 func (mb *MenuBar) Update(win *mtk.Window) {
-	// Key events.
-	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		if !mb.DrawArea().Contains(win.MousePosition()) {
-			for _, s := range mb.slots {
-				if !s.Dragged() {
-					continue
-				}
-				s.Clear()
-				mb.updateLayout()
-			}
-		}
-	}
-	if win.JustPressed(pixelgl.Key1) {
-		mb.useSlot(mb.slots[0])
-	}
-	if win.JustPressed(pixelgl.Key2) {
-		mb.useSlot(mb.slots[1])
-	}
-	if win.JustPressed(pixelgl.Key3) {
-		mb.useSlot(mb.slots[2])
-	}
-	if win.JustPressed(pixelgl.Key4) {
-		mb.useSlot(mb.slots[3])
-	}
-	if win.JustPressed(pixelgl.Key5) {
-		mb.useSlot(mb.slots[4])
-	}
-	if win.JustPressed(pixelgl.Key6) {
-		mb.useSlot(mb.slots[5])
-	}
-	if win.JustPressed(pixelgl.Key7) {
-		mb.useSlot(mb.slots[6])
-	}
-	if win.JustPressed(pixelgl.Key8) {
-		mb.useSlot(mb.slots[7])
-	}
-	if win.JustPressed(pixelgl.Key9) {
-		mb.useSlot(mb.slots[8])
-	}
-	if win.JustPressed(pixelgl.Key0) {
-		mb.useSlot(mb.slots[9])
+	if !mb.Locked() {
+		mb.handleKeyEvents(win)
 	}
 	// Buttons.
 	mb.menuButton.Update(win)
@@ -238,6 +200,18 @@ func (mb *MenuBar) Size() pixel.Vec {
 // DrawArea return current draw area of bar background.
 func (mb *MenuBar) DrawArea() pixel.Rect {
 	return mb.drawArea
+}
+
+// Lock toggles menu bar lock.
+// When menu bar is locked then button events
+// are no longer handled.
+func (mb *MenuBar) Lock(lock bool) {
+	mb.lock = lock
+}
+
+// Locked checks if menu bar is locked.
+func (mb *MenuBar) Locked() bool {
+	return mb.lock
 }
 
 // drawIMBackground draws menu bar background with IMDraw.
@@ -336,6 +310,52 @@ func (mb *MenuBar) setLayout(l *Layout) {
 			continue
 		}
 		mb.hud.insertSlotItem(i, slot)
+	}
+}
+
+// handleKeyEvents handles recent key events.
+func (mb *MenuBar) handleKeyEvents(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(pixelgl.MouseButtonLeft) {
+		if !mb.DrawArea().Contains(win.MousePosition()) {
+			for _, s := range mb.slots {
+				if !s.Dragged() {
+					continue
+				}
+				s.Clear()
+				mb.updateLayout()
+			}
+		}
+	}
+	if win.JustPressed(pixelgl.Key1) {
+		mb.useSlot(mb.slots[0])
+	}
+	if win.JustPressed(pixelgl.Key2) {
+		mb.useSlot(mb.slots[1])
+	}
+	if win.JustPressed(pixelgl.Key3) {
+		mb.useSlot(mb.slots[2])
+	}
+	if win.JustPressed(pixelgl.Key4) {
+		mb.useSlot(mb.slots[3])
+	}
+	if win.JustPressed(pixelgl.Key5) {
+		mb.useSlot(mb.slots[4])
+	}
+	if win.JustPressed(pixelgl.Key6) {
+		mb.useSlot(mb.slots[5])
+	}
+	if win.JustPressed(pixelgl.Key7) {
+		mb.useSlot(mb.slots[6])
+	}
+	if win.JustPressed(pixelgl.Key8) {
+		mb.useSlot(mb.slots[7])
+	}
+	if win.JustPressed(pixelgl.Key9) {
+		mb.useSlot(mb.slots[8])
+	}
+	if win.JustPressed(pixelgl.Key0) {
+		mb.useSlot(mb.slots[9])
 	}
 }
 

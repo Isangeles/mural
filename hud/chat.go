@@ -201,6 +201,7 @@ func (c *Chat) Activate(active bool) {
 	c.activated = active
 	c.textedit.Focus(c.Activated())
 	c.hud.Camera().Lock(c.Activated())
+	c.hud.bar.Lock(c.Activated())
 }
 
 // Echo displays specified text in chat log.

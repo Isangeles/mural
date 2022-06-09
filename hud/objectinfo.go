@@ -1,7 +1,7 @@
 /*
  * objectinfo.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,10 @@ func (oi *ObjectInfo) Draw(win *mtk.Window) {
 
 // Update updates object info.
 func (oi *ObjectInfo) Update(win *mtk.Window) {
+	if oi.hud.containsPos(win.MousePosition()) {
+		oi.Open(false)
+		return
+	}
 	oi.info.Update(win)
 	oi.object = nil
 	for _, av := range oi.hud.Camera().Avatars() {

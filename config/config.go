@@ -107,7 +107,7 @@ func Load() error {
 		}
 	}
 	// Max FPS.
-	if len(conf["max-fps"]) > 1 {
+	if len(conf["max-fps"]) > 0 {
 		MaxFPS, err = strconv.Atoi(conf["max-fps"][0])
 		if err != nil {
 			log.Err.Printf("config: unable to set max FPS: %v", err)

@@ -474,6 +474,12 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 			av.ID(), av.Serial(), s.ID())
 		return
 	}
+	// Direction.
+	if len(av.Targets()) > 0 {
+		tar := av.Targets()[0]
+		tarPosX, tarPosY := tar.Position()
+		av.face(pixel.V(tarPosX, tarPosY))
+	}
 	// Animation.
 	switch sg.ActivationAnim() {
 	case AvatarMelee:
@@ -531,4 +537,18 @@ func (av *Avatar) spritesheet(sprs []*res.SpritesheetData) *res.SpritesheetData 
 		return s
 	}
 	return nil
+}
+
+// face turns avatar in direction of specified position.
+func (av *Avatar) face(pos pixel.Vec) {
+	switch {
+	case pos.Y > av.Position().Y:
+		av.sprite.Up()
+	case pos.Y < av.Position().Y:
+		av.sprite.Down()
+	case pos.X > av.Position().X:
+		av.sprite.Right()
+	case pos.X < av.Position().X:
+		av.sprite.Left()
+	}
 }

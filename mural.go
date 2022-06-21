@@ -194,7 +194,6 @@ func run() {
 			continue
 		}
 		pcHUD.Update(win)
-		activeGame.Update(win.Delta())
 		if pcHUD.Exiting() || activeGame.Closing() {
 			inGame = false
 			// Reimport module.
@@ -249,6 +248,7 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	for _, s := range scripts {
 		go ci.RunScript(s)
 	}
+	go activeGame.Update()
 }
 
 // setHUD sets specified HUD instance as current

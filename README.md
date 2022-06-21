@@ -21,17 +21,9 @@ Repository: [GitHub](https://github.com/Isangeles-Softworks/openelwynn)
 ## Build
 First, make sure you have dependencies required by [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep).
 
-Get sources from git:
-```
-go get -u github.com/isangeles/mural
-```
 Install GUI:
 ```
 go install github.com/isangeles/mural@latest
-```
-Or with GOPATH mode simply:
-```
-go install github.com/isangeles/mural
 ```
 After that, the GUI executable will be placed in your GOBIN directory(e.g. ~/go/bin).
 ## Run
@@ -215,16 +207,16 @@ Note that documentation of Burn commands is still incomplete.
 ## Contributing
 You are welcome to contribute to project development.
 
-If you looking for things to do, then check [TODO file](https://github.com/Isangeles/mural/blob/master/TODO) or contact maintainer(dev@isangeles.pl).
+If you looking for things to do, then check [TODO file](https://github.com/Isangeles/mural/blob/master/TODO) or contact maintainer(ds@isangeles.dev).
 
 When you find something to do, create a new branch for your feature.
 After you finish, open a pull request to merge your changes with master branch.
 
 ## Contact
-* Isangeles <<dev@isangeles.pl>>
+* Isangeles <<ds@isangeles.dev>>
 
 ## License
-Copyright 2018-2022 Dariusz Sikora <<dev@isangeles.pl>>
+Copyright 2018-2022 Dariusz Sikora <<ds@isangeles.dev>>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package game
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/faiface/pixel"
 
@@ -66,16 +67,26 @@ func New(module *flame.Module) *Game {
 }
 
 // Update updates game.
-func (g *Game) Update(delta int64) {
-	if g.Pause {
-		return
+func (g *Game) Update() {
+	update := time.Now()
+	for {
+		if g.closing {
+			return
+		}
+		// Delta.
+		delta := time.Since(update).Milliseconds()
+		// Update.
+		if g.Pause {
+			continue
+		}
+		g.Module.Update(delta)
+		if g.Server() == nil {
+			g.updateAIChars()
+			g.localAI.Update(delta)
+		}
+		update = time.Now()
+		time.Sleep(time.Duration(16) * time.Millisecond)
 	}
-	g.Module.Update(delta)
-	if g.Server() != nil {
-		return
-	}
-	g.updateAIChars()
-	g.localAI.Update(delta)
 }
 
 // AddPlayer adds specified avatar to player avatars list.

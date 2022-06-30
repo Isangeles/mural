@@ -1,7 +1,7 @@
 /*
  * player.go
  *
- * Copyright 2020-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,8 @@ func (p *Player) Use(ob useaction.Usable) {
 		p.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
 		if !p.meetTargetRangeReqs(ob.UseAction().Requirements()...) {
 			tar := p.Targets()[0]
-			p.SetDestPoint(tar.Position())
+			tarPosX, tarPosY := tar.Position()
+			p.moveCloseTo(tarPosX, tarPosY, ob.UseAction().MinRange())
 		}
 		return
 	}
@@ -222,3 +223,20 @@ func (p *Player) meetTargetRangeReqs(reqs ...req.Requirement) bool {
 	}
 	return true
 }
+
+// moveCloseTo moves player to the position at minimal range
+// to the specified position.
+func (p *Player) moveCloseTo(x, y, minRange float64) {
+	switch {
+	case x > p.Position().X:
+		x -= minRange
+	case x < p.Position().X:
+		x += minRange
+	case y > p.Position().Y:
+		y -= minRange
+	case y < p.Position().Y:
+		y += minRange
+	}
+	p.SetDestPoint(x, y)
+}
+

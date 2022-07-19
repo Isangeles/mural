@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,9 @@
 package hud
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"golang.org/x/image/colornames"
@@ -449,9 +451,12 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 	mod := hud.Game().Module
 	path := filepath.Join(config.GUIPath, "chapters", mod.Chapter().ID(), "areas", a.ID(),
 		"scripts")
+	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+		return
+	}
 	scripts, err := data.ScriptsDir(path)
 	if err != nil {
-		log.Err.Printf("hud: run area scripts: fail to retrieve scripts: %v", err)
+		log.Err.Printf("hud: run area scripts: unable to retrieve scripts: %v", err)
 		return
 	}
 	// Run scripts in background.

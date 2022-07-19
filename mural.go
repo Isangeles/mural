@@ -25,7 +25,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"golang.org/x/image/colornames"
@@ -240,14 +242,11 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	}
 	inGame = true
 	// Run module scripts.
-	scriptsPath := filepath.Join(config.GUIPath, "scripts/run")
-	scripts, err := data.ScriptsDir(scriptsPath)
+	err = runModuleScripts()
 	if err != nil {
-		log.Err.Printf("enter game: unable to retrieve module scripts: %v", err)
+		log.Err.Printf("enter game: unable to run module scripts: %v", err)
 	}
-	for _, s := range scripts {
-		go ci.RunScript(s)
-	}
+	// Run game update.
 	go activeGame.Update()
 }
 
@@ -265,4 +264,21 @@ func setModule(data flameres.ModuleData) {
 	if mainMenu != nil {
 		mainMenu.SetModule(mod)
 	}
+}
+
+// runModuleScripts starts all scripts from the module
+// GUI directory(scripts/run).
+func runModuleScripts() error {
+	scriptsPath := filepath.Join(config.GUIPath, "scripts/run")
+	if _, err := os.Stat(scriptsPath); errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	scripts, err := data.ScriptsDir(scriptsPath)
+	if err != nil {
+		return fmt.Errorf("unable to retrieve scripts: %v", err)
+	}
+	for _, s := range scripts {
+		go ci.RunScript(s)
+	}
+	return nil
 }

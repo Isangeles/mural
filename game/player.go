@@ -106,6 +106,9 @@ func (p *Player) SetTarget(tar effect.Target) {
 
 // Use uses specified usable object.
 func (p *Player) Use(ob useaction.Usable) {
+	if p.Casted() != nil {
+		return
+	}
 	err := p.Character.Use(ob)
 	if err != nil {
 		p.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})

@@ -1,7 +1,7 @@
 /*
  * castbar.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ func (cb *CastBar) Update(win *mtk.Window) {
 	if pc == nil {
 		return
 	}
-	if pc.Casted() != nil {
+	if pc.Casted() != nil && pc.Casted().UseAction() != nil {
 		cb.bar.SetMax(int(pc.Casted().UseAction().CastMax()))
 		cb.bar.SetValue(int(pc.Casted().UseAction().Cast()))
 	}

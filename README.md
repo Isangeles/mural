@@ -21,11 +21,10 @@ Repository: [GitHub](https://github.com/Isangeles-Softworks/openelwynn)
 ## Build
 First, make sure you have dependencies required by [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep).
 
-Install GUI:
+After that, use go build:
 ```
-go install github.com/isangeles/mural@latest
+go build
 ```
-After that, the GUI executable will be placed in your GOBIN directory(e.g. ~/go/bin).
 ## Run
 Before starting GUI specify the ID of a Flame module in `.mural` configuration file:
 

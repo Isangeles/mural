@@ -50,13 +50,13 @@ const (
 // Wrapper struct for game.
 type Game struct {
 	*flame.Module
-	players              []*Player
-	activePlayer         *Player
-	server               *Server
-	localAI              *ai.AI
-	closing              bool
-	Pause                bool
-	onActivePlayerChange func(p *Player)
+	playerChars        []*Character
+	activePC           *Character
+	server             *Server
+	localAI            *ai.AI
+	closing            bool
+	Pause              bool
+	onPlayerCharChange func(c *Character)
 }
 
 // New creates new wrapper for specified module.
@@ -89,29 +89,29 @@ func (g *Game) Update() {
 	}
 }
 
-// AddPlayer adds specified avatar to player avatars list.
-func (g *Game) AddPlayer(avatar *Player) error {
-	g.players = append(g.players, avatar)
-	g.SetActivePlayer(avatar)
+// AddPlayerChar adds specified character to player characters list.
+func (g *Game) AddPlayerChar(char *Character) error {
+	g.playerChars = append(g.playerChars, char)
+	g.SetActivePlayerChar(char)
 	return nil
 }
 
-// Players returns all player avatars.
-func (g *Game) Players() []*Player {
-	return g.players
+// PlayerChars returns all player characters.
+func (g *Game) PlayerChars() []*Character {
+	return g.playerChars
 }
 
 // SetActivePlayer sets specified avatar as active player avatar.
-func (g *Game) SetActivePlayer(player *Player) {
-	g.activePlayer = player
-	if g.onActivePlayerChange != nil {
-		g.onActivePlayerChange(player)
+func (g *Game) SetActivePlayerChar(char *Character) {
+	g.activePC = char
+	if g.onPlayerCharChange != nil {
+		g.onPlayerCharChange(char)
 	}
 }
 
-// ActivePlayer returns active player avatar.
-func (g *Game) ActivePlayer() *Player {
-	return g.activePlayer
+// ActivePlayerChar returns active player character.
+func (g *Game) ActivePlayerChar() *Character {
+	return g.activePC
 }
 
 // SetServer sets game server.
@@ -132,9 +132,9 @@ func (g *Game) Closing() bool {
 	return g.closing
 }
 
-// SetOnActivePlayerChangeFunc sets function triggered on active player change.
-func (g *Game) SetOnActivePlayerChangeFunc(f func(p *Player)) {
-	g.onActivePlayerChange = f
+// SetOnPlayerChangeFunc sets function triggered on active player change.
+func (g *Game) SetOnPlayerCharChangeFunc(f func(c *Character)) {
+	g.onPlayerCharChange = f
 }
 
 // SpawnChar sets start area and position of current chapter for specified avatar.

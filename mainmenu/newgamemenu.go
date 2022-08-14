@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,14 +259,14 @@ func (ngm *NewGameMenu) startGame() {
 	} else {
 		char := character.New(pcd.CharacterData)
 		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewPlayer(av, gameWrapper)
+		pc := game.NewCharacter(av, gameWrapper)
 		err := gameWrapper.SpawnChar(pc.Avatar)
 		if err != nil {
 			log.Err.Printf("main menu: new game: unable to spawn new player: %v",
 				err)
 			return
 		}
-		gameWrapper.AddPlayer(pc)
+		gameWrapper.AddPlayerChar(pc)
 	}
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated != nil {

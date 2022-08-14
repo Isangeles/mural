@@ -198,7 +198,7 @@ func (cm *CraftingMenu) Update(win *mtk.Window) {
 func (cm *CraftingMenu) Show() {
 	cm.opened = true
 	cm.recipesList.Clear()
-	pc := cm.hud.Game().ActivePlayer()
+	pc := cm.hud.Game().ActivePlayerChar()
 	cm.insertRecipes(pc.Crafting().Recipes()...)
 }
 
@@ -268,6 +268,6 @@ func (cm *CraftingMenu) onMakeButtonClicked(b *mtk.Button) {
 	if !ok {
 		return
 	}
-	cm.hud.Game().ActivePlayer().Use(recipe)
+	cm.hud.Game().ActivePlayerChar().Use(recipe)
 	return
 }

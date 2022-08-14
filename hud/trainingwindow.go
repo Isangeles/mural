@@ -1,7 +1,7 @@
 /*
  * trainingwindow.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,7 +263,7 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 		log.Err.Printf("hud training: unable to retrieve training from list")
 		return
 	}
-	pc := tw.hud.Game().ActivePlayer()
+	pc := tw.hud.Game().ActivePlayerChar()
 	pc.Use(train)
 }
 

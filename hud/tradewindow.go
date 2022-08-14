@@ -1,7 +1,7 @@
 /*
  * tradewindow.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ func (tw *TradeWindow) Show() {
 	if tw.seller != nil {
 		tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
 	}
-	tw.insertSellItems(tw.hud.Game().ActivePlayer().Inventory().Items()...)
+	tw.insertSellItems(tw.hud.Game().ActivePlayerChar().Inventory().Items()...)
 }
 
 // Hide hides window.
@@ -400,7 +400,7 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	// Check trade value.
 	if tw.tradeValue() < 0 {
 		msg := objects.Message{Text: "hud_trade_low_value_msg"}
-		tw.hud.Game().ActivePlayer().PrivateLog().Add(msg)
+		tw.hud.Game().ActivePlayerChar().PrivateLog().Add(msg)
 		return
 	}
 	// Trade.
@@ -412,7 +412,7 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	for _, it := range tw.buyItems {
 		buyItems = append(buyItems, it)
 	}
-	tw.hud.Game().Trade(tw.seller, tw.hud.Game().ActivePlayer(), sellItems, buyItems)
+	tw.hud.Game().Trade(tw.seller, tw.hud.Game().ActivePlayerChar(), sellItems, buyItems)
 	tw.Hide()
 }
 

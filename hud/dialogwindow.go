@@ -199,7 +199,7 @@ func (dw *DialogWindow) DrawArea() pixel.Rect {
 // SetDialog sets dialog for window.
 func (dw *DialogWindow) SetDialog(d *dialog.Dialog) {
 	dw.dialog = d
-	dw.hud.Game().StartDialog(d, dw.hud.Game().ActivePlayer())
+	dw.hud.Game().StartDialog(d, dw.hud.Game().ActivePlayerChar())
 	dw.dialogUpdate()
 }
 
@@ -221,7 +221,7 @@ func (dw *DialogWindow) dialogUpdate() {
 	// Select answers.
 	answers := make([]*dialog.Answer, 0)
 	for _, a := range dw.dialog.Stage().Answers() {
-		if dw.hud.Game().ActivePlayer().MeetReqs(a.Requirements()...) {
+		if dw.hud.Game().ActivePlayerChar().MeetReqs(a.Requirements()...) {
 			answers = append(answers, a)
 		}
 	}
@@ -250,7 +250,7 @@ func (dw *DialogWindow) onAnswerSelected(cs *mtk.CheckSlot) {
 		return
 	}
 	// Print answer to chat box.
-	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.Game().ActivePlayer().Name(),
+	dw.chatBox.AddText(fmt.Sprintf("[%s]: %s\n", dw.hud.Game().ActivePlayerChar().Name(),
 		dw.dialogText(answer.ID())))
 	dw.chatBox.ScrollBottom()
 	// Move dialog forward.

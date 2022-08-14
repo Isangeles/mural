@@ -1,7 +1,7 @@
 /*
  * lootwindow.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,7 +232,7 @@ func (lw *LootWindow) onSlotLeftClicked(s *mtk.Slot) {
 		if !ok {
 			continue
 		}
-		err := lw.hud.Game().TransferItems(lw.target, lw.hud.Game().ActivePlayer(), ig.Item)
+		err := lw.hud.Game().TransferItems(lw.target, lw.hud.Game().ActivePlayerChar(), ig.Item)
 		if err != nil {
 			log.Err.Printf("hud: loot window: unable to transfer items: %v",
 				err)

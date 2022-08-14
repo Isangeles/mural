@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -365,8 +365,8 @@ func (mm *MainMenu) continueGame() {
 			avData = &defAv
 		}
 		av := object.NewAvatar(c, avData)
-		pc := game.NewPlayer(av, gameWrapper)
-		gameWrapper.AddPlayer(pc)
+		pc := game.NewCharacter(av, gameWrapper)
+		gameWrapper.AddPlayerChar(pc)
 	}
 	// Trigger game created function.
 	if mm.onGameCreated != nil {

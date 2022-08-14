@@ -213,7 +213,7 @@ func (c *Chat) Echo(text string) {
 // characters and objects near to any of the player
 // characters.
 func (c *Chat) nearMessages() (messages []Message) {
-	for _, pc := range c.hud.Game().Players() {
+	for _, pc := range c.hud.Game().PlayerChars() {
 		// PC's private messages.
 		for _, lm := range pc.PrivateLog().Messages() {
 			m := Message{
@@ -329,7 +329,7 @@ func (c *Chat) onEnterPressed() {
 		Translated: true,
 		Text:       input,
 	}
-	c.hud.Game().ActivePlayer().AddChatMessage(msg)
+	c.hud.Game().ActivePlayerChar().AddChatMessage(msg)
 }
 
 // executeScriptFile executes Ash script from file

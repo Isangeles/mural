@@ -178,7 +178,7 @@ func (jw *JournalWindow) Update(win *mtk.Window) {
 func (jw *JournalWindow) Show() {
 	jw.opened = true
 	jw.questsList.Clear()
-	pc := jw.hud.Game().ActivePlayer()
+	pc := jw.hud.Game().ActivePlayerChar()
 	jw.insertQuests(pc.Journal().Quests()...)
 }
 

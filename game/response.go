@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 func (g *Game) handleCharacterResponse(resp response.Character) {
 	addPlayerMutex.Lock()
 	defer addPlayerMutex.Unlock()
-	for _, p := range g.Players() {
+	for _, p := range g.PlayerChars() {
 		if p.ID() == resp.ID && p.Serial() == resp.Serial {
 			return
 		}
@@ -80,6 +80,6 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 		return
 	}
 	avatar := object.NewAvatar(char, avData)
-	player := Player{avatar, g}
-	g.AddPlayer(&player)
+	gameChar := Character{avatar, g}
+	g.AddPlayerChar(&gameChar)
 }

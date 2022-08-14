@@ -1,7 +1,7 @@
 /*
  * skillmenu.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ func (sm *SkillMenu) Opened() bool {
 func (sm *SkillMenu) Show() {
 	sm.opened = true
 	sm.slots.Clear()
-	sm.insert(sm.hud.Game().ActivePlayer().Skills()...)
+	sm.insert(sm.hud.Game().ActivePlayerChar().Skills()...)
 	sm.hud.UserFocus().Focus(sm)
 }
 
@@ -251,7 +251,7 @@ func (sm *SkillMenu) onSlotRightClicked(s *mtk.Slot) {
 	if !ok {
 		log.Err.Printf("hud: skills menu: %v: is not skill", s.Values()[0])
 	}
-	sm.hud.Game().ActivePlayer().Use(skill.Skill)
+	sm.hud.Game().ActivePlayerChar().Use(skill.Skill)
 }
 
 // Triggered after one of skill slots was clicked with

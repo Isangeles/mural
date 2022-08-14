@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,8 +200,8 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 			continue
 		}
 		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewPlayer(av, gameWrapper)
-		gameWrapper.AddPlayer(pc)
+		pc := game.NewCharacter(av, gameWrapper)
+		gameWrapper.AddPlayerChar(pc)
 	}
 	// Enter game.
 	if lgm.mainmenu.onGameCreated != nil {

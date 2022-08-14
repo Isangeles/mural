@@ -190,7 +190,7 @@ Gender:     %s
 Race:       %s
 Alignment   %s
 Attributes: %s`
-	pc := cw.hud.Game().ActivePlayer()
+	pc := cw.hud.Game().ActivePlayerChar()
 	race := lang.Text("rUnknown")
 	if pc.Race() != nil {
 		race = lang.Text(pc.Race().ID())

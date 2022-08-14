@@ -241,7 +241,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	val := s.Values()[0]
 	skill, ok := val.(*object.SkillGraphic)
 	if ok {
-		mb.hud.Game().ActivePlayer().Use(skill.Skill)
+		mb.hud.Game().ActivePlayerChar().Use(skill.Skill)
 		return
 	}
 	// Item.
@@ -249,12 +249,12 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 	if ok {
 		eqit, ok := it.Item.(item.Equiper)
 		if ok {
-			pc := mb.hud.Game().ActivePlayer()
+			pc := mb.hud.Game().ActivePlayerChar()
 			if pc.Equipment().Equiped(eqit) {
 				pc.Unequip(eqit)
 				return
 			}
-			mb.hud.Game().ActivePlayer().Equip(eqit)
+			mb.hud.Game().ActivePlayerChar().Equip(eqit)
 			return
 		}
 	}
@@ -264,7 +264,7 @@ func (mb *MenuBar) useSlot(s *mtk.Slot) {
 // active player.
 func (mb *MenuBar) updateLayout() {
 	// Retrieve layout for current PC.
-	pc := mb.hud.Game().ActivePlayer()
+	pc := mb.hud.Game().ActivePlayerChar()
 	layout := mb.hud.Layout(pc.ID(), pc.Serial())
 	// Clear layout.
 	layout.SetBarSlots(make(map[string]int))
@@ -284,7 +284,7 @@ func (mb *MenuBar) updateLayout() {
 // current bar layout.
 func (mb *MenuBar) setLayout(l *Layout) {
 	// Skills.
-	for _, s := range mb.hud.Game().ActivePlayer().Skills() {
+	for _, s := range mb.hud.Game().ActivePlayerChar().Skills() {
 		slotID := l.BarSlotID(s)
 		if slotID < 0 {
 			continue
@@ -298,7 +298,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		insertSlotSkill(s, slot)
 	}
 	// Items.
-	for _, i := range mb.hud.Game().ActivePlayer().Items() {
+	for _, i := range mb.hud.Game().ActivePlayerChar().Items() {
 		slotID := l.BarSlotID(i)
 		if slotID < 0 {
 			continue

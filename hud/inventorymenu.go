@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ func (im *InventoryMenu) Size() pixel.Vec {
 func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 	im.slots.Clear()
 	// Insert items from layout first.
-	pc := im.hud.Game().ActivePlayer()
+	pc := im.hud.Game().ActivePlayerChar()
 	layout := im.hud.Layout(pc.ID(), pc.Serial())
 	for _, it := range items {
 		slotID := layout.InvSlotID(it)
@@ -256,7 +256,7 @@ func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 // updateLayout updates inventory layout for active player.
 func (im *InventoryMenu) updateLayout() {
 	// Retrieve layout for current PC.
-	pc := im.hud.Game().ActivePlayer()
+	pc := im.hud.Game().ActivePlayerChar()
 	layout := im.hud.layouts[pc.ID()+pc.Serial()]
 	if layout == nil {
 		layout = NewLayout()
@@ -316,12 +316,12 @@ func (im *InventoryMenu) removeSlotItems(s *mtk.Slot) {
 			continue
 		}
 		items[it.ID()] = append(items[it.ID()], it.Serial())
-		im.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
+		im.hud.Game().ActivePlayerChar().Inventory().RemoveItem(it)
 	}
 	s.Clear()
 	// Server request to remove items.
 	if im.hud.Game().Server() != nil {
-		pc := im.hud.Game().ActivePlayer()
+		pc := im.hud.Game().ActivePlayerChar()
 		throwItemsReq := request.ThrowItems{
 			ObjectID:     pc.ID(),
 			ObjectSerial: pc.Serial(),
@@ -361,7 +361,7 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 // refresh inserts player items to inventory
 // slots and saves inventory layout.
 func (im *InventoryMenu) refresh() {
-	im.insertItems(im.hud.Game().ActivePlayer().Items()...)
+	im.insertItems(im.hud.Game().ActivePlayerChar().Items()...)
 	im.updateLayout()
 }
 
@@ -383,12 +383,12 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 	}
 	switch it := it.Item.(type) {
 	case item.Equiper:
-		if im.hud.Game().ActivePlayer().Equipment().Equiped(it) {
-			im.hud.Game().ActivePlayer().Unequip(it)
+		if im.hud.Game().ActivePlayerChar().Equipment().Equiped(it) {
+			im.hud.Game().ActivePlayerChar().Unequip(it)
 			s.SetColor(invSlotColor)
 			break
 		}
-		err := im.hud.Game().ActivePlayer().Equip(it)
+		err := im.hud.Game().ActivePlayerChar().Equip(it)
 		if err != nil {
 			log.Err.Printf("inventory: item: %s %s: unable to equip: %v", it.ID(),
 				it.Serial(), err)
@@ -396,9 +396,9 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 		}
 		s.SetColor(invSlotEqColor)
 	case *item.Misc:
-		im.hud.Game().ActivePlayer().Use(it)
+		im.hud.Game().ActivePlayerChar().Use(it)
 		if it.Consumable() {
-			im.hud.Game().ActivePlayer().Inventory().RemoveItem(it)
+			im.hud.Game().ActivePlayerChar().Inventory().RemoveItem(it)
 			im.refresh()
 		}
 	}

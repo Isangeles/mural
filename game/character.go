@@ -44,110 +44,120 @@ import (
 // Struct for game character.
 type Character struct {
 	*object.Avatar
-	game *Game
+	game       *Game
+	privateLog *objects.Log
 }
 
 // NewCharacter creates game wrapper for avatar.
 func NewCharacter(avatar *object.Avatar, game *Game) *Character {
-	player := Character{avatar, game}
-	return &player
+	c := Character{
+		Avatar:     avatar,
+		game:       game,
+		privateLog: objects.NewLog(),
+	}
+	return &c
+}
+
+// PrivateLog returns avatar private log.
+func (c *Character) PrivateLog() *objects.Log {
+	return c.privateLog
 }
 
 // SetDestPoint sets destination point for player character.
-func (p *Character) SetDestPoint(x, y float64) {
-	p.Character.SetDestPoint(x, y)
-	if p.game.Server() == nil {
+func (c *Character) SetDestPoint(x, y float64) {
+	c.Character.SetDestPoint(x, y)
+	if c.game.Server() == nil {
 		return
 	}
-	moveReq := request.Move{p.ID(), p.Serial(), x, y}
+	moveReq := request.Move{c.ID(), c.Serial(), x, y}
 	req := request.Request{Move: []request.Move{moveReq}}
-	err := p.game.Server().Send(req)
+	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send move request to the server: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 }
 
 // AddChatMessage adds new message to the character chat log.
-func (p *Character) AddChatMessage(message objects.Message) {
-	p.ChatLog().Add(message)
-	if p.game.Server() == nil {
+func (c *Character) AddChatMessage(message objects.Message) {
+	c.ChatLog().Add(message)
+	if c.game.Server() == nil {
 		return
 	}
-	chatReq := request.Chat{p.ID(), p.Serial(), message.String(), true}
+	chatReq := request.Chat{c.ID(), c.Serial(), message.String(), true}
 	req := request.Request{Chat: []request.Chat{chatReq}}
-	err := p.game.Server().Send(req)
+	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send chat request to the server: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 }
 
 // SetTarget sets specified targetable object as the current target.
-func (p *Character) SetTarget(tar effect.Target) {
-	p.Character.SetTarget(tar)
-	if p.game.Server() == nil {
+func (c *Character) SetTarget(tar effect.Target) {
+	c.Character.SetTarget(tar)
+	if c.game.Server() == nil {
 		return
 	}
 	targetReq := request.Target{
-		ObjectID:     p.ID(),
-		ObjectSerial: p.Serial(),
+		ObjectID:     c.ID(),
+		ObjectSerial: c.Serial(),
 	}
 	if tar != nil {
 		targetReq.TargetID, targetReq.TargetSerial = tar.ID(), tar.Serial()
 	}
 	req := request.Request{Target: []request.Target{targetReq}}
-	err := p.game.Server().Send(req)
+	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send target request to the server: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 }
 
 // Use uses specified usable object.
-func (p *Character) Use(ob useaction.Usable) {
-	if p.Casted() != nil {
+func (c *Character) Use(ob useaction.Usable) {
+	if c.Casted() != nil {
 		return
 	}
-	err := p.Character.Use(ob)
+	err := c.Character.Use(ob)
 	if err != nil {
-		p.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
-		if !p.meetTargetRangeReqs(ob.UseAction().Requirements()...) {
-			tar := p.Targets()[0]
+		c.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
+		if !c.meetTargetRangeReqs(ob.UseAction().Requirements()...) {
+			tar := c.Targets()[0]
 			tarPosX, tarPosY := tar.Position()
-			p.moveCloseTo(tarPosX, tarPosY, ob.UseAction().MinRange())
+			c.moveCloseTo(tarPosX, tarPosY, ob.UseAction().MinRange())
 		}
 		return
 	}
-	if p.game.Server() == nil {
+	if c.game.Server() == nil {
 		return
 	}
 	useReq := request.Use{
-		UserID:     p.ID(),
-		UserSerial: p.Serial(),
+		UserID:     c.ID(),
+		UserSerial: c.Serial(),
 		ObjectID:   ob.ID(),
 	}
 	if ob, ok := ob.(serial.Serialer); ok {
 		useReq.ObjectSerial = ob.Serial()
 	}
 	req := request.Request{Use: []request.Use{useReq}}
-	err = p.game.Server().Send(req)
+	err = c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send use request: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 }
 
 // Equip inserts specified equipable item to all
 // compatible slots in active PC equipment.
-func (p *Character) Equip(it item.Equiper) error {
-	if !p.MeetReqs(it.EquipReqs()...) {
+func (c *Character) Equip(it item.Equiper) error {
+	if !c.MeetReqs(it.EquipReqs()...) {
 		return fmt.Errorf(lang.Text("reqs_not_meet"))
 	}
 	slots := make([]*character.EquipmentSlot, 0)
 	for _, itSlot := range it.Slots() {
 		equiped := false
-		for _, eqSlot := range p.Equipment().Slots() {
+		for _, eqSlot := range c.Equipment().Slots() {
 			if eqSlot.Item() != nil {
 				continue
 			}
@@ -159,19 +169,19 @@ func (p *Character) Equip(it item.Equiper) error {
 			}
 		}
 		if !equiped {
-			p.Equipment().Unequip(it)
+			c.Equipment().Unequip(it)
 			return fmt.Errorf(lang.Text("equip_no_free_slot_error"))
 		}
 	}
-	if !p.Equipment().Equiped(it) {
+	if !c.Equipment().Equiped(it) {
 		return fmt.Errorf(lang.Text("equip_no_valid_slot_error"))
 	}
-	if p.game.Server() == nil {
+	if c.game.Server() == nil {
 		return nil
 	}
 	eqReq := request.Equip{
-		CharID:     p.ID(),
-		CharSerial: p.Serial(),
+		CharID:     c.ID(),
+		CharSerial: c.Serial(),
 		ItemID:     it.ID(),
 		ItemSerial: it.Serial(),
 	}
@@ -183,45 +193,45 @@ func (p *Character) Equip(it item.Equiper) error {
 		eqReq.Slots = append(eqReq.Slots, slotReq)
 	}
 	req := request.Request{Equip: []request.Equip{eqReq}}
-	err := p.game.Server().Send(req)
+	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send equip request: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 	return nil
 }
 
 // Unequip removes specified item from player equipment.
-func (p *Character) Unequip(it item.Equiper) {
-	p.Equipment().Unequip(it)
-	if p.game.Server() == nil {
+func (c *Character) Unequip(it item.Equiper) {
+	c.Equipment().Unequip(it)
+	if c.game.Server() == nil {
 		return
 	}
 	uneqReq := request.Unequip{
-		CharID:     p.ID(),
-		CharSerial: p.Serial(),
+		CharID:     c.ID(),
+		CharSerial: c.Serial(),
 		ItemID:     it.ID(),
 		ItemSerial: it.Serial(),
 	}
 	req := request.Request{Unequip: []request.Unequip{uneqReq}}
-	err := p.game.Server().Send(req)
+	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send unequip request: %v",
-			p.ID(), p.Serial(), err)
+			c.ID(), c.Serial(), err)
 	}
 }
 
 // meetTargetRangeReqs check if all target range requirements are meet.
 // Returns true, if none of specified requirements is a target range
 // requirement.
-func (p *Character) meetTargetRangeReqs(reqs ...req.Requirement) bool {
+func (c *Character) meetTargetRangeReqs(reqs ...req.Requirement) bool {
 	tarRangeReqs := make([]req.Requirement, 0)
 	for _, r := range reqs {
 		if r, ok := r.(*req.TargetRange); ok {
 			tarRangeReqs = append(tarRangeReqs, r)
 		}
 	}
-	if !p.MeetReqs(tarRangeReqs...) {
+	if !c.MeetReqs(tarRangeReqs...) {
 		return false
 	}
 	return true
@@ -229,17 +239,16 @@ func (p *Character) meetTargetRangeReqs(reqs ...req.Requirement) bool {
 
 // moveCloseTo moves player to the position at minimal range
 // to the specified position.
-func (p *Character) moveCloseTo(x, y, minRange float64) {
+func (c *Character) moveCloseTo(x, y, minRange float64) {
 	switch {
-	case x > p.Position().X:
+	case x > c.Position().X:
 		x -= minRange
-	case x < p.Position().X:
+	case x < c.Position().X:
 		x += minRange
-	case y > p.Position().Y:
+	case y > c.Position().Y:
 		y -= minRange
-	case y < p.Position().Y:
+	case y < c.Position().Y:
 		y += minRange
 	}
-	p.SetDestPoint(x, y)
+	c.SetDestPoint(x, y)
 }
-

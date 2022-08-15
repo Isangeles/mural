@@ -80,6 +80,6 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 		return
 	}
 	avatar := object.NewAvatar(char, avData)
-	gameChar := Character{avatar, g}
-	g.AddPlayerChar(&gameChar)
+	gameChar := NewCharacter(avatar, g)
+	g.AddPlayerChar(gameChar)
 }

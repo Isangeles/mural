@@ -68,7 +68,6 @@ type Avatar struct {
 	headName     string
 	fullBodyName string
 	combatLog    *objects.Log
-	privateLog   *objects.Log
 }
 
 // Type for avatar animations
@@ -132,7 +131,6 @@ func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Logs.
 	av.combatLog = objects.NewLog()
-	av.privateLog = objects.NewLog()
 	// Events.
 	av.SetOnSkillActivatedFunc(av.onSkillActivated)
 	av.SetOnModifierTakenFunc(av.onModifierTaken)
@@ -318,11 +316,6 @@ func (av *Avatar) Hovered() bool {
 // CombatLog returns avatar combat log.
 func (av *Avatar) CombatLog() *objects.Log {
 	return av.combatLog
-}
-
-// PrivateLog returns avatar private log.
-func (av *Avatar) PrivateLog() *objects.Log {
-	return av.privateLog
 }
 
 // updateGraphic updates avatar grapphical

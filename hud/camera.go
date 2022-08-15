@@ -104,25 +104,19 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.avatars {
-		for _, pc := range c.hud.Game().PlayerChars() {
-			if mtk.Range(pc.Position(),
-				av.Position()) > pc.SightRange() {
-				continue
-			}
-			avPos := c.ConvAreaPos(av.Position())
-			av.Draw(win, mtk.Matrix().Moved(avPos))
+		if !c.VisibleForPlayer(av.Position()) {
+			continue
 		}
+		avPos := c.ConvAreaPos(av.Position())
+		av.Draw(win, mtk.Matrix().Moved(avPos))
 	}
 	// Objects.
 	for _, ob := range c.objects {
-		for _, pc := range c.hud.Game().PlayerChars() {
-			if mtk.Range(pc.Position(),
-				ob.Position()) > pc.SightRange() {
-				continue
-			}
-			obPos := c.ConvAreaPos(ob.Position())
-			ob.Draw(win, mtk.Matrix().Moved(obPos))
+		if !c.VisibleForPlayer(ob.Position()) {
+			continue
 		}
+		obPos := c.ConvAreaPos(ob.Position())
+		ob.Draw(win, mtk.Matrix().Moved(obPos))
 	}
 	// FOW effect.
 	if c.areaMap != nil && config.MapFOW {
@@ -176,25 +170,19 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.avatars {
-		for _, pc := range c.hud.Game().PlayerChars() {
-			if mtk.Range(pc.Position(), av.Position()) > pc.SightRange() {
-				av.Silence(true)
-				continue
-			}
-			av.Silence(false)
-			av.Update(win)
+		if !c.VisibleForPlayer(av.Position()) {
+			continue
 		}
+		av.Silence(false)
+		av.Update(win)
 	}
 	// Objects.
 	for _, ob := range c.objects {
-		for _, pc := range c.hud.Game().PlayerChars() {
-			if mtk.Range(pc.Position(), ob.Position()) > pc.SightRange() {
-				ob.Silence(true)
-				continue
-			}
-			ob.Silence(false)
-			ob.Update(win)
+		if !c.VisibleForPlayer(ob.Position()) {
+			continue
 		}
+		ob.Silence(false)
+		ob.Update(win)
 	}
 	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
 		c.Position()))
@@ -354,11 +342,11 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	return areaPos
 }
 
-// VisibleForPlayers checks whether specified position is
-// in visibility range of any HUD PCs.
-func (c *Camera) VisibleForPlayers(pos pixel.Vec) bool {
+// VisibleForPlayer checks whether specified position is
+// in visibility range of any PC.
+func (c *Camera) VisibleForPlayer(pos pixel.Vec) bool {
 	for _, pc := range c.hud.Game().PlayerChars() {
-		if mtk.Range(pc.Position(), pos) <= pc.SightRange() {
+		if pc.InSight(pos.X, pos.Y) {
 			return true
 		}
 	}
@@ -371,7 +359,7 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 	w, h := 0.0, 0.0
 	for h < c.areaMap.Size().Y {
 		pos := pixel.V(w, h)
-		if !c.VisibleForPlayers(pos) {
+		if !c.VisibleForPlayer(pos) {
 			// Draw FOW tile.
 			tileSizeX := mtk.ConvSize(c.areaMap.TileSize().X)
 			tileSizeY := mtk.ConvSize(c.areaMap.TileSize().Y)

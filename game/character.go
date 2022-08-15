@@ -25,6 +25,7 @@ package game
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/data/res/lang"
@@ -61,6 +62,12 @@ func NewCharacter(avatar *object.Avatar, game *Game) *Character {
 // PrivateLog returns avatar private log.
 func (c *Character) PrivateLog() *objects.Log {
 	return c.privateLog
+}
+
+// InSight checks if specified XY position is in sight range
+// of the character.
+func (c *Character) InSight(x, y float64) bool {
+	return math.Hypot(c.Position().X-x, c.Position().Y-y) <= c.SightRange()
 }
 
 // SetDestPoint sets destination point for player character.

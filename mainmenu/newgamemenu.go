@@ -260,7 +260,7 @@ func (ngm *NewGameMenu) startGame() {
 		char := character.New(pcd.CharacterData)
 		av := object.NewAvatar(char, &pcd.Avatar)
 		pc := game.NewCharacter(av, gameWrapper)
-		err := gameWrapper.SpawnChar(pc.Avatar)
+		err := gameWrapper.SpawnChar(pc)
 		if err != nil {
 			log.Err.Printf("main menu: new game: unable to spawn new player: %v",
 				err)

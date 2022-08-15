@@ -40,7 +40,6 @@ import (
 	"github.com/isangeles/ignite/ai"
 
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 const (
@@ -137,19 +136,20 @@ func (g *Game) SetOnPlayerCharChangeFunc(f func(c *Character)) {
 	g.onPlayerCharChange = f
 }
 
-// SpawnChar sets start area and position of current chapter for specified avatar.
-func (g *Game) SpawnChar(avatar *object.Avatar) error {
+// SpawnChar sets start area and position of current chapter for specified
+// character.
+func (g *Game) SpawnChar(char *Character) error {
 	// Set start position.
 	startPos := pixel.V(g.Chapter().Conf().StartPosX,
 		g.Chapter().Conf().StartPosY)
-	avatar.SetPosition(startPos)
+	char.SetPosition(startPos)
 	// Set start area.
 	startArea := g.Chapter().Area(g.Chapter().Conf().StartArea)
 	if startArea == nil {
 		return fmt.Errorf("chapter start area not found: %s",
 			g.Chapter().Conf().StartArea)
 	}
-	startArea.AddCharacter(avatar.Character)
+	startArea.AddCharacter(char.Character)
 	return nil
 }
 

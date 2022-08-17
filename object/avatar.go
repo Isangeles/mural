@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,11 +93,7 @@ const (
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	av.SetName(data.Name)
-	// Translate name if empty.
-	if len(av.Name()) < 1 {
-		av.SetName(lang.Text(av.ID()))
-	}
+	av.SetName(lang.Text(av.ID()))
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]
 	if av.portrait != nil {
@@ -288,7 +284,6 @@ func (av *Avatar) Data() res.AvatarData {
 	data := res.AvatarData{
 		ID:       av.ID(),
 		Serial:   av.Serial(),
-		Name:     av.Name(),
 		Portrait: av.portraitName,
 		Torso:    av.torsoName,
 		Head:     av.headName,

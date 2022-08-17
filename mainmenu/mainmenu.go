@@ -339,9 +339,6 @@ func (mm *MainMenu) ImportPlayableChars() error {
 			}
 			pc := PlayableCharData{charData, avData}
 			mm.playableChars.Store(charData.ID+charData.Serial, pc)
-			// Add translation for character name.
-			nameTrans := flameres.TranslationData{charData.ID, []string{avData.Name}}
-			lang.AddTranslation(nameTrans)
 			break
 		}
 	}

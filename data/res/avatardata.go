@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ type AvatarsData struct {
 type AvatarData struct {
 	ID       string `xml:"id,attr" json:"id"`
 	Serial   string `xml:"serial,attr" json:"serial"`
-	Name     string `xml:"name,attr" json:"name"`
 	Portrait string `xml:"portrait,attr" json:"portrait"`
 	Head     string `xml:"head,attr" json:"head"`
 	Torso    string `xml:"torso,attr" json:"torso"`

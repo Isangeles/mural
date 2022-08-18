@@ -93,7 +93,7 @@ const (
 func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	av.SetName(lang.Text(av.ID()))
+	av.name = lang.Text(av.ID())
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]
 	if av.portrait != nil {
@@ -208,11 +208,6 @@ func (av *Avatar) DrawArea() pixel.Rect {
 // Name returns avatar name.
 func (av *Avatar) Name() string {
 	return av.name
-}
-
-// SetName sets avatar name.
-func (av *Avatar) SetName(name string) {
-	av.name = name
 }
 
 // Portrait returns avatar portrait

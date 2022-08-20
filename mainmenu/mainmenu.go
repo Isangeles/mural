@@ -49,7 +49,6 @@ import (
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 var (
@@ -356,13 +355,7 @@ func (mm *MainMenu) continueGame() {
 	gameWrapper.SetServer(mm.server)
 	// Create players.
 	for _, c := range mm.continueChars {
-		avData := res.Avatar(c.ID())
-		if avData == nil {
-			defAv := data.DefaultAvatarData(c)
-			avData = &defAv
-		}
-		av := object.NewAvatar(c, avData)
-		pc := game.NewCharacter(av, gameWrapper)
+		pc := game.NewCharacter(c, gameWrapper)
 		gameWrapper.AddPlayerChar(pc)
 	}
 	// Trigger game created function.

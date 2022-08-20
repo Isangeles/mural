@@ -48,6 +48,7 @@ import (
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object"
 )
 
 var (
@@ -88,6 +89,7 @@ type HUD struct {
 	exiting       bool
 	loaderr       error
 	onAreaChanged func(a *area.Area)
+	playerAvatars map[string]*object.Avatar
 	areaScripts   []*ash.Script
 }
 
@@ -124,6 +126,8 @@ func New(win *mtk.Window) *HUD {
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
 	// Layouts.
 	hud.layouts = make(map[string]*Layout)
+	// Avatars.
+	hud.playerAvatars = make(map[string]*object.Avatar)
 	return hud
 }
 
@@ -215,6 +219,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if hud.Game() == nil || hud.Game().ActivePlayerChar() == nil { // no game or active pc, don't update
 		return
 	}
+	hud.updatePlayerAvatars()
 	// Handle area change.
 	hud.updateCurrentArea()
 	// Toggle game pause.
@@ -266,11 +271,15 @@ func (hud *HUD) Update(win *mtk.Window) {
 // SetActivePlayer sets specified game character as active
 // character.
 func (hud *HUD) SetActivePlayer(pc *game.Character) {
+	hud.updatePlayerAvatars()
 	if pc == nil {
 		return
 	}
-	hud.camera.CenterAt(hud.Game().ActivePlayerChar().Position())
-	hud.pcFrame.SetObject(hud.Game().ActivePlayerChar())
+	pcAvatar := hud.PCAvatar()
+	if pcAvatar != nil {
+		hud.camera.CenterAt(pcAvatar.Position())
+		hud.pcFrame.SetObject(pcAvatar)
+	}
 	hud.Reload()
 	// Setup active player area.
 	if hud.game == nil {
@@ -367,6 +376,17 @@ func (hud *HUD) SetGame(g *game.Game) {
 	hud.SetActivePlayer(hud.game.ActivePlayerChar())
 }
 
+// PCAvatar return avatar for player current character.
+func (hud *HUD) PCAvatar() *object.Avatar {
+	pc := hud.game.ActivePlayerChar()
+	for _, av := range hud.playerAvatars {
+		if av.ID() == pc.ID() && av.Serial() == pc.Serial() {
+			return av
+		}
+	}
+	return nil
+}
+
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *area.Area) error {
 	// Stop previous area scripts.
@@ -393,7 +413,7 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 func (hud *HUD) Data() res.HUDData {
 	var data res.HUDData
 	// Players.
-	for _, pc := range hud.Game().PlayerChars() {
+	for _, pc := range hud.playerAvatars {
 		pcData := res.Player{Avatar: pc.Data()}
 		// Layout.
 		layout := hud.layouts[pc.ID()+pc.Serial()]
@@ -474,6 +494,23 @@ func (hud *HUD) updateCurrentArea() {
 	pcArea := chapter.CharacterArea(hud.Game().ActivePlayerChar().Character)
 	if pcArea != hud.Camera().Area() {
 		go hud.ChangeArea(pcArea)
+	}
+}
+
+// updatePlayerAvatars updates list of player avatars.
+func (hud *HUD) updatePlayerAvatars() {
+	for _, c := range hud.game.PlayerChars() {
+		av := hud.playerAvatars[c.ID()+c.Serial()]
+		if av != nil {
+			return
+		}
+		avData := res.Avatar(c.ID())
+		if avData == nil {
+			defAv := data.DefaultAvatarData(c.Character)
+			avData = &defAv
+		}
+		av = object.NewAvatar(c, avData)
+		hud.playerAvatars[av.ID()+av.Serial()] = av
 	}
 }
 

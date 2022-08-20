@@ -46,7 +46,6 @@ import (
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 // LoadGameMenu struct represents load game
@@ -199,8 +198,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 				pcd.Avatar.ID, pcd.Avatar.Serial)
 			continue
 		}
-		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewCharacter(av, gameWrapper)
+		pc := game.NewCharacter(char, gameWrapper)
 		gameWrapper.AddPlayerChar(pc)
 	}
 	// Enter game.

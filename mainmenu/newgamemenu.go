@@ -43,7 +43,6 @@ import (
 	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 // NewGameMenu struct represents new game
@@ -258,8 +257,7 @@ func (ngm *NewGameMenu) startGame() {
 		}
 	} else {
 		char := character.New(pcd.CharacterData)
-		av := object.NewAvatar(char, &pcd.Avatar)
-		pc := game.NewCharacter(av, gameWrapper)
+		pc := game.NewCharacter(char, gameWrapper)
 		err := gameWrapper.SpawnChar(pc)
 		if err != nil {
 			log.Err.Printf("main menu: new game: unable to spawn new player: %v",

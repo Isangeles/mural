@@ -32,7 +32,6 @@ import (
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 var addPlayerMutex sync.Mutex
@@ -73,13 +72,6 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 			resp.ID, resp.Serial)
 		return
 	}
-	avData := res.Avatar(char.ID())
-	if avData == nil {
-		log.Err.Printf("Game: no avatar data for new character: %s",
-			char.ID())
-		return
-	}
-	avatar := object.NewAvatar(char, avData)
-	gameChar := NewCharacter(avatar, g)
+	gameChar := NewCharacter(char, g)
 	g.AddPlayerChar(gameChar)
 }

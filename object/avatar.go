@@ -29,10 +29,10 @@ import (
 
 	"github.com/faiface/pixel"
 
-	flameres "github.com/isangeles/flame/data/res"
-	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/craft"
+	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
 	"github.com/isangeles/flame/objects"
@@ -43,14 +43,15 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/graphic"
-	"github.com/isangeles/mural/object/internal"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
+	"github.com/isangeles/mural/object/internal"
 )
 
 // Avatar struct for graphical representation of
 // game character.
 type Avatar struct {
-	*character.Character
+	*game.Character
 	name         string
 	portrait     pixel.Picture
 	sprite       *internal.AvatarSprite
@@ -90,7 +91,7 @@ const (
 
 // NewAvatar creates new avatar for specified game character
 // from specified avatar resources.
-func NewAvatar(char *character.Character, data *res.AvatarData) *Avatar {
+func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
 	av.name = lang.Text(av.ID())

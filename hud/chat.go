@@ -231,7 +231,8 @@ func (c *Chat) nearMessages() (messages []Message) {
 		if area == nil {
 			continue
 		}
-		for _, tar := range area.NearObjects(pc.Position().X, pc.Position().Y, pc.SightRange()) {
+		pcX, pcY := pc.Position()
+		for _, tar := range area.NearObjects(pcX, pcY, pc.SightRange()) {
 			log, ok := tar.(objects.Logger)
 			if !ok {
 				continue

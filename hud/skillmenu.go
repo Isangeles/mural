@@ -165,7 +165,10 @@ func (sm *SkillMenu) Opened() bool {
 func (sm *SkillMenu) Show() {
 	sm.opened = true
 	sm.slots.Clear()
-	sm.insert(sm.hud.Game().ActivePlayerChar().Skills()...)
+	pcAvatar := sm.hud.PCAvatar()
+	if pcAvatar != nil {
+		sm.insert(pcAvatar.Skills()...)
+	}
 	sm.hud.UserFocus().Focus(sm)
 }
 

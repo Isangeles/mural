@@ -43,6 +43,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/object"
 )
@@ -215,9 +216,9 @@ func (c *Camera) SetArea(a *area.Area) error {
 	c.avatars = make(map[string]*object.Avatar)
 	for _, char := range a.Characters() {
 		var pcAvatar *object.Avatar
-		for _, pc := range c.hud.Game().PlayerChars() {
-			if char == pc.Character {
-				pcAvatar = pc.Avatar
+		for _, av := range c.hud.playerAvatars {
+			if char.ID() == av.ID() && char.Serial() == av.Serial() {
+				pcAvatar = av
 				break
 			}
 		}
@@ -228,9 +229,11 @@ func (c *Camera) SetArea(a *area.Area) error {
 	}
 	// Update objects graphics.
 	c.updateAreaObjects()
-	// Center camera at player.
-	pc := c.hud.Game().ActivePlayerChar()
-	c.CenterAt(pc.Position())
+	// Center camera at player
+	pcAvatar := c.hud.PCAvatar()
+	if pcAvatar != nil {
+		c.CenterAt(pcAvatar.Position())
+	}
 	return nil
 }
 
@@ -399,9 +402,9 @@ func (c *Camera) updateAreaObjects() {
 		}
 		var av *object.Avatar
 		// Search players first.
-		for _, p := range c.hud.Game().PlayerChars() {
+		for _, p := range c.hud.playerAvatars {
 			if p.ID() == char.ID() && p.Serial() == char.Serial() {
-				av = p.Avatar
+				av = p
 			}
 		}
 		if av == nil {
@@ -411,7 +414,8 @@ func (c *Camera) updateAreaObjects() {
 				res.SetAvatars(append(res.Avatars(), defData))
 				avData = &defData
 			}
-			av = object.NewAvatar(char, avData)
+			gameChar := game.NewCharacter(char, c.hud.game)
+			av = object.NewAvatar(gameChar, avData)
 		}
 		c.avatars[char.ID()+char.Serial()] = av
 	}
@@ -499,7 +503,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	if c.hud.containsPos(pos) {
 		return
 	}
-	pc := c.hud.Game().ActivePlayerChar()
+	pc := c.hud.PCAvatar()
 	// Action.
 	for _, ob := range c.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
@@ -517,7 +521,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Loot.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() || av == pc.Avatar {
+		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {
 			continue
 		}
 		// Range check.
@@ -550,7 +554,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Dialog.
 	for _, av := range c.Avatars() {
-		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc.Avatar ||
+		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc ||
 			av.AttitudeFor(pc) == character.Hostile || len(av.Dialogs()) < 1 {
 			continue
 		}

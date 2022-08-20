@@ -283,8 +283,12 @@ func (mb *MenuBar) updateLayout() {
 // setLayout sets specified layout as
 // current bar layout.
 func (mb *MenuBar) setLayout(l *Layout) {
+	pcAvatar := mb.hud.PCAvatar()
+	if pcAvatar == nil {
+		return
+	}
 	// Skills.
-	for _, s := range mb.hud.Game().ActivePlayerChar().Skills() {
+	for _, s := range pcAvatar.Skills() {
 		slotID := l.BarSlotID(s)
 		if slotID < 0 {
 			continue
@@ -298,7 +302,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		insertSlotSkill(s, slot)
 	}
 	// Items.
-	for _, i := range mb.hud.Game().ActivePlayerChar().Items() {
+	for _, i := range pcAvatar.Items() {
 		slotID := l.BarSlotID(i)
 		if slotID < 0 {
 			continue

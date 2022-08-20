@@ -28,8 +28,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/faiface/pixel"
-
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/dialog"
 	"github.com/isangeles/flame/flag"
@@ -140,9 +138,8 @@ func (g *Game) SetOnPlayerCharChangeFunc(f func(c *Character)) {
 // character.
 func (g *Game) SpawnChar(char *Character) error {
 	// Set start position.
-	startPos := pixel.V(g.Chapter().Conf().StartPosX,
+	char.SetPosition(g.Chapter().Conf().StartPosX,
 		g.Chapter().Conf().StartPosY)
-	char.SetPosition(startPos)
 	// Set start area.
 	startArea := g.Chapter().Area(g.Chapter().Conf().StartArea)
 	if startArea == nil {

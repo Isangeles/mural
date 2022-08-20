@@ -39,24 +39,30 @@ import (
 	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mural/log"
-	"github.com/isangeles/mural/object"
 )
 
 // Struct for game character.
 type Character struct {
-	*object.Avatar
+	*character.Character
 	game       *Game
+	name       string
 	privateLog *objects.Log
 }
 
-// NewCharacter creates game wrapper for avatar.
-func NewCharacter(avatar *object.Avatar, game *Game) *Character {
+// NewCharacter creates game wrapper for module character.
+func NewCharacter(char *character.Character, game *Game) *Character {
 	c := Character{
-		Avatar:     avatar,
+		Character:  char,
 		game:       game,
+		name:       lang.Text(char.ID()),
 		privateLog: objects.NewLog(),
 	}
 	return &c
+}
+
+// Name returns character name.
+func (c *Character) Name() string {
+	return c.name
 }
 
 // PrivateLog returns avatar private log.
@@ -67,7 +73,8 @@ func (c *Character) PrivateLog() *objects.Log {
 // InSight checks if specified XY position is in sight range
 // of the character.
 func (c *Character) InSight(x, y float64) bool {
-	return math.Hypot(c.Position().X-x, c.Position().Y-y) <= c.SightRange()
+	charX, charY := c.Position()
+	return math.Hypot(charX-x, charY-y) <= c.SightRange()
 }
 
 // SetDestPoint sets destination point for player character.
@@ -247,14 +254,15 @@ func (c *Character) meetTargetRangeReqs(reqs ...req.Requirement) bool {
 // moveCloseTo moves player to the position at minimal range
 // to the specified position.
 func (c *Character) moveCloseTo(x, y, minRange float64) {
+	charX, charY := c.Position()
 	switch {
-	case x > c.Position().X:
+	case x > charX:
 		x -= minRange
-	case x < c.Position().X:
+	case x < charX:
 		x += minRange
-	case y > c.Position().Y:
+	case y > charY:
 		y -= minRange
-	case y < c.Position().Y:
+	case y < charY:
 		y += minRange
 	}
 	c.SetDestPoint(x, y)

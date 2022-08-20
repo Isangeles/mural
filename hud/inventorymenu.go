@@ -361,7 +361,10 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 // refresh inserts player items to inventory
 // slots and saves inventory layout.
 func (im *InventoryMenu) refresh() {
-	im.insertItems(im.hud.Game().ActivePlayerChar().Items()...)
+	pcAvatar := im.hud.PCAvatar()
+	if pcAvatar != nil {
+		im.insertItems(pcAvatar.Items()...)
+	}
 	im.updateLayout()
 }
 

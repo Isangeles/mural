@@ -52,7 +52,6 @@ import (
 // game character.
 type Avatar struct {
 	*game.Character
-	name         string
 	portrait     pixel.Picture
 	sprite       *internal.AvatarSprite
 	chat         *mtk.Text
@@ -94,7 +93,6 @@ const (
 func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
 	av := new(Avatar)
 	av.Character = char
-	av.name = lang.Text(av.ID())
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]
 	if av.portrait != nil {
@@ -204,11 +202,6 @@ func (av *Avatar) Update(win *mtk.Window) {
 // DrawArea returns current draw area.
 func (av *Avatar) DrawArea() pixel.Rect {
 	return av.sprite.DrawArea()
-}
-
-// Name returns avatar name.
-func (av *Avatar) Name() string {
-	return av.name
 }
 
 // Portrait returns avatar portrait

@@ -10,7 +10,6 @@ MAJOR:
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
 * Chat messages should not be removed/added depending on message source being in range
-* Game player struct should not be based on graphical avatar(it's avatar struct that should be based on some game package struct)
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window
@@ -23,6 +22,7 @@ MINOR:
 * Exporting character via flame data package exports also quests, effects, items, etc., those
   should be deleted when exporting character to use in different game
 * Loading screen at startup
+* Move combat log from avatar to game character struct
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

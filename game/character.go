@@ -46,6 +46,7 @@ type Character struct {
 	*character.Character
 	game       *Game
 	name       string
+	combatLog  *objects.Log
 	privateLog *objects.Log
 }
 
@@ -55,8 +56,10 @@ func NewCharacter(char *character.Character, game *Game) *Character {
 		Character:  char,
 		game:       game,
 		name:       lang.Text(char.ID()),
+		combatLog:  objects.NewLog(),
 		privateLog: objects.NewLog(),
 	}
+	c.SetOnModifierTakenFunc(c.onModifierTaken)
 	return &c
 }
 
@@ -65,7 +68,12 @@ func (c *Character) Name() string {
 	return c.name
 }
 
-// PrivateLog returns avatar private log.
+// CombatLog returns character combat log.
+func (c *Character) CombatLog() *objects.Log {
+	return c.combatLog
+}
+
+// PrivateLog returns character private log.
 func (c *Character) PrivateLog() *objects.Log {
 	return c.privateLog
 }
@@ -266,4 +274,17 @@ func (c *Character) moveCloseTo(x, y, minRange float64) {
 		y += minRange
 	}
 	c.SetDestPoint(x, y)
+}
+
+// Triggered on receiving new modifier.
+func (c *Character) onModifierTaken(m effect.Modifier) {
+	switch m := m.(type) {
+	case *effect.HealthMod:
+		msg := objects.Message{
+			Translated: true,
+			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+				m.LastValue()),
+		}
+		c.CombatLog().Add(msg)
+	}
 }

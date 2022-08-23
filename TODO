@@ -22,7 +22,6 @@ MINOR:
 * Exporting character via flame data package exports also quests, effects, items, etc., those
   should be deleted when exporting character to use in different game
 * Loading screen at startup
-* Move combat log from avatar to game character struct
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

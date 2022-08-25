@@ -47,6 +47,7 @@ const (
 // Wrapper struct for game.
 type Game struct {
 	*flame.Module
+	chars              map[string]*Character
 	playerChars        []*Character
 	activePC           *Character
 	server             *Server
@@ -58,7 +59,10 @@ type Game struct {
 
 // New creates new wrapper for specified module.
 func New(module *flame.Module) *Game {
-	g := Game{Module: module}
+	g := Game{
+		Module: module,
+		chars:  make(map[string]*Character),
+	}
 	g.localAI = ai.New(ai.NewGame(module))
 	return &g
 }
@@ -81,9 +85,15 @@ func (g *Game) Update() {
 			g.updateAIChars()
 			g.localAI.Update(delta)
 		}
+		g.updateChars()
 		update = time.Now()
 		time.Sleep(time.Duration(16) * time.Millisecond)
 	}
+}
+
+// Char returns game character with specified ID and serial.
+func (g *Game) Char(id, serial string) *Character {
+	return g.chars[id+serial]
 }
 
 // AddPlayerChar adds specified character to player characters list.
@@ -296,5 +306,17 @@ outer:
 		}
 		aiChar := ai.NewCharacter(c, g.localAI.Game())
 		g.localAI.Game().AddCharacter(aiChar)
+	}
+}
+
+// updateChars updars list of game characters.
+func (g *Game) updateChars() {
+	for _, c := range g.Chapter().Characters() {
+		gameChar := g.chars[c.ID()+c.Serial()]
+		if gameChar != nil {
+			continue
+		}
+		gameChar = NewCharacter(c, g)
+		g.chars[gameChar.ID()+gameChar.Serial()] = gameChar
 	}
 }

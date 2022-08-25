@@ -43,7 +43,6 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
-	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/object"
 )
@@ -414,7 +413,10 @@ func (c *Camera) updateAreaObjects() {
 				res.SetAvatars(append(res.Avatars(), defData))
 				avData = &defData
 			}
-			gameChar := game.NewCharacter(char, c.hud.game)
+			gameChar := c.hud.game.Char(char.ID(), char.Serial())
+			if gameChar == nil {
+				return
+			}
 			av = object.NewAvatar(gameChar, avData)
 		}
 		c.avatars[char.ID()+char.Serial()] = av

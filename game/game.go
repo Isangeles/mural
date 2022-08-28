@@ -311,6 +311,13 @@ outer:
 
 // updateChars updars list of game characters.
 func (g *Game) updateChars() {
+	for _, p := range g.playerChars {
+		gameChar := g.chars[p.ID()+p.Serial()]
+		if gameChar != nil {
+			continue
+		}
+		g.chars[p.ID()+p.Serial()] = p
+	}
 	for _, c := range g.Chapter().Characters() {
 		gameChar := g.chars[c.ID()+c.Serial()]
 		if gameChar != nil {

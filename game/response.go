@@ -66,12 +66,17 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 			return
 		}
 	}
+	gameChar := g.Char(resp.ID, resp.Serial)
+	if gameChar != nil {
+		g.AddPlayerChar(gameChar)
+		return
+	}
 	char := g.Chapter().Character(resp.ID, resp.Serial)
 	if char == nil {
 		log.Err.Printf("Game: character from new char response not found in current module: %s %s",
 			resp.ID, resp.Serial)
 		return
 	}
-	gameChar := NewCharacter(char, g)
+	gameChar = NewCharacter(char, g)
 	g.AddPlayerChar(gameChar)
 }

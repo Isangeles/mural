@@ -36,6 +36,7 @@ import (
 	"github.com/isangeles/flame/item"
 	"github.com/isangeles/flame/objects"
 	"github.com/isangeles/flame/skill"
+	"github.com/isangeles/flame/useaction"
 
 	"github.com/isangeles/mtk"
 
@@ -123,7 +124,7 @@ func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Events.
-	av.SetOnSkillActivatedFunc(av.onSkillActivated)
+	av.SetOnUseFunc(av.onUse)
 	av.updateGraphic()
 	return av
 }
@@ -456,6 +457,15 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	if !av.Silenced() && mtk.Audio() != nil && sg.ActivationAudio() != nil {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
+}
+
+// Triggered after one of character skills was activated.
+func (av *Avatar) onUse(object useaction.Usable) {
+	skill, ok := object.(*skill.Skill)
+	if !ok {
+		return
+	}
+	av.onSkillActivated(skill)
 }
 
 // castingRecipe checks if avatar crafting

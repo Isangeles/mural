@@ -48,6 +48,7 @@ type Character struct {
 	name       string
 	combatLog  *objects.Log
 	privateLog *objects.Log
+	onUse      func(o useaction.Usable)
 }
 
 // NewCharacter creates game wrapper for module character.
@@ -83,6 +84,11 @@ func (c *Character) PrivateLog() *objects.Log {
 func (c *Character) InSight(x, y float64) bool {
 	charX, charY := c.Position()
 	return math.Hypot(charX-x, charY-y) <= c.SightRange()
+}
+
+// SetOnUseFunc sets function to trigger after using an object.
+func (c *Character) SetOnUseFunc(f func(o useaction.Usable)) {
+	c.onUse = f
 }
 
 // SetDestPoint sets destination point for player character.
@@ -152,6 +158,12 @@ func (c *Character) Use(ob useaction.Usable) {
 		return
 	}
 	if c.game.Server() == nil {
+		// If no server then trigger onUse event and return.
+		// With server this event will be triggered after
+		// user response from the server.
+		if c.onUse != nil {
+			c.onUse(ob)
+		}
 		return
 	}
 	useReq := request.Use{
@@ -241,6 +253,21 @@ func (c *Character) Unequip(it item.Equiper) {
 		log.Err.Printf("Character: %s %s: unable to send unequip request: %v",
 			c.ID(), c.Serial(), err)
 	}
+}
+
+// Usable returns usable object with specified ID and serial.
+func (c *Character) Usable(id, serial string) useaction.Usable {
+	for _, s := range c.Skills() {
+		if s.ID() == id {
+			return s
+		}
+	}
+	for _, r := range c.Crafting().Recipes() {
+		if r.ID() == id {
+			return r
+		}
+	}
+	return c.Inventory().Item(id, serial)
 }
 
 // meetTargetRangeReqs check if all target range requirements are meet.

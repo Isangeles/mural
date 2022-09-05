@@ -27,6 +27,8 @@ import (
 	"sync"
 
 	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/serial"
+	"github.com/isangeles/flame/useaction"
 
 	"github.com/isangeles/fire/response"
 
@@ -41,6 +43,9 @@ func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
 	for _, r := range resp.Character {
 		g.handleCharacterResponse(r)
+	}
+	for _, r := range resp.Use {
+		g.handleUseResponse(r)
 	}
 	for _, r := range resp.Command {
 		log.Inf.Printf("[%d]: %s", r.Result, r.Out)
@@ -79,4 +84,33 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 	}
 	gameChar = NewCharacter(char, g)
 	g.AddPlayerChar(gameChar)
+}
+
+// handleUseResponse handles use response.
+func (g *Game) handleUseResponse(resp response.Use) {
+	char := g.Char(resp.UserID, resp.UserSerial)
+	if char == nil {
+		return
+	}
+	if char.onUse == nil {
+		return
+	}
+	usable := char.Usable(resp.ObjectID, resp.ObjectSerial)
+	if usable == nil {
+		// Search for item or area object.
+		ob := serial.Object(resp.ObjectID, resp.ObjectSerial)
+		if ob == nil {
+			log.Err.Printf("Object not found: %s %s", resp.ObjectID,
+				resp.ObjectSerial)
+			return
+		}
+		u, ok := ob.(useaction.Usable)
+		if !ok {
+			log.Err.Printf("Object is not usable: %s %s", resp.ObjectID,
+				resp.ObjectSerial)
+			return
+		}
+		usable = u
+	}
+	char.onUse(usable)
 }

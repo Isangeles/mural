@@ -156,7 +156,7 @@ func (g *Game) SpawnChar(char *Character) error {
 		return fmt.Errorf("chapter start area not found: %s",
 			g.Chapter().Conf().StartArea)
 	}
-	startArea.AddCharacter(char.Character)
+	startArea.AddObject(char.Character)
 	return nil
 }
 

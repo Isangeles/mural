@@ -34,6 +34,7 @@ import (
 
 	"github.com/isangeles/flame/area"
 	"github.com/isangeles/flame/character"
+	flameob "github.com/isangeles/flame/object"
 	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/stone"
@@ -213,7 +214,11 @@ func (c *Camera) SetArea(a *area.Area) error {
 	c.areaMap = areaMap
 	// PC avatars.
 	c.avatars = make(map[string]*object.Avatar)
-	for _, char := range a.Characters() {
+	for _, ob := range a.Objects() {
+		char, ok := ob.(*character.Character)
+		if !ok {
+			continue
+		}
 		var pcAvatar *object.Avatar
 		for _, av := range c.hud.playerAvatars {
 			if char.ID() == av.ID() && char.Serial() == av.Serial() {
@@ -395,8 +400,9 @@ func (c *Camera) updateAreaObjects() {
 	}
 	c.clearAreaObjects()
 	// Add new objects & characters.
-	for _, char := range c.area.Characters() {
-		if c.avatars[char.ID()+char.Serial()] != nil {
+	for _, ob := range c.area.Objects() {
+		char, isChar := ob.(*character.Character)
+		if !isChar || c.avatars[char.ID()+char.Serial()] != nil {
 			continue
 		}
 		var av *object.Avatar
@@ -422,7 +428,8 @@ func (c *Camera) updateAreaObjects() {
 		c.avatars[char.ID()+char.Serial()] = av
 	}
 	for _, ob := range c.area.Objects() {
-		if c.objects[ob.ID()+ob.Serial()] != nil {
+		ob, isOb := ob.(*flameob.Object)
+		if !isOb || c.objects[ob.ID()+ob.Serial()] != nil {
 			continue
 		}
 		ogData := res.Object(ob.ID())
@@ -441,8 +448,9 @@ func (c *Camera) updateAreaObjects() {
 func (c *Camera) clearAreaObjects() {
 	for _, av := range c.Avatars() {
 		found := false
-		for _, char := range c.area.Characters() {
-			if char.ID() == av.ID() && char.Serial() == av.Serial() {
+		for _, ob := range c.area.Objects() {
+			_, isChar := ob.(*character.Character)
+			if isChar && ob.ID() == av.ID() && ob.Serial() == av.Serial() {
 				found = true
 				break
 			}

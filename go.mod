@@ -7,10 +7,10 @@ require (
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/isangeles/burn v0.0.0-20220903161932-c9d0bcc1c173
-	github.com/isangeles/fire v0.0.0-20220905162333-9b24133801fa
-	github.com/isangeles/flame v0.0.0-20220901180201-7d149b34bee0
-	github.com/isangeles/ignite v0.0.0-20220729210906-459a2058f4b1
-	github.com/isangeles/mtk v0.0.0-20220601165723-c22f1c7aabc3
+	github.com/isangeles/fire v0.0.0-20220914161631-89275dce4396
+	github.com/isangeles/flame v0.0.0-20220912150639-39f7719d0ad1
+	github.com/isangeles/ignite v0.0.0-20220915154834-499898bc5050
+	github.com/isangeles/mtk v0.0.0-20220912150721-ef4a917d3e98
 	github.com/isangeles/stone v0.1.0
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.0.0-20220902085622-e7cb96979f69

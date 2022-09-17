@@ -286,7 +286,7 @@ func (hud *HUD) SetActivePlayer(pc *game.Character) {
 		return
 	}
 	chapter := hud.game.Chapter()
-	pcArea := chapter.CharacterArea(hud.Game().ActivePlayerChar().Character)
+	pcArea := chapter.ObjectArea(hud.Game().ActivePlayerChar())
 	if pcArea == nil {
 		log.Err.Printf("hud: set active pc: no pc area")
 		return
@@ -491,7 +491,7 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 // updateCurrentArea updates HUD area to active player area.
 func (hud *HUD) updateCurrentArea() {
 	chapter := hud.Game().Chapter()
-	pcArea := chapter.CharacterArea(hud.Game().ActivePlayerChar().Character)
+	pcArea := chapter.ObjectArea(hud.Game().ActivePlayerChar())
 	if pcArea != hud.Camera().Area() {
 		go hud.ChangeArea(pcArea)
 	}

@@ -227,7 +227,7 @@ func (c *Chat) nearMessages() (messages []Message) {
 			messages = append(messages, m)
 		}
 		// Near objects chat & combat.
-		area := c.hud.Game().Chapter().CharacterArea(pc.Character)
+		area := c.hud.Game().Chapter().ObjectArea(pc)
 		if area == nil {
 			continue
 		}

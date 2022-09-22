@@ -67,7 +67,6 @@ type Chat struct {
 	textedit     *mtk.Textedit
 	activated    bool
 	lastInput    string
-	onScriptName func(name string, args ...string) error
 }
 
 // Interface for objects with combat log.
@@ -316,7 +315,7 @@ func (c *Chat) onEnterPressed() {
 		return
 	}
 	// Execute script file.
-	if strings.HasPrefix(input, chatScriptPrefix) && c.onScriptName != nil {
+	if strings.HasPrefix(input, chatScriptPrefix) {
 		input = strings.TrimPrefix(input, chatScriptPrefix)
 		args := strings.Split(input, " ")
 		err := c.executeScriptFile(args[0], args...)

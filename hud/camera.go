@@ -385,10 +385,6 @@ func (c *Camera) drawMapFOW(t pixel.Target) {
 			h += c.areaMap.TileSize().Y
 		}
 	}
-	// 'FOW ring' effect.
-	//c.fow.Color = FOWColor
-	//c.fow.Push(c.ConvAreaPos(c.hud.ActivePlayer().Position()))
-	//c.fow.Circle(c.hud.ActivePlayer().SightRange(), 10)
 	c.fow.Draw(t)
 }
 

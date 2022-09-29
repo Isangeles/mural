@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"math"
 	"path/filepath"
+	"sync"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -68,8 +69,8 @@ type Camera struct {
 	// Map & objects.
 	areaMap *stone.Map
 	fow     *imdraw.IMDraw
-	avatars map[string]*object.Avatar
-	objects map[string]*object.ObjectGraphic
+	avatars *sync.Map
+	objects *sync.Map
 	// Debug mode.
 	cameraInfo *mtk.Text
 	cursorInfo *mtk.Text
@@ -82,8 +83,8 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.size = size
 	c.position = pixel.V(0, 0)
 	c.fow = imdraw.New(nil)
-	c.avatars = make(map[string]*object.Avatar)
-	c.objects = make(map[string]*object.ObjectGraphic)
+	c.avatars = new(sync.Map)
+	c.objects = new(sync.Map)
 	// Debug info.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
@@ -104,7 +105,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 		}
 	}
 	// Avatars.
-	for _, av := range c.avatars {
+	for _, av := range c.Avatars() {
 		if !c.VisibleForPlayer(av.Position()) {
 			continue
 		}
@@ -112,7 +113,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 		av.Draw(win, mtk.Matrix().Moved(avPos))
 	}
 	// Objects.
-	for _, ob := range c.objects {
+	for _, ob := range c.AreaObjects() {
 		if !c.VisibleForPlayer(ob.Position()) {
 			continue
 		}
@@ -170,7 +171,7 @@ func (c *Camera) Update(win *mtk.Window) {
 		c.onMouseRightPressed(win.MousePosition())
 	}
 	// Avatars.
-	for _, av := range c.avatars {
+	for _, av := range c.Avatars() {
 		if !c.VisibleForPlayer(av.Position()) {
 			continue
 		}
@@ -178,7 +179,7 @@ func (c *Camera) Update(win *mtk.Window) {
 		av.Update(win)
 	}
 	// Objects.
-	for _, ob := range c.objects {
+	for _, ob := range c.AreaObjects() {
 		if !c.VisibleForPlayer(ob.Position()) {
 			continue
 		}
@@ -213,7 +214,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	}
 	c.areaMap = areaMap
 	// PC avatars.
-	c.avatars = make(map[string]*object.Avatar)
+	c.avatars = new(sync.Map)
 	for _, ob := range a.Objects() {
 		char, ok := ob.(*character.Character)
 		if !ok {
@@ -229,7 +230,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 		if pcAvatar == nil {
 			continue
 		}
-		c.avatars[char.ID()+char.Serial()] = pcAvatar
+		c.avatars.Store(char.ID()+char.Serial(), pcAvatar)
 	}
 	// Update objects graphics.
 	c.updateAreaObjects()
@@ -254,17 +255,29 @@ func (c *Camera) Map() *stone.Map {
 
 // Avatars returns all avatars from current area.
 func (c *Camera) Avatars() (avatars []*object.Avatar) {
-	for _, av := range c.avatars {
+	addAvatar := func(k, v interface{}) bool {
+		av, ok := v.(*object.Avatar)
+		if !ok {
+			return true
+		}
 		avatars = append(avatars, av)
+		return true
 	}
+	c.avatars.Range(addAvatar)
 	return
 }
 
 // AreaObjects returns all objects in current area.
 func (c *Camera) AreaObjects() (objects []*object.ObjectGraphic) {
-	for _, ob := range c.objects {
+	addObject := func(k, v interface{}) bool {
+		ob, ok := v.(*object.ObjectGraphic)
+		if !ok {
+			return true
+		}
 		objects = append(objects, ob)
+		return true
 	}
+	c.objects.Range(addObject)
 	return
 }
 
@@ -272,10 +285,10 @@ func (c *Camera) AreaObjects() (objects []*object.ObjectGraphic) {
 // objects from current area.
 func (c *Camera) DrawObjects() []object.Drawer {
 	objects := make([]object.Drawer, 0)
-	for _, av := range c.avatars {
+	for _, av := range c.Avatars() {
 		objects = append(objects, av)
 	}
-	for _, ob := range c.objects {
+	for _, ob := range c.AreaObjects() {
 		objects = append(objects, ob)
 	}
 	return objects
@@ -398,7 +411,11 @@ func (c *Camera) updateAreaObjects() {
 	// Add new objects & characters.
 	for _, ob := range c.area.Objects() {
 		char, isChar := ob.(*character.Character)
-		if !isChar || c.avatars[char.ID()+char.Serial()] != nil {
+		if !isChar {
+			continue
+		}
+		_, avExists := c.avatars.Load(char.ID() + char.Serial())
+		if avExists {
 			continue
 		}
 		var av *object.Avatar
@@ -421,11 +438,15 @@ func (c *Camera) updateAreaObjects() {
 			}
 			av = object.NewAvatar(gameChar, avData)
 		}
-		c.avatars[char.ID()+char.Serial()] = av
+		c.avatars.Store(char.ID()+char.Serial(), av)
 	}
 	for _, ob := range c.area.Objects() {
 		ob, isOb := ob.(*flameob.Object)
-		if !isOb || c.objects[ob.ID()+ob.Serial()] != nil {
+		if !isOb {
+			continue
+		}
+		_, obExists := c.objects.Load(ob.ID() + ob.Serial())
+		if !obExists {
 			continue
 		}
 		ogData := res.Object(ob.ID())
@@ -435,7 +456,7 @@ func (c *Camera) updateAreaObjects() {
 			continue
 		}
 		og := object.NewObjectGraphic(ob, ogData)
-		c.objects[ob.ID()+ob.Serial()] = og
+		c.objects.Store(ob.ID()+ob.Serial(), og)
 	}
 }
 
@@ -454,7 +475,7 @@ func (c *Camera) clearAreaObjects() {
 		if found {
 			continue
 		}
-		delete(c.avatars, av.ID()+av.Serial())
+		c.avatars.Delete(av.ID() + av.Serial())
 	}
 	for _, gob := range c.AreaObjects() {
 		found := false
@@ -467,7 +488,7 @@ func (c *Camera) clearAreaObjects() {
 		if found {
 			continue
 		}
-		delete(c.objects, gob.ID()+gob.Serial())
+		c.objects.Delete(gob.ID() + gob.Serial())
 	}
 }
 
@@ -475,8 +496,8 @@ func (c *Camera) clearAreaObjects() {
 func (c *Camera) clear() {
 	c.area = nil
 	c.areaMap = nil
-	c.avatars = make(map[string]*object.Avatar)
-	c.objects = make(map[string]*object.ObjectGraphic)
+	c.avatars = new(sync.Map)
+	c.objects = new(sync.Map)
 }
 
 // Triggered after right mouse button was pressed.

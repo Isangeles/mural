@@ -174,7 +174,7 @@ func (av *Avatar) Update(win *mtk.Window) {
 	av.sprite.Update(win)
 	// Chat.
 	for _, m := range av.ChatLog().Messages() {
-		duration := time.Since(m.Time())
+		duration := time.Since(m.Time)
 		av.speaking = duration.Seconds() < 2
 		if av.speaking {
 			text := m.String()

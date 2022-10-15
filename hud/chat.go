@@ -217,7 +217,7 @@ func (c *Chat) nearMessages() (messages []Message) {
 		for _, lm := range pc.PrivateLog().Messages() {
 			m := Message{
 				author: pc.ID(),
-				time:   lm.Time(),
+				time:   lm.Time,
 				text:   fmt.Sprintf("%s\n", lm.String()),
 			}
 			if !lm.Translated {
@@ -239,7 +239,7 @@ func (c *Chat) nearMessages() (messages []Message) {
 			for _, lm := range log.ChatLog().Messages() {
 				m := Message{
 					author: log.ID(),
-					time:   lm.Time(),
+					time:   lm.Time,
 					text:   fmt.Sprintf("%s\n", lm.String()),
 				}
 				if !lm.Translated {
@@ -254,7 +254,7 @@ func (c *Chat) nearMessages() (messages []Message) {
 			for _, m := range cmbLog.CombatLog().Messages() {
 				m := Message{
 					author: log.ID(),
-					time:   m.Time(),
+					time:   m.Time,
 					text:   fmt.Sprintf("%s\n", m.String()),
 				}
 				messages = append(messages, m)
@@ -325,10 +325,7 @@ func (c *Chat) onEnterPressed() {
 		return
 	}
 	// Echo chat.
-	msg := objects.Message{
-		Translated: true,
-		Text:       input,
-	}
+	msg := objects.NewMessage(input, true)
 	c.hud.Game().ActivePlayerChar().AddChatMessage(msg)
 }
 

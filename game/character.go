@@ -307,11 +307,8 @@ func (c *Character) moveCloseTo(x, y, minRange float64) {
 func (c *Character) onModifierTaken(m effect.Modifier) {
 	switch m := m.(type) {
 	case *effect.HealthMod:
-		msg := objects.Message{
-			Translated: true,
-			Text: fmt.Sprintf("%s: %d", lang.Text("ob_health"),
-				m.LastValue()),
-		}
+		msg := objects.NewMessage(fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+			m.LastValue()), true)
 		c.CombatLog().Add(msg)
 	}
 }

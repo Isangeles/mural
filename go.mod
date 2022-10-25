@@ -6,14 +6,14 @@ require (
 	github.com/faiface/beep v1.1.0
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/isangeles/burn v0.0.0-20220903161932-c9d0bcc1c173
+	github.com/isangeles/burn v0.0.0-20221017183617-4505cd94ad91
 	github.com/isangeles/fire v0.0.0-20221013170000-7a5dca0fda8c
 	github.com/isangeles/flame v0.0.0-20221011162038-399adf7749db
 	github.com/isangeles/ignite v0.0.0-20221014160931-0f0db4848156
 	github.com/isangeles/mtk v0.0.0-20220923172130-1c038ae99090
 	github.com/isangeles/stone v0.1.0
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.0.0-20220902085622-e7cb96979f69
+	golang.org/x/image v0.1.0
 )
 
 require (
@@ -29,5 +29,5 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8 // indirect
 	golang.org/x/mobile v0.0.0-20190415191353-3e0bab5405d6 // indirect
-	golang.org/x/sys v0.0.0-20190626150813-e07cf5db2756 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 )

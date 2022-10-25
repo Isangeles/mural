@@ -59,14 +59,15 @@ var (
 
 // Chat represents HUD chat window.
 type Chat struct {
-	hud          *HUD
-	bgSpr        *pixel.Sprite
-	bgDraw       *imdraw.IMDraw
-	drawArea     pixel.Rect
-	textbox      *mtk.Textbox
-	textedit     *mtk.Textedit
-	activated    bool
-	lastInput    string
+	hud       *HUD
+	bgSpr     *pixel.Sprite
+	bgDraw    *imdraw.IMDraw
+	drawArea  pixel.Rect
+	textbox   *mtk.Textbox
+	textedit  *mtk.Textedit
+	activated bool
+	lastInput string
+	messages  []Message
 }
 
 // Interface for objects with combat log.
@@ -121,6 +122,8 @@ func newChat(hud *HUD) *Chat {
 	}
 	// Textedit.
 	c.textedit = mtk.NewTextedit(textboxParams)
+	// Listen to avatars chat channels.
+	go c.listenCharsChat()
 	return c
 }
 
@@ -148,8 +151,9 @@ func (c *Chat) Update(win *mtk.Window) {
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
 	c.textbox.Clear()
-	// Get messages from players and nearby objects.
-	messages := c.nearMessages()
+	messages := make([]Message, 0)
+	messages = append(messages, c.messages...)
+	messages = append(messages, c.playerPrivMessages()...)
 	// Add engine log messages.
 	for _, m := range flamelog.Messages() {
 		m := Message{
@@ -208,10 +212,27 @@ func (c *Chat) Echo(text string) {
 	log.Inf.Printf("%s", text)
 }
 
-// nearMessages returns all messages from the player
-// characters and objects near to any of the player
-// characters.
-func (c *Chat) nearMessages() (messages []Message) {
+// listenCharChat listens to avatars chat channels.
+func (c *Chat) listenCharsChat() {
+	for {
+		for _, a := range c.hud.camera.Avatars() {
+			if !c.hud.camera.VisibleForPlayer(a.Position()) {
+				continue
+			}
+			select {
+			case msg := <- a.ChatLog().Channel():
+				c.addObjectMessage(a.ID(), msg)
+			case msg := <- a.CombatLog().Channel():
+				c.addObjectMessage(a.ID(), msg)
+			default:
+			}
+		}
+	}
+}
+
+// playerPrivMessages returns private messages from all
+// player characters.
+func (c *Chat) playerPrivMessages() (messages []Message) {
 	for _, pc := range c.hud.Game().PlayerChars() {
 		// PC's private messages.
 		for _, lm := range pc.PrivateLog().Messages() {
@@ -225,43 +246,22 @@ func (c *Chat) nearMessages() (messages []Message) {
 			}
 			messages = append(messages, m)
 		}
-		// Near objects chat & combat.
-		area := c.hud.Game().Chapter().ObjectArea(pc)
-		if area == nil {
-			continue
-		}
-		pcX, pcY := pc.Position()
-		for _, tar := range area.NearObjects(pcX, pcY, pc.SightRange()) {
-			log, ok := tar.(objects.Logger)
-			if !ok {
-				continue
-			}
-			for _, lm := range log.ChatLog().Messages() {
-				m := Message{
-					author: log.ID(),
-					time:   lm.Time,
-					text:   fmt.Sprintf("%s\n", lm.String()),
-				}
-				if !lm.Translated {
-					m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
-				}
-				messages = append(messages, m)
-			}
-			cmbLog := c.combatLogger(log)
-			if cmbLog == nil {
-				continue
-			}
-			for _, m := range cmbLog.CombatLog().Messages() {
-				m := Message{
-					author: log.ID(),
-					time:   m.Time,
-					text:   fmt.Sprintf("%s\n", m.String()),
-				}
-				messages = append(messages, m)
-			}
-		}
 	}
 	return
+}
+
+
+// addObjectMessage adds specified object message to the chat log.
+func (c *Chat) addObjectMessage(objectID string, msg objects.Message) {
+	chatMsg := Message{
+		author: objectID,
+		time:   msg.Time,
+		text:   fmt.Sprintf("%s\n", msg),
+	}
+	if !msg.Translated {
+		chatMsg.text = fmt.Sprintf("%s\n", lang.Text(msg.String()))
+	}
+	c.messages = append(c.messages, chatMsg)
 }
 
 // combatLogger retruns returns object with combat

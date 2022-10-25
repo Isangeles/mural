@@ -27,6 +27,7 @@ import (
 	"sync"
 
 	flameres "github.com/isangeles/flame/data/res"
+	"github.com/isangeles/flame/objects"
 	"github.com/isangeles/flame/serial"
 	"github.com/isangeles/flame/useaction"
 
@@ -43,6 +44,9 @@ func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
 	for _, r := range resp.Character {
 		g.handleCharacterResponse(r)
+	}
+	for _, r := range resp.Chat {
+		g.handleChatResponse(r)
 	}
 	for _, r := range resp.Use {
 		g.handleUseResponse(r)
@@ -84,6 +88,16 @@ func (g *Game) handleCharacterResponse(resp response.Character) {
 	}
 	gameChar = NewCharacter(char, g)
 	g.AddPlayerChar(gameChar)
+}
+
+// handleChatResponse handles chat response.
+func (g *Game) handleChatResponse(resp response.Chat) {
+	char := g.Char(resp.ObjectID, resp.ObjectSerial)
+	if char == nil {
+		return
+	}
+	msg := objects.Message{resp.Translated, resp.Message, resp.Time}
+	char.ChatLog().Channel() <- msg
 }
 
 // handleUseResponse handles use response.

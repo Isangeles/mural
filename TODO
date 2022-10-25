@@ -9,7 +9,6 @@ MAJOR:
 * Documentation for gui directories: chapters, effects, font, items, objects, portraits,
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
-* Chat messages should not be removed/added depending on message source being in range
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window

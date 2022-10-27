@@ -21,6 +21,7 @@ MINOR:
 * Exporting character via flame data package exports also quests, effects, items, etc., those
   should be deleted when exporting character to use in different game
 * Loading screen at startup
+* Separate chat(multitab?) for combat messages
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

@@ -22,6 +22,7 @@ MINOR:
   should be deleted when exporting character to use in different game
 * Loading screen at startup
 * Separate chat(multitab?) for combat messages
+* AI chars moving around are not visible when connected to game server
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

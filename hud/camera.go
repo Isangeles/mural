@@ -446,7 +446,7 @@ func (c *Camera) updateAreaObjects() {
 			continue
 		}
 		_, obExists := c.objects.Load(ob.ID() + ob.Serial())
-		if !obExists {
+		if obExists {
 			continue
 		}
 		ogData := res.Object(ob.ID())

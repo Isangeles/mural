@@ -103,7 +103,7 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {
 		serial.Reset()
-		mm.mod = flame.NewModule(resp.Module)
+		mm.SetModule(flame.NewModule(resp.Module))
 		return
 	}
 	mm.mod.Apply(resp.Module)

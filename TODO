@@ -10,6 +10,7 @@ MAJOR:
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
 * Graphical effects for area weather and day/night
+* Character movement is lagging when connected to the game server
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
 * Display portrait in character window
@@ -23,7 +24,6 @@ MINOR:
   should be deleted when exporting character to use in different game
 * Loading screen at startup
 * Separate chat(multitab?) for combat messages
-* AI chars moving around are not visible when connected to game server
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

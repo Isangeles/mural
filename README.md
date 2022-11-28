@@ -149,8 +149,7 @@ All NPCs that should be controlled by the AI need to have the `igniteNpc` flag s
 [Burn](https://github.com/Isangeles/burn) CI handles commands execution.
 
 Additionally to Burn tools, Mural implements gui tools to manage game GUI.
-You can access CI by the dropdown console in the main menu or chat window in HUD,
-both accessible by pressing '`'(grave).
+You can access CI by the dropdown console in the main menu(accessible by pressing '`'(grave)) or chat window in HUD.
 
 Note: all commands entered in HUD chat window must be prefixed by '$' character.
 

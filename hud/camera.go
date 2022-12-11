@@ -451,8 +451,9 @@ func (c *Camera) updateAreaObjects() {
 		}
 		ogData := res.Object(ob.ID())
 		if ogData == nil {
-			log.Err.Printf("hud camera: update area objects: object data not found: %s",
-				ob.ID())
+			defData := data.DefaultObjectGraphicData(ob)
+			res.SetObjects(append(res.Objects(), defData))
+			ogData = &defData
 			continue
 		}
 		og := object.NewObjectGraphic(ob, ogData)

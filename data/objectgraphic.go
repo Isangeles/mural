@@ -1,7 +1,7 @@
 /*
  * objectgraphic.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/isangeles/flame/object"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
@@ -83,4 +85,13 @@ func ImportObjectsGraphicsDir(dirPath string) ([]res.ObjectGraphicData, error) {
 		}
 	}
 	return objects, nil
+}
+
+// DefaultObjectGraphicData returns default object graphic data.
+func DefaultObjectGraphicData(ob *object.Object) res.ObjectGraphicData {
+	return res.ObjectGraphicData{
+		ID:     ob.ID(),
+		Serial: ob.Serial(),
+		Sprite: "default.png",
+	}
 }

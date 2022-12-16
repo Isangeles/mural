@@ -1,7 +1,7 @@
 /*
  * skillgraphic.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	SkillGraphicsFileExt = ".graphic"
 )
 
 // ImportSkillsGraphics imports all skills graphics from
@@ -68,9 +63,6 @@ func ImportSkillsGraphicsDir(path string) ([]res.SkillGraphicData, error) {
 	}
 	skills := make([]res.SkillGraphicData, 0)
 	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), SkillGraphicsFileExt) {
-			continue
-		}
 		basePath := filepath.FromSlash(path + "/" + finfo.Name())
 		impSkills, err := ImportSkillsGraphics(basePath)
 		if err != nil {

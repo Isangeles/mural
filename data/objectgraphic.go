@@ -29,16 +29,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/flame/object"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	ObjectGraphicsFileExt = ".graphic"
 )
 
 // ImportObjectsGraphics imports all objects graphic from
@@ -70,9 +65,6 @@ func ImportObjectsGraphicsDir(dirPath string) ([]res.ObjectGraphicData, error) {
 	}
 	objects := make([]res.ObjectGraphicData, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), ObjectGraphicsFileExt) {
-			continue
-		}
 		basePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impObjects, err := ImportObjectsGraphics(basePath)
 		if err != nil {

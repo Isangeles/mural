@@ -1,7 +1,7 @@
 /*
  * effectgraphic.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
@@ -68,9 +67,6 @@ func ImportEffectsGraphicsDir(path string) ([]res.EffectGraphicData, error) {
 	}
 	effects := make([]res.EffectGraphicData, 0)
 	for _, finfo := range files {
-		if !strings.HasSuffix(finfo.Name(), EffectGraphicsFileExt) {
-			continue
-		}
 		basePath := filepath.FromSlash(path + "/" + finfo.Name())
 		impEffects, err := ImportEffectsGraphics(basePath)
 		if err != nil {

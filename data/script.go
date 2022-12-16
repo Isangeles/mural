@@ -1,7 +1,7 @@
 /*
  * scripts.go
  *
- * Copyright 2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2021-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +30,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/burn/ash"
 
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	ashScriptExt = ".ash"
 )
 
 // ScriptsDir returns all scripts from directory with
@@ -50,9 +45,6 @@ func ScriptsDir(path string) ([]*ash.Script, error) {
 	}
 	scripts := make([]*ash.Script, 0)
 	for _, info := range files {
-		if !strings.HasSuffix(info.Name(), ashScriptExt) {
-			continue
-		}
 		scriptPath := filepath.FromSlash(path + "/" + info.Name())
 		s, err := Script(scriptPath)
 		if err != nil {

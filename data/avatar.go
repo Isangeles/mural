@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/flame/character"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	AvatarsFileExt = ".avatars"
 )
 
 // ImportAvatars imports all avatars data for specified characters
@@ -72,9 +67,6 @@ func ImportAvatarsDir(dirPath string) ([]res.AvatarData, error) {
 	}
 	avsData := make([]res.AvatarData, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), AvatarsFileExt) {
-			continue
-		}
 		avFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impAvs, err := ImportAvatars(avFilePath)
 		if err != nil {
@@ -100,10 +92,6 @@ func ExportAvatars(path string, avatars ...res.AvatarData) error {
 	xml, err := xml.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("unable to marshal XML data: %v", err)
-	}
-	// Check whether file path ends with proper extension.
-	if !strings.HasSuffix(path, AvatarsFileExt) {
-		path = path + AvatarsFileExt
 	}
 	// Create base file.
 	dirPath := filepath.Dir(path)

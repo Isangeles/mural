@@ -1,7 +1,7 @@
 /*
  * itemgraphic.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	ItemGraphicsFileExt = ".graphic"
 )
 
 // ImportItemsGraphics imports all items grpahics from
@@ -68,9 +63,6 @@ func ImportItemsGraphicsDir(dirPath string) ([]res.ItemGraphicData, error) {
 	}
 	items := make([]res.ItemGraphicData, 0)
 	for _, fInfo := range files {
-		if !strings.HasSuffix(fInfo.Name(), ItemGraphicsFileExt) {
-			continue
-		}
 		itemsGraphicFilePath := filepath.FromSlash(dirPath + "/" + fInfo.Name())
 		impItems, err := ImportItemsGraphics(itemsGraphicFilePath)
 		if err != nil {

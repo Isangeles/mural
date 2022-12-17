@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
@@ -54,30 +53,6 @@ func ImportHUD(path string) (res.HUDData, error) {
 	if err != nil {
 		return data, fmt.Errorf("unable to unmarshal data: %v",
 			err)
-	}
-	return data, nil
-}
-
-// ImportHUDDir imports all HUD data files in directory with
-// specified path.
-func ImportHUDDir(dirPath string) ([]res.HUDData, error) {
-	files, err := os.ReadDir(dirPath)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read dir: %v", err)
-	}
-	data := make([]res.HUDData, 0)
-	for _, f := range files {
-		if !strings.HasSuffix(f.Name(), HUDFileExt) {
-			continue
-		}
-		path := filepath.Join(dirPath, f.Name())
-		hud, err := ImportHUD(path)
-		if err != nil {
-			log.Err.Printf("data: import hud dir: unable to import data file: %v",
-				err)
-			continue
-		}
-		data = append(data, hud)
 	}
 	return data, nil
 }

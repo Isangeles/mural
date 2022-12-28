@@ -35,7 +35,6 @@ import (
 
 	"github.com/isangeles/flame/area"
 	"github.com/isangeles/flame/character"
-	flameob "github.com/isangeles/flame/object"
 	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/stone"
@@ -414,10 +413,22 @@ func (c *Camera) updateAreaObjects() {
 		if !isChar {
 			continue
 		}
+		_, obExists := c.objects.Load(char.ID() + char.Serial())
+		if obExists {
+			continue
+		}
 		_, avExists := c.avatars.Load(char.ID() + char.Serial())
 		if avExists {
 			continue
 		}
+		// Object graphic.
+		ogData := res.Object(char.ID())
+		if ogData != nil {
+			og := object.NewObjectGraphic(char, ogData)
+			c.objects.Store(char.ID()+char.Serial(), og)
+			continue
+		}
+		// Avatar.
 		var av *object.Avatar
 		// Search players first.
 		for _, p := range c.hud.playerAvatars {
@@ -428,9 +439,11 @@ func (c *Camera) updateAreaObjects() {
 		if av == nil {
 			avData := res.Avatar(char.ID())
 			if avData == nil {
-				defData := data.DefaultAvatarData(char)
-				res.SetAvatars(append(res.Avatars(), defData))
-				avData = &defData
+				defData := data.DefaultObjectGraphicData(char)
+				res.SetObjects(append(res.Objects(), defData))
+				og := object.NewObjectGraphic(char, &defData)
+				c.objects.Store(char.ID()+char.Serial(), og)
+				continue
 			}
 			gameChar := c.hud.game.Char(char.ID(), char.Serial())
 			if gameChar == nil {
@@ -439,25 +452,6 @@ func (c *Camera) updateAreaObjects() {
 			av = object.NewAvatar(gameChar, avData)
 		}
 		c.avatars.Store(char.ID()+char.Serial(), av)
-	}
-	for _, ob := range c.area.Objects() {
-		ob, isOb := ob.(*flameob.Object)
-		if !isOb {
-			continue
-		}
-		_, obExists := c.objects.Load(ob.ID() + ob.Serial())
-		if obExists {
-			continue
-		}
-		ogData := res.Object(ob.ID())
-		if ogData == nil {
-			defData := data.DefaultObjectGraphicData(ob)
-			res.SetObjects(append(res.Objects(), defData))
-			ogData = &defData
-			continue
-		}
-		og := object.NewObjectGraphic(ob, ogData)
-		c.objects.Store(ob.ID()+ob.Serial(), og)
 	}
 }
 
@@ -520,7 +514,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: set target: %s", ob.ID()+"_"+ob.Serial())
-		c.hud.Game().ActivePlayerChar().SetTarget(ob.Object)
+		c.hud.Game().ActivePlayerChar().SetTarget(ob.Character)
 		return
 	}
 	c.hud.Game().ActivePlayerChar().SetTarget(nil)
@@ -544,7 +538,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 			continue
 		}
 		log.Dbg.Printf("hud: action: %s#%s", ob.ID(), ob.Serial())
-		pc.Use(ob.Object)
+		pc.Use(ob.Character)
 		return
 	}
 	// Loot.

@@ -30,7 +30,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/isangeles/flame/object"
+	"github.com/isangeles/flame/character"
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
@@ -80,10 +80,10 @@ func ImportObjectsGraphicsDir(dirPath string) ([]res.ObjectGraphicData, error) {
 }
 
 // DefaultObjectGraphicData returns default object graphic data.
-func DefaultObjectGraphicData(ob *object.Object) res.ObjectGraphicData {
+func DefaultObjectGraphicData(char *character.Character) res.ObjectGraphicData {
 	return res.ObjectGraphicData{
-		ID:     ob.ID(),
-		Serial: ob.Serial(),
+		ID:     char.ID(),
+		Serial: char.Serial(),
 		Sprite: "default.png",
 	}
 }

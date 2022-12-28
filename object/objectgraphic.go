@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ import (
 
 	"github.com/faiface/pixel"
 
+	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
-	flameobject "github.com/isangeles/flame/object"
 	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/mtk"
@@ -43,7 +43,7 @@ import (
 // Struct for graphical representation
 // of area object.
 type ObjectGraphic struct {
-	*flameobject.Object
+	*character.Character
 	name         string
 	sprite       *mtk.Animation
 	portrait     pixel.Picture
@@ -56,10 +56,10 @@ type ObjectGraphic struct {
 	combatLog    *objects.Log
 }
 
-// NewObjectGraphic creates new graphical wrapper for specified object.
-func NewObjectGraphic(ob *flameobject.Object, data *res.ObjectGraphicData) *ObjectGraphic {
+// NewObjectGraphic creates new object graphic for specified character.
+func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) *ObjectGraphic {
 	og := new(ObjectGraphic)
-	og.Object = ob
+	og.Character = char 
 	og.name = lang.Text(og.ID())
 	og.combatLog = objects.NewLog()
 	// Sprite.
@@ -118,7 +118,7 @@ func (og *ObjectGraphic) Name() string {
 // Position return object position in form of
 // pixel XY vector.
 func (og *ObjectGraphic) Position() pixel.Vec {
-	x, y := og.Object.Position()
+	x, y := og.Character.Position()
 	return pixel.V(x, y)
 }
 

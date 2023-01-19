@@ -1,7 +1,7 @@
 ## Introduction
 Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
 
-GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/faiface/pixel) library.
+GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep) libraries.
 
 Currently in an early development stage.
 
@@ -214,7 +214,7 @@ After you finish, open a pull request to merge your changes with master branch.
 * Isangeles <<ds@isangeles.dev>>
 
 ## License
-Copyright 2018-2022 Dariusz Sikora <<ds@isangeles.dev>>
+Copyright 2018-2023 Dariusz Sikora <<ds@isangeles.dev>>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,25 +212,6 @@ func (c *Camera) SetArea(a *area.Area) error {
 		return fmt.Errorf("unable to create pc area map: %v", err)
 	}
 	c.areaMap = areaMap
-	// PC avatars.
-	c.avatars = new(sync.Map)
-	for _, ob := range a.Objects() {
-		char, ok := ob.(*character.Character)
-		if !ok {
-			continue
-		}
-		var pcAvatar *object.Avatar
-		for _, av := range c.hud.playerAvatars {
-			if char.ID() == av.ID() && char.Serial() == av.Serial() {
-				pcAvatar = av
-				break
-			}
-		}
-		if pcAvatar == nil {
-			continue
-		}
-		c.avatars.Store(char.ID()+char.Serial(), pcAvatar)
-	}
 	// Update objects graphics.
 	c.updateAreaObjects()
 	// Center camera at player
@@ -429,28 +410,19 @@ func (c *Camera) updateAreaObjects() {
 			continue
 		}
 		// Avatar.
-		var av *object.Avatar
-		// Search players first.
-		for _, p := range c.hud.playerAvatars {
-			if p.ID() == char.ID() && p.Serial() == char.Serial() {
-				av = p
-			}
+		avData := res.Avatar(char.ID())
+		if avData == nil {
+			defData := data.DefaultObjectGraphicData(char)
+			res.SetObjects(append(res.Objects(), defData))
+			og := object.NewObjectGraphic(char, &defData)
+			c.objects.Store(char.ID()+char.Serial(), og)
+			continue
 		}
-		if av == nil {
-			avData := res.Avatar(char.ID())
-			if avData == nil {
-				defData := data.DefaultObjectGraphicData(char)
-				res.SetObjects(append(res.Objects(), defData))
-				og := object.NewObjectGraphic(char, &defData)
-				c.objects.Store(char.ID()+char.Serial(), og)
-				continue
-			}
-			gameChar := c.hud.game.Char(char.ID(), char.Serial())
-			if gameChar == nil {
-				return
-			}
-			av = object.NewAvatar(gameChar, avData)
+		gameChar := c.hud.game.Char(char.ID(), char.Serial())
+		if gameChar == nil {
+			return
 		}
+		av := object.NewAvatar(gameChar, avData)
 		c.avatars.Store(char.ID()+char.Serial(), av)
 	}
 }

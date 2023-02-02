@@ -105,7 +105,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.Avatars() {
-		if !c.VisibleForPlayer(av.Position()) {
+		if !c.hud.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
 			continue
 		}
 		avPos := c.ConvAreaPos(av.Position())
@@ -113,7 +113,7 @@ func (c *Camera) Draw(win *mtk.Window) {
 	}
 	// Objects.
 	for _, ob := range c.AreaObjects() {
-		if !c.VisibleForPlayer(ob.Position()) {
+		if !c.hud.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
 			continue
 		}
 		obPos := c.ConvAreaPos(ob.Position())
@@ -171,7 +171,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	// Avatars.
 	for _, av := range c.Avatars() {
-		if !c.VisibleForPlayer(av.Position()) {
+		if !c.hud.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
 			continue
 		}
 		av.Silence(false)
@@ -179,7 +179,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	}
 	// Objects.
 	for _, ob := range c.AreaObjects() {
-		if !c.VisibleForPlayer(ob.Position()) {
+		if !c.hud.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
 			continue
 		}
 		ob.Silence(false)
@@ -342,28 +342,16 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	return areaPos
 }
 
-// VisibleForPlayer checks whether specified position is
-// in visibility range of any PC.
-func (c *Camera) VisibleForPlayer(pos pixel.Vec) bool {
-	for _, pc := range c.hud.Game().PlayerChars() {
-		if pc.InSight(pos.X, pos.Y) {
-			return true
-		}
-	}
-	return false
-}
-
 // drawMapFOW draws 'Fog Of War' effect on current area map.
 func (c *Camera) drawMapFOW(t pixel.Target) {
 	c.fow.Clear()
 	w, h := 0.0, 0.0
 	for h < c.areaMap.Size().Y {
-		pos := pixel.V(w, h)
-		if !c.VisibleForPlayer(pos) {
+		if !c.hud.game.VisibleForPlayer(w, h) {
 			// Draw FOW tile.
 			tileSizeX := mtk.ConvSize(c.areaMap.TileSize().X)
 			tileSizeY := mtk.ConvSize(c.areaMap.TileSize().Y)
-			tileDrawMin := c.ConvAreaPos(pos)
+			tileDrawMin := c.ConvAreaPos(pixel.V(w, h))
 			tileDrawMax := pixel.V(tileDrawMin.X+tileSizeX,
 				tileDrawMin.Y+tileSizeY)
 			c.fow.Color = FOWColor

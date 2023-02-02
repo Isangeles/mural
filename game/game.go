@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,6 +292,17 @@ func (g *Game) AnswerDialog(dialog *dialog.Dialog, answer *dialog.Answer) {
 	dialog.Next(answer)
 }
 
+// VisibleForPlayer checks whether specified position is
+// in visibility range of any PC.
+func (g *Game) VisibleForPlayer(x, y float64) bool {
+	for _, pc := range g.PlayerChars() {
+		if pc.InSight(x, y) {
+			return true
+		}
+	}
+	return false
+}
+
 // updateAIChars updates list of characters controlled by the AI.
 func (g *Game) updateAIChars() {
 outer:
@@ -309,7 +320,7 @@ outer:
 	}
 }
 
-// updateChars updars list of game characters.
+// updateChars updates list of game characters.
 func (g *Game) updateChars() {
 	for _, p := range g.playerChars {
 		gameChar := g.chars[p.ID()+p.Serial()]

@@ -261,19 +261,6 @@ func (c *Camera) AreaObjects() (objects []*object.ObjectGraphic) {
 	return
 }
 
-// DrawObjects returns all objects with 'drawable'
-// objects from current area.
-func (c *Camera) DrawObjects() []object.Drawer {
-	objects := make([]object.Drawer, 0)
-	for _, av := range c.Avatars() {
-		objects = append(objects, av)
-	}
-	for _, ob := range c.AreaObjects() {
-		objects = append(objects, ob)
-	}
-	return objects
-}
-
 // Area retuns current area.
 func (c *Camera) Area() *area.Area {
 	return c.area

@@ -215,7 +215,10 @@ func (c *Chat) Echo(text string) {
 // listenCharChat listens to avatars chat channels.
 func (c *Chat) listenCharsChat() {
 	for {
-		for _, a := range c.hud.camera.Avatars() {
+		if c.hud.camera.area == nil {
+			continue
+		}
+		for _, a := range c.hud.camera.area.Avatars() {
 			if !c.hud.game.VisibleForPlayer(a.Position().X, a.Position().Y) {
 				continue
 			}
@@ -268,12 +271,12 @@ func (c *Chat) addObjectMessage(objectID string, msg objects.Message) {
 // log for specified logger, or nil if such object
 // does not exists.
 func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
-	for _, a := range c.hud.Camera().Avatars() {
+	for _, a := range c.hud.camera.area.Avatars() {
 		if a.ID() == l.ID() && a.Serial() == l.Serial() {
 			return a
 		}
 	}
-	for _, o := range c.hud.Camera().AreaObjects() {
+	for _, o := range c.hud.camera.area.AreaObjects() {
 		if o.ID() == l.ID() && o.Serial() == l.Serial() {
 			return o
 		}

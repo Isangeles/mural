@@ -230,12 +230,12 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	// Put PC target into target frame.
 	if len(hud.Game().ActivePlayerChar().Targets()) > 0 {
-		for _, av := range hud.camera.Avatars() {
+		for _, av := range hud.camera.area.Avatars() {
 			if objects.Equals(hud.Game().ActivePlayerChar().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
 			}
 		}
-		for _, ob := range hud.camera.AreaObjects() {
+		for _, ob := range hud.camera.area.AreaObjects() {
 			if objects.Equals(hud.Game().ActivePlayerChar().Targets()[0], ob.Character) {
 				hud.tarFrame.SetObject(ob)
 			}
@@ -356,7 +356,7 @@ func (hud *HUD) SetGame(g *game.Game) {
 // PCAvatar return avatar for player current character.
 func (hud *HUD) PCAvatar() *object.Avatar {
 	pc := hud.game.ActivePlayerChar()
-	for _, av := range hud.camera.Avatars() {
+	for _, av := range hud.camera.area.Avatars() {
 		if av.ID() == pc.ID() && av.Serial() == pc.Serial() {
 			return av
 		}
@@ -474,7 +474,13 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 func (hud *HUD) updateCurrentArea() {
 	chapter := hud.Game().Chapter()
 	pcArea := chapter.ObjectArea(hud.Game().ActivePlayerChar())
-	if pcArea != hud.Camera().Area() {
+	if hud.game == nil {
+		return
+	}
+	if pcArea == nil {
+		return
+	}
+	if hud.camera.Area() == nil || pcArea.ID() != hud.camera.Area().ID() {
 		go hud.ChangeArea(pcArea)
 	}
 }

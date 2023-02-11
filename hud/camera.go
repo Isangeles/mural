@@ -27,10 +27,8 @@ import (
 	"fmt"
 	"math"
 	"path/filepath"
-	"sync"
 
 	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame/area"
@@ -42,8 +40,6 @@ import (
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
-	"github.com/isangeles/mural/data"
-	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/object"
 )
@@ -64,12 +60,7 @@ type Camera struct {
 	position pixel.Vec
 	size     pixel.Vec
 	locked   bool
-	area     *area.Area
-	// Map & objects.
-	areaMap *stone.Map
-	fow     *imdraw.IMDraw
-	avatars *sync.Map
-	objects *sync.Map
+	area     *object.Area
 	// Debug mode.
 	cameraInfo *mtk.Text
 	cursorInfo *mtk.Text
@@ -81,9 +72,6 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 	c.hud = hud
 	c.size = size
 	c.position = pixel.V(0, 0)
-	c.fow = imdraw.New(nil)
-	c.avatars = new(sync.Map)
-	c.objects = new(sync.Map)
 	// Debug info.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
@@ -95,34 +83,7 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	// Map.
-	if c.areaMap != nil {
-		if config.MapFull {
-			c.areaMap.Draw(win.Window, mtk.Matrix().Moved(c.Position()))
-		} else {
-			c.areaMap.DrawPart(win.Window, mtk.Matrix().Moved(c.Position()), c.Size())
-		}
-	}
-	// Avatars.
-	for _, av := range c.Avatars() {
-		if !c.hud.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
-			continue
-		}
-		avPos := c.ConvAreaPos(av.Position())
-		av.Draw(win, mtk.Matrix().Moved(avPos))
-	}
-	// Objects.
-	for _, ob := range c.AreaObjects() {
-		if !c.hud.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
-			continue
-		}
-		obPos := c.ConvAreaPos(ob.Position())
-		ob.Draw(win, mtk.Matrix().Moved(obPos))
-	}
-	// FOW effect.
-	if c.areaMap != nil && config.MapFOW {
-		c.drawMapFOW(win.Window)
-	}
+	c.area.Draw(win, mtk.Matrix().Moved(c.Position()), c.Size())
 	// Debug mode.
 	if config.Debug {
 		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
@@ -134,33 +95,9 @@ func (c *Camera) Draw(win *mtk.Window) {
 
 // Update updates camera.
 func (c *Camera) Update(win *mtk.Window) {
-	if c.areaMap == nil {
-		return
-	}
-	c.size = win.Bounds().Size()
-	c.updateAreaObjects()
-	if !c.locked {
-		mSize := c.areaMap.Size()
-		mTileSize := c.areaMap.TileSize()
-		offset := pixel.V(mTileSize.X*16, mTileSize.Y*16)
-		mapSizePlus := pixel.V(mSize.X+offset.X, mSize.Y+offset.Y)
-		// Key events.
-		if c.position.Y < mapSizePlus.Y && win.Pressed(pixelgl.KeyW) ||
-			win.Pressed(pixelgl.KeyUp) {
-			c.position.Y += mTileSize.Y
-		}
-		if c.position.X < mapSizePlus.X && win.Pressed(pixelgl.KeyD) ||
-			win.Pressed(pixelgl.KeyRight) {
-			c.position.X += mTileSize.X
-		}
-		if c.position.Y > 0-offset.Y && win.Pressed(pixelgl.KeyS) ||
-			win.Pressed(pixelgl.KeyDown) {
-			c.position.Y -= mTileSize.Y
-		}
-		if c.position.X > 0-offset.X && win.Pressed(pixelgl.KeyA) ||
-			win.Pressed(pixelgl.KeyLeft) {
-			c.position.X -= mTileSize.X
-		}
+	//Area.
+	if c.area != nil {
+		c.area.Update(win)
 	}
 	// Mouse events.
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
@@ -169,22 +106,7 @@ func (c *Camera) Update(win *mtk.Window) {
 	if win.JustPressed(pixelgl.MouseButtonRight) {
 		c.onMouseRightPressed(win.MousePosition())
 	}
-	// Avatars.
-	for _, av := range c.Avatars() {
-		if !c.hud.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
-			continue
-		}
-		av.Silence(false)
-		av.Update(win)
-	}
-	// Objects.
-	for _, ob := range c.AreaObjects() {
-		if !c.hud.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
-			continue
-		}
-		ob.Silence(false)
-		ob.Update(win)
-	}
+	// Debug.
 	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
 		c.Position()))
 	c.cursorInfo.SetText(fmt.Sprintf("cursor_pos:%v",
@@ -198,9 +120,8 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 
 // SetArea sets area for camera to display.
 func (c *Camera) SetArea(a *area.Area) error {
-	c.area = a
-	if c.area == nil {
-		c.clear()
+	if a == nil {
+		a = nil
 		return nil
 	}
 	// Set map.
@@ -211,9 +132,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	if err != nil {
 		return fmt.Errorf("unable to create pc area map: %v", err)
 	}
-	c.areaMap = areaMap
-	// Update objects graphics.
-	c.updateAreaObjects()
+	c.area = object.NewArea(c.hud.game, a, areaMap)
 	// Center camera at player
 	pcAvatar := c.hud.PCAvatar()
 	if pcAvatar != nil {
@@ -228,41 +147,8 @@ func (c *Camera) CenterAt(pos pixel.Vec) {
 	c.SetPosition(center)
 }
 
-// Map returns current map.
-func (c *Camera) Map() *stone.Map {
-	return c.areaMap
-}
-
-// Avatars returns all avatars from current area.
-func (c *Camera) Avatars() (avatars []*object.Avatar) {
-	addAvatar := func(k, v interface{}) bool {
-		av, ok := v.(*object.Avatar)
-		if !ok {
-			return true
-		}
-		avatars = append(avatars, av)
-		return true
-	}
-	c.avatars.Range(addAvatar)
-	return
-}
-
-// AreaObjects returns all objects in current area.
-func (c *Camera) AreaObjects() (objects []*object.ObjectGraphic) {
-	addObject := func(k, v interface{}) bool {
-		ob, ok := v.(*object.ObjectGraphic)
-		if !ok {
-			return true
-		}
-		objects = append(objects, ob)
-		return true
-	}
-	c.objects.Range(addObject)
-	return
-}
-
 // Area retuns current area.
-func (c *Camera) Area() *area.Area {
+func (c *Camera) Area() *object.Area {
 	return c.area
 }
 
@@ -294,30 +180,6 @@ func (c *Camera) Locked() bool {
 	return c.locked
 }
 
-// PassablePosition checks if specified position is 'passable',
-// i.e. map there is visible layer on this position where player
-// is allowed to move(like 'ground' layer').
-func (c *Camera) PassablePosition(pos pixel.Vec) bool {
-	layer := c.Map().PositionLayer(pos)
-	if layer == nil {
-		return false
-	}
-	return layer.Name() == "ground"
-}
-
-// ConvAreaPos translates specified area
-// position to camera position.
-func (c *Camera) ConvAreaPos(pos pixel.Vec) pixel.Vec {
-	drawMatrix := mtk.Matrix().Moved(c.Position())
-	drawPos := pixel.V(drawMatrix[4], drawMatrix[5])
-	drawScale := drawMatrix[0]
-	posX := pos.X * drawScale
-	posY := pos.Y * drawScale
-	drawX := drawPos.X //* drawScale
-	drawY := drawPos.Y //* drawScale
-	return pixel.V(posX-drawX, posY-drawY)
-}
-
 // ConvCameraPos translates specified camera
 // position to area position.
 func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
@@ -329,126 +191,13 @@ func (c *Camera) ConvCameraPos(pos pixel.Vec) pixel.Vec {
 	return areaPos
 }
 
-// drawMapFOW draws 'Fog Of War' effect on current area map.
-func (c *Camera) drawMapFOW(t pixel.Target) {
-	c.fow.Clear()
-	w, h := 0.0, 0.0
-	for h < c.areaMap.Size().Y {
-		if !c.hud.game.VisibleForPlayer(w, h) {
-			// Draw FOW tile.
-			tileSizeX := mtk.ConvSize(c.areaMap.TileSize().X)
-			tileSizeY := mtk.ConvSize(c.areaMap.TileSize().Y)
-			tileDrawMin := c.ConvAreaPos(pixel.V(w, h))
-			tileDrawMax := pixel.V(tileDrawMin.X+tileSizeX,
-				tileDrawMin.Y+tileSizeY)
-			c.fow.Color = FOWColor
-			c.fow.Push(tileDrawMin)
-			c.fow.Push(tileDrawMax)
-			c.fow.Rectangle(0)
-		}
-		// Next tile.
-		w += c.areaMap.TileSize().X
-		if w > c.areaMap.Size().X {
-			w = 0.0
-			h += c.areaMap.TileSize().Y
-		}
-	}
-	c.fow.Draw(t)
-}
-
-// updateAreaObjects updates lists with avatars
-// and graphical objects for current area.
-func (c *Camera) updateAreaObjects() {
-	if c.area == nil {
-		return
-	}
-	c.clearAreaObjects()
-	// Add new objects & characters.
-	for _, ob := range c.area.Objects() {
-		char, isChar := ob.(*character.Character)
-		if !isChar {
-			continue
-		}
-		_, obExists := c.objects.Load(char.ID() + char.Serial())
-		if obExists {
-			continue
-		}
-		_, avExists := c.avatars.Load(char.ID() + char.Serial())
-		if avExists {
-			continue
-		}
-		// Object graphic.
-		ogData := res.Object(char.ID())
-		if ogData != nil {
-			og := object.NewObjectGraphic(char, ogData)
-			c.objects.Store(char.ID()+char.Serial(), og)
-			continue
-		}
-		// Avatar.
-		avData := res.Avatar(char.ID())
-		if avData == nil {
-			defData := data.DefaultObjectGraphicData(char)
-			res.SetObjects(append(res.Objects(), defData))
-			og := object.NewObjectGraphic(char, &defData)
-			c.objects.Store(char.ID()+char.Serial(), og)
-			continue
-		}
-		gameChar := c.hud.game.Char(char.ID(), char.Serial())
-		if gameChar == nil {
-			return
-		}
-		av := object.NewAvatar(gameChar, avData)
-		c.avatars.Store(char.ID()+char.Serial(), av)
-	}
-}
-
-// clearAreaObjecs removes avatars & graphics without
-// corresponding objects in current area.
-func (c *Camera) clearAreaObjects() {
-	for _, av := range c.Avatars() {
-		found := false
-		for _, ob := range c.area.Objects() {
-			_, isChar := ob.(*character.Character)
-			if isChar && ob.ID() == av.ID() && ob.Serial() == av.Serial() {
-				found = true
-				break
-			}
-		}
-		if found {
-			continue
-		}
-		c.avatars.Delete(av.ID() + av.Serial())
-	}
-	for _, gob := range c.AreaObjects() {
-		found := false
-		for _, ob := range c.area.Objects() {
-			if ob.ID() == gob.ID() && ob.Serial() == gob.Serial() {
-				found = true
-				break
-			}
-		}
-		if found {
-			continue
-		}
-		c.objects.Delete(gob.ID() + gob.Serial())
-	}
-}
-
-// clear removes removes current area and all objects.
-func (c *Camera) clear() {
-	c.area = nil
-	c.areaMap = nil
-	c.avatars = new(sync.Map)
-	c.objects = new(sync.Map)
-}
-
 // Triggered after right mouse button was pressed.
 func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 	// Set target.
 	if c.hud.containsPos(pos) {
 		return
 	}
-	for _, av := range c.Avatars() {
+	for _, av := range c.area.Avatars() {
 		if !av.DrawArea().Contains(pos) {
 			continue
 		}
@@ -456,7 +205,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 		c.hud.Game().ActivePlayerChar().SetTarget(av.Character)
 		return
 	}
-	for _, ob := range c.AreaObjects() {
+	for _, ob := range c.area.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) {
 			continue
 		}
@@ -474,7 +223,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	pc := c.hud.PCAvatar()
 	// Action.
-	for _, ob := range c.AreaObjects() {
+	for _, ob := range c.area.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
 			continue
 		}
@@ -489,7 +238,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		return
 	}
 	// Loot.
-	for _, av := range c.Avatars() {
+	for _, av := range c.area.Avatars() {
 		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {
 			continue
 		}
@@ -505,7 +254,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		c.hud.loot.Show()
 		return
 	}
-	for _, ob := range c.AreaObjects() {
+	for _, ob := range c.area.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) || ob.Live() {
 			continue
 		}
@@ -522,7 +271,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		return
 	}
 	// Dialog.
-	for _, av := range c.Avatars() {
+	for _, av := range c.area.Avatars() {
 		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc ||
 			av.AttitudeFor(pc) == character.Hostile || len(av.Dialogs()) < 1 {
 			continue
@@ -541,7 +290,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Pause && c.PassablePosition(destPos) {
+	if !c.hud.game.Pause && c.area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

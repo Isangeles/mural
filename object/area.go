@@ -43,7 +43,7 @@ import (
 )
 
 var (
-	FOWColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+	fowColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
 )
 
 // Graphical wrapper for area.
@@ -248,7 +248,7 @@ func (a *Area) drawMapFOW(t pixel.Target, matrix pixel.Matrix) {
 			tileDrawMin := a.convAreaPos(pixel.V(w, h), matrix)
 			tileDrawMax := pixel.V(tileDrawMin.X+tileSizeX,
 				tileDrawMin.Y+tileSizeY)
-			a.fow.Color = FOWColor
+			a.fow.Color = fowColor
 			a.fow.Push(tileDrawMin)
 			a.fow.Push(tileDrawMax)
 			a.fow.Rectangle(0)

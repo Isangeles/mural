@@ -95,6 +95,31 @@ func (c *Camera) Draw(win *mtk.Window) {
 
 // Update updates camera.
 func (c *Camera) Update(win *mtk.Window) {
+	c.size = win.Bounds().Size()
+	// Key events.
+	if !c.locked && c.area != nil {
+		tileSize := c.area.Map().TileSize()
+		offset := pixel.V(tileSize.X*16, tileSize.Y*16)
+		mapSize := c.area.Map().Size()
+		mapSize = pixel.V(mapSize.X+offset.X, mapSize.Y+offset.Y)
+		// Key events.
+		if c.position.Y < mapSize.Y && win.Pressed(pixelgl.KeyW) ||
+			win.Pressed(pixelgl.KeyUp) {
+			c.position.Y += tileSize.Y
+		}
+		if c.position.X < mapSize.X && win.Pressed(pixelgl.KeyD) ||
+			win.Pressed(pixelgl.KeyRight) {
+			c.position.X += tileSize.X
+		}
+		if c.position.Y > 0-offset.Y && win.Pressed(pixelgl.KeyS) ||
+			win.Pressed(pixelgl.KeyDown) {
+			c.position.Y -= tileSize.Y
+		}
+		if c.position.X > 0-offset.X && win.Pressed(pixelgl.KeyA) ||
+			win.Pressed(pixelgl.KeyLeft) {
+			c.position.X -= tileSize.X
+		}
+	}
 	//Area.
 	if c.area != nil {
 		c.area.Update(win)

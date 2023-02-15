@@ -150,6 +150,11 @@ func (a *Area) AreaObjects() (objects []*ObjectGraphic) {
 	return
 }
 
+// Map returns area map.
+func (a *Area) Map() *stone.Map {
+	return a.areaMap
+}
+
 // PassablePosition checks if specified position is 'passable',
 // i.e. map there is visible layer on this position where player
 // is allowed to move(like 'ground' layer').

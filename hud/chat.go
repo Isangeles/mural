@@ -45,6 +45,7 @@ import (
 
 	"github.com/isangeles/mtk"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/log"
@@ -223,9 +224,9 @@ func (c *Chat) listenCharsChat() {
 				continue
 			}
 			select {
-			case msg := <- a.ChatLog().Channel():
+			case msg := <-a.ChatLog().Channel():
 				c.addObjectMessage(a.ID(), msg)
-			case msg := <- a.CombatLog().Channel():
+			case msg := <-a.CombatLog().Channel():
 				c.addObjectMessage(a.ID(), msg)
 			default:
 			}
@@ -252,7 +253,6 @@ func (c *Chat) playerPrivMessages() (messages []Message) {
 	}
 	return
 }
-
 
 // addObjectMessage adds specified object message to the chat log.
 func (c *Chat) addObjectMessage(objectID string, msg objects.Message) {
@@ -335,8 +335,7 @@ func (c *Chat) onEnterPressed() {
 // executeScriptFile executes Ash script from file
 // with specified name in background.
 func (c *Chat) executeScriptFile(name string, args ...string) error {
-	modpath := c.hud.Game().Conf().Path
-	path := filepath.FromSlash(modpath + "/gui/scripts/" + name + ".ash")
+	path := filepath.Join(config.GUIPath, "scripts", name+".ash")
 	script, err := data.Script(path)
 	if err != nil {
 		return fmt.Errorf("unable to retrieve script: %v", err)

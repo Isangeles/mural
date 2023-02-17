@@ -13,7 +13,7 @@ require (
 	github.com/isangeles/mtk v0.0.0-20220923172130-1c038ae99090
 	github.com/isangeles/stone v0.1.0
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.3.0
+	golang.org/x/image v0.5.0
 )
 
 require (

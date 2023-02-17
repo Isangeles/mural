@@ -147,7 +147,7 @@ func (c *Chat) Draw(win *mtk.Window, matrix pixel.Matrix) {
 func (c *Chat) Update(win *mtk.Window) {
 	// Key events.
 	if win.JustPressed(chatKey) {
-		c.onEnterPressed()
+		c.onChatKeyPressed()
 	}
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
@@ -284,8 +284,8 @@ func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
 	return nil
 }
 
-// Triggered after pressing the enter key.
-func (c *Chat) onEnterPressed() {
+// Triggered after pressing the chat key.
+func (c *Chat) onChatKeyPressed() {
 	if !c.Activated() {
 		c.Activate(true)
 		return

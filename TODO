@@ -10,7 +10,7 @@ MAJOR:
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
 * Documentation for GUI commands: guiaudio, guiexport, guiimport, guiset, guishow
-* Graphical effects for area weather and day/night
+* Graphical effects for area weather
 * Character movement is lagging when connected to the game server(windows only?)
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)

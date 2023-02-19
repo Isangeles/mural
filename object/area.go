@@ -42,8 +42,15 @@ import (
 	"github.com/isangeles/mural/game"
 )
 
+const (
+	dayColorAlpha = 0.0
+	eveningColorAlpha = 0.5
+	nightColorAlpha = 0.9
+)
+
 var (
 	fowColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+	dayColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, dayColorAlpha}
 )
 
 // Graphical wrapper for area.
@@ -99,6 +106,9 @@ func (a *Area) Draw(win *mtk.Window, matrix pixel.Matrix, size pixel.Vec) {
 	if a.areaMap != nil && config.MapFOW {
 		a.drawMapFOW(win.Window, matrix)
 	}
+	// Day.
+	dayColor.A = a.dayTransparency()
+	mtk.DrawRectangle(win, win.Bounds(), dayColor)
 }
 
 // Update updates area.
@@ -278,4 +288,18 @@ func (a *Area) convAreaPos(pos pixel.Vec, matrix pixel.Matrix) pixel.Vec {
 	drawX := drawPos.X //* drawScale
 	drawY := drawPos.Y //* drawScale
 	return pixel.V(posX-drawX, posY-drawY)
+}
+
+// dayTransparency return transparency level for
+// current phase of the day in the area.
+func (a *Area) dayTransparency() float64 {
+	hour := a.Time.Hour()
+	switch {
+	case hour > 17:
+		return eveningColorAlpha
+	case hour > 21 || hour < 5:
+		return nightColorAlpha
+	default:
+		return dayColorAlpha
+	}
 }

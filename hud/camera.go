@@ -83,7 +83,7 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	c.area.Draw(win, mtk.Matrix().Moved(c.Position()), c.areaDrawSize())
+	c.area.Draw(win, mtk.Matrix().Moved(c.Position()), c.Size())
 	// Debug mode.
 	if config.Debug {
 		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
@@ -318,19 +318,4 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	if !c.hud.game.Pause && c.area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
-}
-
-// areaDrawSize returns area draw size for current camera
-// size and position adjusted to current resolution.
-func (c *Camera) areaDrawSize() (size pixel.Vec) {
-	size = c.Size()
-	size.X /= mtk.Scale()
-	size.Y /= mtk.Scale()
-	if c.Position().X > 0 {
-		size.X += c.Position().X
-	}
-	if c.Position().Y > 0 {
-		size.Y += c.Position().Y
-	}
-	return
 }

@@ -40,12 +40,13 @@ import (
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/game"
+	"github.com/isangeles/mural/log"
 )
 
 const (
-	dayColorAlpha = 0.0
+	dayColorAlpha     = 0.0
 	eveningColorAlpha = 0.5
-	nightColorAlpha = 0.9
+	nightColorAlpha   = 0.9
 )
 
 var (
@@ -197,7 +198,12 @@ func (a *Area) updateObjects() {
 		// Object graphic.
 		ogData := res.Object(char.ID())
 		if ogData != nil {
-			og := NewObjectGraphic(char, ogData)
+			og, err := NewObjectGraphic(char, ogData)
+			if err != nil {
+				log.Err.Printf("Area objects update: unable to create object graphic: %s %s: %v",
+					char.ID(), char.Serial(), err)
+				continue
+			}
 			a.objects.Store(char.ID()+char.Serial(), og)
 			continue
 		}
@@ -206,7 +212,12 @@ func (a *Area) updateObjects() {
 		if avData == nil {
 			defData := data.DefaultObjectGraphicData(char)
 			res.SetObjects(append(res.Objects(), defData))
-			og := NewObjectGraphic(char, &defData)
+			og, err := NewObjectGraphic(char, &defData)
+			if err != nil {
+				log.Err.Printf("Area objects update: unable to create default object graphic: %s %s: %v",
+					char.ID(), char.Serial(), err)
+				continue
+			}
 			a.objects.Store(char.ID()+char.Serial(), og)
 			continue
 		}
@@ -214,7 +225,12 @@ func (a *Area) updateObjects() {
 		if gameChar == nil {
 			return
 		}
-		av := NewAvatar(gameChar, avData)
+		av, err := NewAvatar(gameChar, avData)
+		if err != nil {
+			log.Err.Printf("Area objects update: unable to create avatar: %s %s: %v",
+				char.ID(), char.Serial(), err)
+			continue
+		}
 		a.avatars.Store(char.ID()+char.Serial(), av)
 	}
 }

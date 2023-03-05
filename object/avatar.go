@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,8 @@ import (
 )
 
 // Avatar struct for graphical representation of
-// game character.
+// game objects with multiple directional
+// animations(idle, move, cast, meele, etc.).
 type Avatar struct {
 	*game.Character
 	portrait     pixel.Picture
@@ -89,7 +90,9 @@ const (
 
 // NewAvatar creates new avatar for specified game character
 // from specified avatar resources.
-func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
+// Returns error if spritesheets from data object(torso/head or full body)
+// were not found in res/graphic avatar spritesheet map.
+func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	av := new(Avatar)
 	av.Character = char
 	// Portrait.
@@ -110,8 +113,8 @@ func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
 			av.torsoName = data.Torso
 			av.headName = data.Head
 		} else {
-			log.Err.Printf("avatar: %s#%s: sprite textures not found: fullbody: '%s' torso: '%s' head: '%s'",
-				av.ID(), av.Serial(), data.FullBody, data.Torso, data.Head)
+			return nil, fmt.Errorf("sprite textures not found: fullbody: '%s' torso: '%s' head: '%s'",
+				data.FullBody, data.Torso, data.Head)
 		}
 	}
 	chatParams := mtk.Params{
@@ -126,7 +129,7 @@ func NewAvatar(char *game.Character, data *res.AvatarData) *Avatar {
 	// Events.
 	av.SetOnUseFunc(av.onUse)
 	av.updateGraphic()
-	return av
+	return av, nil
 }
 
 // Draw draws avatar.

@@ -1,7 +1,7 @@
 /*
  * object.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,10 @@ import (
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/graphic"
-	"github.com/isangeles/mural/log"
 )
 
 // Struct for graphical representation
-// of area object.
+// of area object with single idle animation.
 type ObjectGraphic struct {
 	*character.Character
 	name         string
@@ -57,7 +56,9 @@ type ObjectGraphic struct {
 }
 
 // NewObjectGraphic creates new object graphic for specified character.
-func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) *ObjectGraphic {
+// Returns error if sprite texture from data object was not found it
+// res/graphic object spritesheets map.
+func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) (*ObjectGraphic, error) {
 	og := new(ObjectGraphic)
 	og.Character = char 
 	og.name = lang.Text(og.ID())
@@ -68,8 +69,7 @@ func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) *O
 		og.sprite = mtk.NewAnimation(buildSpriteFrames(spritePic), 2)
 		og.spriteName = data.Sprite
 	} else {
-		log.Err.Printf("object: %s#%s: sprite texture not found: %s", og.ID(),
-			og.Serial(), data.Sprite)
+		return nil, fmt.Errorf("sprite texture not found: %s", data.Sprite)
 	}
 	// Portrait.
 	og.portrait = graphic.Portraits[data.Portrait]
@@ -81,7 +81,7 @@ func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) *O
 	og.items = make(map[string]*ItemGraphic)
 	// Events.
 	og.SetOnModifierTakenFunc(og.onModifierTaken)
-	return og
+	return og, nil
 }
 
 // Draw draws object sprite.

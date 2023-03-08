@@ -10,10 +10,10 @@ require (
 	github.com/isangeles/fire v0.0.0-20230127182407-24a6c20b8955
 	github.com/isangeles/flame v0.0.0-20230208222648-12f4e12aec91
 	github.com/isangeles/ignite v0.0.0-20230226103625-fde27dd5475b
-	github.com/isangeles/mtk v0.0.0-20220923172130-1c038ae99090
+	github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d
 	github.com/isangeles/stone v0.1.1
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.5.0
+	golang.org/x/image v0.6.0
 )
 
 require (
@@ -29,5 +29,5 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8 // indirect
 	golang.org/x/mobile v0.0.0-20190415191353-3e0bab5405d6 // indirect
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
+	golang.org/x/sys v0.5.0 // indirect
 )

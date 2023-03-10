@@ -149,7 +149,7 @@ func (c *Character) Use(ob useaction.Usable) {
 	}
 	err := c.Character.Use(ob)
 	if err != nil {
-		c.PrivateLog().Add(objects.Message{Text: "cant_do_right_now"})
+		c.PrivateLog().Add(objects.NewMessage("cant_do_right_now", false))
 		if !c.meetTargetRangeReqs(ob.UseAction().Requirements()...) {
 			tar := c.Targets()[0]
 			tarPosX, tarPosY := tar.Position()

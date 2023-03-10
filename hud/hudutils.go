@@ -1,7 +1,7 @@
 /*
  * hudutils.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,17 @@ func (hud *HUD) itemInfo(it item.Item) string {
 			it.ID(), it.Serial())
 	}
 	return info
+}
+
+// playerObject checks if object with specified id and serial
+// is under player control.
+func (hud *HUD) playerObject(id, serial string) bool {
+	for _, c := range hud.game.PlayerChars() {
+		if c.ID() == id && c.Serial() == serial {
+			return true
+		}
+	}
+	return false
 }
 
 // itemErrorGraphic returns error graphic data for specified item.

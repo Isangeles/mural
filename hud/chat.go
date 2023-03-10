@@ -154,7 +154,6 @@ func (c *Chat) Update(win *mtk.Window) {
 	c.textbox.Clear()
 	messages := make([]Message, 0)
 	messages = append(messages, c.messages...)
-	messages = append(messages, c.playerPrivMessages()...)
 	// Add engine log messages.
 	for _, m := range flamelog.Messages() {
 		m := Message{
@@ -228,30 +227,14 @@ func (c *Chat) listenCharsChat() {
 				c.addObjectMessage(a.ID(), msg)
 			case msg := <-a.CombatLog().Channel():
 				c.addObjectMessage(a.ID(), msg)
+			case msg := <-a.PrivateLog().Channel():
+				if c.hud.playerObject(a.ID(), a.Serial()) {
+					c.addObjectMessage(a.ID(), msg)
+				}
 			default:
 			}
 		}
 	}
-}
-
-// playerPrivMessages returns private messages from all
-// player characters.
-func (c *Chat) playerPrivMessages() (messages []Message) {
-	for _, pc := range c.hud.Game().PlayerChars() {
-		// PC's private messages.
-		for _, lm := range pc.PrivateLog().Messages() {
-			m := Message{
-				author: pc.ID(),
-				time:   lm.Time,
-				text:   fmt.Sprintf("%s\n", lm.String()),
-			}
-			if !lm.Translated {
-				m.text = fmt.Sprintf("%s\n", lang.Text(lm.String()))
-			}
-			messages = append(messages, m)
-		}
-	}
-	return
 }
 
 // addObjectMessage adds specified object message to the chat log.

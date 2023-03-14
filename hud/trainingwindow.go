@@ -264,7 +264,7 @@ func (tw *TrainingWindow) onTrainButtonClicked(b *mtk.Button) {
 		return
 	}
 	pc := tw.hud.Game().ActivePlayerChar()
-	pc.Use(train)
+	pc.Train(train, tw.trainer)
 }
 
 // reqInfo returns information about specified

@@ -1,7 +1,7 @@
 /*
  * character.go
  *
- * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import (
 	"github.com/isangeles/flame/objects"
 	"github.com/isangeles/flame/req"
 	"github.com/isangeles/flame/serial"
+	"github.com/isangeles/flame/training"
 	"github.com/isangeles/flame/useaction"
 
 	"github.com/isangeles/fire/request"
@@ -138,6 +139,35 @@ func (c *Character) SetTarget(tar effect.Target) {
 	err := c.game.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Character: %s %s: unable to send target request to the server: %v",
+			c.ID(), c.Serial(), err)
+	}
+}
+
+// Train uses specified training from specified trainer.
+func (c *Character) Train(training *training.TrainerTraining, trainer training.Trainer) {
+	err := c.Character.Use(training)
+	if err != nil {
+		c.PrivateLog().Add(objects.NewMessage("cant_do_right_now", false))
+	}
+	if c.game.Server() == nil {
+		// If no server then trigger onUse event and return.
+		// With server this event will be triggered after
+		// user response from the server.
+		if c.onUse != nil {
+			c.onUse(training)
+		}
+	}
+	trainReq := request.Training{
+		TrainingID:    training.ID(),
+		TrainerID:     trainer.ID(),
+		TrainerSerial: trainer.Serial(),
+		UserID:        c.ID(),
+		UserSerial:    c.Serial(),
+	}
+	req := request.Request{Training: []request.Training{trainReq}}
+	err = c.game.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Character: %s %s: unable to send training request: %v",
 			c.ID(), c.Serial(), err)
 	}
 }

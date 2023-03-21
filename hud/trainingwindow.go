@@ -1,7 +1,7 @@
 /*
  * trainingwindow.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,6 +178,7 @@ func (tw *TrainingWindow) Update(win *mtk.Window) {
 	if tw.Opened() {
 		tw.closeButton.Update(win)
 		tw.trainButton.Update(win)
+		tw.trainingInfo.Update(win)
 		tw.trainingsList.Update(win)
 	}
 }

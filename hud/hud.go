@@ -355,6 +355,9 @@ func (hud *HUD) SetGame(g *game.Game) {
 
 // PCAvatar return avatar for player current character.
 func (hud *HUD) PCAvatar() *object.Avatar {
+	if hud.camera.area == nil {
+		return nil
+	}
 	pc := hud.game.ActivePlayerChar()
 	for _, av := range hud.camera.area.Avatars() {
 		if av.ID() == pc.ID() && av.Serial() == pc.Serial() {

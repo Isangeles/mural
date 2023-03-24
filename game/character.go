@@ -174,7 +174,7 @@ func (c *Character) Train(training *training.TrainerTraining, trainer training.T
 
 // Use uses specified usable object.
 func (c *Character) Use(ob useaction.Usable) {
-	if c.Casted() != nil {
+	if c.Casted() != nil || ob.UseAction() == nil {
 		return
 	}
 	err := c.Character.Use(ob)

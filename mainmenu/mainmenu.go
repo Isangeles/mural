@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 // SetMod sets module for main menu.
 func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
-	mm.menu.title.SetText(mod.Conf().ID)
+	mm.menu.title.SetText(lang.Text(mod.Conf().ID))
 	err := mm.ImportPlayableChars()
 	if err != nil {
 		log.Err.Printf("Main menu: unable to import playable characters: %v",

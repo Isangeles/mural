@@ -26,6 +26,7 @@ MINOR:
   should be deleted when exporting character to use in different game
 * Loading screen at startup
 * Separate chat(multitab?) for combat messages
+* Sound effect after accepting a new quest
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

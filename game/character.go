@@ -340,5 +340,9 @@ func (c *Character) onModifierTaken(m effect.Modifier) {
 		msg := objects.NewMessage(fmt.Sprintf("%s: %d", lang.Text("ob_health"),
 			m.LastValue()), true)
 		c.CombatLog().Add(msg)
+	case *effect.QuestMod:
+		msg := objects.NewMessage(fmt.Sprintf("%s: %s", lang.Text("quest_accepted_msg"),
+			lang.Text(m.QuestID())), true)
+		c.PrivateLog().Add(msg)
 	}
 }

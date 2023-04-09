@@ -61,7 +61,6 @@ func NewCharacter(char *character.Character, game *Game) *Character {
 		combatLog:  objects.NewLog(),
 		privateLog: objects.NewLog(),
 	}
-	c.SetOnModifierTakenFunc(c.onModifierTaken)
 	return &c
 }
 
@@ -331,18 +330,4 @@ func (c *Character) moveCloseTo(x, y, minRange float64) {
 		y += minRange
 	}
 	c.SetDestPoint(x, y)
-}
-
-// Triggered on receiving new modifier.
-func (c *Character) onModifierTaken(m effect.Modifier) {
-	switch m := m.(type) {
-	case *effect.HealthMod:
-		msg := objects.NewMessage(fmt.Sprintf("%s: %d", lang.Text("ob_health"),
-			m.LastValue()), true)
-		c.CombatLog().Add(msg)
-	case *effect.QuestMod:
-		msg := objects.NewMessage(fmt.Sprintf("%s: %s", lang.Text("quest_accepted_msg"),
-			lang.Text(m.QuestID())), true)
-		c.PrivateLog().Add(msg)
-	}
 }

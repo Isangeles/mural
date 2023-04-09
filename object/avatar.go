@@ -33,6 +33,7 @@ import (
 	"github.com/isangeles/flame/craft"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
 	"github.com/isangeles/flame/objects"
 	"github.com/isangeles/flame/skill"
@@ -42,6 +43,7 @@ import (
 
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/audio"
 	"github.com/isangeles/mural/data/res/graphic"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
@@ -128,6 +130,7 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Events.
 	av.SetOnUseFunc(av.onUse)
+	av.SetOnModifierTakenFunc(av.onModifierTaken)
 	av.updateGraphic()
 	return av, nil
 }
@@ -517,5 +520,23 @@ func (av *Avatar) face(pos pixel.Vec) {
 		av.sprite.Right()
 	case pos.X < av.Position().X:
 		av.sprite.Left()
+	}
+}
+
+// Triggered on receiving new modifier.
+func (av *Avatar) onModifierTaken(m effect.Modifier) {
+	switch m := m.(type) {
+	case *effect.HealthMod:
+		msg := objects.NewMessage(fmt.Sprintf("%s: %d", lang.Text("ob_health"),
+			m.LastValue()), true)
+		av.CombatLog().Add(msg)
+	case *effect.QuestMod:
+		msg := objects.NewMessage(fmt.Sprintf("%s: %s", lang.Text("quest_accepted_msg"),
+			lang.Text(m.QuestID())), true)
+		av.PrivateLog().Add(msg)
+		audioEffect := audio.Effects["questAccept1.mp3"]
+		if audioEffect != nil {
+			mtk.Audio().Play(audioEffect)
+		}
 	}
 }

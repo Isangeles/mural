@@ -6,14 +6,14 @@ require (
 	github.com/faiface/beep v1.1.0
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/isangeles/burn v0.0.0-20230222193005-181d4b8bcd34
-	github.com/isangeles/fire v0.0.0-20230315190023-7b49f69750e9
-	github.com/isangeles/flame v0.0.0-20230315200221-3fcbd7bd73a9
+	github.com/isangeles/burn v0.0.0-20230415173422-e5a2425f018f
+	github.com/isangeles/fire v0.0.0-20230416094323-8120f8d08bce
+	github.com/isangeles/flame v0.0.0-20230415114616-b2c1902c37af
 	github.com/isangeles/ignite v0.0.0-20230226103625-fde27dd5475b
 	github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d
 	github.com/isangeles/stone v0.1.1
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.6.0
+	golang.org/x/image v0.7.0
 )
 
 require (

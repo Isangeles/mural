@@ -169,11 +169,7 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 				i.ID(), i.Serial())
 		}
 		from.Inventory().RemoveItem(i)
-		err := to.Inventory().AddItem(i)
-		if err != nil {
-			return fmt.Errorf("Unable to add item inventory: %v",
-				err)
-		}
+		to.Inventory().AddItem(i)
 	}
 	if g.Server() == nil {
 		return nil
@@ -201,19 +197,11 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 func (g *Game) Trade(seller, buyer item.Container, sellItems, buyItems []item.Item) {
 	for _, it := range sellItems {
 		buyer.Inventory().RemoveItem(it)
-		err := seller.Inventory().AddItem(it)
-		if err != nil {
-			log.Err.Printf("Game: trade items: unable to add sell item: %s %s: %v",
-				it.ID(), it.Serial(), err)
-		}
+		seller.Inventory().AddItem(it)
 	}
 	for _, it := range buyItems {
 		seller.Inventory().RemoveItem(it)
-		err := buyer.Inventory().AddItem(it)
-		if err != nil {
-			log.Err.Printf("Game: trade items: unable to add buy item: %s %s: %v",
-				it.ID(), it.Serial(), err)
-		}
+		buyer.Inventory().AddItem(it)
 	}
 	if g.Server() == nil {
 		return

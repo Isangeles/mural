@@ -1,16 +1,13 @@
 MAJOR:
 * HUD: map window
 * Graphical effects
-* Focusing UI elements with tab key
 * Skill cast audio effects
 * Support for avatar sprites with crafting animation
-* HUD: zoom/unzoom for camera
 * Documentation for .graphic files: items, objects, skills, effects, avatars.
 * Documentation for gui directories: chapters, effects, font, items, objects, portraits,
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
 * Documentation for GUI commands: guiaudio, guiexport, guiimport, guiset, guishow
-* Graphical effects for area weather
 * Character movement is lagging when connected to the game server(windows only?)
 MINOR:
 * Fix for initial mainmenu console input line(remove '`'[grave] char after console open)
@@ -29,6 +26,9 @@ MINOR:
 * Displaying names at the top of the avatars
 * Escape should close currently open menu instead
 * Default skills on the menu bar after starting new game
+* Focusing UI elements with tab key
+* Graphical effects for area weather
+* HUD: zoom/unzoom for camera
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

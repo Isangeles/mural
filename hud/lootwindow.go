@@ -1,7 +1,7 @@
 /*
  * lootwindow.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +194,20 @@ func (lw *LootWindow) SetTarget(t LootTarget) {
 func (lw *LootWindow) insertItems(items ...*object.ItemGraphic) {
 	for _, it := range items {
 		slot := lw.slots.EmptySlot()
+		// Try to find slot with same content and available space.
+		for _, s := range lw.slots.Slots() {
+			if len(s.Values()) < 1 || len(s.Values()) >= it.MaxStack() {
+				continue
+			}
+			slotIt, ok := s.Values()[0].(*object.ItemGraphic)
+			if !ok {
+				continue
+			}
+			if slotIt.ID() == it.ID() {
+				slot = s
+				break
+			}
+		}
 		if slot == nil {
 			slot = lw.createSlot()
 			lw.slots.Add(slot)

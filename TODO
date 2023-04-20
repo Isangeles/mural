@@ -26,7 +26,6 @@ MINOR:
   should be deleted when exporting character to use in different game
 * Loading screen at startup
 * Separate chat(multitab?) for combat messages
-* Stacking items in loot menu
 * Displaying names at the top of the avatars
 * Escape should close currently open menu instead
 * Default skills on the menu bar after starting new game

@@ -149,6 +149,9 @@ func (c *Chat) Update(win *mtk.Window) {
 	if win.JustPressed(chatKey) {
 		c.onChatKeyPressed()
 	}
+	if win.JustPressed(pixelgl.KeyEscape) {
+		c.Activate(false)
+	}
 	// Clear textbox.
 	scrollBottom := c.textbox.AtBottom()
 	c.textbox.Clear()

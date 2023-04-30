@@ -155,6 +155,7 @@ func (c *Character) Train(training *training.TrainerTraining, trainer training.T
 		if c.onUse != nil {
 			c.onUse(training)
 		}
+		return
 	}
 	trainReq := request.Training{
 		TrainingID:    training.ID(),

@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,10 @@ type Camera struct {
 
 // Struct for HUD player data (avatar, inventory layout, etc.).
 type Player struct {
-	Avatar   AvatarData `xml:"avatar" json:"avatar"`
-	InvSlots []Slot     `xml:"inventory>slot" json:"inv-slots"`
-	BarSlots []Slot     `xml:"bar>slot" json:"bar-slots"`
+	ID       string `xml:"id" json:"id"`
+	Serial   string `xml:"serial" json:"serial"`
+	InvSlots []Slot `xml:"inventory>slot" json:"inv-slots"`
+	BarSlots []Slot `xml:"bar>slot" json:"bar-slots"`
 }
 
 // Struct for HUD slot data.

@@ -399,7 +399,7 @@ func (hud *HUD) Data() res.HUDData {
 	var data res.HUDData
 	// Players.
 	for _, pc := range hud.game.PlayerChars() {
-		var pcData res.Player
+		pcData := res.Player{ID: pc.ID(), Serial: pc.Serial()}
 		// Layout.
 		layout := hud.layouts[pc.ID()+pc.Serial()]
 		if layout != nil {
@@ -435,7 +435,7 @@ func (hud *HUD) Apply(data res.HUDData) error {
 			slotsLayout[s.Content] = s.ID
 		}
 		layout.SetBarSlots(slotsLayout)
-		layoutKey := pcd.Avatar.ID + pcd.Avatar.Serial
+		layoutKey := pcd.ID + pcd.Serial
 		hud.layouts[layoutKey] = layout
 	}
 	// Camera position.

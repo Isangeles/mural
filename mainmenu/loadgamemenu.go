@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,10 +192,10 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 		return fmt.Errorf("unable to import HUD: %v", err)
 	}
 	for _, pcd := range hud.Players {
-		char := gameWrapper.Chapter().Character(pcd.Avatar.ID, pcd.Avatar.Serial)
+		char := gameWrapper.Chapter().Character(pcd.ID, pcd.Serial)
 		if char == nil {
 			log.Err.Printf("Main menu: load game: unable to retrieve pc character: %s %s",
-				pcd.Avatar.ID, pcd.Avatar.Serial)
+				pcd.ID, pcd.Serial)
 			continue
 		}
 		pc := game.NewCharacter(char, gameWrapper)

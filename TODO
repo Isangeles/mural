@@ -23,8 +23,12 @@ MINOR:
   should be deleted when exporting character to use in different game
 * Loading screen at startup
 * Separate chat(multitab?) for combat messages
-* Displaying names at the top of the avatars
-* Escape should close currently open menu instead
+* Option to displaying names at the top of the avatars
+* Escape should close currently open menu instead of opening menu at the top
+* Game saved in single player mode doesn't work when connected to the server(no server user flag
+  on player chars), results in black screen(no HUD), add some error message?
+* Skill cooldown indication
+* Training log info and audio effect
 * Default skills on the menu bar after starting new game
 * Focusing UI elements with tab key
 * Graphical effects for area weather

@@ -229,7 +229,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 		hud.onMouseRightPressed(win.MousePosition())
 	}
 	// Put PC target into target frame.
-	if len(hud.Game().ActivePlayerChar().Targets()) > 0 {
+	if hud.camera.area != nil && len(hud.Game().ActivePlayerChar().Targets()) > 0 {
 		for _, av := range hud.camera.area.Avatars() {
 			if objects.Equals(hud.Game().ActivePlayerChar().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)

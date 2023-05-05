@@ -28,7 +28,6 @@ MINOR:
 * Game saved in single player mode doesn't work when connected to the server(no server user flag
   on player chars), results in black screen(no HUD), add some error message?
 * Skill cooldown indication
-* Training log info and audio effect
 * Default skills on the menu bar after starting new game
 * Focusing UI elements with tab key
 * Graphical effects for area weather

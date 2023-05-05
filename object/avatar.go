@@ -538,5 +538,13 @@ func (av *Avatar) onModifierTaken(m effect.Modifier) {
 		if audioEffect != nil {
 			mtk.Audio().Play(audioEffect)
 		}
+	case *effect.AddSkillMod:
+		msg := objects.NewMessage(fmt.Sprintf("%s: %s", lang.Text("skill_added_msg"),
+			lang.Text(m.SkillID())), true)
+		av.PrivateLog().Add(msg)
+		audioEffect := audio.Effects["skillAdded1.mp3"]
+		if audioEffect != nil {
+			mtk.Audio().Play(audioEffect)
+		}
 	}
 }

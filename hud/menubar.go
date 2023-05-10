@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/item"
+	"github.com/isangeles/flame/useaction"
 
 	"github.com/isangeles/mtk"
 
@@ -56,9 +57,10 @@ type MenuBar struct {
 }
 
 var (
-	barSlots     = 10
-	barSlotSize  = mtk.SizeMedium
-	barSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
+	barSlots             = 10
+	barSlotSize          = mtk.SizeMedium
+	barDisabledSlotColor = pixel.RGBA{0.1, 0.1, 0.1, 0.9}
+	barActiveSlotColor   = pixel.RGBA{0.1, 0.1, 0.1, 0.5}
 )
 
 // newMenuBar creates new menu bar for HUD.
@@ -186,6 +188,11 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	// Slots.
 	for _, s := range mb.slots {
 		s.Update(win)
+		if mb.slotActive(s) {
+			s.SetColor(barActiveSlotColor)
+		} else {
+			s.SetColor(barDisabledSlotColor)
+		}
 	}
 }
 
@@ -222,8 +229,9 @@ func (mb *MenuBar) drawIMBackground(t pixel.Target) {
 // createSlot creates new slot for bar.
 func (mb *MenuBar) createSlot() *mtk.Slot {
 	params := mtk.Params{
-		Size:     barSlotSize,
-		FontSize: mtk.SizeMini,
+		Size:      barSlotSize,
+		FontSize:  mtk.SizeMini,
+		MainColor: barActiveSlotColor,
 	}
 	s := mtk.NewSlot(params)
 	s.SetOnRightClickFunc(mb.onSlotRightClicked)
@@ -315,6 +323,22 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		}
 		mb.hud.insertSlotItem(i, slot)
 	}
+}
+
+// slotActive checks if specified slot is active.
+func (mb *MenuBar) slotActive(s *mtk.Slot) bool {
+	if len(s.Values()) < 1 {
+		return true
+	}
+	if mb.hud.Game().ActivePlayerChar().Cooldown() > 0 {
+		return false
+	}
+	val := s.Values()[0]
+	ob, ok := val.(useaction.Usable)
+	if !ok {
+		return true
+	}
+	return ob.UseAction().Cooldown() <= 0
 }
 
 // handleKeyEvents handles recent key events.

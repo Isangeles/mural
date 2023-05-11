@@ -1,7 +1,7 @@
 /*
  * savemenu.go
  *
- * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ func (sm *SaveMenu) loadSaves() error {
 	// Clear list.
 	sm.savesList.Clear()
 	// Check if saves dir exists.
-	path := filepath.Join(config.GUIPath, data.SavesDir)
+	path := filepath.Join(config.GUIPath, data.HUDDir)
 	_, err := os.ReadDir(path)
 	if err != nil {
 		return nil
@@ -261,7 +261,7 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 // Save saves GUI and module state.
 func (sm *SaveMenu) save(saveName string) error {
 	// Save HUD.
-	hudPath := filepath.Join(config.GUIPath, data.SavesDir,
+	hudPath := filepath.Join(config.GUIPath, data.HUDDir,
 		saveName+data.HUDFileExt)
 	err := data.ExportHUD(sm.hud.Data(), hudPath)
 	if err != nil {

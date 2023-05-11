@@ -68,7 +68,7 @@ func guiexport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s:no HUD set", GUIExport)
 		}
 		name := cmd.Args()[0]
-		path := filepath.Join(config.GUIPath, data.SavesDir, name + data.HUDFileExt)
+		path := filepath.Join(config.GUIPath, data.HUDDir, name + data.HUDFileExt)
 		hudData := guiHUD.Data()
 		err := data.ExportHUD(hudData, path)
 		if err != nil {

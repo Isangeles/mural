@@ -1,7 +1,7 @@
 /*
  * guiimport.go
  *
- * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ func guiimport(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s: no HUD set", GUIImport)
 		}
 		name := cmd.Args()[0] + data.HUDFileExt
-		path := filepath.Join(config.GUIPath, data.SavesDir, name)
+		path := filepath.Join(config.GUIPath, data.HUDDir, name)
 		data, err := data.ImportHUD(path)
 		if err != nil {
 			return 3, fmt.Sprintf("%s: unable to import HUD: %v",

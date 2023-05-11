@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 	gameWrapper := game.New(m)
 	gameWrapper.SetServer(mm.server)
 	// Import saved HUD state.
-	hudPath := filepath.Join(config.GUIPath, data.SavesDir, resp.Save+data.HUDFileExt)
+	hudPath := filepath.Join(config.GUIPath, data.HUDDir, resp.Save+data.HUDFileExt)
 	hud, err := data.ImportHUD(hudPath)
 	if err != nil {
 		log.Err.Printf("Main menu: handle load response: unable to import HUD: %v", err)

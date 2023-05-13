@@ -85,6 +85,7 @@ type HUD struct {
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessagesQueue
 	layouts       map[string]*Layout
+	defaultLayout *Layout
 	loading       bool
 	exiting       bool
 	loaderr       error
@@ -125,6 +126,7 @@ func New(win *mtk.Window) *HUD {
 	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
 	// Layouts.
 	hud.layouts = make(map[string]*Layout)
+	hud.defaultLayout = NewLayout()
 	return hud
 }
 
@@ -328,12 +330,12 @@ func (hud *HUD) CloseLoadingScreen() {
 // serial value(creates new layout if there is no saved
 // layout for such player).
 func (hud *HUD) Layout(id, serial string) *Layout {
-	l := hud.layouts[id+serial]
-	if l == nil {
-		l = NewLayout()
-		hud.layouts[id+serial] = l
+	layout := hud.layouts[id+serial]
+	if layout == nil {
+		layout = hud.defaultLayout
+		hud.layouts[id+serial] = layout
 	}
-	return l
+	return layout
 }
 
 // Reload reloads HUD layouts for
@@ -435,6 +437,10 @@ func (hud *HUD) Apply(data res.HUDData) error {
 			slotsLayout[s.Content] = s.ID
 		}
 		layout.SetBarSlots(slotsLayout)
+		if pcd.ID == "*" {
+			hud.defaultLayout = layout
+			continue
+		}
 		layoutKey := pcd.ID + pcd.Serial
 		hud.layouts[layoutKey] = layout
 	}

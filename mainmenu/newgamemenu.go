@@ -1,7 +1,7 @@
 /*
  * newgamemenu.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@
 package mainmenu
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/faiface/pixel"
@@ -266,9 +268,18 @@ func (ngm *NewGameMenu) startGame() {
 		}
 		gameWrapper.AddPlayerChar(pc)
 	}
+	// Default HUD setup.
+	var hudData res.HUDData
+	hudPath := filepath.Join(config.GUIPath, data.HUDDir, config.DefaultHUD)
+	if _, err := os.Stat(hudPath); !errors.Is(err, os.ErrNotExist) {
+		hudData, err = data.ImportHUD(hudPath)
+		if err != nil {
+			log.Err.Printf("main menu: new game: unable to load default hud: %v", err)
+		}
+	}
 	// Trigger game created function.
 	if ngm.mainmenu.onGameCreated != nil {
-		ngm.mainmenu.onGameCreated(gameWrapper, nil)
+		ngm.mainmenu.onGameCreated(gameWrapper, &hudData)
 	}
 }
 

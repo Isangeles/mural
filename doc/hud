@@ -1,0 +1,31 @@
+.TH HUD
+.SH DESCRIPTION
+HUD(head-over-display) is part of the interface responsible for drawing are map and all user menus.
+.br
+After saving the game with save menu, the current HUD state is exported to he module hud directory([module]/mural/hud) and is used while loading the saved game with load game menu.
+.br
+Default HUD setup can be defined in default.xml file in module hud directory([module]/mural/hud).
+.br
+This default setup will be used after starting the game via new game menu.
+.SH CONTROLS
+* WSAD - move HUD camera
+.br
+* Right mouse button - target object
+.br
+* Left mouse button - move player/interact with object(loot/dialog/attack)
+.br
+* SPACE - pause game
+.br
+* ESCAPE - open in-game menu
+.br
+* ENTER - activate/deactivate chat
+.br
+* B - open inventory
+.br
+* K - open skills menu
+.br
+* L - open journal
+.br
+* V - open crafting menu
+.br
+* C - open character window

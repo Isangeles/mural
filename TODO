@@ -27,7 +27,7 @@ MINOR:
 * Escape should close currently open menu instead of opening menu at the top
 * Game saved in single player mode doesn't work when connected to the server(no server user flag
   on player chars), results in black screen(no HUD), add some error message?
-* Skill cooldown cooldown on menu bar
+* Skill cooldown counter on menu bar
 * Focusing UI elements with tab key
 * Graphical effects for area weather
 * HUD: zoom/unzoom for camera

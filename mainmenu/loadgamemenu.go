@@ -157,7 +157,9 @@ func (lgm *LoadGameMenu) loadSaves() error {
 	}
 	// Add save names to the list.
 	for _, s := range saves {
-		lgm.savesList.AddItem(s, s)
+		if s != config.DefaultHUD {
+			lgm.savesList.AddItem(s, s)
+		}
 	}
 	return nil
 }

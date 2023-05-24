@@ -88,6 +88,16 @@ func newSaveMenu(hud *HUD) *SaveMenu {
 	}
 	sm.savesList = mtk.NewList(savesListParams)
 	sm.savesList.SetOnItemSelectFunc(sm.onSaveSelected)
+	upButtonTex := graphic.Textures["scrollup.png"]
+	if upButtonTex != nil {
+		upSprite := pixel.NewSprite(upButtonTex, upButtonTex.Bounds())
+		sm.savesList.SetUpButtonBackground(upSprite)
+	}
+	downButtonTex := graphic.Textures["scrolldown.png"]
+	if downButtonTex != nil {
+		downSprite := pixel.NewSprite(downButtonTex, downButtonTex.Bounds())
+		sm.savesList.SetDownButtonBackground(downSprite)
+	}
 	// Text field.
 	texteditParams := mtk.Params{
 		FontSize:  mtk.SizeSmall,

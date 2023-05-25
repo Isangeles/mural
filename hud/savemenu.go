@@ -238,7 +238,9 @@ func (sm *SaveMenu) loadSaves() error {
 	}
 	// Add save names to the list.
 	for _, s := range saves {
-		sm.savesList.AddItem(s, s)
+		if s != config.DefaultHUD {
+			sm.savesList.AddItem(s, s)
+		}
 	}
 	return nil
 }

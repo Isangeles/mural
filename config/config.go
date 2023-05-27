@@ -64,6 +64,7 @@ var (
 	ServerPassword   = ""
 	ServerHost       = ""
 	ServerPort       = ""
+	ServerClose      = false
 )
 
 // Load loads configuration file.
@@ -149,6 +150,9 @@ func Load() error {
 		ServerHost = conf["server"][0]
 		ServerPort = conf["server"][1]
 	}
+	if len(conf["server-close"]) > 0 {
+		ServerClose = conf["server-close"][0] == "true"
+	}
 	// Debug.
 	log.Dbg.Print("Config file loaded")
 	return nil
@@ -183,6 +187,7 @@ func Save() error {
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
 	conf["server-user"] = []string{ServerLogin, ServerPassword}
 	conf["server"] = []string{ServerHost, ServerPort}
+	conf["server-close"] = []string{fmt.Sprintf("%v", ServerClose)}
 	confText := text.MarshalConfig(conf)
 	// Write config values.
 	w := bufio.NewWriter(file)

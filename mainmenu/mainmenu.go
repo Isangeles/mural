@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2023 Dariusz Sikora ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,7 @@ func (mm *MainMenu) Draw(win *mtk.Window) {
 // Update updates current menu screen.
 func (mm *MainMenu) Update(win *mtk.Window) {
 	if mm.exiting {
-		if mm.server != nil {
+		if mm.server != nil && config.ServerClose {
 			req := request.Request{Close: time.Now().UnixNano()}
 			err := mm.server.Send(req)
 			if err != nil {

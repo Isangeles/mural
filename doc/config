@@ -88,6 +88,12 @@ First value is used as server host, second as server port.
 Specifies user login and password for remote game server.
 .br
 First value is for login, second for password.
+.P
+* server-close
+.br
+Specifies if after closing the program the close request should be send to the game server(if connected).
+.br
+Value 'true' enables sending close request to the server, everything else makes this feature disabled.
 .SH EXAMPLE
 .nf
 lang:english

@@ -30,10 +30,10 @@ github.com/hajimehoshi/oto v0.7.1 h1:I7maFPz5MBCwiutOrz++DLdbr4rTzBsbBuV2VpgU9kk
 github.com/hajimehoshi/oto v0.7.1/go.mod h1:wovJ8WWMfFKvP587mhHgot/MBr4DnNy9m6EepeVGnos=
 github.com/icza/bitio v1.0.0/go.mod h1:0jGnlLAx8MKMr9VGnn/4YrvZiprkvBelsVIbA9Jjr9A=
 github.com/icza/mighty v0.0.0-20180919140131-cfd07d671de6/go.mod h1:xQig96I1VNBDIWGCdTt54nHt6EeI639SmHycLYL7FkA=
-github.com/isangeles/burn v0.0.0-20230415173422-e5a2425f018f h1:MArFvM6PJ0wOeDFS+/H8q/PxyZRDhtkREMJy/Ep4nds=
-github.com/isangeles/burn v0.0.0-20230415173422-e5a2425f018f/go.mod h1:rMHSwcB+qVazTfyOObSKj4NWUa/LPpaFZZOsvxUPEr0=
-github.com/isangeles/fire v0.0.0-20230501203606-ceab875511f9 h1:jX7SG4DrwnVKY0g/tlLeSwM2Qia6PvKIa2fdNzDJN3c=
-github.com/isangeles/fire v0.0.0-20230501203606-ceab875511f9/go.mod h1:aSwbS5NXRaH21Py5jD/+qlNUCOlRjefs4nr6fZ7jMe4=
+github.com/isangeles/burn v0.0.0-20230604191634-c0eaf7b6f47c h1:MzM56rub9+UIK6pPvn8MifO4p4nQSbEggENyLJG4P2g=
+github.com/isangeles/burn v0.0.0-20230604191634-c0eaf7b6f47c/go.mod h1:rMHSwcB+qVazTfyOObSKj4NWUa/LPpaFZZOsvxUPEr0=
+github.com/isangeles/fire v0.0.0-20230605163407-f2cd9376002e h1:uaJywD1yobxTBBEeep7hZ89BTrm8Pe0NuYj98FkKB2M=
+github.com/isangeles/fire v0.0.0-20230605163407-f2cd9376002e/go.mod h1:ebZOIhV7tccsjkwplAklHUfEoIGCoPJYieoEuYgk9VA=
 github.com/isangeles/flame v0.0.0-20230430104731-ce9b481c626d h1:wDeaR+VqIGNBy3FnMGmHECEvG321B9XmsefOyKze72g=
 github.com/isangeles/flame v0.0.0-20230430104731-ce9b481c626d/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/ignite v0.0.0-20230422075556-10c765c5d661 h1:XdW1irZ/DuEeAeYpOF6AkiUnPBiMnTbj4kPtuMnVfNo=

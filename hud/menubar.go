@@ -310,8 +310,9 @@ func (mb *MenuBar) setLayout(l *Layout) {
 		insertSlotSkill(s, slot)
 	}
 	// Items.
-	for _, i := range pcAvatar.Items() {
-		slotID := l.BarSlotID(i)
+	for _, i := range pcAvatar.Inventory().Items() {
+		it := itemGraphic(i)
+		slotID := l.BarSlotID(it)
 		if slotID < 0 {
 			continue
 		}
@@ -321,7 +322,7 @@ func (mb *MenuBar) setLayout(l *Layout) {
 				slotID)
 			continue
 		}
-		mb.hud.insertSlotItem(i, slot)
+		mb.hud.insertSlotItem(it, slot)
 	}
 }
 

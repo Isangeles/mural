@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,12 +206,13 @@ func (im *InventoryMenu) Size() pixel.Vec {
 }
 
 // insertItems inserts specified items in inventory slots.
-func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
+func (im *InventoryMenu) insertItems(items ...item.Item) {
 	im.slots.Clear()
 	// Insert items from layout first.
 	pc := im.hud.Game().ActivePlayerChar()
 	layout := im.hud.Layout(pc.ID(), pc.Serial())
-	for _, it := range items {
+	for _, i := range items {
+		it := itemGraphic(i)
 		slotID := layout.InvSlotID(it)
 		if slotID < 0 {
 			continue
@@ -222,7 +223,8 @@ func (im *InventoryMenu) insertItems(items ...*object.ItemGraphic) {
 		}
 	}
 	// Insert new items.
-	for _, it := range items {
+	for _, i := range items {
+		it := itemGraphic(i)
 		// Skip items from layout.
 		slotID := layout.InvSlotID(it)
 		if slotID > -1 {
@@ -363,7 +365,7 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 func (im *InventoryMenu) refresh() {
 	pcAvatar := im.hud.PCAvatar()
 	if pcAvatar != nil {
-		im.insertItems(pcAvatar.Items()...)
+		im.insertItems(pcAvatar.Inventory().Items()...)
 	}
 	im.updateLayout()
 }

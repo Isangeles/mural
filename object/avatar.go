@@ -62,7 +62,6 @@ type Avatar struct {
 	speaking     bool
 	silenced     bool
 	chatTimer    int64
-	items        map[string]*ItemGraphic
 	eqItems      map[string]*ItemGraphic
 	effects      map[string]*EffectGraphic
 	skills       map[string]*SkillGraphic
@@ -124,7 +123,6 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	}
 	av.chat = mtk.NewText(chatParams)
 	// Items, effects, skills.
-	av.items = make(map[string]*ItemGraphic, 0)
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
@@ -230,28 +228,6 @@ func (av *Avatar) DestPoint() pixel.Vec {
 	return pixel.V(x, y)
 }
 
-// Items returns all avatar items(in form of
-// graphical wrappers).
-func (av *Avatar) Items() (items []*ItemGraphic) {
-	for _, ig := range av.items {
-		if av.Inventory().Item(ig.ID(), ig.Serial()) != nil {
-			items = append(items, ig)
-		}
-	}
-	return
-}
-
-// LootItems returns all 'lootable' items(in form of
-// graphical wrappers).
-func (av *Avatar) LootItems() (items []*ItemGraphic) {
-	for _, ig := range av.items {
-		if av.Inventory().LootItem(ig.ID(), ig.Serial()) != nil {
-			items = append(items, ig)
-		}
-	}
-	return
-}
-
 // Effects returns all visible effects active on
 // avatar character.
 func (av *Avatar) Effects() (effects []*EffectGraphic) {
@@ -302,16 +278,6 @@ func (av *Avatar) Hovered() bool {
 // updateGraphic updates avatar grapphical
 // content.
 func (av *Avatar) updateGraphic() {
-	// Clear items.
-	for id, ig := range av.items {
-		found := false
-		for _, it := range av.Inventory().Items() {
-			found = objects.Equals(it, ig)
-		}
-		if !found {
-			delete(av.items, id)
-		}
-	}
 	// Clear unequipped items.
 	for _, ig := range av.eqItems {
 		eit, ok := ig.Item.(item.Equiper)
@@ -342,18 +308,6 @@ func (av *Avatar) updateGraphic() {
 		if !found {
 			delete(av.skills, id)
 		}
-	}
-	// Inventory.
-	for _, it := range av.Inventory().Items() {
-		if av.items[it.ID()+it.Serial()] != nil {
-			continue
-		}
-		data := res.Item(it.ID())
-		if data == nil {
-			data = DefaultItemGraphic(it)
-		}
-		itemGraphic := NewItemGraphic(it, data)
-		av.items[it.ID()+it.Serial()] = itemGraphic
 	}
 	// Equipment.
 	for _, eqi := range av.Equipment().Items() {

@@ -54,7 +54,6 @@ type LootWindow struct {
 // Interface for 'lootable' objects.
 type LootTarget interface {
 	item.Container
-	LootItems() []*object.ItemGraphic
 }
 
 var (
@@ -187,12 +186,13 @@ func (lw *LootWindow) DrawArea() pixel.Rect {
 func (lw *LootWindow) SetTarget(t LootTarget) {
 	lw.target = t
 	lw.slots.Clear()
-	lw.insertItems(lw.target.LootItems()...)
+	lw.insertItems(lw.target.Inventory().LootItems()...)
 }
 
 // insertItems inserts specified items in window slots.
-func (lw *LootWindow) insertItems(items ...*object.ItemGraphic) {
-	for _, it := range items {
+func (lw *LootWindow) insertItems(items ...item.Item) {
+	for _, i := range items {
+		it := itemGraphic(i)
 		slot := lw.slots.EmptySlot()
 		// Try to find slot with same content and available space.
 		for _, s := range lw.slots.Slots() {

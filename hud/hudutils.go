@@ -98,3 +98,12 @@ func itemErrorGraphic(it item.Item) *res.ItemGraphicData {
 		MaxStack: 100,
 	}
 }
+
+// itemGraphic returns item graphic for specified item.
+func itemGraphic(it item.Item) *object.ItemGraphic {
+	data := res.Item(it.ID())
+	if data == nil {
+		data = object.DefaultItemGraphic(it)
+	}
+	return object.NewItemGraphic(it, data)
+}

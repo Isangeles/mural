@@ -336,7 +336,7 @@ func (mb *MenuBar) slotActive(s *mtk.Slot) bool {
 	}
 	val := s.Values()[0]
 	ob, ok := val.(useaction.Usable)
-	if !ok {
+	if !ok || ob.UseAction() == nil {
 		return true
 	}
 	return ob.UseAction().Cooldown() <= 0

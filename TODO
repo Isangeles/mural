@@ -31,6 +31,7 @@ MINOR:
 * Focusing UI elements with tab key
 * Graphical effects for area weather
 * HUD: zoom/unzoom for camera
+* HUD: for item stacks load icons only for once instead for every item in that stack
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

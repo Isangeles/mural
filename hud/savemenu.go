@@ -264,6 +264,9 @@ func (sm *SaveMenu) onCloseButtonClicked(b *mtk.Button) {
 func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 	saveFileName := sm.saveNameEdit.Text()
 	saveName := strings.Split(saveFileName, ".")[0]
+	if len(saveName) < 1 {
+		return
+	}
 	err := sm.save(saveName)
 	if err != nil {
 		log.Err.Printf("hud: savegame menu: unable to save: %v", err)

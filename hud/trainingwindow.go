@@ -174,6 +174,10 @@ func (tw *TrainingWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (tw *TrainingWindow) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(exitKey) {
+		tw.Hide()
+	}
 	// Elements.
 	if tw.Opened() {
 		tw.closeButton.Update(win)

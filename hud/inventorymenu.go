@@ -156,6 +156,9 @@ func (im *InventoryMenu) Update(win *mtk.Window) {
 			im.Show()
 		}
 	}
+	if win.JustPressed(exitKey) {
+		im.Hide()
+	}
 	// Elements update.
 	if im.Opened() {
 		im.slots.Update(win)

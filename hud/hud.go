@@ -58,6 +58,7 @@ var (
 	accentColor = colornames.Red
 	// Keys.
 	pauseKey = pixelgl.KeySpace
+	exitKey  = pixelgl.KeyEscape
 )
 
 // Struct for 'head-up display'.

@@ -135,6 +135,10 @@ func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (lw *LootWindow) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(exitKey) {
+		lw.Hide()
+	}
 	// Elements.
 	if lw.Opened() {
 		lw.slots.Update(win)

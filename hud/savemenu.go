@@ -167,6 +167,10 @@ func (sm *SaveMenu) Update(win *mtk.Window) {
 	if !sm.Opened() {
 		return
 	}
+	// Key events.
+	if win.JustPressed(exitKey) {
+		sm.Hide()
+	}
 	// Elements.
 	sm.closeButton.Update(win)
 	sm.saveButton.Update(win)

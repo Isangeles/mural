@@ -1,7 +1,7 @@
 /*
  * tradewindow.go
  *
- * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,6 +196,10 @@ func (tw *TradeWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates window.
 func (tw *TradeWindow) Update(win *mtk.Window) {
+	// Key events.
+	if win.JustPressed(exitKey) {
+		tw.Hide()
+	}
 	// Elements.
 	if tw.Opened() {
 		tw.closeButton.Update(win)

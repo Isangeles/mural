@@ -1,7 +1,7 @@
 /*
  * journalwindow.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,6 +165,9 @@ func (jw *JournalWindow) Update(win *mtk.Window) {
 		} else {
 			jw.Show()
 		}
+	}
+	if win.JustPressed(exitKey) {
+		jw.Hide()
 	}
 	// Elements.
 	if jw.Opened() {

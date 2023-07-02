@@ -495,10 +495,10 @@ func (hud *HUD) updateCurrentArea() {
 	}
 }
 
-// containsPos checks is specified position is contained
+// containsPos checks if specified position is contained
 // by any HUD element(except camera).
 func (hud *HUD) containsPos(pos pixel.Vec) bool {
-	if hud.bar.DrawArea().Contains(pos) ||
+	return hud.bar.DrawArea().Contains(pos) ||
 		hud.chat.DrawArea().Contains(pos) ||
 		hud.pcFrame.DrawArea().Contains(pos) ||
 		(hud.inv.Opened() && hud.inv.DrawArea().Contains(pos)) ||
@@ -511,10 +511,7 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		(hud.crafting.Opened() && hud.crafting.DrawArea().Contains(pos)) ||
 		(hud.trade.Opened() && hud.trade.DrawArea().Contains(pos)) ||
 		(hud.training.Opened() && hud.training.DrawArea().Contains(pos)) ||
-		(hud.charinfo.Opened() && hud.charinfo.DrawArea().Contains(pos)) {
-		return true
-	}
-	return false
+		(hud.charinfo.Opened() && hud.charinfo.DrawArea().Contains(pos))
 }
 
 // Triggered after right mouse button was pressed.

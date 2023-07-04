@@ -148,7 +148,7 @@ func (m *Menu) Update(win *mtk.Window) {
 		// Show menu.
 		if m.Opened() {
 			m.Hide()
-		} else {
+		} else if !m.hud.menuOpen() {
 			m.Show()
 		}
 	}

@@ -514,6 +514,15 @@ func (hud *HUD) containsPos(pos pixel.Vec) bool {
 		(hud.charinfo.Opened() && hud.charinfo.DrawArea().Contains(pos))
 }
 
+// menuOpen checks if any HUD menu is open.
+func (hud *HUD) menuOpen() bool {
+	return hud.charinfo.Opened() || hud.crafting.Opened() ||
+		hud.dialog.Opened() || hud.inv.Opened() ||
+		hud.journal.Opened() || hud.loot.Opened() ||
+		hud.menu.Opened() || hud.savemenu.Opened() ||
+		hud.trade.Opened() || hud.training.Opened()
+}
+
 // Triggered after right mouse button was pressed.
 func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
 }

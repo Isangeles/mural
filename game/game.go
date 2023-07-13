@@ -195,6 +195,9 @@ func (g *Game) TransferItems(from, to item.Container, items ...item.Item) error 
 
 // Trade exchanges items between specified containers.
 func (g *Game) Trade(seller, buyer item.Container, sellItems, buyItems []item.Item) {
+	if !fairTrade(sellItems, buyItems) {
+		return
+	}
 	for _, it := range sellItems {
 		buyer.Inventory().RemoveItem(it)
 		seller.Inventory().AddItem(it)
@@ -325,4 +328,18 @@ func (g *Game) updateChars() {
 		gameChar = NewCharacter(c, g)
 		g.chars[gameChar.ID()+gameChar.Serial()] = gameChar
 	}
+}
+
+// fairTrade checks if value of all items to sell is greater or
+// equal to the value of items to buy.
+func fairTrade(sell, buy []item.Item) bool {
+	buyValue := 0
+	for _, it := range buy {
+		buyValue += it.Value()
+	}
+	sellValue := 0
+	for _, it := range sell {
+		sellValue += it.Value()
+	}
+	return sellValue >= buyValue
 }

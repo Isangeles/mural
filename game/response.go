@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,10 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
-var addPlayerMutex sync.Mutex
+var (
+	addPlayerMutex sync.Mutex
+	updateMutex    sync.Mutex
+)
 
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
@@ -61,6 +64,8 @@ func (g *Game) handleResponse(resp response.Response) {
 
 // handleUpdateResponse handles update response.
 func (g *Game) handleUpdateResponse(resp response.Update) {
+	updateMutex.Lock()
+	defer updateMutex.Unlock()
 	flameres.Clear()
 	flameres.TranslationBases = res.TranslationBases()
 	g.Apply(resp.Module)

@@ -25,6 +25,7 @@ package mainmenu
 
 import (
 	"path/filepath"
+	"sync"
 
 	"github.com/isangeles/flame"
 	flameres "github.com/isangeles/flame/data/res"
@@ -38,6 +39,8 @@ import (
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
+
+var updateMutex sync.Mutex
 
 // handleResponse handles specified response from Fire server.
 func (mm *MainMenu) handleResponse(resp response.Response) {
@@ -99,6 +102,8 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 
 // handleUpdateResponse handles update response.
 func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
+	updateMutex.Lock()
+	defer updateMutex.Unlock()
 	flameres.Clear()
 	flameres.TranslationBases = res.TranslationBases()
 	if mm.mod == nil {

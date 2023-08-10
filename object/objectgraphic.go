@@ -60,7 +60,7 @@ type ObjectGraphic struct {
 // res/graphic object spritesheets map.
 func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) (*ObjectGraphic, error) {
 	og := new(ObjectGraphic)
-	og.Character = char 
+	og.Character = char
 	og.name = lang.Text(og.ID())
 	og.combatLog = objects.NewLog()
 	// Sprite.
@@ -147,7 +147,7 @@ func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 // graphical wrappers).
 func (og *ObjectGraphic) LootItems() (items []*ItemGraphic) {
 	for _, ig := range og.items {
-		if it := og.Inventory().Item(ig.ID(), ig.Serial()); it != nil && it.Loot{
+		if it := og.Inventory().Item(ig.ID(), ig.Serial()); it != nil && it.Loot {
 			items = append(items, ig)
 		}
 	}

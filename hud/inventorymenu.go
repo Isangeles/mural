@@ -209,13 +209,13 @@ func (im *InventoryMenu) Size() pixel.Vec {
 }
 
 // insertItems inserts specified items in inventory slots.
-func (im *InventoryMenu) insertItems(items ...item.Item) {
+func (im *InventoryMenu) insertItems(items ...*item.InventoryItem) {
 	im.slots.Clear()
 	// Insert items from layout first.
 	pc := im.hud.Game().ActivePlayerChar()
 	layout := im.hud.Layout(pc.ID(), pc.Serial())
 	for _, i := range items {
-		it := itemGraphic(i)
+		it := itemGraphic(i.Item)
 		slotID := layout.InvSlotID(it)
 		if slotID < 0 {
 			continue
@@ -227,7 +227,7 @@ func (im *InventoryMenu) insertItems(items ...item.Item) {
 	}
 	// Insert new items.
 	for _, i := range items {
-		it := itemGraphic(i)
+		it := itemGraphic(i.Item)
 		// Skip items from layout.
 		slotID := layout.InvSlotID(it)
 		if slotID > -1 {

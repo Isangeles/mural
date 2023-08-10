@@ -147,7 +147,7 @@ func (og *ObjectGraphic) Items() (items []*ItemGraphic) {
 // graphical wrappers).
 func (og *ObjectGraphic) LootItems() (items []*ItemGraphic) {
 	for _, ig := range og.items {
-		if og.Inventory().LootItem(ig.ID(), ig.Serial()) != nil {
+		if it := og.Inventory().Item(ig.ID(), ig.Serial()); it != nil && it.Loot{
 			items = append(items, ig)
 		}
 	}

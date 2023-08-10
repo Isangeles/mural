@@ -213,7 +213,7 @@ func (tw *TradeWindow) Update(win *mtk.Window) {
 func (tw *TradeWindow) Show() {
 	tw.opened = true
 	if tw.seller != nil {
-		tw.insertBuyItems(tw.seller.Inventory().TradeItems()...)
+		tw.insertBuyItems(tw.seller.Inventory().Items()...)
 	}
 	tw.insertSellItems(tw.hud.Game().ActivePlayerChar().Inventory().Items()...)
 }
@@ -266,13 +266,7 @@ func (tw *TradeWindow) reset() {
 // tradeValue returns current trade value.
 func (tw *TradeWindow) tradeValue() (v int) {
 	for _, it := range tw.buyItems {
-		ti, ok := it.(*item.TradeItem)
-		if !ok {
-			log.Err.Printf("hud trade: item a trade item: %s#%s",
-				it.ID(), it.Serial())
-			continue
-		}
-		v -= ti.Price
+		v -= itemTradeValue(tw.seller.Inventory(), it)
 	}
 	for _, it := range tw.sellItems {
 		v += it.Value()
@@ -289,7 +283,7 @@ func (tw *TradeWindow) updateTradeValue() {
 }
 
 // insertBuyItems inserts specified items in buy slots.
-func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
+func (tw *TradeWindow) insertBuyItems(items ...*item.InventoryItem) {
 	tw.buySlots.Clear()
 	for _, it := range items {
 		// Retrieve item graphic.
@@ -299,7 +293,7 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 			// Get fallback graphic.
 			igd = itemErrorGraphic(it)
 		}
-		ig := object.NewItemGraphic(it, igd)
+		ig := object.NewItemGraphic(it.Item, igd)
 		// Find proper slot.
 		slot := tw.buySlots.EmptySlot()
 		// Try to find slot with same content and available space.
@@ -326,7 +320,7 @@ func (tw *TradeWindow) insertBuyItems(items ...*item.TradeItem) {
 }
 
 // insertSellItem inserts specified items in sell slots.
-func (tw *TradeWindow) insertSellItems(items ...item.Item) {
+func (tw *TradeWindow) insertSellItems(items ...*item.InventoryItem) {
 	tw.sellSlots.Clear()
 	for _, it := range items {
 		// Retrieve item graphic.
@@ -336,7 +330,7 @@ func (tw *TradeWindow) insertSellItems(items ...item.Item) {
 			// Get fallback graphic.
 			igd = itemErrorGraphic(it)
 		}
-		ig := object.NewItemGraphic(it, igd)
+		ig := object.NewItemGraphic(it.Item, igd)
 		// Find proper slot.
 		slot := tw.sellSlots.EmptySlot()
 		// Try to find slot with same content and available space.
@@ -418,6 +412,7 @@ func (tw *TradeWindow) onTradeButtonClicked(b *mtk.Button) {
 	}
 	tw.hud.Game().Trade(tw.seller, tw.hud.Game().ActivePlayerChar(), sellItems, buyItems)
 	tw.Hide()
+	tw.Show()
 }
 
 // Triggered after one of buy slots was clicked
@@ -544,4 +539,14 @@ func (tw *TradeWindow) onSellSlotSpecialLeftClicked(s *mtk.Slot) {
 // right mouse button and special key.
 func (tw *TradeWindow) onSellSlotSpecialRightClicked(s *mtk.Slot) {
 
+}
+
+// itemTradeValue returns item trading value inside specified
+// inventory.
+func itemTradeValue(inv *item.Inventory, it item.Item) int {
+	invIt := inv.Item(it.ID(), it.Serial())
+	if invIt == nil {
+		return it.Value()
+	}
+	return invIt.Price
 }

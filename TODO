@@ -31,7 +31,6 @@ MINOR:
 * Graphical effects for area weather
 * HUD: zoom/unzoom for camera
 * HUD: for item stacks load icons only for once instead for every item in that stack
-* HUD: trade window should be updated after trade
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

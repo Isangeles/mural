@@ -32,10 +32,10 @@ github.com/icza/bitio v1.0.0/go.mod h1:0jGnlLAx8MKMr9VGnn/4YrvZiprkvBelsVIbA9Jjr
 github.com/icza/mighty v0.0.0-20180919140131-cfd07d671de6/go.mod h1:xQig96I1VNBDIWGCdTt54nHt6EeI639SmHycLYL7FkA=
 github.com/isangeles/burn v0.0.0-20230809163323-d0f196b23b4d h1:AzDDsVdVyfoWaYB5wWeZwqjNGNlGatZGDb5+I8PkY/o=
 github.com/isangeles/burn v0.0.0-20230809163323-d0f196b23b4d/go.mod h1:gJtuSG7KOfMpYmC51/K4v705iMll5kx4NCMatdfMzHU=
-github.com/isangeles/fire v0.0.0-20230810183231-0843222b45f5 h1:HPQpVXwv7xU6EsJpm9yZWb5ZuLi1G8eCia1T5HvPCBA=
-github.com/isangeles/fire v0.0.0-20230810183231-0843222b45f5/go.mod h1:a2spTG7l295RVWtYNE2JLJWa/Kf3FQWOEU30c5zYOJQ=
-github.com/isangeles/flame v0.0.0-20230808172659-66e944d0f0a5 h1:lYJUwhvNzG5bQT81jhagglj3p9x6TdN9PFp/jZ09abE=
-github.com/isangeles/flame v0.0.0-20230808172659-66e944d0f0a5/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
+github.com/isangeles/fire v0.0.0-20230828191417-38c9c83ce02e h1:DPd8LrH9LqALgDY61q/apvDkNkVdHbC6VeelWj2xF9E=
+github.com/isangeles/fire v0.0.0-20230828191417-38c9c83ce02e/go.mod h1:BCy8WVIlNCaX9RzX5rBIcWp5GOtUEQd9W+O3fWDKwcE=
+github.com/isangeles/flame v0.0.0-20230824191220-9f7e4aaf45ee h1:Z4xWJ/YkCDo9s5+BPMPgvClGJQ8Cc8UfPJEMl4UVyCQ=
+github.com/isangeles/flame v0.0.0-20230824191220-9f7e4aaf45ee/go.mod h1:SnqHiRyVIg6hdDObByPdi8C8Fy2TdF5F0bbYQ9/PWLs=
 github.com/isangeles/ignite v0.0.0-20230621175758-7591e10d8d2c h1:3AMeGTzIFvs57w8+CqXssRc4rKLMWLXPhNLKXNbgNnE=
 github.com/isangeles/ignite v0.0.0-20230621175758-7591e10d8d2c/go.mod h1:5cboUynqQ+RaOgpnxR0//idnFYUwWbVUwVRUjGnLLRM=
 github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d h1:TSVLKW08g5e+zyjQ1bUpsbwavvssHhE4BZOelsZ5h6M=

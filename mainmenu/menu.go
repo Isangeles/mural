@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ func (m *Menu) Update(win *mtk.Window) {
 	if m.mainmenu.server == nil || m.mainmenu.server.Authorized() {
 		m.loginButton.Active(false)
 		m.newgameB.Active(len(m.mainmenu.PlayableChars()) > 0)
-		m.newcharB.Active(true)
+		m.newcharB.Active(m.mainmenu.mod != nil)
 		m.loadgameB.Active(true)
 	} else {
 		m.loginButton.Active(true)

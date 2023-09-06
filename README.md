@@ -131,7 +131,7 @@ Specifies user login and password for auto-login to the remote game server.
 ```
   server-close:[true/false]
 ```
-Specifies if after closing the program the close request should be send to the game server(if connected).
+If set to true the close request will be send to the game server when program closes(only if connected to the remote game server).
 
 ## Module directory
 All GUI-related files, including UI textures, audio files, and translations for the GUI elements, must be stored in the `data/modules/[module name]/mural` directory.

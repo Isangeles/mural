@@ -6,14 +6,14 @@ require (
 	github.com/faiface/beep v1.1.0
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/isangeles/burn v0.0.0-20230809163323-d0f196b23b4d
-	github.com/isangeles/fire v0.0.0-20230828191417-38c9c83ce02e
-	github.com/isangeles/flame v0.0.0-20230824191220-9f7e4aaf45ee
+	github.com/isangeles/burn v0.0.0-20230918152806-719d56b37da7
+	github.com/isangeles/fire v0.0.0-20230928174311-3822d0924d61
+	github.com/isangeles/flame v0.0.0-20230927160351-b88c2c79d53a
 	github.com/isangeles/ignite v0.0.0-20230621175758-7591e10d8d2c
 	github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d
 	github.com/isangeles/stone v0.1.1
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.11.0
+	golang.org/x/image v0.12.0
 )
 
 require (
@@ -24,6 +24,7 @@ require (
 	github.com/go-gl/mathgl v0.0.0-20190416160123-c4601bc793c7 // indirect
 	github.com/hajimehoshi/go-mp3 v0.3.0 // indirect
 	github.com/hajimehoshi/oto v0.7.1 // indirect
+	github.com/isangeles/tmx v0.0.0-20230925150339-5410bc1b891b // indirect
 	github.com/jfreymuth/oggvorbis v1.0.1 // indirect
 	github.com/jfreymuth/vorbis v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

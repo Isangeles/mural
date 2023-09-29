@@ -91,6 +91,12 @@ func (c *Character) SetOnUseFunc(f func(o useaction.Usable)) {
 	c.onUse = f
 }
 
+// SetPosition sets character position and destination point.
+func (c *Character) SetPosition(x, y float64) {
+	c.Character.SetPosition(x, y)
+	c.SetDestPoint(x, y)
+}
+
 // SetDestPoint sets destination point for player character.
 func (c *Character) SetDestPoint(x, y float64) {
 	c.Character.SetDestPoint(x, y)

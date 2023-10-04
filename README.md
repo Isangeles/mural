@@ -35,14 +35,13 @@ module:[module ID]
 ```
 Mural will search the default modules directory(`data/modules`) for a module with the specified ID.
 
-Flame modules are available for download [here](http://flame.isangeles.pl/mods).
+Flame modules are available for download [here](https://flame.isangeles.dev/mods).
 
 Run Mural:
 ```
 ./mural
 ```
-## Controls
-### HUD:
+## HUD Controls
 WSAD - move HUD camera
 
 Right mouse button - target object
@@ -75,15 +74,15 @@ If the connection was successful you can use the `login` menu to log in to the s
 ## Configuration
 Configuration values are loaded from `.mural` file in Mural executable directory.
 
-### Configuration values:
+### Configuration values
 ```
   lang:[language ID]
 ```
-Specifies game language, language ID is name of directory with translation files in lang directories.
+Game language, language ID is name of directory with translation files in lang directories.
 ```
   module:[module ID]
 ```
-Specifies module from `data/modules` directory to load at start, module ID is ID specified in `.module` file inside main module directory.
+Game module to load from `data/modules` directory, module ID is ID specified in `.module` file inside main module directory.
 ```
   debug:[true/false]
 ```
@@ -95,11 +94,11 @@ Enables fullscreen mode, 'true' enables fullscreen, everything else sets windowe
 ```
   resolution:[width];[height]
 ```
-Specifies current resolution.
+UI window resolution.
 ```
 max-fps[FPS value]
 ```
-Specifies maximal FPS for the window.
+Maximal FPS limit for the window.
 ```
   map-fow:[true/false]
 ```
@@ -107,27 +106,27 @@ Enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else
 ```
   main-font:[file name]
 ```
-Specifies name of font file(located in graphic archive) for main UI font.
+Name of font file(located in graphic archive) for main UI font.
 ```
   music-volume:[int]
 ```
-Specifies game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
+Game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
 ```
   menu-music:[file name]
 ```
-Specifies name of audio file(located in audio archive) for main menu music theme.
+Name of audio file(located in audio archive) for main menu music theme.
 ```
   button-click-sound:[file name]
 ```
-Specifies name of audio file(located in audio archive) for button click sound.
+Name of audio file(located in audio archive) for button click sound.
 ```
   server:[host];[port]
 ```
-Specified server host and port for remote game server.
+Server host and port for remote game server.
 ```
   server-user:[login];[password]
 ```
-Specifies user login and password for auto-login to the remote game server.
+User login and password for auto-login to the remote game server.
 ```
   server-close:[true/false]
 ```
@@ -157,35 +156,32 @@ You can access CI by the dropdown console in the main menu(accessible by pressin
 
 Note: all commands entered in HUD chat window must be prefixed by '$' character.
 
-  Exit mural:
+### Example commands
+
 ```
 guiset -o exit
 ```
-Description: exits program.
+Exits the program.
 
-  Save HUD state:
 ```
 guiimport -o hud -a [save name]
 ```
-Description: saves current HUD state to file in `data/[module]/mural/saves` directory.
+Saves current HUD state to file in `data/[module]/mural/saves` directory.
 
-  Load HUD state:
 ```
 guiexport -o hud -a [save name]
 ```
-Description: load HUD state from file in `data/[module]/mural/saves` directory.
+Load HUD state from file in `data/[module]/mural/saves` directory.
 
-Mute music:
 ```
-guiaudio -o set-mute -a true
+guiaudio -o set-mute -a [true/false]
 ```
-Description: mutes/unmutes GUI music player.
+Mutes/unmutes GUI music player.
 
-Set music volume:
 ```
 guiaudio -o set-volume -a [value]
 ```
-Description: sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
+Sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
 Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` sub-directory are started automatically on game start/load.

@@ -128,7 +128,7 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	av.skills = make(map[string]*SkillGraphic, 0)
 	// Events.
 	av.SetOnUseFunc(av.onUse)
-	av.SetOnModifierTakenFunc(av.onModifierTaken)
+	av.AddOnModifierEvent(av.onModifierTaken)
 	av.updateGraphic()
 	return av, nil
 }

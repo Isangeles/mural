@@ -80,7 +80,7 @@ func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) (*
 	og.effects = make(map[string]*EffectGraphic)
 	og.items = make(map[string]*ItemGraphic)
 	// Events.
-	og.SetOnModifierTakenFunc(og.onModifierTaken)
+	og.AddOnModifierEvent(og.onModifierTaken)
 	return og, nil
 }
 

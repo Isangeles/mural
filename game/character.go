@@ -39,6 +39,8 @@ import (
 
 	"github.com/isangeles/fire/request"
 
+	"github.com/isangeles/ignite/ai"
+
 	"github.com/isangeles/mural/log"
 )
 
@@ -89,6 +91,10 @@ func (c *Character) InSight(x, y float64) bool {
 // SetOnUseFunc sets function to trigger after using an object.
 func (c *Character) SetOnUseFunc(f func(o useaction.Usable)) {
 	c.onUse = f
+	aiChar := c.aiChar()
+	if aiChar != nil {
+		aiChar.AddOnUseEvent(f)
+	}
 }
 
 // SetPosition sets character position and destination point.
@@ -337,4 +343,15 @@ func (c *Character) moveCloseTo(x, y, minRange float64) {
 		y += minRange
 	}
 	c.SetDestPoint(x, y)
+}
+
+// aiChar returns AI wrapper for the character, or nil
+// if AI doesn't control the character.
+func (c *Character) aiChar() *ai.Character {
+	for _, aiChar := range c.game.localAI.Game().Characters() {
+		if c.ID() == aiChar.ID() && c.Serial() == aiChar.Serial() {
+			return aiChar
+		}
+	}
+	return nil
 }

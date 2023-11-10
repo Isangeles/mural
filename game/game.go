@@ -297,7 +297,7 @@ func (g *Game) VisibleForPlayer(x, y float64) bool {
 // updateAIChars updates list of characters controlled by the AI.
 func (g *Game) updateAIChars() {
 outer:
-	for _, c := range g.Chapter().Characters() {
+	for _, c := range g.chars {
 		for _, aic := range g.localAI.Game().Characters() {
 			if aic.ID() == c.ID() && aic.Serial() == c.Serial() {
 				continue outer
@@ -306,7 +306,7 @@ outer:
 		if !c.HasFlag(aiCharFlag) {
 			continue
 		}
-		aiChar := ai.NewCharacter(c, g.localAI.Game())
+		aiChar := ai.NewCharacter(c.Character, g.localAI.Game())
 		g.localAI.Game().AddCharacter(aiChar)
 	}
 }

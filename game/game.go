@@ -68,18 +68,14 @@ func New(module *flame.Module) *Game {
 }
 
 // Update updates game.
+// It executes game update loop until game is closed.
 func (g *Game) Update() {
 	update := time.Now()
-	for {
-		if g.closing {
-			return
-		}
-		// Delta.
-		delta := time.Since(update).Milliseconds()
-		// Update.
+	for !g.closing {
 		if g.Pause {
 			continue
 		}
+		delta := time.Since(update).Milliseconds()
 		g.Module.Update(delta)
 		if g.Server() == nil {
 			g.updateAIChars()

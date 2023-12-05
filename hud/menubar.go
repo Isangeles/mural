@@ -295,6 +295,10 @@ func (mb *MenuBar) setLayout(l *Layout) {
 	if pcAvatar == nil {
 		return
 	}
+	// Clear slots.
+	for _, s := range mb.slots {
+		s.Clear()
+	}
 	// Skills.
 	for _, s := range pcAvatar.Skills() {
 		slotID := l.BarSlotID(s)

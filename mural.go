@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/character"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
@@ -160,7 +161,7 @@ func run() {
 	if server == nil {
 		mainMenu.SetModule(mod)
 	}
-	mainMenu.SetOnGameCreatedFunc(EnterGame)
+	mainMenu.SetOnGameCreatedFunc(enterGame)
 	ci.SetMainMenu(mainMenu)
 	// Debug mode.
 	textParams := mtk.Params{
@@ -212,14 +213,15 @@ func run() {
 	}
 }
 
-// EnterGame creates HUD and enters game.
+// enterGame creates HUD and enters game.
 // The second parameter is used to apply data on newly
 // created HUD, if nil the HUD will be left in its
 // default state after creation.
-func EnterGame(g *game.Game, hudData *res.HUDData) {
+func enterGame(g *game.Game, hudData *res.HUDData) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	activeGame = g
+	activeGame.AddChapterChangeEvent(changeChapter)
 	// Create HUD.
 	hud := hud.New(win)
 	// Set HUD.
@@ -248,6 +250,39 @@ func EnterGame(g *game.Game, hudData *res.HUDData) {
 	}
 	// Run game update.
 	go activeGame.Update()
+}
+
+// changeChater handles chaper change event triggered by specified character.
+func changeChapter(ob *character.Character) {
+	// Change game chapter.
+	activeGame.Conf().Chapter = ob.ChapterID()
+	chapterPath := filepath.Join(activeGame.Conf().ChaptersPath(), activeGame.Conf().Chapter)
+	chapterData, err := flamedata.ImportChapterDir(chapterPath)
+	if err != nil {
+		log.Err.Printf("Chapter change: unable to load chapter data: %v", err)
+		return
+	}
+	chapter := flame.NewChapter(activeGame.Module, chapterData)
+	activeGame.SetChapter(chapter)
+	// Load GUI data.
+	chapterGUIPath := filepath.Join(config.GUIPath, "chapters", activeGame.Chapter().Conf().ID)
+	err = data.LoadChapterData(chapterGUIPath)
+	if err != nil {
+		log.Err.Printf("Chapter change: unable to load chapter GUI data: %v", err)
+		return
+	}
+	// Respawn the character.
+	gameChar := activeGame.Char(ob.ID(), ob.Serial())
+	if gameChar == nil {
+		log.Err.Printf("Chapter change: game character not found: %s %s", ob.ID(),
+			ob.Serial())
+		return
+	}
+	err = activeGame.SpawnChar(gameChar)
+	if err != nil {
+		log.Err.Printf("Chapter change: unable to spawn character: %v", err)
+		return
+	}
 }
 
 // setHUD sets specified HUD instance as current

@@ -221,7 +221,7 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_game_info"))
 	defer mainMenu.CloseLoadingScreen()
 	activeGame = g
-	activeGame.AddChapterChangeEvent(changeChapter)
+	activeGame.AddChangeChapterEvent(changeChapter)
 	// Create HUD.
 	hud := hud.New(win)
 	// Set HUD.

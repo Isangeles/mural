@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ func New(module *flame.Module) *Game {
 func (g *Game) Update() {
 	update := time.Now()
 	for !g.closing {
-		if g.Pause {
+		if g.Pause && g.Server() == nil {
 			continue
 		}
 		delta := time.Since(update).Milliseconds()

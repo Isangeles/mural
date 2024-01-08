@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +223,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	hud.updateCurrentArea()
 	// Toggle game pause.
 	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
-		hud.Game().Pause = !hud.Game().Pause
+		hud.Game().SetPause(!hud.Game().Pause())
 	}
 	if win.JustPressed(pixelgl.MouseButtonLeft) {
 		hud.onMouseLeftPressed(win.MousePosition())

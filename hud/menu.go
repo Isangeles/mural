@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ func (m *Menu) Opened() bool {
 func (m *Menu) Show() {
 	m.opened = true
 	m.hud.camera.Lock(true)
-	m.hud.game.Pause = true
+	m.hud.game.SetPause(true)
 	m.hud.UserFocus().Focus(m)
 }
 
@@ -192,7 +192,7 @@ func (m *Menu) Show() {
 func (m *Menu) Hide() {
 	m.opened = false
 	m.hud.camera.Lock(false)
-	m.hud.game.Pause = false
+	m.hud.game.SetPause(false)
 	m.hud.UserFocus().Focus(nil)
 }
 

@@ -32,6 +32,7 @@ import (
 	"github.com/isangeles/flame/dialog"
 	"github.com/isangeles/flame/flag"
 	"github.com/isangeles/flame/item"
+	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/fire/request"
 
@@ -53,7 +54,7 @@ type Game struct {
 	server             *Server
 	localAI            *ai.AI
 	closing            bool
-	Pause              bool
+	pause              bool
 	onPlayerCharChange func(c *Character)
 }
 
@@ -72,7 +73,7 @@ func New(module *flame.Module) *Game {
 func (g *Game) Update() {
 	update := time.Now()
 	for !g.closing {
-		if g.Pause && g.Server() == nil {
+		if g.pause {
 			continue
 		}
 		delta := time.Since(update).Milliseconds()
@@ -115,6 +116,24 @@ func (g *Game) SetActivePlayerChar(char *Character) {
 // ActivePlayerChar returns active player character.
 func (g *Game) ActivePlayerChar() *Character {
 	return g.activePC
+}
+
+// Pause checks if the game pause is active.
+func (g *Game) Pause() bool {
+	return g.pause
+}
+
+// SetPause pauses/unpauses the game.
+func (g *Game) SetPause(pause bool) {
+	if g.Server() != nil { // server don't supports the game pause
+		return
+	}
+	g.pause = pause
+	if pause {
+		g.activePC.PrivateLog().Add(objects.NewMessage("game_paused", false))
+	} else {
+		g.activePC.PrivateLog().Add(objects.NewMessage("game_unpaused", false))
+	}
 }
 
 // SetServer sets game server.

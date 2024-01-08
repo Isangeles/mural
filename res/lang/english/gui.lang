@@ -121,3 +121,5 @@ com_yes:Yes
 ob_health:Health
 quest_accepted_msg:Quest accepted
 skill_added_msg:Skill added
+game_paused:Game Paused
+game_unpaused:Game Unpaused

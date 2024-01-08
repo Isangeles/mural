@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Pause && c.area.PassablePosition(destPos) {
+	if !c.hud.game.Pause() && c.area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

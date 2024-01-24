@@ -37,6 +37,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231223183121-56fa3ac82ce7 h1:7tf/0aw5Dx
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231223183121-56fa3ac82ce7/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240108052320-294b0144ba39 h1:Fyfrfr+TP8w6ZQ2UXX2Slz8zMCPV/2d4WF78C39zGU0=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240108052320-294b0144ba39/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
+github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240118000515-a250818d05e3 h1:nanQfMsOs3gnuKRm0E5jXWomedE/9YIFXdmHJNZYeqc=
+github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240118000515-a250818d05e3/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/mathgl v0.0.0-20190416160123-c4601bc793c7 h1:THttjeRn1iiz69E875U6gAik8KTWk/JYAHoSVpUxBBI=
 github.com/go-gl/mathgl v0.0.0-20190416160123-c4601bc793c7/go.mod h1:yhpkQzEiH9yPyxDUGzkmgScbaBVlhC06qodikEM0ZwQ=
 github.com/go-gl/mathgl v1.0.0/go.mod h1:yhpkQzEiH9yPyxDUGzkmgScbaBVlhC06qodikEM0ZwQ=
@@ -76,6 +78,8 @@ github.com/isangeles/fire v0.0.0-20231226143838-8079f0b9990b h1:FyHoZBwraLrjTtwN
 github.com/isangeles/fire v0.0.0-20231226143838-8079f0b9990b/go.mod h1:wlmjV2CPXUIvbLjhmfz2GfzM9g842kf8bUt6mwGA7BQ=
 github.com/isangeles/fire v0.0.0-20240109184739-49c7fce9b0b4 h1:zXbIeQwVbeLh2G1Z+CZavD77qO2CMBuOZ5rWk1669LU=
 github.com/isangeles/fire v0.0.0-20240109184739-49c7fce9b0b4/go.mod h1:wlmjV2CPXUIvbLjhmfz2GfzM9g842kf8bUt6mwGA7BQ=
+github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d h1:tZ4/QegfBpCe2vOw7tc8rQ+JcM1AIj+QnLjOCpf8SMc=
+github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d/go.mod h1:wlmjV2CPXUIvbLjhmfz2GfzM9g842kf8bUt6mwGA7BQ=
 github.com/isangeles/flame v0.0.0-20230927160351-b88c2c79d53a h1:szbxxDWvyHfPeAUeN4DkHUxI+ff7JjJOsaIvDX2wCKY=
 github.com/isangeles/flame v0.0.0-20230927160351-b88c2c79d53a/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/flame v0.0.0-20231015135904-f125cc4a161a h1:7/WnFJA3a3asSiUFVAG3/Hh9PH9ZyePfWu1NVB0PV7s=
@@ -98,6 +102,8 @@ github.com/isangeles/ignite v0.0.0-20231109164847-3f21bc6bccac h1:+XUAgG7s+k/PpB
 github.com/isangeles/ignite v0.0.0-20231109164847-3f21bc6bccac/go.mod h1:3KpWMHembt575NtLHsBOZQzPES9ZqaabLIBCoXraPCs=
 github.com/isangeles/ignite v0.0.0-20231112140147-4cac47bd8932 h1:LlpGXPZFAu5RvHMyMqu4QnS/NGR+AJgOdFtgUFFELQg=
 github.com/isangeles/ignite v0.0.0-20231112140147-4cac47bd8932/go.mod h1:3KpWMHembt575NtLHsBOZQzPES9ZqaabLIBCoXraPCs=
+github.com/isangeles/ignite v0.0.0-20240122200514-b48b9fbecd83 h1:nCCTkbS25IZ4cQ+JYCyXBiaIUZ75B810JPngK9w4nG8=
+github.com/isangeles/ignite v0.0.0-20240122200514-b48b9fbecd83/go.mod h1:Yth19yM5NhwxRto8UIh5P8HmZ7W2uWf6mIthlFFDagU=
 github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d h1:TSVLKW08g5e+zyjQ1bUpsbwavvssHhE4BZOelsZ5h6M=
 github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d/go.mod h1:oR73qjyPJtVk4v4QUeeEglQtHPHpAu+ScoRaknvhl6I=
 github.com/isangeles/stone v0.1.1 h1:wj0BjxzpvqKMXBE5nqAjIOguUTjSDzYLYQvL7nmu40s=
@@ -147,6 +153,8 @@ golang.org/x/exp/shiny v0.0.0-20231226003508-02704c960a9b h1:jLOAaILR15uYdT/zHIn
 golang.org/x/exp/shiny v0.0.0-20231226003508-02704c960a9b/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
 golang.org/x/exp/shiny v0.0.0-20240112132812-db7319d0e0e3 h1:NezsOJwoBjJ5AXH5QQCdxe+WsqLw+f/t8eo1Tacfhqs=
 golang.org/x/exp/shiny v0.0.0-20240112132812-db7319d0e0e3/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
+golang.org/x/exp/shiny v0.0.0-20240119083558-1b970713d09a h1:NZ9mAQhIcCceDZKqQX3JJVIz7nn3QLDuC+nXedsViBM=
+golang.org/x/exp/shiny v0.0.0-20240119083558-1b970713d09a/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
 golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=

@@ -9,7 +9,7 @@ require (
 	github.com/isangeles/burn v0.0.0-20231211162654-96c6ddd40b4c
 	github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d
 	github.com/isangeles/flame v0.0.0-20231224130251-cc2361940191
-	github.com/isangeles/ignite v0.0.0-20240122200514-b48b9fbecd83
+	github.com/isangeles/ignite v0.0.0-20240125190701-250f537a584f
 	github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d
 	github.com/isangeles/stone v0.1.1
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
@@ -33,3 +33,5 @@ require (
 	golang.org/x/mobile v0.0.0-20240112133503-c713f31d574b // indirect
 	golang.org/x/sys v0.16.0 // indirect
 )
+
+replace github.com/isangeles/ignite => ../ignite

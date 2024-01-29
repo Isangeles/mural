@@ -33,5 +33,3 @@ require (
 	golang.org/x/mobile v0.0.0-20240112133503-c713f31d574b // indirect
 	golang.org/x/sys v0.16.0 // indirect
 )
-
-replace github.com/isangeles/ignite => ../ignite

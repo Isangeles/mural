@@ -104,6 +104,8 @@ github.com/isangeles/ignite v0.0.0-20231112140147-4cac47bd8932 h1:LlpGXPZFAu5RvH
 github.com/isangeles/ignite v0.0.0-20231112140147-4cac47bd8932/go.mod h1:3KpWMHembt575NtLHsBOZQzPES9ZqaabLIBCoXraPCs=
 github.com/isangeles/ignite v0.0.0-20240122200514-b48b9fbecd83 h1:nCCTkbS25IZ4cQ+JYCyXBiaIUZ75B810JPngK9w4nG8=
 github.com/isangeles/ignite v0.0.0-20240122200514-b48b9fbecd83/go.mod h1:Yth19yM5NhwxRto8UIh5P8HmZ7W2uWf6mIthlFFDagU=
+github.com/isangeles/ignite v0.0.0-20240125190701-250f537a584f h1:yLpRxWddOrkfn+En/ymrSmylkG3yPPiz8yYdwH67cFM=
+github.com/isangeles/ignite v0.0.0-20240125190701-250f537a584f/go.mod h1:Yth19yM5NhwxRto8UIh5P8HmZ7W2uWf6mIthlFFDagU=
 github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d h1:TSVLKW08g5e+zyjQ1bUpsbwavvssHhE4BZOelsZ5h6M=
 github.com/isangeles/mtk v0.0.0-20230307200355-e359fb73ca5d/go.mod h1:oR73qjyPJtVk4v4QUeeEglQtHPHpAu+ScoRaknvhl6I=
 github.com/isangeles/stone v0.1.1 h1:wj0BjxzpvqKMXBE5nqAjIOguUTjSDzYLYQvL7nmu40s=

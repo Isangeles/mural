@@ -124,8 +124,17 @@ func (g *Game) Pause() bool {
 }
 
 // SetPause pauses/unpauses the game.
+// If game uses the remote server this function will only send
+// the pause request to the server and return, changing the game
+// pause variable value should happend while handling the server
+// response in such a case.
 func (g *Game) SetPause(pause bool) {
-	if g.Server() != nil { // server don't supports the game pause
+	if g.server != nil {
+		req := request.Request{Pause: pause}
+		err := g.server.Send(req)
+		if err != nil {
+			log.Err.Printf("Game: unable to send pause request: %v", err)
+		}
 		return
 	}
 	g.pause = pause

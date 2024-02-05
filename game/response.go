@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ var (
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
+	g.pause = resp.Paused
 	for _, r := range resp.Character {
 		g.handleCharacterResponse(r)
 	}

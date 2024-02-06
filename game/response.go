@@ -45,7 +45,10 @@ var (
 // handleResponse handles specified response from Fire server.
 func (g *Game) handleResponse(resp response.Response) {
 	g.handleUpdateResponse(resp.Update)
-	g.pause = resp.Paused
+	if g.pause != resp.Paused {
+		g.pause = resp.Paused
+		log.Inf.Print(pauseMessage(g.pause))
+	}
 	for _, r := range resp.Character {
 		g.handleCharacterResponse(r)
 	}

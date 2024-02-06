@@ -29,10 +29,10 @@ import (
 	"time"
 
 	"github.com/isangeles/flame"
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/dialog"
 	"github.com/isangeles/flame/flag"
 	"github.com/isangeles/flame/item"
-	"github.com/isangeles/flame/objects"
 
 	"github.com/isangeles/fire/request"
 
@@ -138,11 +138,7 @@ func (g *Game) SetPause(pause bool) {
 		return
 	}
 	g.pause = pause
-	if pause {
-		g.activePC.PrivateLog().Add(objects.NewMessage("game_paused", false))
-	} else {
-		g.activePC.PrivateLog().Add(objects.NewMessage("game_unpaused", false))
-	}
+	log.Inf.Print(pauseMessage(g.pause))
 }
 
 // SetServer sets game server.
@@ -366,4 +362,14 @@ func fairTrade(sell, buy []item.Item) bool {
 		sellValue += it.Value()
 	}
 	return sellValue >= buyValue
+}
+
+// pauseMessage returns the pause message depending on the pause
+// value(true = game pause message, false = game unpaused message).
+func pauseMessage(pause bool) string {
+	id := "game_paused"
+	if !pause {
+		id = "game_unpaused"
+	}
+	return lang.Text(id)
 }

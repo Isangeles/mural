@@ -1,7 +1,7 @@
 /*
  * log.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2024 Dariusz Sikora <dev@isangeles.pl>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ import (
 )
 
 var (
-	Inf *log.Logger = log.New(flamelog.InfWriter, "mural: ", 0)
-	Err *log.Logger = log.New(flamelog.ErrWriter, "mural-error: ", 0)
-	Dbg *log.Logger = log.New(flamelog.DbgWriter, "mural-debug: ", 0)
-	Cli *log.Logger = log.New(flamelog.InfWriter, "mural-cli: ", 0)
+	Inf *log.Logger = log.New(flamelog.InfWriter, "Mural: ", 0)
+	Err *log.Logger = log.New(flamelog.ErrWriter, "Mural Error: ", 0)
+	Dbg *log.Logger = log.New(flamelog.DbgWriter, "Mural Debug: ", 0)
+	Cli *log.Logger = log.New(flamelog.InfWriter, "Mural CLI: ", 0)
 )
 
 // PrintStdOut enables/disables printing log messages

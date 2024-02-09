@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,13 +82,13 @@ func main() {
 	// Import module.
 	modData, err := flamedata.ImportModuleDir(config.ModulePath())
 	if err != nil {
-		panic(fmt.Errorf("unable to import module: %v", err))
+		panic(fmt.Errorf("Unable to import module: %v", err))
 	}
 	setModule(modData)
 	// Load GUI graphic data.
 	err = data.LoadModuleData(config.GUIPath)
 	if err != nil {
-		panic(fmt.Errorf("unable to load game graphic data: %v", err))
+		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
 	}
 	// Music.
 	mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -99,7 +99,7 @@ func main() {
 			pl := []beep.Streamer{m.Streamer(0, m.Len())}
 			mtk.Audio().SetPlaylist(pl)
 		} else {
-			log.Err.Printf("main theme audio data not found: %s",
+			log.Err.Printf("Main theme audio data not found: %s",
 				config.MenuMusic)
 		}
 		mtk.Audio().SetVolume(config.MusicVolume)
@@ -130,7 +130,7 @@ func run() {
 	var err error
 	win, err = mtk.NewWindow(winConfig)
 	if err != nil {
-		panic(fmt.Errorf("unable to create mtk window: %v", err))
+		panic(fmt.Errorf("Unable to create mtk window: %v", err))
 	}
 	win.SetMaxFPS(config.MaxFPS)
 	// UI Font.
@@ -141,7 +141,7 @@ func run() {
 	// Audio effects.
 	bClickSound := audio.Effects[config.ButtonClickSound]
 	if bClickSound == nil {
-		log.Err.Printf("init run: button click audio data not found: %s",
+		log.Err.Printf("Button click audio data not found: %s",
 			config.ButtonClickSound)
 	}
 	mtk.SetButtonClickSound(bClickSound) // global button click sound
@@ -150,7 +150,7 @@ func run() {
 	if len(config.ServerHost+config.ServerPort) > 1 {
 		s, err := game.NewServer(config.ServerHost, config.ServerPort)
 		if err != nil {
-			log.Err.Printf("Init run: Unable to connect to the game server: %v",
+			log.Err.Printf("Unable to connect to the game server: %v",
 				err)
 		}
 		server = s
@@ -202,7 +202,7 @@ func run() {
 			// Reimport module.
 			modData, err := flamedata.ImportModuleDir(config.ModulePath())
 			if err != nil {
-				log.Err.Printf("unable to reimport module: %v", err)
+				log.Err.Printf("Unable to reimport module: %v", err)
 			}
 			setModule(modData)
 		}
@@ -230,7 +230,7 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	chapterGUIPath := filepath.Join(config.GUIPath, "chapters", activeGame.Chapter().Conf().ID)
 	err := data.LoadChapterData(chapterGUIPath)
 	if err != nil {
-		log.Err.Printf("enter game: unable to load chapter GUI data: %v", err)
+		log.Err.Printf("Enter game: Unable to load chapter GUI data: %v", err)
 		mainMenu.ShowMessage(lang.Text("load_game_err"))
 		return
 	}
@@ -239,14 +239,14 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	if hudData != nil {
 		err = pcHUD.Apply(*hudData)
 		if err != nil {
-			log.Err.Printf("enter game: unable to load HUD layout: %v", err)
+			log.Err.Printf("Enter game: Unable to load HUD layout: %v", err)
 		}
 	}
 	inGame = true
 	// Run module scripts.
 	err = runModuleScripts()
 	if err != nil {
-		log.Err.Printf("enter game: unable to run module scripts: %v", err)
+		log.Err.Printf("Enter game: Unable to run module scripts: %v", err)
 	}
 	// Run game update.
 	go activeGame.Update()
@@ -259,7 +259,7 @@ func changeChapter(ob *character.Character) {
 	chapterPath := filepath.Join(activeGame.Conf().ChaptersPath(), activeGame.Conf().Chapter)
 	chapterData, err := flamedata.ImportChapterDir(chapterPath)
 	if err != nil {
-		log.Err.Printf("Chapter change: unable to load chapter data: %v", err)
+		log.Err.Printf("Chapter change: Unable to load chapter data: %v", err)
 		return
 	}
 	chapter := flame.NewChapter(activeGame.Module, chapterData)
@@ -268,19 +268,19 @@ func changeChapter(ob *character.Character) {
 	chapterGUIPath := filepath.Join(config.GUIPath, "chapters", activeGame.Chapter().Conf().ID)
 	err = data.LoadChapterData(chapterGUIPath)
 	if err != nil {
-		log.Err.Printf("Chapter change: unable to load chapter GUI data: %v", err)
+		log.Err.Printf("Chapter change: Unable to load chapter GUI data: %v", err)
 		return
 	}
 	// Respawn the character.
 	gameChar := activeGame.Char(ob.ID(), ob.Serial())
 	if gameChar == nil {
-		log.Err.Printf("Chapter change: game character not found: %s %s", ob.ID(),
+		log.Err.Printf("Chapter change: Game character not found: %s %s", ob.ID(),
 			ob.Serial())
 		return
 	}
 	err = activeGame.SpawnChar(gameChar)
 	if err != nil {
-		log.Err.Printf("Chapter change: unable to spawn character: %v", err)
+		log.Err.Printf("Chapter change: Unable to spawn character: %v", err)
 		return
 	}
 }
@@ -310,7 +310,7 @@ func runModuleScripts() error {
 	}
 	scripts, err := data.ScriptsDir(scriptsPath)
 	if err != nil {
-		return fmt.Errorf("unable to retrieve scripts: %v", err)
+		return fmt.Errorf("Unable to retrieve scripts: %v", err)
 	}
 	for _, s := range scripts {
 		go ci.RunScript(s)

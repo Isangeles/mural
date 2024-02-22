@@ -91,21 +91,22 @@ func main() {
 		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
 	}
 	// Music.
-	mtk.InitAudio(beep.Format{44100, 2, 2})
-	if mtk.Audio() != nil {
-		ci.SetMusicPlayer(mtk.Audio())
-		m := audio.Music[config.MenuMusic]
-		if m != nil {
-			pl := []beep.Streamer{m.Streamer(0, m.Len())}
-			mtk.Audio().SetPlaylist(pl)
-		} else {
-			log.Err.Printf("Main theme audio data not found: %s",
-				config.MenuMusic)
-		}
-		mtk.Audio().SetVolume(config.MusicVolume)
-		mtk.Audio().SetMute(config.MusicMute)
-		mtk.Audio().ResumePlaylist()
+	mtk.Audio, err = mtk.NewAudioPlayer(beep.Format{44100, 2, 2})
+	if err != nil {
+		panic(fmt.Errorf("Unable to create audio player: %v", err))
 	}
+	ci.SetMusicPlayer(mtk.Audio)
+	menuMusic := audio.Music[config.MenuMusic]
+	if menuMusic != nil {
+		pl := []beep.Streamer{menuMusic.Streamer(0, menuMusic.Len())}
+		mtk.Audio.SetPlaylist(pl)
+	} else {
+		log.Err.Printf("Menu music audio data not found: %s",
+			config.MenuMusic)
+	}
+	mtk.Audio.SetVolume(config.MusicVolume)
+	mtk.Audio.SetMute(config.MusicMute)
+	mtk.Audio.ResumePlaylist()
 	// Graphic.
 	pixelgl.Run(run)
 }

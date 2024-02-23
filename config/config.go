@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,11 +71,11 @@ var (
 func Load() error {
 	file, err := os.Open(ConfFileName)
 	if err != nil {
-		return fmt.Errorf("unable to open config file: %v", err)
+		return fmt.Errorf("Unable to open config file: %v", err)
 	}
 	conf, err := text.UnmarshalConfig(file)
 	if err != nil {
-		return fmt.Errorf("unable to unmarshal config: %v", err)
+		return fmt.Errorf("Unable to unmarshal config: %v", err)
 	}
 	// Language.
 	if len(conf["lang"]) > 0 {
@@ -101,18 +101,18 @@ func Load() error {
 	if len(conf["resolution"]) > 1 {
 		Resolution.X, err = strconv.ParseFloat(conf["resolution"][0], 64)
 		if err != nil {
-			log.Err.Printf("config: unable to set resolution x: %v", err)
+			log.Err.Printf("Config: Unable to set resolution x: %v", err)
 		}
 		Resolution.Y, err = strconv.ParseFloat(conf["resolution"][1], 64)
 		if err != nil {
-			log.Err.Printf("config: unable to set resolution y: %v", err)
+			log.Err.Printf("Config: Unable to set resolution y: %v", err)
 		}
 	}
 	// Max FPS.
 	if len(conf["max-fps"]) > 0 {
 		MaxFPS, err = strconv.Atoi(conf["max-fps"][0])
 		if err != nil {
-			log.Err.Printf("config: unable to set max FPS: %v", err)
+			log.Err.Printf("Config: Unable to set max FPS: %v", err)
 		}
 	}
 	// Graphic effects.
@@ -135,7 +135,7 @@ func Load() error {
 	if len(conf["music-volume"]) > 0 {
 		MusicVolume, err = strconv.ParseFloat(conf["music-volume"][0], 64)
 		if err != nil {
-			log.Err.Printf("config: unable to set music volume: %v", err)
+			log.Err.Printf("Config: Unable to set music volume: %v", err)
 		}
 	}
 	if len(conf["music-mute"]) > 0 {
@@ -163,7 +163,7 @@ func Save() error {
 	// Create file.
 	file, err := os.Create(ConfFileName)
 	if err != nil {
-		return err
+		return fmt.Errorf("Unable to create config file: %v", err)
 	}
 	defer file.Close()
 	// Marshal config.

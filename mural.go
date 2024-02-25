@@ -71,13 +71,8 @@ var (
 // Main function.
 func main() {
 	// Load GUI config.
-	err := config.Load()
-	if err != nil {
-		err = config.Save() // save default config
-		if err != nil {
-			log.Err.Printf("Unable to save default config: %v", err)
-		}
-	}
+	config.Load()
+	defer config.Save()
 	log.PrintStdOut(config.Debug)
 	// Import module.
 	modData, err := flamedata.ImportModuleDir(config.ModulePath())
@@ -207,10 +202,6 @@ func run() {
 			}
 			setModule(modData)
 		}
-	}
-	// On exit.
-	if win.Closed() {
-		config.Save()
 	}
 }
 

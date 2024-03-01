@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ type MainMenu struct {
 	console       *Console
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
-	msgs          *mtk.MessagesQueue
+	msgs          *mtk.MessageQueue
 	server        *game.Server
 	mod           *flame.Module
 	playableChars *sync.Map
@@ -105,7 +105,7 @@ func New() *MainMenu {
 	mm.loadscreen = newLoadingScreen(mm)
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
-	mm.msgs = mtk.NewMessagesQueue(mm.userFocus)
+	mm.msgs = mtk.NewMessageQueue(mm.userFocus)
 	mm.OpenMenu()
 	return mm
 }

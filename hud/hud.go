@@ -84,7 +84,7 @@ type HUD struct {
 	training      *TrainingWindow
 	game          *game.Game
 	userFocus     *mtk.Focus
-	msgs          *mtk.MessagesQueue
+	msgs          *mtk.MessageQueue
 	layouts       map[string]*Layout
 	defaultLayout *Layout
 	loading       bool
@@ -124,7 +124,7 @@ func New(win *mtk.Window) *HUD {
 	hud.training = newTrainingWindow(hud)
 	// Messages & focus.
 	hud.userFocus = new(mtk.Focus)
-	hud.msgs = mtk.NewMessagesQueue(hud.UserFocus())
+	hud.msgs = mtk.NewMessageQueue(hud.UserFocus())
 	// Layouts.
 	hud.layouts = make(map[string]*Layout)
 	hud.defaultLayout = NewLayout()

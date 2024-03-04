@@ -1,7 +1,7 @@
 /*
  * console.go
  *
- * Copyright 2018-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,6 +141,9 @@ func (c *Console) Echo(text string) {
 func (c *Console) onEnterPressed() {
 	// Echo input to log.
 	input := c.textedit.Text()
+	if len(input) < 1 {
+		return
+	}
 	c.Echo(input)
 	c.lastInput = input
 	defer c.textedit.Clear()

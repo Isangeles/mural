@@ -1,7 +1,7 @@
 /*
  * trainingwindow.go
  *
- * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,12 +132,14 @@ func newTrainingWindow(hud *HUD) *TrainingWindow {
 		upBG := pixel.NewSprite(upButtonBG,
 			upButtonBG.Bounds())
 		tw.trainingsList.SetUpButtonBackground(upBG)
+		tw.trainingInfo.SetUpButtonBackground(upBG)
 	}
 	downButtonBG := graphic.Textures["scrolldown.png"]
 	if downButtonBG != nil {
 		downBG := pixel.NewSprite(downButtonBG,
 			downButtonBG.Bounds())
 		tw.trainingsList.SetDownButtonBackground(downBG)
+		tw.trainingInfo.SetDownButtonBackground(downBG)
 	}
 	tw.trainingsList.SetOnItemSelectFunc(tw.onTrainingSelected)
 	return tw

@@ -1,7 +1,7 @@
 /*
  * characterwindow.go
  *
- * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,6 +189,7 @@ func (cw *CharacterWindow) updateInfo() {
 	infoForm := `
 Name:       %s
 Level:      %d
+Experience: %d/%d
 Gender:     %s
 Race:       %s
 Alignment   %s
@@ -198,8 +199,8 @@ Attributes: %s`
 	if pc.Race() != nil {
 		race = lang.Text(pc.Race().ID())
 	}
-	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), lang.Text(string(pc.Gender())),
-		race, lang.Text(string(pc.Alignment())),
+	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), pc.Experience(), pc.MaxExperience(),
+		lang.Text(string(pc.Gender())), race, lang.Text(string(pc.Alignment())),
 		pc.Attributes())
 	cw.charInfo.SetText(info)
 }

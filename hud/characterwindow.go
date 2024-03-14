@@ -195,10 +195,7 @@ Race:       %s
 Alignment   %s
 Attributes: %s`
 	pc := cw.hud.Game().ActivePlayerChar()
-	race := lang.Text("rUnknown")
-	if pc.Race() != nil {
-		race = lang.Text(pc.Race().ID())
-	}
+	race := lang.Text(pc.Race().ID())
 	info := fmt.Sprintf(infoForm, pc.Name(), pc.Level(), pc.Experience(), pc.MaxExperience(),
 		lang.Text(string(pc.Gender())), race, lang.Text(string(pc.Alignment())),
 		pc.Attributes())

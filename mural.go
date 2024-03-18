@@ -201,6 +201,7 @@ func run() {
 				log.Err.Printf("Unable to reimport module: %v", err)
 			}
 			setModule(modData)
+			mainMenu.SetServer(server)
 		}
 	}
 }

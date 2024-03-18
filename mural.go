@@ -65,6 +65,7 @@ var (
 	pcHUD      *hud.HUD
 	mod        *flame.Module
 	activeGame *game.Game
+	server     *game.Server
 	inGame     bool
 )
 
@@ -85,39 +86,52 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
 	}
-	// Music.
+	// Init audio and set global audio effects.
 	mtk.Audio, err = mtk.NewAudioPlayer(beep.Format{44100, 2, 2})
 	if err != nil {
 		panic(fmt.Errorf("Unable to create audio player: %v", err))
 	}
+	mtk.Audio.SetVolume(config.MusicVolume)
+	mtk.Audio.SetMute(config.MusicMute)
 	ci.SetMusicPlayer(mtk.Audio)
 	menuMusic := audio.Music[config.MenuMusic]
 	if menuMusic != nil {
 		pl := []beep.Streamer{menuMusic.Streamer(0, menuMusic.Len())}
 		mtk.Audio.SetPlaylist(pl)
-	} else {
-		log.Err.Printf("Menu music audio data not found: %s",
-			config.MenuMusic)
+		mtk.Audio.ResumePlaylist()
 	}
-	mtk.Audio.SetVolume(config.MusicVolume)
-	mtk.Audio.SetMute(config.MusicMute)
-	mtk.Audio.ResumePlaylist()
-	// Graphic.
+	buttonClickSound := audio.Effects[config.ButtonClickSound]
+	if buttonClickSound != nil {
+		mtk.SetButtonClickSound(buttonClickSound)
+	}
+	// Set UI Font.
+	uiFont := graphic.Fonts[config.MainFont]
+	if uiFont != nil {
+		mtk.SetMainFont(uiFont)
+	}
+	// Connect to the game server(if configured).
+	if len(config.ServerHost+config.ServerPort) > 1 {
+		server, err = game.NewServer(config.ServerHost, config.ServerPort)
+		if err != nil {
+			log.Err.Printf("Unable to connect to the game server: %v",
+				err)
+		}
+	}
+	// Run graphic.
 	pixelgl.Run(run)
 }
 
 // All window code fired from there.
 func run() {
-	// Configure window.
+	// Create window.
 	monitor := pixelgl.PrimaryMonitor()
-	winPosX, winPosY := 0.0, 0.0
 	winRes := config.Resolution
 	if winRes.X == 0 || winRes.Y == 0 {
 		winRes.X, winRes.Y = monitor.Size()
 	}
 	winConfig := pixelgl.WindowConfig{
 		Title:  config.Name + " " + config.Version,
-		Bounds: pixel.R(winPosX, winPosY, winRes.X, winRes.Y),
+		Bounds: pixel.R(0, 0, winRes.X, winRes.Y),
 		VSync:  true,
 	}
 	if config.Fullscreen {
@@ -129,37 +143,15 @@ func run() {
 		panic(fmt.Errorf("Unable to create mtk window: %v", err))
 	}
 	win.SetMaxFPS(config.MaxFPS)
-	// UI Font.
-	uiFont := graphic.Fonts[config.MainFont]
-	if uiFont != nil {
-		mtk.SetMainFont(uiFont)
-	}
-	// Audio effects.
-	bClickSound := audio.Effects[config.ButtonClickSound]
-	if bClickSound == nil {
-		log.Err.Printf("Button click audio data not found: %s",
-			config.ButtonClickSound)
-	}
-	mtk.SetButtonClickSound(bClickSound) // global button click sound
-	// Fire mode.
-	var server *game.Server
-	if len(config.ServerHost+config.ServerPort) > 1 {
-		s, err := game.NewServer(config.ServerHost, config.ServerPort)
-		if err != nil {
-			log.Err.Printf("Unable to connect to the game server: %v",
-				err)
-		}
-		server = s
-	}
 	// Create main menu.
 	mainMenu = mainmenu.New()
 	mainMenu.SetServer(server)
-	if server == nil {
+	if server == nil { // with the server mod will be set with update response
 		mainMenu.SetModule(mod)
 	}
 	mainMenu.SetOnGameCreatedFunc(enterGame)
 	ci.SetMainMenu(mainMenu)
-	// Debug mode.
+	// Create debug mode info.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
 	}
@@ -194,16 +186,21 @@ func run() {
 		}
 		pcHUD.Update(win)
 		if pcHUD.Exiting() || activeGame.Closing() {
-			inGame = false
-			// Reimport module.
-			modData, err := flamedata.ImportModuleDir(config.ModulePath())
-			if err != nil {
-				log.Err.Printf("Unable to reimport module: %v", err)
-			}
-			setModule(modData)
-			mainMenu.SetServer(server)
+			enterMainMenu()
 		}
 	}
+}
+
+// enterMainMenu exits the game and prepares the main menu.
+func enterMainMenu() {
+	inGame = false
+	// Reimport module.
+	modData, err := flamedata.ImportModuleDir(config.ModulePath())
+	if err != nil {
+		log.Err.Printf("Unable to reimport module: %v", err)
+	}
+	setModule(modData)
+	mainMenu.SetServer(server)
 }
 
 // enterGame creates HUD and enters game.

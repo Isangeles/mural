@@ -1,7 +1,7 @@
 /*
  * savemenu.go
  *
- * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,6 +201,7 @@ func (sm *SaveMenu) Opened() bool {
 func (sm *SaveMenu) Show() {
 	sm.opened = true
 	sm.hud.Camera().Lock(true)
+	sm.hud.bar.Lock(true)
 	err := sm.loadSaves()
 	if err != nil {
 		log.Err.Printf("hud: savegame menu: unable to load saves: %v", err)
@@ -211,6 +212,7 @@ func (sm *SaveMenu) Show() {
 func (sm *SaveMenu) Hide() {
 	sm.opened = false
 	sm.hud.Camera().Lock(false)
+	sm.hud.bar.Lock(false)
 }
 
 // Focused checks if menu us focused.

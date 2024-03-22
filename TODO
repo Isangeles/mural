@@ -33,6 +33,8 @@ MINOR:
 * HUD: zoom/unzoom for camera
 * HUD: for item stacks load icons only once instead for every item in that stack
 * Move playing main menu theme to the MainMenu struct
+* Some target attitude indication
+* Sometimes training via game server triggers avatar onModifierTaken function multiple times(conflicting update responses?)
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

@@ -89,6 +89,8 @@ github.com/isangeles/fire v0.0.0-20240109184739-49c7fce9b0b4 h1:zXbIeQwVbeLh2G1Z
 github.com/isangeles/fire v0.0.0-20240109184739-49c7fce9b0b4/go.mod h1:wlmjV2CPXUIvbLjhmfz2GfzM9g842kf8bUt6mwGA7BQ=
 github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d h1:tZ4/QegfBpCe2vOw7tc8rQ+JcM1AIj+QnLjOCpf8SMc=
 github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d/go.mod h1:wlmjV2CPXUIvbLjhmfz2GfzM9g842kf8bUt6mwGA7BQ=
+github.com/isangeles/fire v0.0.0-20240323111227-574918073792 h1:OnWGVlbabdHH2xEypN9bl5HMLa2aN9GOvKpQGubKPqc=
+github.com/isangeles/fire v0.0.0-20240323111227-574918073792/go.mod h1:bfjFYaLj8UHAhnGnHL6R1ffpraZt1x+vXq4oBvZJ3S8=
 github.com/isangeles/flame v0.0.0-20230927160351-b88c2c79d53a h1:szbxxDWvyHfPeAUeN4DkHUxI+ff7JjJOsaIvDX2wCKY=
 github.com/isangeles/flame v0.0.0-20230927160351-b88c2c79d53a/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/flame v0.0.0-20231015135904-f125cc4a161a h1:7/WnFJA3a3asSiUFVAG3/Hh9PH9ZyePfWu1NVB0PV7s=
@@ -131,6 +133,8 @@ github.com/isangeles/mtk v0.0.0-20240229164721-414f0552df02 h1:uk9ZP9QzEnSvNmPo8
 github.com/isangeles/mtk v0.0.0-20240229164721-414f0552df02/go.mod h1:RFAiWYImUV06Z8FH21A3lTJYd0xN3rAeqfslzyR8E0I=
 github.com/isangeles/mtk v0.0.0-20240305223015-15f7005102e4 h1:eS267UecJ9j1ylf0hZpi86wAbpiXE3TPgtrZrceiW48=
 github.com/isangeles/mtk v0.0.0-20240305223015-15f7005102e4/go.mod h1:RFAiWYImUV06Z8FH21A3lTJYd0xN3rAeqfslzyR8E0I=
+github.com/isangeles/mtk v0.0.0-20240403155454-7d1387df456c h1:DxBIlSx5RJSaSu3H5iqf3rCO82ElDGZlGbxQM6k5Ywc=
+github.com/isangeles/mtk v0.0.0-20240403155454-7d1387df456c/go.mod h1:RFAiWYImUV06Z8FH21A3lTJYd0xN3rAeqfslzyR8E0I=
 github.com/isangeles/stone v0.1.1 h1:wj0BjxzpvqKMXBE5nqAjIOguUTjSDzYLYQvL7nmu40s=
 github.com/isangeles/stone v0.1.1/go.mod h1:J3LM7hw38gOl4gaiULM1Vph9fZYAZ/FN/egTNLrCm6M=
 github.com/isangeles/tmx v0.0.0-20230925150339-5410bc1b891b h1:TfKHKtfJnlSIe2OZ8QaPLBskYJ5LE7Sf/dVDhDEFZxs=
@@ -202,6 +206,8 @@ golang.org/x/exp/shiny v0.0.0-20240222234643-814bf88cf225 h1:5c1vh6Z0LHEVurVuFE5
 golang.org/x/exp/shiny v0.0.0-20240222234643-814bf88cf225/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
 golang.org/x/exp/shiny v0.0.0-20240314144324-c7f7c6466f7f h1:QBBTwX973JHUNzDH9uI3LJJl3e+1iM5a2MG/i+ZZ/Gg=
 golang.org/x/exp/shiny v0.0.0-20240314144324-c7f7c6466f7f/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
+golang.org/x/exp/shiny v0.0.0-20240325151524-a685a6edb6d8 h1:GYlVE/zmuKm+XvR3nYWXZF0SaO2vvPX1Djy2LVOf+TU=
+golang.org/x/exp/shiny v0.0.0-20240325151524-a685a6edb6d8/go.mod h1:3F+MieQB7dRYLTmnncoFbb1crS5lfQoTfDgQy6K4N0o=
 golang.org/x/image v0.0.0-20190220214146-31aff87c08e9/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
 golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
@@ -231,6 +237,8 @@ golang.org/x/mobile v0.0.0-20240112133503-c713f31d574b h1:kfWLZgb8iUBHdE9WydD5V5
 golang.org/x/mobile v0.0.0-20240112133503-c713f31d574b/go.mod h1:4efzQnuA1nICq6h4kmZRMGzbPiP06lZvgADUu1VpJCE=
 golang.org/x/mobile v0.0.0-20240213143359-d1f7d3436075 h1:iZzqyDd8gFkJZpsJNzveyScRBcQlsveheh6Q77LzhPY=
 golang.org/x/mobile v0.0.0-20240213143359-d1f7d3436075/go.mod h1:Y8Bnziw2dX69ZhYuqQB8Ihyjks1Q6fMmbg17j9+ISNA=
+golang.org/x/mobile v0.0.0-20240401224555-755f4ef71bbd h1:8DdkwtkaTxucbPOF7TQHIIsxBf0oCuV+SK6Qoo1IsLs=
+golang.org/x/mobile v0.0.0-20240401224555-755f4ef71bbd/go.mod h1:DN+F2TpepQEh5goqWnM3gopfFakSWM8OmHiz0rPRjT4=
 golang.org/x/mod v0.1.0/go.mod h1:0QHyrYULN0/3qlju5TqG8bIK38QM8yzMo5ekMj3DlcY=
 golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
 golang.org/x/mod v0.1.1-0.20191209134235-331c550502dd/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
@@ -285,6 +293,8 @@ golang.org/x/sys v0.17.0 h1:25cE3gD+tdBA7lp7QfhuV+rJiE9YXTcS3VG1SqssI/Y=
 golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
 golang.org/x/sys v0.18.0 h1:DBdB3niSjOA/O0blCZBqDefyWNYveAYMNF1Wum0DYQ4=
 golang.org/x/sys v0.18.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+golang.org/x/sys v0.19.0 h1:q5f1RH2jigJ1MoAWp2KTp3gm5zAGFUTarQZ5U386+4o=
+golang.org/x/sys v0.19.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
 golang.org/x/telemetry v0.0.0-20240208230135-b75ee8823808/go.mod h1:KG1lNk5ZFNssSZLrpVb4sMXKMpGwGXOxSG3rnu2gZQQ=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=

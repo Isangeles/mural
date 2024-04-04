@@ -7,10 +7,10 @@ require (
 	github.com/faiface/pixel v0.10.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/isangeles/burn v0.0.0-20240308171729-0cacbfcb317f
-	github.com/isangeles/fire v0.0.0-20240116161423-8eb3ff21b83d
+	github.com/isangeles/fire v0.0.0-20240323111227-574918073792
 	github.com/isangeles/flame v0.0.0-20240312184759-ac9a988d6a9b
 	github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7
-	github.com/isangeles/mtk v0.0.0-20240305223015-15f7005102e4
+	github.com/isangeles/mtk v0.0.0-20240403155454-7d1387df456c
 	github.com/isangeles/stone v0.1.1
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.15.0
@@ -29,7 +29,7 @@ require (
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
-	golang.org/x/exp/shiny v0.0.0-20240314144324-c7f7c6466f7f // indirect
-	golang.org/x/mobile v0.0.0-20240213143359-d1f7d3436075 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/exp/shiny v0.0.0-20240325151524-a685a6edb6d8 // indirect
+	golang.org/x/mobile v0.0.0-20240401224555-755f4ef71bbd // indirect
+	golang.org/x/sys v0.19.0 // indirect
 )

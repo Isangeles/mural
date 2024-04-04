@@ -1,7 +1,7 @@
 /*
  * guiaudio.go
  *
- * Copyright 2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +46,14 @@ func guiaudio(cmd burn.Command) (int, string) {
 		guiMusic.StopPlaylist()
 		return 0, ""
 	case "next":
-		guiMusic.Next()
+		guiMusic.StopPlaylist()
+		guiMusic.SetPlayIndex(guiMusic.PlayIndex()+1)
+		guiMusic.ResumePlaylist()
 		return 0, ""
 	case "prev":
-		guiMusic.Prev()
+		guiMusic.StopPlaylist()
+		guiMusic.SetPlayIndex(guiMusic.PlayIndex()-1)
+		guiMusic.ResumePlaylist()
 		return 0, ""
 	case "volume":
 		out := fmt.Sprintf("%f", guiMusic.Volume())

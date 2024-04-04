@@ -96,8 +96,7 @@ func main() {
 	ci.SetMusicPlayer(mtk.Audio)
 	menuMusic := audio.Music[config.MenuMusic]
 	if menuMusic != nil {
-		pl := []beep.Streamer{menuMusic.Streamer(0, menuMusic.Len())}
-		mtk.Audio.SetPlaylist(pl)
+		mtk.Audio.SetPlaylist([]*beep.Buffer{menuMusic})
 		mtk.Audio.ResumePlaylist()
 	}
 	buttonClickSound := audio.Effects[config.ButtonClickSound]

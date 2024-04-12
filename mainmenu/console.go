@@ -27,8 +27,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/pixelgl"
 
 	flamelog "github.com/isangeles/flame/log"
 

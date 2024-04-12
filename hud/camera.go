@@ -28,8 +28,8 @@ import (
 	"math"
 	"path/filepath"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/pixelgl"
 
 	"github.com/isangeles/flame/area"
 	"github.com/isangeles/flame/character"

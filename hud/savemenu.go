@@ -29,8 +29,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
+	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/imdraw"
 
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"

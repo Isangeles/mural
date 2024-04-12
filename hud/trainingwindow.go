@@ -26,8 +26,8 @@ package hud
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/imdraw"
+	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/imdraw"
 
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/req"

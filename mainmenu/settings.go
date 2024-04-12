@@ -1,7 +1,7 @@
 /*
  * settings.go
  *
- * Copyright 2018-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ package mainmenu
 import (
 	"fmt"
 
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
+	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/pixelgl"
 
 	"github.com/isangeles/flame/data/res/lang"
 

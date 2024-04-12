@@ -1,7 +1,7 @@
 ## Introduction
-Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/faiface/pixel) library.
+Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame) RPG engine written in Go with [Pixel](https://github.com/gopxl/pixel) library.
 
-GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep) libraries.
+GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/gopxl/pixel) and [Beep](https://github.com/goxpl/beep) libraries.
 
 Currently in an early development stage.
 
@@ -19,7 +19,7 @@ Download: [Linux](https://my.opendesktop.org/s/ctjfGeFAtjBHEXa), [macOS](https:/
 
 Repository: [GitHub](https://github.com/Isangeles-Softworks/openelwynn)
 ## Build
-First, make sure you have dependencies required by [Pixel](https://github.com/faiface/pixel) and [Beep](https://github.com/faiface/beep).
+First, make sure you have dependencies required by [Pixel](https://github.com/goxpl/pixel) and [Beep](https://github.com/goxpl/beep).
 
 After that, use go build:
 ```

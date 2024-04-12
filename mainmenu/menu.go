@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 package mainmenu
 
 import (
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/flame/data/res/lang"
 

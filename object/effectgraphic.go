@@ -1,7 +1,7 @@
 /*
  * effectgraphic.go
  *
- * Copyright 2019-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/flame/effect"
 

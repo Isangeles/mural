@@ -1,7 +1,7 @@
 /*
  * castbar.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 package hud
 
 import (
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/mtk"
 )

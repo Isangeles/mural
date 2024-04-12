@@ -1,7 +1,7 @@
 /*
  * graphic.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import (
 
 	"github.com/golang/freetype/truetype"
 
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 )
 
 // loadPicturesFromArch loads all pictures from specified

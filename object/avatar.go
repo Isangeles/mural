@@ -27,7 +27,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/craft"

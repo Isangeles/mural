@@ -1,7 +1,7 @@
 /*
  * audio.go
  *
- * Copyright 2019-2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/mp3"
-	"github.com/faiface/beep/vorbis"
-	"github.com/faiface/beep/wav"
+	"github.com/gopxl/beep"
+	"github.com/gopxl/beep/mp3"
+	"github.com/gopxl/beep/vorbis"
+	"github.com/gopxl/beep/wav"
 )
 
 // loadAudiosFromArch open ZIP archive iwth specified path and load all

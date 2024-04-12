@@ -1,7 +1,7 @@
 /*
  * graphic.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ package graphic
 import (
 	"github.com/golang/freetype/truetype"
 
-	"github.com/faiface/pixel"
+	"github.com/gopxl/pixel"
 )
 
 var (

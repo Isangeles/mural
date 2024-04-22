@@ -6,13 +6,13 @@ toolchain go1.21.6
 
 require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
-	github.com/gopxl/beep v1.4.0
+	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
 	github.com/isangeles/burn v0.0.0-20240308171729-0cacbfcb317f
 	github.com/isangeles/fire v0.0.0-20240323111227-574918073792
 	github.com/isangeles/flame v0.0.0-20240312184759-ac9a988d6a9b
 	github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7
-	github.com/isangeles/mtk v0.0.0-20240411162537-ef9556b05ace
+	github.com/isangeles/mtk v0.0.0-20240419150401-b650db254cc8
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.15.0

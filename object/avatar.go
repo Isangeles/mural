@@ -415,7 +415,7 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 	}
 	// Audio effect.
 	if !av.Silenced() && mtk.Audio != nil && sg.ActivationAudio() != nil {
-		mtk.Audio.Play(sg.ActivationAudio())
+		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }
 
@@ -490,7 +490,7 @@ func (av *Avatar) onModifierTaken(m effect.Modifier) {
 		av.PrivateLog().Add(msg)
 		audioEffect := audio.Effects["questAccept1.mp3"]
 		if audioEffect != nil {
-			mtk.Audio.Play(audioEffect)
+			mtk.Audio().Play(audioEffect)
 		}
 	case *effect.AddSkillMod:
 		msg := objects.NewMessage(fmt.Sprintf("%s: %s", lang.Text("skill_added_msg"),
@@ -498,7 +498,7 @@ func (av *Avatar) onModifierTaken(m effect.Modifier) {
 		av.PrivateLog().Add(msg)
 		audioEffect := audio.Effects["skillAdded1.mp3"]
 		if audioEffect != nil {
-			mtk.Audio.Play(audioEffect)
+			mtk.Audio().Play(audioEffect)
 		}
 	}
 }

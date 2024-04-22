@@ -43,15 +43,15 @@ func guiaudio(cmd burn.Command) (int, string) {
 		guiMusic.ResumePlaylist()
 		return 0, ""
 	case "stop-music":
-		guiMusic.StopPlaylist()
+		guiMusic.Stop()
 		return 0, ""
 	case "next":
-		guiMusic.StopPlaylist()
+		guiMusic.Stop()
 		guiMusic.SetPlayIndex(guiMusic.PlayIndex()+1)
 		guiMusic.ResumePlaylist()
 		return 0, ""
 	case "prev":
-		guiMusic.StopPlaylist()
+		guiMusic.Stop()
 		guiMusic.SetPlayIndex(guiMusic.PlayIndex()-1)
 		guiMusic.ResumePlaylist()
 		return 0, ""

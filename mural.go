@@ -87,17 +87,17 @@ func main() {
 		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
 	}
 	// Init audio and set global audio effects.
-	mtk.Audio, err = mtk.NewAudioPlayer(beep.Format{44100, 2, 2})
+	err = mtk.InitAudio(beep.Format{44100, 2, 2})
 	if err != nil {
-		panic(fmt.Errorf("Unable to create audio player: %v", err))
+		panic(fmt.Errorf("Unable to initialize the audio: %v", err))
 	}
-	mtk.Audio.SetVolume(config.MusicVolume)
-	mtk.Audio.SetMute(config.MusicMute)
-	ci.SetMusicPlayer(mtk.Audio)
+	mtk.Audio().SetVolume(config.MusicVolume)
+	mtk.Audio().SetMute(config.MusicMute)
+	ci.SetMusicPlayer(mtk.Audio())
 	menuMusic := audio.Music[config.MenuMusic]
 	if menuMusic != nil {
-		mtk.Audio.SetPlaylist([]*beep.Buffer{menuMusic})
-		mtk.Audio.ResumePlaylist()
+		mtk.Audio().SetPlaylist([]*beep.Buffer{menuMusic})
+		mtk.Audio().ResumePlaylist()
 	}
 	buttonClickSound := audio.Effects[config.ButtonClickSound]
 	if buttonClickSound != nil {

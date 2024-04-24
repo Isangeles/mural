@@ -47,6 +47,7 @@ import (
 	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/data"
 	"github.com/isangeles/mural/data/res"
+	"github.com/isangeles/mural/data/res/audio"
 	"github.com/isangeles/mural/game"
 	"github.com/isangeles/mural/log"
 )
@@ -72,6 +73,7 @@ type MainMenu struct {
 	loadscreen    *LoadingScreen
 	userFocus     *mtk.Focus
 	msgs          *mtk.MessageQueue
+	music         *mtk.AudioPlayer
 	server        *game.Server
 	mod           *flame.Module
 	playableChars *sync.Map
@@ -106,6 +108,10 @@ func New() *MainMenu {
 	// Messages & focus.
 	mm.userFocus = new(mtk.Focus)
 	mm.msgs = mtk.NewMessageQueue(mm.userFocus)
+	// Music.
+	mm.music = mtk.NewAudioPlayer()
+	mm.music.SetVolume(config.MusicVolume)
+	mm.music.SetMute(config.MusicMute)
 	mm.OpenMenu()
 	return mm
 }
@@ -214,6 +220,7 @@ func (mm *MainMenu) SetServer(server *game.Server) {
 // Exit sends exit request to main menu.
 func (mm *MainMenu) Exit() {
 	mm.exiting = true
+	mm.music.Stop()
 }
 
 // SetOnGameCreatedFunc sets specified function as function
@@ -226,6 +233,9 @@ func (mm *MainMenu) SetOnGameCreatedFunc(f func(g *game.Game, h *res.HUDData)) {
 func (mm *MainMenu) OpenMenu() {
 	mm.HideMenus()
 	mm.menu.Show()
+	if !mm.music.Playing() {
+		mm.PlayMainTheme()
+	}
 }
 
 // OpenNewGameMenu opens new game creation menu.
@@ -295,6 +305,15 @@ func (mm *MainMenu) ShowMessage(msg string) {
 	mw.SetAcceptLabel(lang.Text("accept_button_label"))
 	mw.Show(true)
 	mm.msgs.Append(mw)
+}
+
+// PlayMainTheme start the main theme menu music.
+func (mm *MainMenu) PlayMainTheme() {
+	menuMusic := audio.Music[config.MenuMusic]
+	if menuMusic == nil {
+		return
+	}
+	mm.music.Play(menuMusic)
 }
 
 // Console returns main menu console.

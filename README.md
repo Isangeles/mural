@@ -76,23 +76,23 @@ Configuration values are loaded from `.mural` file in Mural executable directory
 
 ### Configuration values
 ```
-  lang:[language ID]
+lang:[language ID]
 ```
 Game language, language ID is name of directory with translation files in lang directories.
 ```
-  module:[module ID]
+module:[module ID]
 ```
 Game module to load from `data/modules` directory, module ID is ID specified in `.module` file inside main module directory.
 ```
-  debug:[true/false]
+debug:[true/false]
 ```
 Enables engine debug mode(shows debug messages in engine log), 'true' enables mode, everything else sets mode disabled.
 ```
-  fullscreen:[true/false]
+fullscreen:[true/false]
 ```
 Enables fullscreen mode, 'true' enables fullscreen, everything else sets windowed mode.
 ```
-  resolution:[width];[height]
+resolution:[width];[height]
 ```
 UI window resolution.
 ```
@@ -100,35 +100,35 @@ max-fps[FPS value]
 ```
 Maximal FPS limit for the window.
 ```
-  map-fow:[true/false]
+map-fow:[true/false]
 ```
 Enables 'Fog of War' effect for an area map, 'true' enables FOW, everything else sets FOW disabled.
 ```
-  main-font:[file name]
+main-font:[file name]
 ```
 Name of font file(located in graphic archive) for main UI font.
 ```
-  music-volume:[int]
+music-volume:[int]
 ```
 Game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
 ```
-  menu-music:[file name]
+menu-music:[file name]
 ```
 Name of audio file(located in audio archive) for main menu music theme.
 ```
-  button-click-sound:[file name]
+button-click-sound:[file name]
 ```
 Name of audio file(located in audio archive) for button click sound.
 ```
-  server:[host];[port]
+server:[host];[port]
 ```
 Server host and port for remote game server.
 ```
-  server-user:[login];[password]
+server-user:[login];[password]
 ```
 User login and password for auto-login to the remote game server.
 ```
-  server-close:[true/false]
+server-close:[true/false]
 ```
 If set to true the close request will be send to the game server when program closes(only if connected to the remote game server).
 

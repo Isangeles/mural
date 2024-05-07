@@ -91,6 +91,8 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Unable to initialize the audio: %v", err))
 	}
+	mtk.Audio().SetVolume(config.EffectsVolume)
+	mtk.Audio().SetMute(config.EffectsMute)
 	buttonClickSound := audio.Effects[config.ButtonClickSound]
 	if buttonClickSound != nil {
 		mtk.SetButtonClickSound(buttonClickSound)

@@ -59,6 +59,18 @@ Value 'true' enables FOW, everything else sets FOW disabled.
 .br
 Specifies name of font file(located in graphic archive) for main UI font.
 .P
+* effects-volume
+.br
+Specifies game effects volume.
+.br
+Value 0 is system volume, <0 is quieter then system, >0 is louder then system.
+.P
+* effects-mute
+.br
+Mutes or unmutes the game effects.
+.br
+Value 'true' mutes the effects, everything else will sets effects unmuted.
+.P
 * music-volume
 .br
 Specifies game music volume.

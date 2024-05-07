@@ -58,6 +58,8 @@ var (
 	MainFont         = ""
 	MenuMusic        = ""
 	ButtonClickSound = ""
+	EffectsVolume    = 0.0
+	EffectsMute      = false
 	MusicVolume      = 0.0
 	MusicMute        = false
 	ServerLogin      = ""
@@ -132,6 +134,15 @@ func Load() error {
 	if len(conf["button-click-sound"]) > 0 {
 		ButtonClickSound = conf["button-click-sound"][0]
 	}
+	if len(conf["effects-volume"]) > 0 {
+		EffectsVolume, err = strconv.ParseFloat(conf["effects-volume"][0], 64)
+		if err != nil {
+			log.Err.Printf("Config: Unable to set effects volume: %v", err)
+		}
+	}
+	if len(conf["effects-mute"]) > 0 {
+		EffectsMute = conf["effects-mute"][0] == "true"
+	}
 	if len(conf["music-volume"]) > 0 {
 		MusicVolume, err = strconv.ParseFloat(conf["music-volume"][0], 64)
 		if err != nil {
@@ -183,6 +194,8 @@ func Save() error {
 	conf["main-font"] = []string{MainFont}
 	conf["menu-music"] = []string{MenuMusic}
 	conf["button-click-sound"] = []string{ButtonClickSound}
+	conf["effects-volume"] = []string{fmt.Sprintf("%f", EffectsVolume)}
+	conf["effects-mute"] = []string{fmt.Sprintf("%v", EffectsMute)}
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
 	conf["server-user"] = []string{ServerLogin, ServerPassword}

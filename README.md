@@ -108,6 +108,14 @@ main-font:[file name]
 ```
 Name of font file(located in graphic archive) for main UI font.
 ```
+effects-volume:[float]
+```
+Game effects volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
+```
+effects-mute:[true/false]
+```
+Mutes or unmutes the game effects, value 'true' mutes the effects, everything else will sets effects unmuted.
+```
 music-volume:[int]
 ```
 Game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.

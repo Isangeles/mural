@@ -116,9 +116,13 @@ effects-mute:[true/false]
 ```
 Mutes or unmutes the game effects, value 'true' mutes the effects, everything else will sets effects unmuted.
 ```
-music-volume:[int]
+music-volume:[float]
 ```
 Game music volume, 0 is system volume, <0 is quieter then system, >0 is louder then system.
+```
+music-mute:[true/false]
+```
+Mutes or unmutes the game music, value 'true' mutes the music, everything else will sets the music unmuted.
 ```
 menu-music:[file name]
 ```

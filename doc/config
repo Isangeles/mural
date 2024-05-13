@@ -77,6 +77,12 @@ Specifies game music volume.
 .br
 Value 0 is system volume, <0 is quieter then system, >0 is louder then system.
 .P
+* music-mute
+.br
+Mutes or unmutes the game music.
+.br
+Value 'true' mutes the music, everything else will sets music unmuted.
+.P
 * menu-music
 .br
 Specifies name of audio file(located in audio archive) for main menu music theme.

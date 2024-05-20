@@ -91,10 +91,6 @@ Specifies name of audio file(located in audio archive) for main menu music theme
 .br
 Specifies name of audio file(located in audio archive) for button click sound.
 .P
-* button-click-sound
-.br
-Specifies name of audio file(located in audio archive) for button click sound.
-.P
 * server
 .br
 Specified server host and port for remote game server.
@@ -122,7 +118,10 @@ fullscreen:true
 resolution:1920;1080
 map-fow:true
 main-font:font.ttf
+effects-volume:0
+effects-mute:false
 music-volume:0
+music-mute:false
 menu-music:music.ogg
 button-click-sound:click.ogg
 fire:true

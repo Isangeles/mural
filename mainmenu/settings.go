@@ -40,16 +40,18 @@ import (
 // Settings struct represents main menu
 // settings screen.
 type Settings struct {
-	mainmenu          *MainMenu
-	title             *mtk.Text
-	backButton        *mtk.Button
-	fullscrSwitch     *mtk.Switch
-	resSwitch         *mtk.Switch
-	langSwitch        *mtk.Switch
-	musicVolumeSwitch *mtk.Switch
-	musicMuteSwitch   *mtk.Switch
-	opened            bool
-	changed           bool
+	mainmenu            *MainMenu
+	title               *mtk.Text
+	backButton          *mtk.Button
+	fullscrSwitch       *mtk.Switch
+	resSwitch           *mtk.Switch
+	langSwitch          *mtk.Switch
+	effectsVolumeSwitch *mtk.Switch
+	effectsMuteSwitch   *mtk.Switch
+	musicVolumeSwitch   *mtk.Switch
+	musicMuteSwitch     *mtk.Switch
+	opened              bool
+	changed             bool
 }
 
 // newSettings returns new settings screen instance.
@@ -105,22 +107,32 @@ func newSettings(mainmenu *MainMenu) *Settings {
 	}
 	s.langSwitch.SetValues(langValues...)
 	s.langSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
-	// Music volume.
-	s.musicVolumeSwitch = mtk.NewSwitch(switchParams)
-	s.musicVolumeSwitch.SetLabel(lang.Text("settings_vol_switch_label"))
+	// Effects volume.
+	s.effectsVolumeSwitch = mtk.NewSwitch(switchParams)
+	s.effectsVolumeSwitch.SetLabel(lang.Text("settings_effects_vol_switch_label"))
 	volValues := []mtk.SwitchValue{
 		mtk.SwitchValue{"-1", -1.0},
 		mtk.SwitchValue{lang.Text("settings_vol_sys"), 0.0},
 		mtk.SwitchValue{"+1", 1.0},
 	}
+	s.effectsVolumeSwitch.SetValues(volValues...)
+	s.effectsVolumeSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Effects mute.
+	s.effectsMuteSwitch = mtk.NewSwitch(switchParams)
+	s.effectsMuteSwitch.SetLabel(lang.Text("settings_effects_mute_switch_label"))
+	muteTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
+	muteFalse := mtk.SwitchValue{lang.Text("com_no"), false}
+	muteValues := []mtk.SwitchValue{muteTrue, muteFalse}
+	s.effectsMuteSwitch.SetValues(muteValues...)
+	s.effectsMuteSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
+	// Music volume.
+	s.musicVolumeSwitch = mtk.NewSwitch(switchParams)
+	s.musicVolumeSwitch.SetLabel(lang.Text("settings_music_vol_switch_label"))
 	s.musicVolumeSwitch.SetValues(volValues...)
 	s.musicVolumeSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	// Music mute.
 	s.musicMuteSwitch = mtk.NewSwitch(switchParams)
-	s.musicMuteSwitch.SetLabel(lang.Text("settings_mute_switch_label"))
-	muteTrue := mtk.SwitchValue{lang.Text("com_yes"), true}
-	muteFalse := mtk.SwitchValue{lang.Text("com_no"), false}
-	muteValues := []mtk.SwitchValue{muteTrue, muteFalse}
+	s.musicMuteSwitch.SetLabel(lang.Text("settings_music_mute_switch_label"))
 	s.musicMuteSwitch.SetValues(muteValues...)
 	s.musicMuteSwitch.SetOnChangeFunc(s.onSettingsSwitchChanged)
 	return s
@@ -135,13 +147,17 @@ func (s *Settings) Draw(win *pixelgl.Window) {
 	fullscrSwitchPos := mtk.BottomOf(s.title.DrawArea(), s.fullscrSwitch.Size(), 50)
 	resSwitchPos := mtk.BottomOf(s.fullscrSwitch.DrawArea(), s.resSwitch.Size(), 30)
 	langSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.langSwitch.Size(), 30)
-	mVolSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.musicVolumeSwitch.Size(), 30)
-	mMuteSwitchPos := mtk.BottomOf(s.musicVolumeSwitch.DrawArea(), s.musicMuteSwitch.Size(), 30)
+	effVolSwitchPos := mtk.BottomOf(s.resSwitch.DrawArea(), s.effectsVolumeSwitch.Size(), 30)
+	effMuteSwitchPos := mtk.BottomOf(s.effectsVolumeSwitch.DrawArea(), s.effectsMuteSwitch.Size(), 30)
+	musicVolSwitchPos := mtk.BottomOf(s.effectsMuteSwitch.DrawArea(), s.musicVolumeSwitch.Size(), 30)
+	musicMuteSwitchPos := mtk.BottomOf(s.musicVolumeSwitch.DrawArea(), s.musicMuteSwitch.Size(), 30)
 	s.fullscrSwitch.Draw(win, mtk.Matrix().Moved(fullscrSwitchPos))
 	s.resSwitch.Draw(win, mtk.Matrix().Moved(resSwitchPos))
 	s.langSwitch.Draw(win, mtk.Matrix().Moved(langSwitchPos))
-	s.musicVolumeSwitch.Draw(win, mtk.Matrix().Moved(mVolSwitchPos))
-	s.musicMuteSwitch.Draw(win, mtk.Matrix().Moved(mMuteSwitchPos))
+	s.effectsVolumeSwitch.Draw(win, mtk.Matrix().Moved(effVolSwitchPos))
+	s.effectsMuteSwitch.Draw(win, mtk.Matrix().Moved(effMuteSwitchPos))
+	s.musicVolumeSwitch.Draw(win, mtk.Matrix().Moved(musicVolSwitchPos))
+	s.musicMuteSwitch.Draw(win, mtk.Matrix().Moved(musicMuteSwitchPos))
 	// Buttons.
 	backButtonPos := mtk.BottomOf(s.musicMuteSwitch.DrawArea(), s.backButton.Size(), 30)
 	s.backButton.Draw(win, mtk.Matrix().Moved(backButtonPos))
@@ -152,6 +168,8 @@ func (s *Settings) Update(win *mtk.Window) {
 	s.fullscrSwitch.Update(win)
 	s.resSwitch.Update(win)
 	s.langSwitch.Update(win)
+	s.effectsVolumeSwitch.Update(win)
+	s.effectsMuteSwitch.Update(win)
 	s.musicVolumeSwitch.Update(win)
 	s.musicMuteSwitch.Update(win)
 	s.backButton.Update(win)
@@ -175,41 +193,48 @@ func (s *Settings) Hide() {
 
 // Apply applies current settings values.
 func (s *Settings) Apply() {
-	// Fullscreen.
-	fscr, ok := s.fullscrSwitch.Value().Value.(bool)
+	fullscreen, ok := s.fullscrSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf("settings menu: fail to retrive fullscreen switch value")
+		log.Err.Printf("settings menu: unable to retrive fullscreen switch value")
 		return
 	}
-	config.Fullscreen = fscr
-	// Resolution.
+	config.Fullscreen = fullscreen
 	res, ok := s.resSwitch.Value().Value.(pixel.Vec)
 	if !ok {
-		log.Err.Printf("settings menu: fail to retrive res switch value")
+		log.Err.Printf("settings menu: unable to retrive res switch value")
 		return
 	}
 	config.Resolution = res
-	// Language.
 	lang, ok := s.langSwitch.Value().Value.(string)
 	if !ok {
-		log.Err.Printf("settings menu: fail to retrive lang switch value")
+		log.Err.Printf("settings menu: unable to retrive lang switch value")
 		return
 	}
 	config.Lang = lang
-	// Music volume.
-	mVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
+	effectsVol, ok := s.effectsVolumeSwitch.Value().Value.(float64)
 	if !ok {
-		log.Err.Printf("settings menu: fail to retrive music volume switch value")
+		log.Err.Printf("settings menu: unable to retrieve effects volume switch value")
 		return
 	}
-	config.MusicVolume = mVol
-	// Music mute.
-	mMute, ok := s.musicMuteSwitch.Value().Value.(bool)
+	config.EffectsVolume = effectsVol
+	effectsMute, ok := s.effectsMuteSwitch.Value().Value.(bool)
 	if !ok {
-		log.Err.Printf("settings menu: fail to retrive music mute switch value")
+		log.Err.Printf("settings menu: unable to retrieve effects mute switch value")
 		return
 	}
-	config.MusicMute = mMute
+	config.EffectsMute = effectsMute
+	musicVol, ok := s.musicVolumeSwitch.Value().Value.(float64)
+	if !ok {
+		log.Err.Printf("settings menu: unable to retrive music volume switch value")
+		return
+	}
+	config.MusicVolume = musicVol
+	musicMute, ok := s.musicMuteSwitch.Value().Value.(bool)
+	if !ok {
+		log.Err.Printf("settings menu: unable to retrive music mute switch value")
+		return
+	}
+	config.MusicMute = musicMute
 }
 
 // Changed checks if any settings value was changed.
@@ -225,10 +250,14 @@ func (s *Settings) updateValues() {
 	s.resSwitch.SetIndex(resIndex)
 	langIndex := s.langSwitch.Find(config.Lang)
 	s.langSwitch.SetIndex(langIndex)
-	mVolIndex := s.musicVolumeSwitch.Find(config.MusicVolume)
-	s.musicVolumeSwitch.SetIndex(mVolIndex)
-	mMuteIndex := s.musicMuteSwitch.Find(config.MusicMute)
-	s.musicMuteSwitch.SetIndex(mMuteIndex)
+	effectsVolIndex := s.effectsVolumeSwitch.Find(config.EffectsVolume)
+	s.effectsVolumeSwitch.SetIndex(effectsVolIndex)
+	effectsMuteIndex := s.effectsMuteSwitch.Find(config.EffectsMute)
+	s.effectsMuteSwitch.SetIndex(effectsMuteIndex)
+	musicVolIndex := s.musicVolumeSwitch.Find(config.MusicVolume)
+	s.musicVolumeSwitch.SetIndex(musicVolIndex)
+	musicMuteIndex := s.musicMuteSwitch.Find(config.MusicMute)
+	s.musicMuteSwitch.SetIndex(musicMuteIndex)
 }
 
 // close closes settings menu and displays message

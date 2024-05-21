@@ -7,8 +7,10 @@ done_button_label:Done
 back_button_label:Back
 settings_button_label:Settings
 settings_button_info:Open settings menu
-settings_mute_switch_label:Mute music
-settings_vol_switch_label:Music volume
+settings_music_vol_switch_label:Music volume
+settings_music_mute_switch_label:Mute music
+settings_effects_vol_switch_label:Effects volume
+settings_effects_mute_switch_label:Mute effects
 newchar_button_label:New character
 newchar_button_info:Create new character
 settings_menu_title:Settings

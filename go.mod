@@ -12,7 +12,7 @@ require (
 	github.com/isangeles/fire v0.0.0-20240323111227-574918073792
 	github.com/isangeles/flame v0.0.0-20240312184759-ac9a988d6a9b
 	github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7
-	github.com/isangeles/mtk v0.0.0-20240508172252-ca5fe1157fd7
+	github.com/isangeles/mtk v0.0.0-20240525105208-f98038455260
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.16.0

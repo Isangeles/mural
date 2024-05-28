@@ -28,7 +28,6 @@ import (
 
 	"github.com/gopxl/pixel"
 
-	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/objects"
@@ -37,13 +36,13 @@ import (
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/data/res/graphic"
+	"github.com/isangeles/mural/game"
 )
 
 // Struct for graphical representation
 // of area object with single idle animation.
 type ObjectGraphic struct {
-	*character.Character
-	name         string
+	*game.Character
 	sprite       *mtk.Animation
 	portrait     pixel.Picture
 	spriteName   string
@@ -58,10 +57,9 @@ type ObjectGraphic struct {
 // NewObjectGraphic creates new object graphic for specified character.
 // Returns error if sprite texture from data object was not found it
 // res/graphic object spritesheets map.
-func NewObjectGraphic(char *character.Character, data *res.ObjectGraphicData) (*ObjectGraphic, error) {
+func NewObjectGraphic(char *game.Character, data *res.ObjectGraphicData) (*ObjectGraphic, error) {
 	og := new(ObjectGraphic)
 	og.Character = char
-	og.name = lang.Text(og.ID())
 	og.combatLog = objects.NewLog()
 	// Sprite.
 	spritePic := graphic.ObjectSpritesheets[data.Sprite]
@@ -108,11 +106,6 @@ func (og *ObjectGraphic) DrawArea() pixel.Rect {
 // Portrait returns portrait picture.
 func (og *ObjectGraphic) Portrait() pixel.Picture {
 	return og.portrait
-}
-
-// Name returns object name.
-func (og *ObjectGraphic) Name() string {
-	return og.name
 }
 
 // Position return object position in form of

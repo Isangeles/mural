@@ -195,10 +195,14 @@ func (a *Area) updateObjects() {
 		if avExists {
 			continue
 		}
+		gameChar := a.game.Char(char.ID(), char.Serial())
+		if gameChar == nil {
+			continue
+		}
 		// Object graphic.
 		ogData := res.Object(char.ID())
 		if ogData != nil {
-			og, err := NewObjectGraphic(char, ogData)
+			og, err := NewObjectGraphic(gameChar, ogData)
 			if err != nil {
 				log.Err.Printf("Area objects update: unable to create object graphic: %s %s: %v",
 					char.ID(), char.Serial(), err)
@@ -212,7 +216,7 @@ func (a *Area) updateObjects() {
 		if avData == nil {
 			defData := data.DefaultObjectGraphicData(char)
 			res.SetObjects(append(res.Objects(), defData))
-			og, err := NewObjectGraphic(char, &defData)
+			og, err := NewObjectGraphic(gameChar, &defData)
 			if err != nil {
 				log.Err.Printf("Area objects update: unable to create default object graphic: %s %s: %v",
 					char.ID(), char.Serial(), err)
@@ -220,10 +224,6 @@ func (a *Area) updateObjects() {
 			}
 			a.objects.Store(char.ID()+char.Serial(), og)
 			continue
-		}
-		gameChar := a.game.Char(char.ID(), char.Serial())
-		if gameChar == nil {
-			return
 		}
 		av, err := NewAvatar(gameChar, avData)
 		if err != nil {

@@ -48,6 +48,10 @@ func guiset(cmd burn.Command) (int, string) {
                 }
 		resInput := cmd.Args()[0]
 		resX, err := strconv.ParseFloat(strings.Split(resInput, "x")[0], 64)
+		if err != nil {
+			return 3, fmt.Sprintf("%s: invalid input: '%s'", GUISet,
+				cmd.Args()[0])
+		}
 		resY, err := strconv.ParseFloat(strings.Split(resInput, "x")[1], 64)
 		if err != nil {
 			return 3, fmt.Sprintf("%s: invalid input: '%s'", GUISet,

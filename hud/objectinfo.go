@@ -25,9 +25,12 @@ package hud
 
 import (
 	"fmt"
-	
+
 	"github.com/gopxl/pixel"
-	
+
+	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/data/res/lang"
+
 	"github.com/isangeles/mtk"
 
 	"github.com/isangeles/mural/config"
@@ -46,6 +49,7 @@ type InfoTarget interface {
 	ID() string
 	Serial() string
 	Name() string
+	Attitude() character.Attitude
 }
 
 // newObjectInfo creates object info for HUD.
@@ -121,7 +125,6 @@ func objectInfo(o InfoTarget) string {
 		info = fmt.Sprintf("%s\n%s#%s", info, o.ID(),
 			o.Serial())
 	}
+	info = fmt.Sprintf("%s\n%s", info, lang.Text(string(o.Attitude())))
 	return info
 }
-
-

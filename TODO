@@ -34,6 +34,7 @@ MINOR:
 * HUD: for item stacks load icons only once instead for every item in that stack
 * Sometimes training via game server triggers avatar onModifierTaken function multiple times(conflicting update responses?)
 * Not all settings should require restart after the change(vol/mute for example)
+* HUD: some target highlight
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

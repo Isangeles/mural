@@ -3,8 +3,6 @@ Mural is a 2D graphical frontend for [Flame](https://github.com/Isangeles/flame)
 
 GUI uses [MTK](https://github.com/Isangeles/mtk), a simple toolkit built with [Pixel](https://github.com/gopxl/pixel) and [Beep](https://github.com/goxpl/beep) libraries.
 
-Currently in an early development stage.
-
 ### Flame games with Mural support:
 ### Arena
 <img src="res/readme/img/sc1.png" width="200"><img src="res/readme/img/sc2.png" width="200"><img src="res/readme/img/sc3.png" width="200">

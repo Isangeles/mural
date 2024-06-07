@@ -214,15 +214,15 @@ func (a *Area) updateObjects() {
 		// Avatar.
 		avData := res.Avatar(char.ID())
 		if avData == nil {
-			defData := data.DefaultObjectGraphicData(char)
-			res.SetObjects(append(res.Objects(), defData))
-			og, err := NewObjectGraphic(gameChar, &defData)
+			defData := data.DefaultAvatarData(char)
+			res.SetAvatars(append(res.Avatars(), defData))
+			og, err := NewAvatar(gameChar, &defData)
 			if err != nil {
-				log.Err.Printf("Area objects update: unable to create default object graphic: %s %s: %v",
+				log.Err.Printf("Area objects update: unable to create default avatar: %s %s: %v",
 					char.ID(), char.Serial(), err)
 				continue
 			}
-			a.objects.Store(char.ID()+char.Serial(), og)
+			a.avatars.Store(char.ID()+char.Serial(), og)
 			continue
 		}
 		av, err := NewAvatar(gameChar, avData)

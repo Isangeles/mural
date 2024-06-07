@@ -114,20 +114,9 @@ func ExportAvatars(path string, avatars ...res.AvatarData) error {
 // DefaultAvatarData creates default avatar data
 // for specified character.
 func DefaultAvatarData(char *character.Character) res.AvatarData {
-	ssHeadName := "m-head-black-1222211-80x90.png"
-	ssTorsoName := "m-cloth-1222211-80x90.png"
-	portraitName := "male01.png"
-	if char.Gender() == character.Female {
-		ssHeadName = "f-head-black-1222211-80x90.png"
-		ssTorsoName = "f-cloth-1222211-80x90.png"
-		portraitName = "female01.png"
-	}
-	avData := res.AvatarData{
+	return res.AvatarData{
 		ID:       char.ID(),
 		Serial:   char.Serial(),
-		Portrait: portraitName,
-		Head:     ssHeadName,
-		Torso:    ssTorsoName,
+		FullBody: "default.png",
 	}
-	return avData
 }

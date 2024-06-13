@@ -10,7 +10,7 @@ require (
 	github.com/gopxl/pixel v1.0.0
 	github.com/isangeles/burn v0.0.0-20240308171729-0cacbfcb317f
 	github.com/isangeles/fire v0.0.0-20240606164607-6832b543d293
-	github.com/isangeles/flame v0.0.0-20240605184300-b8173b7b3468
+	github.com/isangeles/flame v0.0.0-20240611172704-55741756bc2f
 	github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7
 	github.com/isangeles/mtk v0.0.0-20240525105208-f98038455260
 	github.com/isangeles/stone v0.1.2

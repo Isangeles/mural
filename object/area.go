@@ -61,7 +61,6 @@ type Area struct {
 	areaMap *stone.Map
 	fow     *imdraw.IMDraw
 	avatars *sync.Map
-	objects *sync.Map
 }
 
 // NewArea returns new graphical wrapper for specified area.
@@ -72,7 +71,6 @@ func NewArea(game *game.Game, area *area.Area, areaMap *stone.Map) *Area {
 		areaMap: areaMap,
 		fow:     imdraw.New(nil),
 		avatars: new(sync.Map),
-		objects: new(sync.Map),
 	}
 	// Update objects graphics.
 	a.updateObjects()
@@ -95,14 +93,6 @@ func (a *Area) Draw(win *mtk.Window, matrix pixel.Matrix, size pixel.Vec) {
 		avPos := a.convAreaPos(av.Position(), matrix)
 		av.Draw(win, mtk.Matrix().Moved(avPos))
 	}
-	// Objects.
-	for _, ob := range a.AreaObjects() {
-		if !a.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
-			continue
-		}
-		obPos := a.convAreaPos(ob.Position(), matrix)
-		ob.Draw(win, mtk.Matrix().Moved(obPos))
-	}
 	// FOW effect.
 	if a.areaMap != nil && config.MapFOW {
 		a.drawMapFOW(win.Window, matrix)
@@ -115,21 +105,12 @@ func (a *Area) Draw(win *mtk.Window, matrix pixel.Matrix, size pixel.Vec) {
 // Update updates area.
 func (a *Area) Update(win *mtk.Window) {
 	a.updateObjects()
-	// Avatars.
 	for _, av := range a.Avatars() {
 		if !a.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
 			continue
 		}
 		av.Silence(false)
 		av.Update(win)
-	}
-	// Objects.
-	for _, ob := range a.AreaObjects() {
-		if !a.game.VisibleForPlayer(ob.Position().X, ob.Position().Y) {
-			continue
-		}
-		ob.Silence(false)
-		ob.Update(win)
 	}
 }
 
@@ -144,20 +125,6 @@ func (a *Area) Avatars() (avatars []*Avatar) {
 		return true
 	}
 	a.avatars.Range(addAvatar)
-	return
-}
-
-// AreaObjects returns all objects in current area.
-func (a *Area) AreaObjects() (objects []*ObjectGraphic) {
-	addObject := func(k, v interface{}) bool {
-		ob, ok := v.(*ObjectGraphic)
-		if !ok {
-			return true
-		}
-		objects = append(objects, ob)
-		return true
-	}
-	a.objects.Range(addObject)
 	return
 }
 
@@ -177,18 +144,14 @@ func (a *Area) PassablePosition(pos pixel.Vec) bool {
 	return layer.Name() == "ground"
 }
 
-// updateObjects updates lists with avatars
-// and graphical objects for the area.
+// updateObjects updates checks area objects and creates
+// new avatars or removes old ones if needed.
 func (a *Area) updateObjects() {
 	a.clearObjects()
-	// Add new objects & characters.
+	// Add new avatars.
 	for _, ob := range a.Objects() {
 		char, isChar := ob.(*character.Character)
 		if !isChar {
-			continue
-		}
-		_, obExists := a.objects.Load(char.ID() + char.Serial())
-		if obExists {
 			continue
 		}
 		_, avExists := a.avatars.Load(char.ID() + char.Serial())
@@ -197,18 +160,6 @@ func (a *Area) updateObjects() {
 		}
 		gameChar := a.game.Char(char.ID(), char.Serial())
 		if gameChar == nil {
-			continue
-		}
-		// Object graphic.
-		ogData := res.Object(char.ID())
-		if ogData != nil {
-			og, err := NewObjectGraphic(gameChar, ogData)
-			if err != nil {
-				log.Err.Printf("Area objects update: unable to create object graphic: %s %s: %v",
-					char.ID(), char.Serial(), err)
-				continue
-			}
-			a.objects.Store(char.ID()+char.Serial(), og)
 			continue
 		}
 		// Avatar.
@@ -235,8 +186,8 @@ func (a *Area) updateObjects() {
 	}
 }
 
-// clearObjecs removes avatars & graphics without
-// corresponding objects in the area.
+// clearObjecs removes avatars without the corresponding
+// objects in the area.
 func (a *Area) clearObjects() {
 	for _, av := range a.Avatars() {
 		found := false
@@ -251,19 +202,6 @@ func (a *Area) clearObjects() {
 			continue
 		}
 		a.avatars.Delete(av.ID() + av.Serial())
-	}
-	for _, gob := range a.AreaObjects() {
-		found := false
-		for _, ob := range a.Objects() {
-			if ob.ID() == gob.ID() && ob.Serial() == gob.Serial() {
-				found = true
-				break
-			}
-		}
-		if found {
-			continue
-		}
-		a.objects.Delete(gob.ID() + gob.Serial())
 	}
 }
 

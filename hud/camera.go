@@ -230,6 +230,14 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 		c.hud.Game().ActivePlayerChar().SetTarget(av.Character)
 		return
 	}
+	for _, ob := range c.area.AreaObjects() {
+		if !ob.DrawArea().Contains(pos) {
+			continue
+		}
+		log.Dbg.Printf("hud: set target: %s", ob.ID()+"_"+ob.Serial())
+		c.hud.Game().ActivePlayerChar().SetTarget(ob.Character)
+		return
+	}
 	c.hud.Game().ActivePlayerChar().SetTarget(nil)
 }
 
@@ -240,7 +248,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	pc := c.hud.PCAvatar()
 	// Action.
-	for _, ob := range c.area.Avatars() {
+	for _, ob := range c.area.AreaObjects() {
 		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
 			continue
 		}
@@ -268,6 +276,22 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		// Show loot window.
 		log.Dbg.Printf("hud: loot: %s#%s", av.ID(), av.Serial())
 		c.hud.loot.SetTarget(av)
+		c.hud.loot.Show()
+		return
+	}
+	for _, ob := range c.area.AreaObjects() {
+		if !ob.DrawArea().Contains(pos) || ob.Live() {
+			continue
+		}
+		// Range check.
+		r := math.Hypot(ob.Position().X-pc.Position().X, ob.Position().Y-pc.Position().Y)
+		if r > LootRange {
+			pc.PrivateLog().Add(objects.Message{Text: "tar_too_far"})
+			continue
+		}
+		// Show loot window.
+		log.Dbg.Printf("hud: loot: %s#%s", ob.ID(), ob.Serial())
+		c.hud.loot.SetTarget(ob)
 		c.hud.loot.Show()
 		return
 	}

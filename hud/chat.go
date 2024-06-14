@@ -262,11 +262,6 @@ func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
 			return a
 		}
 	}
-	for _, o := range c.hud.camera.area.AreaObjects() {
-		if o.ID() == l.ID() && o.Serial() == l.Serial() {
-			return o
-		}
-	}
 	return nil
 }
 

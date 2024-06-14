@@ -88,14 +88,6 @@ func (oi *ObjectInfo) Update(win *mtk.Window) {
 		oi.Open(true)
 		return
 	}
-	for _, ob := range oi.hud.camera.area.AreaObjects() {
-		if !ob.Hovered() {
-			continue
-		}
-		oi.SetObject(ob)
-		oi.Open(true)
-		return
-	}
 	if oi.object == nil {
 		oi.Open(false)
 	}

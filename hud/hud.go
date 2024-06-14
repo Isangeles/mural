@@ -238,11 +238,6 @@ func (hud *HUD) Update(win *mtk.Window) {
 				hud.tarFrame.SetObject(av)
 			}
 		}
-		for _, ob := range hud.camera.area.AreaObjects() {
-			if objects.Equals(hud.Game().ActivePlayerChar().Targets()[0], ob.Character) {
-				hud.tarFrame.SetObject(ob)
-			}
-		}
 	}
 	// Elements update.
 	hud.loadScreen.Update(win)

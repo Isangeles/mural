@@ -1,7 +1,7 @@
 /*
  * res.go
  *
- * Copyright 2019-2022 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ import (
 
 var (
 	avatars          *sync.Map
-	objects          *sync.Map
 	items            map[string]*ItemGraphicData
 	effects          map[string]*EffectGraphicData
 	skills           map[string]*SkillGraphicData
@@ -43,7 +42,6 @@ var (
 // On init.
 func init() {
 	avatars = new(sync.Map)
-	objects = new(sync.Map)
 	items = make(map[string]*ItemGraphicData)
 	effects = make(map[string]*EffectGraphicData)
 	skills = make(map[string]*SkillGraphicData)
@@ -58,16 +56,6 @@ func Avatar(id string) *AvatarData {
 		return nil
 	}
 	return ad.(*AvatarData)
-}
-
-// Object returns object graphic data for
-// object with specified ID.
-func Object(id string) *ObjectGraphicData {
-	ogd, ok := objects.Load(id)
-	if !ok {
-		return nil
-	}
-	return ogd.(*ObjectGraphicData)
 }
 
 // Item returns graphic data for item
@@ -98,19 +86,6 @@ func Avatars() (data []AvatarData) {
 		return true
 	}
 	avatars.Range(addAvatar)
-	return
-}
-
-// Objects returns all object graphic resources.
-func Objects() (data []ObjectGraphicData) {
-	addObject := func(k, v interface{}) bool {
-		ogd, ok := v.(*ObjectGraphicData)
-		if ok {
-			data = append(data, *ogd)
-		}
-		return true
-	}
-	objects.Range(addObject)
 	return
 }
 
@@ -151,14 +126,6 @@ func TranslationBases() (data []*flameres.TranslationBaseData) {
 func SetAvatars(data []AvatarData) {
 	for i, _ := range data {
 		avatars.Store(data[i].ID, &data[i])
-	}
-}
-
-// SetObjects sets specified data as objects graphic
-// recources data.
-func SetObjects(data []ObjectGraphicData) {
-	for i, _ := range data {
-		objects.Store(data[i].ID, &data[i])
 	}
 }
 

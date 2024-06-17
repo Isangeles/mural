@@ -86,11 +86,6 @@ func LoadModuleData(path string) (err error) {
 	if err != nil {
 		return fmt.Errorf("unable to load avatars spritesheets: %v", err)
 	}
-	// Object spritesheets.
-	graphic.ObjectSpritesheets, err = loadPicturesFromArch(graphicArchPath, "spritesheet/object")
-	if err != nil {
-		return fmt.Errorf("unable to load objects spritesheets: %v", err)
-	}
 	// Icons.
 	graphic.Icons, err = loadPicturesFromArch(graphicArchPath, "icon")
 	if err != nil {
@@ -102,12 +97,6 @@ func LoadModuleData(path string) (err error) {
 		return fmt.Errorf("unable to import avatars: %v", err)
 	}
 	res.SetAvatars(avs)
-	// Objects graphics.
-	obGraphics, err := ImportObjectsGraphicsDir(filepath.Join(path, "objects"))
-	if err != nil {
-		return fmt.Errorf("unable to import objects graphics: %v", err)
-	}
-	res.SetObjects(obGraphics)
 	// Items graphics.
 	itGraphics, err := ImportItemsGraphicsDir(filepath.Join(path, "items"))
 	if err != nil {
@@ -144,12 +133,6 @@ func LoadChapterData(path string) error {
 		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}
 	res.SetAvatars(append(res.Avatars(), avs...))
-	// Object graphics.
-	obGraphics, err := ImportObjectsGraphicsDir(filepath.Join(path, "objects"))
-	if err != nil {
-		return fmt.Errorf("unable to import objects graphics: %v", err)
-	}
-	res.SetObjects(append(res.Objects(), obGraphics...))
 	return nil
 }
 

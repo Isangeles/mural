@@ -33,7 +33,6 @@ import (
 var (
 	Textures           map[string]pixel.Picture
 	AvatarSpritesheets map[string]pixel.Picture
-	ObjectSpritesheets map[string]pixel.Picture
 	Icons              map[string]pixel.Picture
 	Portraits          map[string]pixel.Picture
 	Fonts              map[string]*truetype.Font
@@ -43,7 +42,6 @@ var (
 func init() {
 	Textures = make(map[string]pixel.Picture)
 	AvatarSpritesheets = make(map[string]pixel.Picture)
-	ObjectSpritesheets = make(map[string]pixel.Picture)
 	Icons = make(map[string]pixel.Picture)
 	Portraits = make(map[string]pixel.Picture)
 	Fonts = make(map[string]*truetype.Font)

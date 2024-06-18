@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,6 @@ type Player struct {
 
 // Struct for HUD slot data.
 type Slot struct {
-	ID      int    `xml:"id,attr"`
-	Content string `xml:"content,attr"`
+	ID      int    `xml:"id,attr", json:"id"`
+	Content string `xml:"content,attr", json:"content"`
 }

@@ -275,6 +275,11 @@ func (av *Avatar) Hovered() bool {
 	return av.hovered
 }
 
+// Moving checks if avatar is in move.
+func (av *Avatar) Moving() bool {
+	return av.Live() && (av.Position().X != av.DestPoint().X || av.Position().Y != av.DestPoint().Y)
+}
+
 // updateGraphic updates avatar grapphical
 // content.
 func (av *Avatar) updateGraphic() {

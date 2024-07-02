@@ -151,9 +151,9 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.wisSwitch.SetOnChangeFunc(ncm.onAttrSwitchChange)
 	// Gender & alligment switches.
 	maleSwitchVal := mtk.SwitchValue{lang.Text(string(character.Male)),
-		character.Male}
+		string(character.Male)}
 	femaleSwitchVal := mtk.SwitchValue{lang.Text(string(character.Female)),
-		character.Female}
+		string(character.Female)}
 	gens := []mtk.SwitchValue{maleSwitchVal, femaleSwitchVal}
 	ncm.sexSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.sexSwitch.SetLabel(lang.Text("newchar_sex_switch_label"))
@@ -172,15 +172,15 @@ func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm.raceSwitch.SetValues(races...)
 	// Alignment switch.
 	alis := []mtk.SwitchValue{
-		mtk.SwitchValue{lang.Text(string(character.LawfulGood)), character.LawfulGood},
-		mtk.SwitchValue{lang.Text(string(character.NeutralGood)), character.NeutralGood},
-		mtk.SwitchValue{lang.Text(string(character.ChaoticGood)), character.ChaoticGood},
-		mtk.SwitchValue{lang.Text(string(character.LawfulNeutral)), character.LawfulNeutral},
-		mtk.SwitchValue{lang.Text(string(character.TrueNeutral)), character.TrueNeutral},
-		mtk.SwitchValue{lang.Text(string(character.ChaoticNeutral)), character.ChaoticNeutral},
-		mtk.SwitchValue{lang.Text(string(character.LawfulEvil)), character.LawfulEvil},
-		mtk.SwitchValue{lang.Text(string(character.NeutralEvil)), character.NeutralEvil},
-		mtk.SwitchValue{lang.Text(string(character.ChaoticEvil)), character.ChaoticEvil},
+		mtk.SwitchValue{lang.Text(string(character.LawfulGood)), string(character.LawfulGood)},
+		mtk.SwitchValue{lang.Text(string(character.NeutralGood)), string(character.NeutralGood)},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticGood)), string(character.ChaoticGood)},
+		mtk.SwitchValue{lang.Text(string(character.LawfulNeutral)), string(character.LawfulNeutral)},
+		mtk.SwitchValue{lang.Text(string(character.TrueNeutral)), string(character.TrueNeutral)},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticNeutral)), string(character.ChaoticNeutral)},
+		mtk.SwitchValue{lang.Text(string(character.LawfulEvil)), string(character.LawfulEvil)},
+		mtk.SwitchValue{lang.Text(string(character.NeutralEvil)), string(character.NeutralEvil)},
+		mtk.SwitchValue{lang.Text(string(character.ChaoticEvil)), string(character.ChaoticEvil)},
 	}
 	ncm.aliSwitch = mtk.NewSwitch(attrSwitchParams)
 	ncm.aliSwitch.SetLabel(lang.Text("newchar_ali_switch_label"))
@@ -313,80 +313,86 @@ func (ncm *NewCharacterMenu) updatePoints() {
 }
 
 // createChar creates new game character.
-func (ncm *NewCharacterMenu) createCharData() (*flameres.CharacterData, error) {
-	// Name.
-	name := ncm.nameEdit.Text()
-	// Attributes.
-	str, ok := ncm.strSwitch.Value().Value.(int)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve strenght switch value")
-	}
-	con, ok := ncm.conSwitch.Value().Value.(int)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve constitution switch value")
-	}
-	dex, ok := ncm.dexSwitch.Value().Value.(int)
-	if !ok {
-		return nil, fmt.Errorf("unable to retireve dexterity switch value")
-	}
-	inte, ok := ncm.intSwitch.Value().Value.(int)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve inteligence switch value")
-	}
-	wis, ok := ncm.wisSwitch.Value().Value.(int)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve wisdom switch value")
-	}
-	// Gender.
-	gender, ok := ncm.sexSwitch.Value().Value.(character.Gender)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrive gender")
-	}
-	// Race.
-	race, ok := ncm.raceSwitch.Value().Value.(string)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve race")
-	}
-	// Alignment.
-	alignment, ok := ncm.aliSwitch.Value().Value.(character.Alignment)
-	if !ok {
-		return nil, fmt.Errorf("unable to retrieve alignment")
-	}
-	// ID.
-	name = strings.ReplaceAll(name, " ", "_")
-	id := fmt.Sprintf("%s%s", playerIDPrefix, strings.ToLower(name))
+func (ncm *NewCharacterMenu) createCharData() (flameres.CharacterData, error) {
 	charData := flameres.CharacterData{
-		ID:        id,
 		Level:     1,
-		Sex:       string(gender),
-		Race:      race,
-		Alignment: string(alignment),
 		Attitude:  string(character.Friendly),
 	}
-	charData.Attributes = flameres.AttributesData{
-		Str: str,
-		Con: con,
-		Dex: dex,
-		Int: inte,
-		Wis: wis,
-	}
+	// ID.
+	name := ncm.nameEdit.Text()
+	id := strings.ReplaceAll(name, " ", "_")
+	charData.ID = fmt.Sprintf("%s%s", playerIDPrefix, strings.ToLower(id))
 	// Add name translation.
 	nameTrans := flameres.TranslationData{charData.ID, []string{name}}
 	lang.AddTranslation(nameTrans)
-	// Player skills & items from interface config.
+	// Attributes.
+	var ok bool
+	charData.Attributes.Str, ok = ncm.strSwitch.Value().Value.(int)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve strenght switch value")
+	}
+	charData.Attributes.Con, ok = ncm.conSwitch.Value().Value.(int)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve constitution switch value")
+	}
+	charData.Attributes.Dex, ok = ncm.dexSwitch.Value().Value.(int)
+	if !ok {
+		return charData, fmt.Errorf("unable to retireve dexterity switch value")
+	}
+	charData.Attributes.Con, ok = ncm.intSwitch.Value().Value.(int)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve inteligence switch value")
+	}
+	charData.Attributes.Wis, ok = ncm.wisSwitch.Value().Value.(int)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve wisdom switch value")
+	}
+	// Gender.
+	charData.Sex, ok = ncm.sexSwitch.Value().Value.(string)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrive gender")
+	}
+	// Race.
+	charData.Race, ok = ncm.raceSwitch.Value().Value.(string)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve race")
+	}
+	// Alignment.
+	charData.Alignment, ok = ncm.aliSwitch.Value().Value.(string)
+	if !ok {
+		return charData, fmt.Errorf("unable to retrieve alignment")
+	}
+	// Player skills & items from the chapter config.
 	for _, sid := range ncm.mainmenu.mod.Chapter().Conf().StartSkills {
-		skill := flameres.ObjectSkillData{
-			ID: sid,
-		}
+		skill := flameres.ObjectSkillData{ID: sid}
 		charData.Skills = append(charData.Skills, skill)
 	}
 	for _, iid := range ncm.mainmenu.mod.Chapter().Conf().StartItems {
-		items := flameres.InventoryItemData{
-			ID: iid,
-		}
-		charData.Inventory.Items = append(charData.Inventory.Items, items)
+		item := flameres.InventoryItemData{ID: iid}
+		charData.Inventory.Items = append(charData.Inventory.Items, item)
 	}
-	return &charData, nil
+	return charData, nil
+}
+
+// createAvatarData Creates avatar data for specified character data.
+func (ncm *NewCharacterMenu) createAvatarData(charData flameres.CharacterData) (res.AvatarData, error) {
+	avData := res.AvatarData{
+		ID:       charData.ID,
+		Serial:   charData.Serial,
+	}
+	avData.Head = "m-head-black-1222211-80x90.png"
+	avData.Torso = "m-cloth-1222211-80x90.png"
+	if character.Gender(charData.Sex) == character.Female {
+		avData.Head = "f-cloth-1222211-80x90.png"
+		avData.Torso = "f-head-black-1222211-80x90.png"
+	}
+	var ok bool
+	avData.Portrait, ok = ncm.faceSwitch.Value().Value.(string)
+	if !ok {
+		return avData, fmt.Errorf("unable to retrieve portrait name from switch")
+	}
+	res.SetAvatars(append(res.Avatars(), avData))
+	return avData, nil
 }
 
 // Triggered after back button clicked.
@@ -396,32 +402,22 @@ func (ncm *NewCharacterMenu) onBackButtonClicked(b *mtk.Button) {
 
 // Triggered after done button clicked.
 func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
+	// Create character.
 	charData, err := ncm.createCharData()
 	if err != nil {
-		log.Err.Printf("newchar menu: unable to create character: %v", err)
+		log.Err.Printf("new char menu: unable to create character: %v", err)
 		return
 	}
-	ssHeadName := "m-head-black-1222211-80x90.png"
-	ssTorsoName := "m-cloth-1222211-80x90.png"
-	if character.Gender(charData.Sex) == character.Female {
-		ssTorsoName = "f-cloth-1222211-80x90.png"
-		ssHeadName = "f-head-black-1222211-80x90.png"
-	}
-	portraitName, ok := ncm.faceSwitch.Value().Value.(string)
-	if !ok {
-		log.Err.Printf("newchar menu: unable to retrieve portrait name from switch")
+	// Create avatar.
+	avData, err := ncm.createAvatarData(charData)
+	if err != nil {
+		log.Err.Printf("new char menu: unable to create avatar: %v", err)
 		return
 	}
-	avData := res.AvatarData{
-		ID:       charData.ID,
-		Serial:   charData.Serial,
-		Portrait: portraitName,
-		Head:     ssHeadName,
-		Torso:    ssTorsoName,
-	}
-	pc := PlayableCharData{*charData, avData}
-	res.SetAvatars(append(res.Avatars(), avData))
+	// Add as playable char.
+	pc := PlayableCharData{charData, avData}
 	ncm.mainmenu.AddPlayableChar(pc)
+	// Show message & go back to main menu.
 	msg := lang.Text("newchar_create_msg")
 	ncm.mainmenu.ShowMessage(msg)
 	ncm.mainmenu.OpenMenu()

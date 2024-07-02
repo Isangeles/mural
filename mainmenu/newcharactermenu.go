@@ -420,6 +420,7 @@ func (ncm *NewCharacterMenu) onDoneButtonClicked(b *mtk.Button) {
 		Torso:    ssTorsoName,
 	}
 	pc := PlayableCharData{*charData, avData}
+	res.SetAvatars(append(res.Avatars(), avData))
 	ncm.mainmenu.AddPlayableChar(pc)
 	msg := lang.Text("newchar_create_msg")
 	ncm.mainmenu.ShowMessage(msg)

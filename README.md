@@ -186,15 +186,15 @@ Load HUD state from file in `data/[module]/mural/saves` directory.
 ```
 guiaudio -o set-mute -a [true/false]
 ```
-Mutes/unmutes GUI music player.
+Mutes/unmutes GUI audio.
 
 ```
 guiaudio -o set-volume -a [value]
 ```
-Sets specified value as current volume level(0 - system volue, <0 - quieter, >0 - louder).
+Sets specified value as current volume level for GUI audio(0 - system volue, <0 - quieter, >0 - louder).
 
 ## Scripts
-Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` sub-directory are started automatically on game start/load.
+Mural handles [Ash](https://github.com/Isangeles/burn/tree/master/ash) scripts placed in `[module dir]/mural/scripts` directory. To start script enter script name in chat window or game console with '%' prefix. Scripts from `run` sub-directory are started automatically on game start.
 
 Area scripts are stored in `[module dir]/mural/chapters/[chapter id]/areas/[area id]/scripts` directory and started after area change.
 

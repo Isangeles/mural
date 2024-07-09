@@ -248,7 +248,7 @@ func (ngm *NewGameMenu) startGame() {
 	gameWrapper.SetServer(ngm.mainmenu.server)
 	// Create player.
 	if gameWrapper.Server() != nil {
-		res.SetAvatars(append(res.Avatars(), pcd.Avatar))
+		res.Avatars = append(res.Avatars, pcd.Avatar)
 		newCharReq := request.NewChar{lang.Text(pcd.ID), pcd.CharacterData}
 		req := request.Request{NewChar: []request.NewChar{newCharReq}}
 		err := gameWrapper.Server().Send(req)

@@ -92,35 +92,31 @@ func LoadModuleData(path string) (err error) {
 		return fmt.Errorf("unable to load icons: %v", err)
 	}
 	// Avatars.
-	avs, err := ImportAvatarsDir(filepath.Join(path, "avatars"))
+	res.Avatars, err = ImportAvatarsDir(filepath.Join(path, "avatars"))
 	if err != nil {
 		return fmt.Errorf("unable to import avatars: %v", err)
 	}
-	res.SetAvatars(avs)
 	// Items graphics.
-	itGraphics, err := ImportItemsGraphicsDir(filepath.Join(path, "items"))
+	res.Items, err = ImportItemsGraphicsDir(filepath.Join(path, "items"))
 	if err != nil {
 		return fmt.Errorf("unable to import items graphics: %v", err)
 	}
-	res.SetItems(itGraphics)
 	// Effects graphic.
-	effGraphics, err := ImportEffectsGraphicsDir(filepath.Join(path, "effects"))
+	res.Effects, err = ImportEffectsGraphicsDir(filepath.Join(path, "effects"))
 	if err != nil {
 		return fmt.Errorf("unable to import effects graphics: %v", err)
 	}
-	res.SetEffects(effGraphics)
 	// Skills graphic.
-	skillGraphics, err := ImportSkillsGraphicsDir(filepath.Join(path, "skills"))
+	res.Skills, err = ImportSkillsGraphicsDir(filepath.Join(path, "skills"))
 	if err != nil {
 		return fmt.Errorf("unable to import skills graphics: %v", err)
 	}
-	res.SetSkills(skillGraphics)
 	// Translations.
 	translations, err := flamedata.ImportLangDirs(filepath.Join(path, "lang"))
 	if err != nil {
 		return fmt.Errorf("unable to import translations: %v", err)
 	}
-	res.SetTranslationBases(translations)
+	res.AddTranslationBases(translations)
 	flameres.Add(flameres.ResourcesData{TranslationBases: translations})
 	return nil
 }
@@ -132,7 +128,7 @@ func LoadChapterData(path string) error {
 	if err != nil {
 		return fmt.Errorf("unable to import chapter avatars: %v", err)
 	}
-	res.SetAvatars(append(res.Avatars(), avs...))
+	res.Avatars = append(res.Avatars, avs...)
 	return nil
 }
 

@@ -26,137 +26,66 @@
 package res
 
 import (
-	"sync"
-
 	flameres "github.com/isangeles/flame/data/res"
 )
 
 var (
-	avatars          *sync.Map
-	items            map[string]*ItemGraphicData
-	effects          map[string]*EffectGraphicData
-	skills           map[string]*SkillGraphicData
-	translationBases map[string]*flameres.TranslationBaseData
+	Avatars          []AvatarData
+	Items            []ItemGraphicData
+	Effects          []EffectGraphicData
+	Skills           []SkillGraphicData
+	TranslationBases []*flameres.TranslationBaseData
 )
-
-// On init.
-func init() {
-	avatars = new(sync.Map)
-	items = make(map[string]*ItemGraphicData)
-	effects = make(map[string]*EffectGraphicData)
-	skills = make(map[string]*SkillGraphicData)
-	translationBases = make(map[string]*flameres.TranslationBaseData)
-}
 
 // Avatar returns avatar data for character
 // with specified ID.
 func Avatar(id string) *AvatarData {
-	ad, ok := avatars.Load(id)
-	if !ok {
-		return nil
+	for _, d := range Avatars {
+		if d.ID == id {
+			return &d
+		}
 	}
-	return ad.(*AvatarData)
+	return nil
 }
 
 // Item returns graphic data for item
 // with specified ID.
-func Item(itemID string) *ItemGraphicData {
-	return items[itemID]
+func Item(id string) *ItemGraphicData {
+	for _, d := range Items {
+		if d.ItemID == id {
+			return &d
+		}
+	}
+	return nil
 }
 
 // Effect returns graphic data for effect
 // with specified ID.
 func Effect(id string) *EffectGraphicData {
-	return effects[id]
+	for _, d := range Effects {
+		if d.EffectID == id {
+			return &d
+		}
+	}
+	return nil
 }
 
 // Skill returns graphic data for skill
 // with specified ID.
 func Skill(id string) *SkillGraphicData {
-	return skills[id]
-}
-
-// Avatars returns all avatars resources.
-func Avatars() (data []AvatarData) {
-	addAvatar := func(k, v interface{}) bool {
-		ad, ok := v.(*AvatarData)
-		if ok {
-			data = append(data, *ad)
+	for _, d := range Skills {
+		if d.SkillID == id {
+			return &d
 		}
-		return true
 	}
-	avatars.Range(addAvatar)
-	return
+	return nil
 }
 
-// Items returns all item resources.
-func Items() (data []ItemGraphicData) {
-	for _, id := range items {
-		data = append(data, *id)
-	}
-	return
-}
-
-// Effects returns all effect resources.
-func Effects() (data []EffectGraphicData) {
-	for _, ed := range effects {
-		data = append(data, *ed)
-	}
-	return
-}
-
-// Skills returns all skill resources.
-func Skills() (data []SkillGraphicData) {
-	for _, sd := range skills {
-		data = append(data, *sd)
-	}
-	return
-}
-
-// TranslationBases returns all translation bases.
-func TranslationBases() (data []*flameres.TranslationBaseData) {
-	for _, tbd := range translationBases {
-		data = append(data, tbd)
-	}
-	return
-}
-
-// SetAvatars sets specified data as
-// avatars resources.
-func SetAvatars(data []AvatarData) {
-	for i, _ := range data {
-		avatars.Store(data[i].ID, &data[i])
+// AddTranslationBases adds all translation bases
+// to the translation resources.
+func AddTranslationBases(bases []flameres.TranslationBaseData) {
+	for _, b := range bases {
+		TranslationBases = append(TranslationBases, &b)
 	}
 }
 
-// SetItems sets specified data as items
-// resources data.
-func SetItems(data []ItemGraphicData) {
-	for i, _ := range data {
-		items[data[i].ItemID] = &data[i]
-	}
-}
-
-// SetEffects sets specified data as effects
-// resources data.
-func SetEffects(data []EffectGraphicData) {
-	for i, _ := range data {
-		effects[data[i].EffectID] = &data[i]
-	}
-}
-
-// SetSkills sets specified data as skills
-// resources data.
-func SetSkills(data []SkillGraphicData) {
-	for i, _ := range data {
-		skills[data[i].SkillID] = &data[i]
-	}
-}
-
-// SetTranslationBases sets specified data as translation
-// resources.
-func SetTranslationBases(data []flameres.TranslationBaseData) {
-	for i, _ := range data {
-		translationBases[data[i].ID] = &data[i]
-	}
-}

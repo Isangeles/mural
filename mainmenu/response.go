@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ func (mm *MainMenu) handleLoadResponse(resp response.Load) {
 	// Recreate saved game.
 	flameres.Clear()
 	serial.Reset()
-	flameres.TranslationBases = res.TranslationBases()
+	flameres.TranslationBases = res.TranslationBases
 	m := flame.NewModule(resp.Module)
 	gameWrapper := game.New(m)
 	gameWrapper.SetServer(mm.server)
@@ -105,7 +105,7 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
 	flameres.Clear()
-	flameres.TranslationBases = res.TranslationBases()
+	flameres.TranslationBases = res.TranslationBases
 	if mm.mod == nil {
 		serial.Reset()
 		mm.SetModule(flame.NewModule(resp.Module))

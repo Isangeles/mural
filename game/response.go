@@ -71,7 +71,7 @@ func (g *Game) handleUpdateResponse(resp response.Update) {
 	updateMutex.Lock()
 	defer updateMutex.Unlock()
 	flameres.Clear()
-	flameres.TranslationBases = res.TranslationBases()
+	flameres.TranslationBases = res.TranslationBases
 	g.Apply(resp.Module)
 }
 

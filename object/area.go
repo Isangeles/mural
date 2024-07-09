@@ -166,7 +166,7 @@ func (a *Area) updateObjects() {
 		avData := res.Avatar(char.ID())
 		if avData == nil {
 			defData := data.DefaultAvatarData(char)
-			res.SetAvatars(append(res.Avatars(), defData))
+			res.Avatars = append(res.Avatars, defData)
 			og, err := NewAvatar(gameChar, &defData)
 			if err != nil {
 				log.Err.Printf("Area objects update: unable to create default avatar: %s %s: %v",

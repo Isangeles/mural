@@ -391,7 +391,7 @@ func (ncm *NewCharacterMenu) createAvatarData(charData flameres.CharacterData) (
 	if !ok {
 		return avData, fmt.Errorf("unable to retrieve portrait name from switch")
 	}
-	res.SetAvatars(append(res.Avatars(), avData))
+	res.Avatars = append(res.Avatars, avData)
 	return avData, nil
 }
 

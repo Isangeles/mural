@@ -35,28 +35,28 @@ func guiaudio(cmd burn.Command) (int, string) {
 	if len(cmd.OptionArgs()) < 1 {
 		return 2, fmt.Sprintf("%s: no option args", GUIAudio)
 	}
-	if guiMusic == nil {
-		return 2, fmt.Sprintf("%s: no music player set", GUIAudio)
+	if guiMenu == nil {
+		return 2, fmt.Sprintf("%s: no main menu set", GUIAudio)
 	}
 	switch cmd.OptionArgs()[0] {
 	case "play-music":
-		guiMusic.ResumePlaylist()
+		guiMenu.Music().ResumePlaylist()
 		return 0, ""
 	case "stop-music":
-		guiMusic.Stop()
+		guiMenu.Music().Stop()
 		return 0, ""
 	case "next":
-		guiMusic.Stop()
-		guiMusic.SetPlayIndex(guiMusic.PlayIndex()+1)
-		guiMusic.ResumePlaylist()
+		guiMenu.Music().Stop()
+		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex()+1)
+		guiMenu.Music().ResumePlaylist()
 		return 0, ""
 	case "prev":
-		guiMusic.Stop()
-		guiMusic.SetPlayIndex(guiMusic.PlayIndex()-1)
-		guiMusic.ResumePlaylist()
+		guiMenu.Music().Stop()
+		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex()-1)
+		guiMenu.Music().ResumePlaylist()
 		return 0, ""
 	case "volume":
-		out := fmt.Sprintf("%f", guiMusic.Volume())
+		out := fmt.Sprintf("%f", guiMenu.Music().Volume())
 		return 0, out
 	case "set-volume":
 		if len(cmd.Args()) < 1 {
@@ -68,7 +68,7 @@ func guiaudio(cmd burn.Command) (int, string) {
 			return 3, fmt.Sprintf("%s: invalid argument: '%s': %v",
 				GUIAudio, cmd.Args()[0], err)
 		}
-		guiMusic.SetVolume(vol)
+		guiMenu.Music().SetVolume(vol)
 		return 0, ""
 	case "set-mute":
 		if len(cmd.Args()) < 1 {
@@ -76,7 +76,7 @@ func guiaudio(cmd burn.Command) (int, string) {
 				GUIAudio, cmd.OptionArgs()[0])
 		}
 		mute := cmd.Args()[0] == "true"
-		guiMusic.SetMute(mute)
+		guiMenu.Music().SetMute(mute)
 		return 0, ""
 	default:
 		return 2, fmt.Sprintf("%s: invalid option: '%s'", GUIAudio,

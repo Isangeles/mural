@@ -1,7 +1,7 @@
 /*
  * ci.go
  *
- * Copyright 2018-2021 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@ import (
 	"github.com/isangeles/burn"
 	"github.com/isangeles/burn/ash"
 
-	"github.com/isangeles/mtk"
-
 	"github.com/isangeles/mural/hud"
 	"github.com/isangeles/mural/log"
 	"github.com/isangeles/mural/mainmenu"
@@ -47,7 +45,6 @@ const (
 var (
 	guiMenu  *mainmenu.MainMenu
 	guiHUD   *hud.HUD
-	guiMusic *mtk.AudioPlayer
 )
 
 // On init.
@@ -70,12 +67,6 @@ func SetMainMenu(menu *mainmenu.MainMenu) {
 // guiman to manage.
 func SetHUD(h *hud.HUD) {
 	guiHUD = h
-}
-
-// SetMusicPlayer sets specified audio player as
-// player for guiman to manage.
-func SetMusicPlayer(p *mtk.AudioPlayer) {
-	guiMusic = p
 }
 
 // RunScript executes specified script, in case

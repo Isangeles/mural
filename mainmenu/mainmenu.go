@@ -307,6 +307,11 @@ func (mm *MainMenu) ShowMessage(msg string) {
 	mm.msgs.Append(mw)
 }
 
+// Music returns music audio player.
+func (mm *MainMenu) Music() *mtk.AudioPlayer {
+	return mm.music
+}
+
 // PlayMainTheme start the main theme menu music.
 func (mm *MainMenu) PlayMainTheme() {
 	menuMusic := audio.Music[config.MenuMusic]

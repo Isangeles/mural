@@ -30,6 +30,8 @@ github.com/isangeles/burn v0.0.0-20240708183831-c5050f08221d h1:dCngZ+19xkSKouLI
 github.com/isangeles/burn v0.0.0-20240708183831-c5050f08221d/go.mod h1:QHcbimGyC0Fo4IP3cstWp2/4B5Mx23o+qHIxPoBLomM=
 github.com/isangeles/fire v0.0.0-20240706190327-e89e710804d7 h1:ZnqLaakDj01LPYZA/AoMAzCWrgB4S8T4jACHCAcme5g=
 github.com/isangeles/fire v0.0.0-20240706190327-e89e710804d7/go.mod h1:CRliptyTMvoonLxnCWWTplAUgUm98yb31a5tGsn49aI=
+github.com/isangeles/flame v0.0.0-20240701164051-2b203642ef58 h1:8ZCK4HYPat4LeE/bJfBMJdFktJechlElgmbsrgG+dUg=
+github.com/isangeles/flame v0.0.0-20240701164051-2b203642ef58/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7 h1:2OAWLyJ3nk/0q9wf0gnQ1L/3FZzw8zt+B4yBCfr7Bcw=
 github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7/go.mod h1:vbyLae9IjmTcKwRgUz2f2J7tqqvSCBUCX+XWoc0jDZo=
 github.com/isangeles/mtk v0.0.0-20240525105208-f98038455260 h1:E59D3WM2B8mjDDYchJLGISPVh5lOHxgxzBAtwZ9SFx0=

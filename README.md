@@ -61,6 +61,8 @@ L - open journal
 V - open crafting menu
 
 C - open character window
+
+~[grave/tilde] - open command console(main menu only)
 ## Multiplayer
 It's possible to join an online game hosted on the [Fire](https://github.com/isangeles/fire) server.
 
@@ -69,6 +71,8 @@ To connect to the remote server specify server host and port in `server` config 
 After that Mural will try to establish a connection with the game server on startup.
 
 If the connection was successful you can use the `login` menu to log in to the server.
+
+Also, the `server-user` configuration value can be used to setup auto-login.
 ## Configuration
 Configuration values are loaded from `.mural` file in Mural executable directory.
 

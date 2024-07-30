@@ -27,7 +27,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gopxl/beep"
 	"github.com/gopxl/pixel"
+	"github.com/gopxl/pixel/pixelgl"
 
 	"github.com/isangeles/flame/character"
 	"github.com/isangeles/flame/craft"
@@ -36,6 +38,7 @@ import (
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
 	"github.com/isangeles/flame/objects"
+	"github.com/isangeles/flame/rng"
 	"github.com/isangeles/flame/skill"
 	"github.com/isangeles/flame/useaction"
 
@@ -65,6 +68,7 @@ type Avatar struct {
 	eqItems      map[string]*ItemGraphic
 	effects      map[string]*EffectGraphic
 	skills       map[string]*SkillGraphic
+	greetings    []Greeting
 	portraitName string
 	torsoName    string
 	headName     string
@@ -74,6 +78,12 @@ type Avatar struct {
 // Type for avatar animations
 // types.
 type AvatarAnimType string
+
+// Struct for greeting audio effects.
+type Greeting struct {
+	*beep.Buffer
+	Name string
+}
 
 const (
 	// Animation types.
@@ -126,6 +136,13 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	av.eqItems = make(map[string]*ItemGraphic, 0)
 	av.effects = make(map[string]*EffectGraphic, 0)
 	av.skills = make(map[string]*SkillGraphic, 0)
+	// Greetings.
+	for _, greetingData := range data.Greetings {
+		greetingAudio := audio.Effects[greetingData.ID]
+		if greetingAudio != nil {
+			av.greetings = append(av.greetings, Greeting{greetingAudio, greetingData.ID})
+		}
+	}
 	// Events.
 	av.SetOnUseFunc(av.onUse)
 	av.AddOnModifierEvent(av.onModifierTaken)
@@ -146,6 +163,11 @@ func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 
 // Update updates avatar.
 func (av *Avatar) Update(win *mtk.Window) {
+	// Mouse events.
+	av.hovered = av.sprite.DrawArea().Contains(win.MousePosition())
+	if win.JustReleased(pixelgl.MouseButtonRight) && av.hovered {
+		av.playGreeting()
+	}
 	// Animations
 	switch {
 	case av.castingSpell():
@@ -196,7 +218,6 @@ func (av *Avatar) Update(win *mtk.Window) {
 			av.chatTimer = 0
 		}
 	}
-	av.hovered = av.sprite.DrawArea().Contains(win.MousePosition())
 }
 
 // DrawArea returns current draw area.
@@ -255,6 +276,9 @@ func (av *Avatar) Data() res.AvatarData {
 		Torso:    av.torsoName,
 		Head:     av.headName,
 		FullBody: av.fullBodyName,
+	}
+	for _, greeting := range av.greetings {
+		data.Greetings = append(data.Greetings, res.GreetingData{greeting.Name})
 	}
 	return data
 }
@@ -397,6 +421,18 @@ func (av *Avatar) infoText() string {
 		info = fmt.Sprintf("%s\n[%s_%s]", info, av.ID(), av.Serial())
 	}
 	return info
+}
+
+// playGreeting plays random greeting audio effect of the avatar.
+func (av *Avatar) playGreeting() {
+	if len(av.greetings) < 1 {
+		return
+	}
+	id := rng.RollInt(0, len(av.greetings)-1)
+	greeting := av.greetings[id]
+	if greeting.Buffer != nil {
+		mtk.Audio().Play(greeting.Buffer)
+	}
 }
 
 // Triggered after one of character skills was activated.

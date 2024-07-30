@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,16 @@ type AvatarsData struct {
 
 // Struct for avatar data.
 type AvatarData struct {
-	ID       string `xml:"id,attr" json:"id"`
-	Serial   string `xml:"serial,attr" json:"serial"`
-	Portrait string `xml:"portrait,attr" json:"portrait"`
-	Head     string `xml:"head,attr" json:"head"`
-	Torso    string `xml:"torso,attr" json:"torso"`
-	FullBody string `xml:"fullbody,attr" json:"full-body"`
+	ID        string         `xml:"id,attr" json:"id"`
+	Serial    string         `xml:"serial,attr" json:"serial"`
+	Portrait  string         `xml:"portrait,attr" json:"portrait"`
+	Head      string         `xml:"head,attr" json:"head"`
+	Torso     string         `xml:"torso,attr" json:"torso"`
+	FullBody  string         `xml:"fullbody,attr" json:"full-body"`
+	Greetings []GreetingData `xml:"greetings>greeting" json:"greetings"`
+}
+
+// Struct for avatar greeting data.
+type GreetingData struct {
+	ID string `xml:"id,attr" json:"id"`
 }

@@ -127,7 +127,7 @@ func (im *InventoryMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if im.bgSpr != nil {
 		im.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, im.DrawArea(), mainColor)
+		mtk.DrawRect(win, im.DrawArea(), mainColor)
 	}
 	// Title.
 	titleTextPos := pixel.V(0, im.Size().Y/2-mtk.ConvSize(25))

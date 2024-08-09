@@ -153,7 +153,7 @@ func (tw *TrainingWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if tw.bgSpr != nil {
 		tw.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, tw.DrawArea(), mainColor)
+		mtk.DrawRect(win, tw.DrawArea(), mainColor)
 	}
 	// Title & trade value.
 	titleTextMove := pixel.V(mtk.ConvSize(0), tw.Size().Y/2-mtk.ConvSize(25))

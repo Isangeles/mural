@@ -137,7 +137,7 @@ func (jw *JournalWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if jw.bgSpr != nil {
 		jw.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, jw.DrawArea(), nil)
+		mtk.DrawRect(win, jw.DrawArea(), nil)
 	}
 	// Title.
 	titleTextMove := pixel.V(0, jw.Size().Y/2-mtk.ConvSize(25))

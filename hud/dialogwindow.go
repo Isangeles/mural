@@ -129,7 +129,7 @@ func (dw *DialogWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if dw.bgSpr != nil {
 		dw.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, dw.DrawArea(), mainColor)
+		mtk.DrawRect(win.Window, dw.DrawArea(), mainColor)
 	}
 	// Title.
 	titleTextMove := pixel.V(0, dw.Size().Y/2-mtk.ConvSize(20))

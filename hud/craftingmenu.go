@@ -154,7 +154,7 @@ func (cm *CraftingMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if cm.bgSpr != nil {
 		cm.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, cm.DrawArea(), nil)
+		mtk.DrawRect(win, cm.DrawArea(), nil)
 	}
 	// Title.
 	titleTextMove := pixel.V(0, cm.Size().Y/2-mtk.ConvSize(25))

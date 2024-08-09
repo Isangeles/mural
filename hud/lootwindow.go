@@ -120,7 +120,7 @@ func (lw *LootWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if lw.bgSpr != nil {
 		lw.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, lw.DrawArea(), nil)
+		mtk.DrawRect(win.Window, lw.DrawArea(), nil)
 	}
 	// Title.
 	titleTextPos := pixel.V(0, lw.Size().Y/2-mtk.ConvSize(25))

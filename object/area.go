@@ -98,7 +98,7 @@ func (a *Area) Draw(win *mtk.Window, matrix pixel.Matrix, size pixel.Vec) {
 	}
 	// Day.
 	dayColor.A = a.dayTransparency()
-	mtk.DrawRectangle(win, win.Bounds(), dayColor)
+	mtk.DrawRect(win, win.Bounds(), dayColor)
 }
 
 // Update updates area.

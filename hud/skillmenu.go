@@ -125,7 +125,7 @@ func (sm *SkillMenu) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if sm.bgSpr != nil {
 		sm.bgSpr.Draw(win.Window, matrix)
 	} else {
-		mtk.DrawRectangle(win.Window, sm.DrawArea(), nil)
+		mtk.DrawRect(win.Window, sm.DrawArea(), nil)
 	}
 	// Title.
 	titleTextPos := pixel.V(mtk.ConvSize(0), sm.Size().Y/2-mtk.ConvSize(25))

@@ -120,7 +120,7 @@ func (cw *CharacterWindow) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	if cw.bgSpr != nil {
 		cw.bgSpr.Draw(win, matrix)
 	} else {
-		mtk.DrawRectangle(win, cw.DrawArea(), mainColor)
+		mtk.DrawRect(win, cw.DrawArea(), mainColor)
 	}
 	// Title.
 	titleTextMove := pixel.V(0, cw.Size().Y/2-mtk.ConvSize(25))

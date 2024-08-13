@@ -1,7 +1,7 @@
 /*
  * character.go
  *
- * Copyright 2020-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,6 +310,20 @@ func (c *Character) Usable(id, serial string) useaction.Usable {
 		}
 	}
 	return c.Inventory().Item(id, serial)
+}
+
+// Targeted checks if character is targeted by the active
+// player character.
+func (c *Character) Targeted() bool {
+	if c.game.ActivePlayerChar() == nil {
+		return false
+	}
+	for _, tar := range c.game.ActivePlayerChar().Targets() {
+		if tar.ID() == c.ID() && tar.Serial() == c.Serial() {
+			return true
+		}
+	}
+	return false
 }
 
 // meetTargetRangeReqs check if all target range requirements are meet.

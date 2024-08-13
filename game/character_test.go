@@ -1,7 +1,7 @@
 /*
  * character_test.go
  *
- * Copyright 2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2023-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,5 +50,22 @@ func TestCharSetPosition(t *testing.T) {
 	if x != 10 || y != 10 {
 		t.Errorf("Character destination point invalid: %fx%f != 10x10",
 			x, y)
+	}
+}
+
+// TestCharTargeted tests checking if game character is targeted.
+func TestCharTargeted(t *testing.T) {
+	// Create game.
+	mod := flame.NewModule(res.ModuleData{})
+	game := New(mod)
+	// Create characters.
+	charData := res.CharacterData{ID: "char", Level: 1}
+	pc := NewCharacter(character.New(charData), game)
+	game.SetActivePlayerChar(pc)
+	tar := NewCharacter(character.New(charData), game)
+	// Test.
+	pc.SetTarget(tar)
+	if !tar.Targeted() {
+		t.Errorf("Character not targeted")
 	}
 }

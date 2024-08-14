@@ -66,6 +66,10 @@ func TestCharTargeted(t *testing.T) {
 	// Test.
 	pc.SetTarget(tar)
 	if !tar.Targeted() {
-		t.Errorf("Character not targeted")
+		t.Errorf("Character not targeted after target set")
+	}
+	pc.SetTarget(nil)
+	if tar.Targeted() {
+		t.Errorf("Character still targeted after target removed")
 	}
 }

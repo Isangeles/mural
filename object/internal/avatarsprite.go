@@ -24,6 +24,8 @@
 package internal
 
 import (
+	"image/color"
+
 	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/mtk"
@@ -69,6 +71,19 @@ func (as *AvatarSprite) Draw(t pixel.Target, matrix pixel.Matrix) {
 	}
 	as.head.Draw(t, matrix)
 	as.torso.Draw(t, matrix)
+}
+
+// DrawColorMask draws current sprite elements with specified color mask.
+func (as *AvatarSprite) DrawColorMask(t pixel.Target, matrix pixel.Matrix, col color.Color) {
+	if as.weapon != nil {
+		as.weapon.DrawColorMask(t, matrix, col)
+	}
+	if as.fullBody != nil {
+		as.fullBody.DrawColorMask(t, matrix, col)
+		return
+	}
+	as.head.DrawColorMask(t, matrix, col)
+	as.torso.DrawColorMask(t, matrix, col)
 }
 
 // Update updates current sprite elements.

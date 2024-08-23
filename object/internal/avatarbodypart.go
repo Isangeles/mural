@@ -24,6 +24,8 @@
 package internal
 
 import (
+	"image/color"
+
 	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/mtk"
@@ -72,6 +74,16 @@ func (abp *AvatarBodyPart) Draw(t pixel.Target, matrix pixel.Matrix) {
 		return
 	}
 	abp.drawAnim.Draw(t, matrix)
+}
+
+// DrawColorMask draws current body animation
+// with specified color mask.
+func (abp *AvatarBodyPart) DrawColorMask(t pixel.Target, matrix pixel.Matrix, col color.Color) {
+	if abp.secAnim != nil {
+		abp.secAnim.DrawColorMask(t, matrix, col)
+		return
+	}
+	abp.drawAnim.DrawColorMask(t, matrix, col)
 }
 
 // Update updates current body animation.

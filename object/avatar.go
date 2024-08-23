@@ -27,6 +27,8 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/image/colornames"
+
 	"github.com/gopxl/beep"
 	"github.com/gopxl/pixel"
 	"github.com/gopxl/pixel/pixelgl"
@@ -99,6 +101,7 @@ const (
 	chatTimeMax = 2000
 )
 
+
 // NewAvatar creates new avatar for specified game character
 // from specified avatar resources.
 // Returns error if spritesheets from data object(torso/head or full body)
@@ -153,7 +156,11 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 // Draw draws avatar.
 func (av *Avatar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 	// Sprite.
-	av.sprite.Draw(win, matrix)
+	if av.Targeted() {
+		av.sprite.DrawColorMask(win, matrix, colornames.Darkgray)
+	} else {
+		av.sprite.Draw(win, matrix)
+	}
 	// Chat.
 	chatPos := mtk.MoveTC(av.sprite.DrawArea().Size(), av.chat.Size())
 	if av.speaking {

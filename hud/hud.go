@@ -225,12 +225,6 @@ func (hud *HUD) Update(win *mtk.Window) {
 	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
 		hud.Game().SetPause(!hud.Game().Pause())
 	}
-	if win.JustPressed(pixelgl.MouseButtonLeft) {
-		hud.onMouseLeftPressed(win.MousePosition())
-	}
-	if win.JustPressed(pixelgl.MouseButtonRight) {
-		hud.onMouseRightPressed(win.MousePosition())
-	}
 	// Put PC target into target frame.
 	if hud.camera.area != nil && len(hud.Game().ActivePlayerChar().Targets()) > 0 {
 		for _, av := range hud.camera.area.Avatars() {
@@ -516,12 +510,4 @@ func (hud *HUD) menuOpen() bool {
 		hud.journal.Opened() || hud.loot.Opened() ||
 		hud.menu.Opened() || hud.savemenu.Opened() ||
 		hud.trade.Opened() || hud.training.Opened()
-}
-
-// Triggered after right mouse button was pressed.
-func (hud *HUD) onMouseRightPressed(pos pixel.Vec) {
-}
-
-// Triggered after left mouse button was pressed.
-func (hud *HUD) onMouseLeftPressed(pos pixel.Vec) {
 }

@@ -57,8 +57,9 @@ var (
 	secColor    = colornames.Blue
 	accentColor = colornames.Red
 	// Keys.
-	pauseKey = pixelgl.KeySpace
-	exitKey  = pixelgl.KeyEscape
+	pauseKey  = pixelgl.KeySpace
+	exitKey   = pixelgl.KeyEscape
+	targetKey = pixelgl.KeyTab
 )
 
 // Struct for 'head-up display'.
@@ -224,6 +225,9 @@ func (hud *HUD) Update(win *mtk.Window) {
 	// Toggle game pause.
 	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
 		hud.Game().SetPause(!hud.Game().Pause())
+	}
+	if hud.game.ActivePlayerChar() != nil && win.JustPressed(targetKey) {
+		hud.targetNearObject()
 	}
 	// Put PC target into target frame.
 	if hud.camera.area != nil && len(hud.Game().ActivePlayerChar().Targets()) > 0 {
@@ -444,6 +448,15 @@ func (hud *HUD) Apply(data res.HUDData) error {
 // SetOnAreaChangedFunc sets function triggered on area change.
 func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 	hud.onAreaChanged = f
+}
+
+// targetNearObject sets the active player target to the nearest object.
+func (hud *HUD) targetNearObject() {
+	pcX, pcY := hud.game.ActivePlayerChar().Position()
+	objects := hud.camera.area.NearObjects(pcX, pcY, hud.game.ActivePlayerChar().SightRange())
+	if len(objects) > 0 {
+		hud.game.ActivePlayerChar().SetTarget(hud.nearestObject(objects))
+	}
 }
 
 // runAreaScripts executes all scripts for specified area

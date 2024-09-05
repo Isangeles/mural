@@ -52,6 +52,8 @@ ESCAPE - open in-game menu
 
 ENTER - activate/deactivate chat
 
+TAB - target near object
+
 B - open inventory
 
 K - open skills menu

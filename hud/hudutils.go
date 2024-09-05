@@ -1,7 +1,7 @@
 /*
  * hudutils.go
  *
- * Copyright 2019-2023 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@ package hud
 import (
 	"fmt"
 
+	"github.com/isangeles/flame/area"
+	"github.com/isangeles/flame/objects"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/item"
 
@@ -88,6 +90,20 @@ func (hud *HUD) playerObject(id, serial string) bool {
 		}
 	}
 	return false
+}
+
+// nearestObject returns the object nearest to the the active player character.
+func (hud *HUD) nearestObject(obs []area.Object) (nearest area.Object) {
+	pc := hud.game.ActivePlayerChar()
+	for _, ob := range obs {
+		if ob.ID() == pc.ID() && ob.Serial() == pc.Serial() {
+			continue
+		}
+		if nearest == nil || objects.Range(ob, pc) < objects.Range(nearest, pc) {
+			nearest = ob
+		}
+	}
+	return nearest
 }
 
 // itemErrorGraphic returns error graphic data for specified item.

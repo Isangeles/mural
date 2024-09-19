@@ -8,11 +8,11 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
-	github.com/isangeles/burn v0.0.0-20240708183831-c5050f08221d
-	github.com/isangeles/fire v0.0.0-20240727170630-e89df3c92af7
+	github.com/isangeles/burn v0.0.0-20240909153220-0cd784a44bb9
+	github.com/isangeles/fire v0.0.0-20240909201201-13d969786d56
 	github.com/isangeles/flame v0.0.0-20240724190605-f4f40ef6037b
-	github.com/isangeles/ignite v0.0.0-20240313173753-ad1b581e72c7
-	github.com/isangeles/mtk v0.0.0-20240902174221-4b54e2530b36
+	github.com/isangeles/ignite v0.0.0-20240910193745-de7dbb0ddaa5
+	github.com/isangeles/mtk v0.0.0-20240918192435-3d4562e313fc
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.20.0

@@ -227,8 +227,8 @@ func (dw *DialogWindow) dialogUpdate() {
 	}
 	// Insert answers to answers list.
 	dw.answersList.Clear()
-	for i, a := range answers {
-		answerText := fmt.Sprintf("%d) %s", i, dw.dialogText(a.ID()))
+	for _, a := range answers {
+		answerText := fmt.Sprintf("%s", dw.dialogText(a.ID()))
 		dw.answersList.AddItem(answerText, a)
 	}
 }

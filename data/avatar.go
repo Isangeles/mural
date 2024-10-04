@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ package data
 
 import (
 	"bufio"
-	"encoding/xml"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -50,9 +50,9 @@ func ImportAvatars(path string) ([]res.AvatarData, error) {
 		return nil, fmt.Errorf("unable to read data file: %v", err)
 	}
 	data := new(res.AvatarsData)
-	err = xml.Unmarshal(buf, data)
+	err = json.Unmarshal(buf, data)
 	if err != nil {
-		return nil, fmt.Errorf("unable to unmarshal XML data: %v",
+		return nil, fmt.Errorf("unable to unmarshal JSON data: %v",
 			err)
 	}
 	return data.Avatars, nil
@@ -89,9 +89,9 @@ func ExportAvatars(path string, avatars ...res.AvatarData) error {
 	for _, av := range avatars {
 		data.Avatars = append(data.Avatars, av)
 	}
-	xml, err := xml.Marshal(data)
+	json, err := json.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("unable to marshal XML data: %v", err)
+		return fmt.Errorf("unable to marshal JSON data: %v", err)
 	}
 	// Create base file.
 	dirPath := filepath.Dir(path)
@@ -106,7 +106,7 @@ func ExportAvatars(path string, avatars ...res.AvatarData) error {
 	defer f.Close()
 	// Write data to base file.
 	w := bufio.NewWriter(f)
-	w.Write(xml)
+	w.Write(json)
 	w.Flush()
 	return nil
 }

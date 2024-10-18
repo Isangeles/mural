@@ -8,10 +8,10 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
-	github.com/isangeles/burn v0.0.0-20240909153220-0cd784a44bb9
-	github.com/isangeles/fire v0.0.0-20241008151456-987c66c23a7f
-	github.com/isangeles/flame v0.0.0-20241001183948-d6b2dba3b628
-	github.com/isangeles/ignite v0.0.0-20240910193745-de7dbb0ddaa5
+	github.com/isangeles/burn v0.0.0-20241015182937-514db43352fc
+	github.com/isangeles/fire v0.0.0-20241016135851-26c4a556cc55
+	github.com/isangeles/flame v0.0.0-20241014141607-0db0f4cbe2e1
+	github.com/isangeles/ignite v0.0.0-20241017100437-3556950e5103
 	github.com/isangeles/mtk v0.0.0-20240922102027-76c096e4ff82
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb

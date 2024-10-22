@@ -39,6 +39,7 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/character"
+	"github.com/isangeles/flame/serial"
 	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
@@ -192,6 +193,7 @@ func enterMainMenu() {
 	if err != nil {
 		log.Err.Printf("Unable to reimport module: %v", err)
 	}
+	serial.Reset()
 	setModule(modData)
 	mainMenu.SetServer(server)
 }

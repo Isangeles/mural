@@ -522,5 +522,6 @@ func (hud *HUD) menuOpen() bool {
 		hud.dialog.Opened() || hud.inv.Opened() ||
 		hud.journal.Opened() || hud.loot.Opened() ||
 		hud.menu.Opened() || hud.savemenu.Opened() ||
-		hud.trade.Opened() || hud.training.Opened()
+		hud.trade.Opened() || hud.training.Opened() ||
+		hud.skills.Opened()
 }

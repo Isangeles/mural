@@ -16,7 +16,6 @@ MINOR:
 * Loading scripts along with module and chapter data
 * Stop old scripts while leaving a game
 * Inventory: equip indicator(grey highlight) is visible even if equipped item was moved to other slot
-* Inventory: Icons are covering item info tooltip
 * Dialog: on smaller resolution(e.g. 1280x1024) answer labels are not aligned to right
 * Exporting character via flame data package exports also quests, effects, items, etc., those
   should be deleted when exporting character to use in different game

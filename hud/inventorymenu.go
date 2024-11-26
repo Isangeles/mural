@@ -210,7 +210,6 @@ func (im *InventoryMenu) Size() pixel.Vec {
 
 // insertItems inserts specified items in inventory slots.
 func (im *InventoryMenu) insertItems(items ...*item.InventoryItem) {
-	im.slots.Clear()
 	// Insert items from layout first.
 	pc := im.hud.Game().ActivePlayerChar()
 	layout := im.hud.Layout(pc.ID(), pc.Serial())
@@ -366,9 +365,9 @@ func (im *InventoryMenu) confirmRemove(s *mtk.Slot) {
 // refresh inserts player items to inventory
 // slots and saves inventory layout.
 func (im *InventoryMenu) refresh() {
-	pcAvatar := im.hud.PCAvatar()
-	if pcAvatar != nil {
-		im.insertItems(pcAvatar.Inventory().Items()...)
+	im.resetSlots()
+	if im.hud.PCAvatar() != nil {
+		im.insertItems(im.hud.PCAvatar().Inventory().Items()...)
 	}
 	im.updateLayout()
 }
@@ -402,7 +401,7 @@ func (im *InventoryMenu) onSlotRightClicked(s *mtk.Slot) {
 				it.Serial(), err)
 			return
 		}
-		s.SetColor(invSlotEqColor)
+		im.refresh()
 	case *item.Misc:
 		im.hud.Game().ActivePlayerChar().Use(it)
 		if it.Consumable() {
@@ -426,6 +425,7 @@ func (im *InventoryMenu) onSlotLeftClicked(s *mtk.Slot) {
 		mtk.SlotSwitch(s, ds)
 		im.updateLayout()
 		ds.Drag(false)
+		im.refresh()
 		return
 	}
 	if len(s.Values()) < 1 {
@@ -479,4 +479,12 @@ func (im *InventoryMenu) onSlotSpecialLeftClicked(s *mtk.Slot) {
 		return
 	}
 	s.Drag(true)
+}
+
+// resetSlots resets all inventory slots to the initial state.
+func (im *InventoryMenu) resetSlots() {
+	for _, s := range im.slots.Slots() {
+		s.Clear()
+		s.SetColor(invSlotColor)
+	}
 }

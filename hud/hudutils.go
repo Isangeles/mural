@@ -57,6 +57,11 @@ func (hud *HUD) insertSlotItem(it *object.ItemGraphic, s *mtk.Slot) {
 	s.AddValues(it)
 	s.SetInfo(hud.itemInfo(it.Item))
 	s.SetIcon(it.Icon())
+	if eqIt, ok := it.Item.(item.Equiper); ok {
+		if hud.PCAvatar() != nil && hud.PCAvatar().Equipment().Equiped(eqIt) {
+			s.SetColor(invSlotEqColor)
+		}
+	}
 }
 
 // itemInfo returns formated string with

@@ -156,10 +156,11 @@ func (mb *MenuBar) Draw(win *mtk.Window, matrix pixel.Matrix) {
 		mb.drawIMBackground(win)
 	}
 	// Slots.
-	slotsStartPos := mtk.ConvVec(pixel.V(-163, 0))
-	for _, s := range mb.slots {
+	slotsStartPos := mtk.ConvVec(pixel.V(161, 0))
+	for i := len(mb.slots)-1; i >= 0; i-- {
+		s := mb.slots[i]
 		s.Draw(win, matrix.Moved(slotsStartPos))
-		slotsStartPos.X += s.Size().X + mtk.ConvSize(6)
+		slotsStartPos.X -= s.Size().X + mtk.ConvSize(6)
 	}
 	// Buttons.
 	menuButtonPos := pixel.V(mb.Size().X/2-mtk.ConvSize(30), mtk.ConvSize(0))

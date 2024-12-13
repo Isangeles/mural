@@ -55,10 +55,10 @@ func guiaudio(cmd burn.Command) (int, string) {
 		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex()-1)
 		guiMenu.Music().ResumePlaylist()
 		return 0, ""
-	case "volume":
+	case "music-volume":
 		out := fmt.Sprintf("%f", guiMenu.Music().Volume())
 		return 0, out
-	case "set-volume":
+	case "set-music-volume":
 		if len(cmd.Args()) < 1 {
 			return 3, fmt.Sprintf("%s: not enought args for: %s",
 				GUIAudio, cmd.OptionArgs()[0])
@@ -70,7 +70,7 @@ func guiaudio(cmd burn.Command) (int, string) {
 		}
 		guiMenu.Music().SetVolume(vol)
 		return 0, ""
-	case "set-mute":
+	case "set-music-mute":
 		if len(cmd.Args()) < 1 {
 			return 3, fmt.Sprintf("%s: not enought args for: %s",
 				GUIAudio, cmd.OptionArgs()[0])

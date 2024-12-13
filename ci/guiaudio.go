@@ -39,10 +39,10 @@ func guiaudio(cmd burn.Command) (int, string) {
 		return 2, fmt.Sprintf("%s: no main menu set", GUIAudio)
 	}
 	switch cmd.OptionArgs()[0] {
-	case "play-music":
+	case "play":
 		guiMenu.Music().ResumePlaylist()
 		return 0, ""
-	case "stop-music":
+	case "stop":
 		guiMenu.Music().Stop()
 		return 0, ""
 	case "next":

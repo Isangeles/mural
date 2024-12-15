@@ -26,8 +26,9 @@ package ci
 import (
 	"fmt"
 	"strconv"
-	
+
 	"github.com/isangeles/burn"
+	"github.com/isangeles/mtk"
 )
 
 // guiaudio handles guiaudio command.
@@ -47,12 +48,12 @@ func guiaudio(cmd burn.Command) (int, string) {
 		return 0, ""
 	case "next":
 		guiMenu.Music().Stop()
-		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex()+1)
+		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex() + 1)
 		guiMenu.Music().ResumePlaylist()
 		return 0, ""
 	case "prev":
 		guiMenu.Music().Stop()
-		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex()-1)
+		guiMenu.Music().SetPlayIndex(guiMenu.Music().PlayIndex() - 1)
 		guiMenu.Music().ResumePlaylist()
 		return 0, ""
 	case "music-volume":
@@ -77,6 +78,29 @@ func guiaudio(cmd burn.Command) (int, string) {
 		}
 		mute := cmd.Args()[0] == "true"
 		guiMenu.Music().SetMute(mute)
+		return 0, ""
+	case "effects-volume":
+		out := fmt.Sprintf("%f", mtk.Audio().Volume())
+		return 0, out
+	case "set-effects-volume":
+		if len(cmd.Args()) < 1 {
+			return 3, fmt.Sprintf("%s: not enought args for: %s",
+				GUIAudio, cmd.OptionArgs()[0])
+		}
+		vol, err := strconv.ParseFloat(cmd.Args()[0], 64)
+		if err != nil {
+			return 3, fmt.Sprintf("%s: invalid argument: '%s': %v",
+				GUIAudio, cmd.Args()[0], err)
+		}
+		mtk.Audio().SetVolume(vol)
+		return 0, ""
+	case "set-effects-mute":
+		if len(cmd.Args()) < 1 {
+			return 3, fmt.Sprintf("%s: not enought args for: %s",
+				GUIAudio, cmd.OptionArgs()[0])
+		}
+		mute := cmd.Args()[0] == "true"
+		mtk.Audio().SetMute(mute)
 		return 0, ""
 	default:
 		return 2, fmt.Sprintf("%s: invalid option: '%s'", GUIAudio,

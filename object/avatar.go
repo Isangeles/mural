@@ -1,7 +1,7 @@
 /*
  * avatar.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	}
 	// Events.
 	av.SetOnUseFunc(av.onUse)
-	av.AddOnModifierEvent(av.onModifierTaken)
+	av.SetOnModifierTakenFunc(av.onModifierTaken)
 	av.updateGraphic()
 	return av, nil
 }

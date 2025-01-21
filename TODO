@@ -31,6 +31,7 @@ MINOR:
 * Sometimes training via game server triggers avatar onModifierTaken function multiple times(conflicting update responses?)
 * Not all settings should require restart after the change(vol/mute for example)
 * Managing all audio with guiaudio CI tool(currently it's only menu music)
+* Fix silencing unvisible avatars
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

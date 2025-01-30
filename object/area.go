@@ -1,7 +1,7 @@
 /*
  * area.go
  *
- * Copyright 2023-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2023-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,11 +106,12 @@ func (a *Area) Update(win *mtk.Window) {
 	a.updateObjects()
 	// Avatars.
 	for _, av := range a.Avatars() {
-		if !a.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
-			continue
+		if a.game.VisibleForPlayer(av.Position().X, av.Position().Y) {
+			av.Silence(false)
+			av.Update(win)
+		} else {
+			av.Silence(true)
 		}
-		av.Silence(false)
-		av.Update(win)
 	}
 }
 

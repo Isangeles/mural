@@ -108,6 +108,7 @@ const (
 // were not found in res/graphic avatar spritesheet map.
 func NewAvatar(char *game.Character, data *res.AvatarData) (*Avatar, error) {
 	av := new(Avatar)
+	av.silenced = true
 	av.Character = char
 	// Portrait.
 	av.portrait = graphic.Portraits[data.Portrait]

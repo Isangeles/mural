@@ -8,14 +8,14 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
-	github.com/isangeles/burn v0.0.0-20241112211812-0738a5e23d7a
-	github.com/isangeles/fire v0.0.0-20250106194820-56f4757ca436
+	github.com/isangeles/burn v0.0.0-20250205155657-19989e39c1d1
+	github.com/isangeles/fire v0.0.0-20250207144343-cd01190ac608
 	github.com/isangeles/flame v0.0.0-20250124145150-32c764e4155e
 	github.com/isangeles/ignite v0.0.0-20250127163554-afb4227b8119
 	github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.23.0
+	golang.org/x/image v0.24.0
 )
 
 require (
@@ -31,5 +31,5 @@ require (
 	github.com/jfreymuth/oggvorbis v1.0.5 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 )

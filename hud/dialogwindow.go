@@ -1,7 +1,7 @@
 /*
  * dialogwindow.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,6 +236,9 @@ func (dw *DialogWindow) dialogUpdate() {
 // Triggered after clicking close button.
 func (dw *DialogWindow) onCloseButtonClicked(b *mtk.Button) {
 	dw.Hide()
+	if dw.dialog != nil {
+		dw.hud.Game().EndDialog(dw.dialog)
+	}
 }
 
 // Triggered after selecting answer from answers list.

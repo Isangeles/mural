@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,6 +275,27 @@ func (g *Game) StartDialog(dialog *dialog.Dialog, target dialog.Talker) {
 	err := g.Server().Send(req)
 	if err != nil {
 		log.Err.Printf("Game: start dialog: unable to send dialog request: %v",
+			err)
+	}
+}
+
+// EndDialog ends specified dialog.
+func (g *Game) EndDialog(dialog *dialog.Dialog) {
+	defer dialog.SetTarget(nil)
+	if g.Server() == nil || dialog.Owner() == nil {
+		return
+	}
+	dialogReq := request.DialogEnd{
+		TargetID:     dialog.Target().ID(),
+		TargetSerial: dialog.Target().Serial(),
+		OwnerID:      dialog.Owner().ID(),
+		OwnerSerial:  dialog.Owner().Serial(),
+		DialogID:     dialog.ID(),
+	}
+	req := request.Request{DialogEnd: []request.DialogEnd{dialogReq}}
+	err := g.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Game: end dialog: unable to send end dialog request: %v",
 			err)
 	}
 }

@@ -9,9 +9,9 @@ require (
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
 	github.com/isangeles/burn v0.0.0-20250225183802-756c003d590a
-	github.com/isangeles/fire v0.0.0-20250314162632-c0f4a8b48817
-	github.com/isangeles/flame v0.0.0-20250224192030-08e09328c70b
-	github.com/isangeles/ignite v0.0.0-20250127163554-afb4227b8119
+	github.com/isangeles/fire v0.0.0-20250328160649-581d7665e14e
+	github.com/isangeles/flame v0.0.0-20250323161844-4795fcd24ada
+	github.com/isangeles/ignite v0.0.0-20250326172246-907393ec196d
 	github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
@@ -19,7 +19,7 @@ require (
 )
 
 require (
-	github.com/ebitengine/oto/v3 v3.3.2 // indirect
+	github.com/ebitengine/oto/v3 v3.3.3 // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/faiface/glhf v0.0.0-20231008131257-c8034b63022b // indirect
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect

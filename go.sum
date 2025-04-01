@@ -28,8 +28,8 @@ github.com/hajimehoshi/go-mp3 v0.3.4/go.mod h1:fRtZraRFcWb0pu7ok0LqyFhCUrPeMsGRS
 github.com/hajimehoshi/oto/v2 v2.3.1/go.mod h1:seWLbgHH7AyUMYKfKYT9pg7PhUu9/SisyJvNTT+ASQo=
 github.com/isangeles/burn v0.0.0-20250225183802-756c003d590a h1:OtfVVZOqv/orzoAWD/cBGGC6unWZqBlyrVNAGJyXO8Q=
 github.com/isangeles/burn v0.0.0-20250225183802-756c003d590a/go.mod h1:KP4Zuk1oEl/gFLR9WxKicyX+xNNONZKYH1Ey1uYEDKk=
-github.com/isangeles/fire v0.0.0-20250328160649-581d7665e14e h1:6FGREOTzy1jaWUnAakuC2Av28p3ZRA50VgFoHZAQ/Rg=
-github.com/isangeles/fire v0.0.0-20250328160649-581d7665e14e/go.mod h1:AMN4SIYcDeeK4Iiq6JXNZNLXLP37Jd0Gm5YIeJvdXig=
+github.com/isangeles/fire v0.0.0-20250331165647-fdd7be2be95a h1:tC8V1ha/M4GQnez3Ex4OvaWTLqrrkE/axNeYF9JxA2U=
+github.com/isangeles/fire v0.0.0-20250331165647-fdd7be2be95a/go.mod h1:AMN4SIYcDeeK4Iiq6JXNZNLXLP37Jd0Gm5YIeJvdXig=
 github.com/isangeles/flame v0.0.0-20250323161844-4795fcd24ada h1:oqzvrJP8m7c2IKcXN/7Vg0A8uNq5FJiLUD4faRlYcWo=
 github.com/isangeles/flame v0.0.0-20250323161844-4795fcd24ada/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/ignite v0.0.0-20250326172246-907393ec196d h1:Hv94QrAtw0H11qFjCvNDDpsWlqlALI8Tbb8r7RN4iyM=

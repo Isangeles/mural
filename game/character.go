@@ -1,7 +1,7 @@
 /*
  * character.go
  *
- * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +101,16 @@ func (c *Character) SetOnUseFunc(f func(o useaction.Usable)) {
 func (c *Character) SetPosition(x, y float64) {
 	c.Character.SetPosition(x, y)
 	c.SetDestPoint(x, y)
+	if c.game.Server() == nil {
+		return
+	}
+	setPosReq := request.SetPos{c.ID(), c.Serial(), x, y}
+	req := request.Request{SetPos: []request.SetPos{setPosReq}}
+	err := c.game.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Character: %s %s: unable to send set pos request to the server: %v",
+			c.ID(), c.Serial(), err)
+	}
 }
 
 // SetDestPoint sets destination point for player character.

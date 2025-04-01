@@ -9,7 +9,7 @@ require (
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
 	github.com/isangeles/burn v0.0.0-20250225183802-756c003d590a
-	github.com/isangeles/fire v0.0.0-20250328160649-581d7665e14e
+	github.com/isangeles/fire v0.0.0-20250331165647-fdd7be2be95a
 	github.com/isangeles/flame v0.0.0-20250323161844-4795fcd24ada
 	github.com/isangeles/ignite v0.0.0-20250326172246-907393ec196d
 	github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a

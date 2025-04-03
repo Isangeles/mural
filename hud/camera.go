@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,8 @@ import (
 )
 
 var (
-	FOWColor pixel.RGBA = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+	FOWColor     = pixel.RGBA{0.1, 0.1, 0.1, 0.7}
+	debugMoveKey = pixelgl.KeyLeftShift
 )
 
 const (
@@ -125,7 +126,9 @@ func (c *Camera) Update(win *mtk.Window) {
 		c.area.Update(win)
 	}
 	// Mouse events.
-	if win.JustPressed(pixelgl.MouseButtonLeft) {
+	if config.Debug && win.JustPressed(pixelgl.MouseButtonLeft) && win.Pressed(debugMoveKey) {
+		c.onDebugMouseLeftPressed(win.MousePosition())
+	} else if win.JustPressed(pixelgl.MouseButtonLeft) {
 		c.onMouseLeftPressed(win.MousePosition())
 	}
 	if win.JustPressed(pixelgl.MouseButtonRight) {
@@ -294,4 +297,10 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	if !c.hud.game.Pause() && c.area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
+}
+
+// Triggered after pressing left mouse button with move debug key.
+func (c *Camera) onDebugMouseLeftPressed(pos pixel.Vec) {
+	movePos := c.ConvCameraPos(pos)
+	c.hud.Game().ActivePlayerChar().SetPosition(movePos.X, movePos.Y)
 }

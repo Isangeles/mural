@@ -288,7 +288,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		}
 		// Show dialog window.
 		log.Dbg.Printf("hud: dialog: %s#%s", av.ID(), av.Serial())
-		dialog := av.Dialogs()[0]
+		dialog := av.Dialog(pc)
 		c.hud.dialog.SetDialog(dialog)
 		c.hud.dialog.Show()
 	}

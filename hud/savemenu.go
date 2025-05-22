@@ -1,7 +1,7 @@
 /*
  * savemenu.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,6 +268,7 @@ func (sm *SaveMenu) onCloseButtonClicked(b *mtk.Button) {
 
 // Triggered after save button clicked.
 func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
+	// Retrieve save name & save
 	saveFileName := sm.saveNameEdit.Text()
 	saveName := strings.Split(saveFileName, ".")[0]
 	if len(saveName) < 1 {
@@ -276,7 +277,12 @@ func (sm *SaveMenu) onSaveButtonClicked(b *mtk.Button) {
 	err := sm.save(saveName)
 	if err != nil {
 		log.Err.Printf("hud: savegame menu: unable to save: %v", err)
+		return
 	}
+	// Clear the save name edit & go back to main menu
+	sm.saveNameEdit.SetText("")
+	sm.Hide()
+	sm.hud.menu.Show()
 }
 
 // Save saves GUI and module state.

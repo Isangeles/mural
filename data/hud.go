@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2019-2022 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@ package data
 
 import (
 	"bufio"
-	"encoding/xml"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/isangeles/mural/data/res"
-	"github.com/isangeles/mural/log"
 )
 
 // ImportHUD imports HUD data file from specified path.
@@ -49,7 +48,7 @@ func ImportHUD(path string) (res.HUDData, error) {
 		return data, fmt.Errorf("unable to read data file: %v",
 			err)
 	}
-	err = xml.Unmarshal(buf, &data)
+	err = json.Unmarshal(buf, &data)
 	if err != nil {
 		return data, fmt.Errorf("unable to unmarshal data: %v",
 			err)
@@ -57,32 +56,30 @@ func ImportHUD(path string) (res.HUDData, error) {
 	return data, nil
 }
 
-// ExportHUD exports HUD data to file with specified name
-// in directory with specified path.
+// ExportHUD exports HUD data to file with specified path.
 func ExportHUD(hud res.HUDData, path string) error {
 	// Marshal GUI.
 	hud.Name = filepath.Base(path)
-	xml, err := xml.Marshal(&hud)
+	data, err := json.Marshal(&hud)
 	if err != nil {
-		return fmt.Errorf("unable to marshal hud: %v",
+		return fmt.Errorf("unable to marshal data: %v",
 			err)
 	}
 	// Create save file.
 	err = os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
-		return fmt.Errorf("unable to create hud directory: %v",
+		return fmt.Errorf("unable to create directory: %v",
 			err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("unable to create hud file: %v",
+		return fmt.Errorf("unable to create file: %v",
 			err)
 	}
 	defer file.Close()
 	// Write save.
-	w := bufio.NewWriter(file)
-	w.Write(xml)
-	w.Flush()
-	log.Dbg.Printf("HUD exported to: %s", path)
+	writer := bufio.NewWriter(file)
+	writer.Write(data)
+	writer.Flush()
 	return nil
 }

@@ -33,6 +33,7 @@ MINOR:
 * Managing all audio with guiaudio CI tool(currently it's only menu music)
 * NPC avatar quest indicator
 * Fix for the cast bar in server mode
+* Switch to json format for GUI data files
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

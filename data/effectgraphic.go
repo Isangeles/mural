@@ -1,7 +1,7 @@
 /*
  * effectgraphic.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,6 @@ import (
 
 	"github.com/isangeles/mural/data/res"
 	"github.com/isangeles/mural/log"
-)
-
-var (
-	EffectGraphicsFileExt = ".graphic"
 )
 
 // ImportEffectsGraphics imports all effects graphics from

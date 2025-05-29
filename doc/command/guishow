@@ -1,0 +1,18 @@
+.TH guishow
+.SH NAME
+guishow - command for retrieving various GUI informations
+.SH DESCRIPTION
+With guishow you can show various configuration values and other GUI-related information like version or list of player characters.
+.SH OPTIONS
+.P
+* version
+.br
+guishow -o version
+.br
+Shows GUI version
+.P
+* playable-chars
+.br
+guishow -o playable-chars
+.br
+Shows all playable characters available in the new game menu

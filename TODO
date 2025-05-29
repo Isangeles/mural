@@ -7,7 +7,7 @@ MAJOR:
 * Documentation for gui directories: chapters, effects, font, items, objects, portraits,
   scripts, skills, chapter, chapter/areas, area
 * Documentation for ZIP archives: graphic.zip, audio.zip
-* Documentation for GUI commands: guiaudio, guiexport, guiimport, guiset, guishow
+* Documentation for GUI commands: guiaudio, guiexport, guiimport, guiset
 * Character movement is lagging when connected to the game server(windows only?)
 * Handling of server change chapter response(to reload chapter resources for GUI)
 MINOR:

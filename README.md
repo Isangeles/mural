@@ -182,12 +182,12 @@ Exits the program.
 ```
 guiimport -o hud -a [save name]
 ```
-Saves current HUD state to file in `data/[module]/mural/saves` directory.
+Saves current HUD state to file in `data/[module]/mural/hud` directory.
 
 ```
 guiexport -o hud -a [save name]
 ```
-Load HUD state from file in `data/[module]/mural/saves` directory.
+Load HUD state from file in `data/[module]/mural/hud` directory.
 
 ```
 guiaudio -o set-mute -a [true/false]

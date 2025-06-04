@@ -32,7 +32,7 @@ MINOR:
 * Not all settings should require restart after the change(vol/mute for example)
 * NPC avatar quest indicator
 * Fix for the cast bar in server mode
-* Switch to json format for GUI data files
+* Cast bar background
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

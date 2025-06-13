@@ -8,19 +8,19 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gopxl/beep v1.4.1
 	github.com/gopxl/pixel v1.0.0
-	github.com/isangeles/burn v0.0.0-20250424161312-bb860a52a87e
+	github.com/isangeles/burn v0.0.0-20250609213334-741bf0763efe
 	github.com/isangeles/fire v0.0.0-20250513175604-25ea77158d3a
-	github.com/isangeles/flame v0.0.0-20250509201456-63692a43680c
+	github.com/isangeles/flame v0.0.0-20250610160031-71c98df0a339
 	github.com/isangeles/ignite v0.0.0-20250514182509-12a4747d6045
 	github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.27.0
+	golang.org/x/image v0.28.0
 )
 
 require (
 	github.com/ebitengine/oto/v3 v3.3.3 // indirect
-	github.com/ebitengine/purego v0.8.3 // indirect
+	github.com/ebitengine/purego v0.8.4 // indirect
 	github.com/faiface/glhf v0.0.0-20231008131257-c8034b63022b // indirect
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 // indirect

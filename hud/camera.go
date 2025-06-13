@@ -259,7 +259,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Loot.
 	for _, av := range c.area.Avatars() {
-		if !av.DrawArea().Contains(pos) || av.Live() || av == pc {
+		if !av.DrawArea().Contains(pos) || (av.Live() && !av.OpenLoot()) || av == pc {
 			continue
 		}
 		// Range check.

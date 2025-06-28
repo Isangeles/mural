@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +39,7 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/character"
-	"github.com/isangeles/flame/serial"
 	flamedata "github.com/isangeles/flame/data"
-	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 
 	"github.com/isangeles/burn"
@@ -64,9 +62,7 @@ var (
 	win        *mtk.Window
 	mainMenu   *mainmenu.MainMenu
 	pcHUD      *hud.HUD
-	mod        *flame.Module
 	activeGame *game.Game
-	server     *game.Server
 	inGame     bool
 )
 
@@ -76,14 +72,8 @@ func main() {
 	config.Load()
 	defer config.Save()
 	log.PrintStdOut(config.Debug)
-	// Import module.
-	modData, err := flamedata.ImportModuleDir(config.ModulePath())
-	if err != nil {
-		panic(fmt.Errorf("Unable to import module: %v", err))
-	}
-	setModule(modData)
 	// Load GUI graphic data.
-	err = data.LoadModuleData(config.GUIPath)
+	err := data.LoadModuleData(config.GUIPath)
 	if err != nil {
 		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
 	}
@@ -102,14 +92,6 @@ func main() {
 	uiFont := graphic.Fonts[config.MainFont]
 	if uiFont != nil {
 		mtk.SetMainFont(uiFont)
-	}
-	// Connect to the game server(if configured).
-	if len(config.ServerHost+config.ServerPort) > 1 {
-		server, err = game.NewServer(config.ServerHost, config.ServerPort)
-		if err != nil {
-			log.Err.Printf("Unable to connect to the game server: %v",
-				err)
-		}
 	}
 	// Run graphic.
 	pixelgl.Run(run)
@@ -137,14 +119,6 @@ func run() {
 		panic(fmt.Errorf("Unable to create mtk window: %v", err))
 	}
 	win.SetMaxFPS(config.MaxFPS)
-	// Create main menu.
-	mainMenu = mainmenu.New()
-	mainMenu.SetServer(server)
-	if server == nil { // with the server mod will be set with update response
-		mainMenu.SetModule(mod)
-	}
-	mainMenu.SetOnGameCreatedFunc(enterGame)
-	ci.SetMainMenu(mainMenu)
 	// Create debug mode info.
 	textParams := mtk.Params{
 		FontSize: mtk.SizeMedium,
@@ -155,6 +129,11 @@ func run() {
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
 		flame.Name, flame.Version))
 	verInfo.Align(mtk.AlignRight)
+	// Create main menu.
+	mainMenu = mainmenu.New()
+	mainMenu.SetOnGameCreatedFunc(enterGame)
+	ci.SetMainMenu(mainMenu)
+	go enterMainMenu()
 	// Main loop.
 	for !win.Closed() {
 		// Draw.
@@ -180,22 +159,18 @@ func run() {
 		}
 		pcHUD.Update(win)
 		if pcHUD.Exiting() || activeGame.Closing() {
-			enterMainMenu()
+			go enterMainMenu()
 		}
 	}
 }
 
 // enterMainMenu exits the game and prepares the main menu.
 func enterMainMenu() {
+	mainMenu.OpenLoadingScreen(lang.Text("enter_menu_info"))
+	defer mainMenu.CloseLoadingScreen()
 	inGame = false
-	// Reimport module.
-	modData, err := flamedata.ImportModuleDir(config.ModulePath())
-	if err != nil {
-		log.Err.Printf("Unable to reimport module: %v", err)
-	}
-	serial.Reset()
-	setModule(modData)
-	mainMenu.SetServer(server)
+	mainMenu.Open()
+	burn.Module = mainMenu.Module()
 }
 
 // enterGame creates HUD and enters game.
@@ -275,15 +250,6 @@ func changeChapter(ob *character.Character) {
 func setHUD(h *hud.HUD) {
 	pcHUD = h
 	ci.SetHUD(pcHUD)
-}
-
-// setModule sets specified module for UI.
-func setModule(data flameres.ModuleData) {
-	mod = flame.NewModule(data)
-	burn.Module = mod
-	if mainMenu != nil {
-		mainMenu.SetModule(mod)
-	}
 }
 
 // runModuleScripts starts all scripts from the module

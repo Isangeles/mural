@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,10 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/character"
+	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/fire/request"
 
@@ -188,6 +190,11 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 	mm.msgs.Update(win)
 }
 
+// Module returns currently used game module.
+func (mm *MainMenu) Module() *flame.Module {
+	return mm.mod
+}
+
 // SetMod sets module for main menu.
 func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
@@ -215,6 +222,30 @@ func (mm *MainMenu) SetServer(server *game.Server) {
 			log.Err.Printf("Login menu: unable to send login request: %v", err)
 		}
 	}
+}
+
+// Open opens the main menu.
+func (mm *MainMenu) Open() {
+	// Connect to the game server(if configured)
+	if mm.server == nil && len(config.ServerHost+config.ServerPort) > 1 {
+		server, err := game.NewServer(config.ServerHost, config.ServerPort)
+		if err != nil {
+			log.Err.Printf("Unable to connect to the game server: %v",
+				err)
+		}
+		mm.SetServer(server)
+	}
+	if mm.server != nil { // skip local module import if server present, server provides it's own module 
+		return
+	}
+	// Import module
+	modData, err := flamedata.ImportModuleDir(config.ModulePath())
+	if err != nil {
+		log.Err.Printf("Unable to import module: %v", err)
+		return
+	}
+	serial.Reset()
+	mm.SetModule(flame.NewModule(modData))
 }
 
 // Exit sends exit request to main menu.

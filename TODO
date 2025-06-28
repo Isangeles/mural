@@ -18,7 +18,6 @@ MINOR:
 * Dialog: on smaller resolution(e.g. 1280x1024) answer labels are not aligned to right
 * Exporting character via flame data package exports also quests, effects, items, etc., those
   should be deleted when exporting character to use in different game
-* Loading screen at startup
 * Separate chat(multitab?) for combat messages
 * Option to displaying names at the top of the avatars
 * Game saved in single player mode doesn't work when connected to the server(no server user flag

@@ -61,7 +61,7 @@ import (
 var (
 	win        *mtk.Window
 	mainMenu   *mainmenu.MainMenu
-	pcHUD      *hud.HUD
+	gameHUD    *hud.HUD
 	activeGame *game.Game
 	inGame     bool
 )
@@ -75,7 +75,7 @@ func main() {
 	// Load GUI graphic data.
 	err := data.LoadModuleData(config.GUIPath)
 	if err != nil {
-		panic(fmt.Errorf("Unable to load game graphic data: %v", err))
+		panic(fmt.Errorf("Unable to load GUI data: %v", err))
 	}
 	// Init audio and set global audio effects.
 	err = mtk.InitAudio(beep.Format{44100, 2, 2})
@@ -116,7 +116,7 @@ func run() {
 	var err error
 	win, err = mtk.NewWindow(winConfig)
 	if err != nil {
-		panic(fmt.Errorf("Unable to create mtk window: %v", err))
+		panic(fmt.Errorf("Unable to create MTK window: %v", err))
 	}
 	win.SetMaxFPS(config.MaxFPS)
 	// Create debug mode info.
@@ -139,7 +139,7 @@ func run() {
 		// Draw.
 		win.Clear(colornames.Black)
 		if inGame {
-			pcHUD.Draw(win)
+			gameHUD.Draw(win)
 		} else {
 			mainMenu.Draw(win)
 		}
@@ -157,8 +157,8 @@ func run() {
 			mainMenu.Update(win)
 			continue
 		}
-		pcHUD.Update(win)
-		if pcHUD.Exiting() || activeGame.Closing() {
+		gameHUD.Update(win)
+		if gameHUD.Exiting() || activeGame.Closing() {
 			go enterMainMenu()
 		}
 	}
@@ -185,7 +185,8 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	// Create HUD.
 	hud := hud.New(win)
 	// Set HUD.
-	setHUD(hud)
+	gameHUD = hud
+	ci.SetHUD(gameHUD)
 	// Load GUI data.
 	chapterGUIPath := filepath.Join(config.GUIPath, "chapters", activeGame.Chapter().Conf().ID)
 	err := data.LoadChapterData(chapterGUIPath)
@@ -197,7 +198,7 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	// Set game for HUD.
 	hud.SetGame(activeGame)
 	if hudData != nil {
-		err = pcHUD.Apply(*hudData)
+		err = gameHUD.Apply(*hudData)
 		if err != nil {
 			log.Err.Printf("Enter game: Unable to load HUD layout: %v", err)
 		}
@@ -243,13 +244,6 @@ func changeChapter(ob *character.Character) {
 		log.Err.Printf("Chapter change: Unable to spawn character: %v", err)
 		return
 	}
-}
-
-// setHUD sets specified HUD instance as current
-// GUI player HUD.
-func setHUD(h *hud.HUD) {
-	pcHUD = h
-	ci.SetHUD(pcHUD)
 }
 
 // runModuleScripts starts all scripts from the module

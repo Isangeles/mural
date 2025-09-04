@@ -1,7 +1,7 @@
 /*
  * effectgraphic.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,12 +64,14 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 			effect.Serial(), data.Icon)
 		iconPic = graphic.Icons[defaultEffectIcon]
 	}
-	// Time text.
-	textParams := mtk.Params{
-		FontSize: mtk.SizeBig,
+	if !eg.Infinite() {
+		// Time text.
+		textParams := mtk.Params{
+			FontSize: mtk.SizeBig,
+		}
+		eg.timeText = mtk.NewText(textParams)
+		eg.timeText.SetColor(timeLabelColor)
 	}
-	eg.timeText = mtk.NewText(textParams)
-	eg.timeText.SetColor(timeLabelColor)
 	return eg
 }
 
@@ -77,8 +79,10 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 // remaining time(in seconds).
 func (eg *EffectGraphic) DrawIcon(t pixel.Target, matrix pixel.Matrix) {
 	eg.icon.Draw(t, matrix)
-	eg.timeText.SetText(fmt.Sprintf("%d", eg.Time()/1000))
-	eg.timeText.Draw(t, matrix)
+	if eg.timeText != nil {
+		eg.timeText.SetText(fmt.Sprintf("%d", eg.Time()/1000))
+		eg.timeText.Draw(t, matrix)
+	}
 }
 
 // Icon returns effect icon.

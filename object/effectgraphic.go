@@ -30,6 +30,7 @@ import (
 
 	"github.com/gopxl/pixel"
 
+	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
 
 	"github.com/isangeles/mtk"
@@ -48,6 +49,7 @@ var (
 type EffectGraphic struct {
 	*effect.Effect
 	icon     *pixel.Sprite
+	info     *mtk.InfoWindow
 	timeText *mtk.Text
 }
 
@@ -55,7 +57,7 @@ type EffectGraphic struct {
 func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *EffectGraphic {
 	eg := new(EffectGraphic)
 	eg.Effect = effect
-	// Icon.
+	// Icon
 	iconPic := graphic.Icons[data.Icon]
 	if iconPic != nil {
 		eg.icon = pixel.NewSprite(iconPic, iconPic.Bounds())
@@ -64,8 +66,15 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 			effect.Serial(), data.Icon)
 		iconPic = graphic.Icons[defaultEffectIcon]
 	}
+	// Info
+	infoParams := mtk.Params{
+		FontSize:  mtk.SizeSmall,
+		MainColor: pixel.RGBA{0.1, 0.1, 0.1, 0.5},
+	}
+	eg.info = mtk.NewInfoWindow(infoParams)
+	eg.info.SetText(lang.Text(eg.ID()))
 	if !eg.Infinite() {
-		// Time text.
+		// Time text
 		textParams := mtk.Params{
 			FontSize: mtk.SizeBig,
 		}
@@ -77,12 +86,24 @@ func NewEffectGraphic(effect *effect.Effect, data *res.EffectGraphicData) *Effec
 
 // DrawIcon draws effect icon and text label with
 // remaining time(in seconds).
-func (eg *EffectGraphic) DrawIcon(t pixel.Target, matrix pixel.Matrix) {
-	eg.icon.Draw(t, matrix)
+func (eg *EffectGraphic) DrawIcon(win *mtk.Window, matrix pixel.Matrix) {
+	// Icon
+	eg.icon.Draw(win, matrix)
+	// Time text
 	if eg.timeText != nil {
 		eg.timeText.SetText(fmt.Sprintf("%d", eg.Time()/1000))
-		eg.timeText.Draw(t, matrix)
+		eg.timeText.Draw(win, matrix)
 	}
+	// Info
+	drawArea := mtk.MatrixToDrawArea(matrix, eg.icon.Frame().Size())
+	if drawArea.Contains(win.MousePosition()) {
+		eg.info.Draw(win)
+	}
+}
+
+// UpdateIcon updates the effect icon.
+func (eg *EffectGraphic) UpdateIcon(win *mtk.Window) {
+	eg.info.Update(win)
 }
 
 // Icon returns effect icon.

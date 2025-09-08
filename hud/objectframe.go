@@ -1,7 +1,7 @@
 /*
  * objectframe.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ func (of *ObjectFrame) Draw(win *mtk.Window, matrix pixel.Matrix) {
 				iconMove.X = iconsStartPos.X
 				iconMove.Y -= mtk.ConvSize(e.Icon().Frame().H()) * float64(i/3)
 			}
-			e.DrawIcon(win.Window, matrix.Moved(iconMove))
+			e.DrawIcon(win, matrix.Moved(iconMove))
 		}
 	}
 }
@@ -143,6 +143,10 @@ func (of *ObjectFrame) Update(win *mtk.Window) {
 	// Bars.
 	of.hpBar.Update(win)
 	of.manaBar.Update(win)
+	// Effects
+	for _, e := range of.object.Effects() {
+		e.UpdateIcon(win)
+	}
 }
 
 // Size returns size of character frame background.

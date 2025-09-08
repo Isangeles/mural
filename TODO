@@ -33,7 +33,6 @@ MINOR:
 * Fix for the cast bar in server mode
 * Cast bar background
 * Fix black camera bars on the top and bottom after game load
-* Info window for effects
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

@@ -34,8 +34,8 @@ github.com/isangeles/flame v0.0.0-20250825192755-4e3d37476ce2 h1:YtLJJnjcQQaLnoQ
 github.com/isangeles/flame v0.0.0-20250825192755-4e3d37476ce2/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/ignite v0.0.0-20250811180429-a262a074643b h1:SjEe9IjnjTE1YMe/333mUzyROoRKjc7LsvfUqz3WvoQ=
 github.com/isangeles/ignite v0.0.0-20250811180429-a262a074643b/go.mod h1:D+ntLmG8toXgUJmUbmOmuilUCT3dKRgVaXby0vvjMy4=
-github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a h1:fwVLN5ryHft3iIHDwVjcaS4Gd0iAqQAiOaDiLWAH3aw=
-github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a/go.mod h1:mFbGg99kbqmBJbbmDEQm/YfSuo1Pb+V4l6hlmZUcCTM=
+github.com/isangeles/mtk v0.0.0-20250910180122-fce568a03718 h1:TPcfnJCLua+NdRGcgeSl8qn2FwfL8LXHryAwosAepxo=
+github.com/isangeles/mtk v0.0.0-20250910180122-fce568a03718/go.mod h1:j6ZeVHYcumDLpE5eKPuoGN+dqdKERb+Wa2/FJJXQKI0=
 github.com/isangeles/stone v0.1.2 h1:qturqReqrGc3UvppcaesgXvQt8iOVmZlxQonZ7jf3ME=
 github.com/isangeles/stone v0.1.2/go.mod h1:c0rtJa+GBo+XbCzLUD3kxu0vLCOyRjUMQI+ODLdcs4w=
 github.com/isangeles/tmx v0.0.0-20230925150339-5410bc1b891b h1:TfKHKtfJnlSIe2OZ8QaPLBskYJ5LE7Sf/dVDhDEFZxs=
@@ -55,11 +55,11 @@ github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb/go.mod h1:MHMSHqNI
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
-golang.org/x/image v0.30.0 h1:jD5RhkmVAnjqaCUXfbGBrn3lpxbknfN9w2UhHHU+5B4=
-golang.org/x/image v0.30.0/go.mod h1:SAEUTxCCMWSrJcCy/4HwavEsfZZJlYxeHLc6tTiAe/c=
+golang.org/x/image v0.31.0 h1:mLChjE2MV6g1S7oqbXC0/UcKijjm5fnJLUYKIYrLESA=
+golang.org/x/image v0.31.0/go.mod h1:R9ec5Lcp96v9FTF+ajwaH3uGxPH4fKfHHAVbUILxghA=
 golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.35.0 h1:vz1N37gP5bs89s7He8XuIYXpyY0+QlsKmzipCbUtyxI=
-golang.org/x/sys v0.35.0/go.mod h1:BJP2sWEmIv4KK5OTEluFJCKSidICx8ciO85XgH3Ak8k=
+golang.org/x/sys v0.36.0 h1:KVRy2GtZBrk1cBYA7MKu5bEZFxQk4NIDV6RLVcC8o0k=
+golang.org/x/sys v0.36.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

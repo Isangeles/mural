@@ -1,8 +1,8 @@
 module github.com/isangeles/mural
 
-go 1.23.0
+go 1.24.0
 
-toolchain go1.23.4
+toolchain go1.24.5
 
 require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -12,10 +12,10 @@ require (
 	github.com/isangeles/fire v0.0.0-20250901193233-bf8cf0f958fc
 	github.com/isangeles/flame v0.0.0-20250825192755-4e3d37476ce2
 	github.com/isangeles/ignite v0.0.0-20250811180429-a262a074643b
-	github.com/isangeles/mtk v0.0.0-20241209200346-4cfbf5e7d42a
+	github.com/isangeles/mtk v0.0.0-20250910180122-fce568a03718
 	github.com/isangeles/stone v0.1.2
 	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
-	golang.org/x/image v0.30.0
+	golang.org/x/image v0.31.0
 )
 
 require (
@@ -31,5 +31,5 @@ require (
 	github.com/jfreymuth/oggvorbis v1.0.5 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 )

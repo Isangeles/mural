@@ -32,7 +32,6 @@ MINOR:
 * NPC avatar quest indicator
 * Fix for the cast bar in server mode
 * Cast bar background
-* Fix black camera bars on the top and bottom after game load
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment

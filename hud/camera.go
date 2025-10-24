@@ -89,7 +89,8 @@ func (c *Camera) Draw(win *mtk.Window) {
 	if config.Debug {
 		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
 		c.cameraInfo.Draw(win, mtk.Matrix().Moved(camInfoPos))
-		curInfoPos := mtk.TopOf(c.cameraInfo.DrawArea(), c.cursorInfo.Size(), 10)
+		curInfoPos := mtk.DrawPosBR(win.Bounds(), c.cursorInfo.Size())
+		curInfoPos.Y += c.cameraInfo.Size().Y
 		c.cursorInfo.Draw(win, mtk.Matrix().Moved(curInfoPos))
 	}
 }

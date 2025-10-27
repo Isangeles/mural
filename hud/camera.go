@@ -136,10 +136,10 @@ func (c *Camera) Update(win *mtk.Window) {
 		c.onMouseRightPressed(win.MousePosition())
 	}
 	// Debug.
-	c.cameraInfo.SetText(fmt.Sprintf("camera_pos:%v",
-		c.Position()))
-	c.cursorInfo.SetText(fmt.Sprintf("cursor_pos:%v",
-		win.MousePosition()))
+	c.cameraInfo.SetText(fmt.Sprintf("Camera: %.2f, %.2f",
+		c.Position().X, c.Position().Y))
+	c.cursorInfo.SetText(fmt.Sprintf("Cursor: %.2f, %.2f",
+		win.MousePosition().X, win.MousePosition().Y))
 }
 
 // SetPosition sets camera position.

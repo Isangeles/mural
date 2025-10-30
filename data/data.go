@@ -31,8 +31,6 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/salviati/go-tmx/tmx"
-
 	"github.com/gopxl/pixel"
 
 	flamedata "github.com/isangeles/flame/data"
@@ -152,20 +150,6 @@ func Pictures(path string) (map[string]pixel.Picture, error) {
 		portraits[file.Name()] = img
 	}
 	return portraits, nil
-}
-
-// Map loads TMX map from file with specified
-// directory and name.
-func Map(areaDir string) (*tmx.Map, error) {
-	tmxFile, err := os.Open(areaDir + "/map.tmx")
-	if err != nil {
-		return nil, fmt.Errorf("unable to open tmx file: %v", err)
-	}
-	tmxMap, err := tmx.Read(tmxFile)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read tmx file: %v", err)
-	}
-	return tmxMap, nil
 }
 
 // DirFiles returns names of all files matching specified

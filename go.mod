@@ -14,7 +14,6 @@ require (
 	github.com/isangeles/ignite v0.0.0-20250811180429-a262a074643b
 	github.com/isangeles/mtk v0.0.0-20250910180122-fce568a03718
 	github.com/isangeles/stone v0.1.2
-	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb
 	golang.org/x/image v0.32.0
 )
 
@@ -31,5 +30,6 @@ require (
 	github.com/jfreymuth/oggvorbis v1.0.5 // indirect
 	github.com/jfreymuth/vorbis v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/salviati/go-tmx v0.0.0-20180901011116-8dae25beffeb // indirect
 	golang.org/x/sys v0.37.0 // indirect
 )

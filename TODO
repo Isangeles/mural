@@ -22,7 +22,6 @@ MINOR:
 * Option to displaying names at the top of the avatars
 * Game saved in single player mode doesn't work when connected to the server(no server user flag
   on player chars), results in black screen(no HUD), add some error message?
-* Skill cooldown counter on menu bar
 * Focusing UI elements with tab key
 * Graphical effects for area weather
 * HUD: zoom/unzoom for camera

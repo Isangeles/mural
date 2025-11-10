@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,21 +180,12 @@ func (mb *MenuBar) Update(win *mtk.Window) {
 	if !mb.Locked() {
 		mb.handleKeyEvents(win)
 	}
-	// Buttons.
 	mb.menuButton.Update(win)
 	mb.invButton.Update(win)
 	mb.skillsButton.Update(win)
 	mb.journalButton.Update(win)
 	mb.charButton.Update(win)
-	// Slots.
-	for _, s := range mb.slots {
-		s.Update(win)
-		if mb.slotActive(s) {
-			s.SetColor(barActiveSlotColor)
-		} else {
-			s.SetColor(barDisabledSlotColor)
-		}
-	}
+	mb.updateSlots(win)
 }
 
 // Size returns size of bar background.
@@ -331,20 +322,38 @@ func (mb *MenuBar) setLayout(l *Layout) {
 	}
 }
 
-// slotActive checks if specified slot is active.
-func (mb *MenuBar) slotActive(s *mtk.Slot) bool {
-	if len(s.Values()) < 1 {
-		return true
+// updateSlots updates menu bar slots along with cooldown labels.
+// Cooldown label value is a sum of usable cooldown and global
+// cooldown of currently active PC.
+func (mb *MenuBar) updateSlots(win *mtk.Window) {
+	for _, s := range mb.slots {
+		if len(s.Values()) < 1 {
+			continue
+		}
+		s.Update(win)
+		cooldown := mb.slotCooldown(s)
+		cooldown += mb.hud.Game().ActivePlayerChar().Cooldown()
+		if cooldown <= 0 {
+			s.SetColor(barActiveSlotColor)
+			s.SetLabel("")
+		} else {
+			s.SetColor(barDisabledSlotColor)
+			s.SetLabel(fmt.Sprintf("%d", cooldown/1000))
+		}
 	}
-	if mb.hud.Game().ActivePlayerChar().Cooldown() > 0 {
-		return false
+}
+
+// slotCooldown checks cooldown of specified slot content.
+func (mb *MenuBar) slotCooldown(s *mtk.Slot) int64 {
+	if len(s.Values()) < 1 {
+		return 0
 	}
 	val := s.Values()[0]
 	ob, ok := val.(useaction.Usable)
 	if !ok || ob.UseAction() == nil {
-		return true
+		return 0
 	}
-	return ob.UseAction().Cooldown() <= 0
+	return ob.UseAction().Cooldown()
 }
 
 // handleKeyEvents handles recent key events.

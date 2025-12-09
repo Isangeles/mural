@@ -175,6 +175,7 @@ func (im *InventoryMenu) Opened() bool {
 func (im *InventoryMenu) Show() {
 	im.opened = true
 	im.hud.UserFocus().Focus(im)
+	im.hud.Camera().Lock(true)
 	im.refresh()
 }
 
@@ -182,6 +183,7 @@ func (im *InventoryMenu) Show() {
 func (im *InventoryMenu) Hide() {
 	im.opened = false
 	im.hud.UserFocus().Focus(nil)
+	im.hud.Camera().Lock(false)
 }
 
 // Focused checks whether menu is focused.

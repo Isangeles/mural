@@ -129,10 +129,10 @@ func (c *Camera) Update(win *mtk.Window) {
 	// Mouse events.
 	if config.Debug && win.JustPressed(pixelgl.MouseButtonLeft) && win.Pressed(debugMoveKey) {
 		c.onDebugMouseLeftPressed(win.MousePosition())
-	} else if win.JustPressed(pixelgl.MouseButtonLeft) {
+	} else if !c.locked && win.JustPressed(pixelgl.MouseButtonLeft) {
 		c.onMouseLeftPressed(win.MousePosition())
 	}
-	if win.JustPressed(pixelgl.MouseButtonRight) {
+	if !c.locaked && win.JustPressed(pixelgl.MouseButtonRight) {
 		c.onMouseRightPressed(win.MousePosition())
 	}
 	// Debug.

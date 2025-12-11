@@ -307,6 +307,31 @@ func (c *Character) Unequip(it item.Equiper) {
 	}
 }
 
+// RemoveItem removes specified item from player inventory
+// and creates loot area object.
+func (c *Character) RemoveItems(items ...item.Item) {
+	reqItems := make(map[string][]string, 0)
+	for _, it := range items {
+		c.Inventory().RemoveItem(it)
+		reqItems[it.ID()] = append(reqItems[it.ID()], it.Serial())
+	}
+	// Server request to remove items.
+	if c.game.Server() == nil {
+		return
+	}
+	throwItemsReq := request.ThrowItems{
+		ObjectID:     c.ID(),
+		ObjectSerial: c.Serial(),
+		Items:        reqItems,
+	}
+	req := request.Request{ThrowItems: []request.ThrowItems{throwItemsReq}}
+	err := c.game.Server().Send(req)
+	if err != nil {
+		log.Err.Printf("Character: %s %s: unable to send throw items request: %v",
+			c.ID(), c.Serial(), err)
+	}
+}
+
 // Usable returns usable object with specified ID and serial.
 func (c *Character) Usable(id, serial string) useaction.Usable {
 	for _, s := range c.Skills() {

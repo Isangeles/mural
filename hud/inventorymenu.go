@@ -1,7 +1,7 @@
 /*
  * inventorymenu.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,6 @@ import (
 
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/item"
-
-	"github.com/isangeles/fire/request"
 
 	"github.com/isangeles/mtk"
 
@@ -315,31 +313,16 @@ func (im *InventoryMenu) draggedSlot() *mtk.Slot {
 // removeSlotItems removes all items from specified slot and
 // from PC inventory.
 func (im *InventoryMenu) removeSlotItems(s *mtk.Slot) {
-	items := make(map[string][]string, 0)
+	var items []item.Item
 	for _, v := range s.Values() {
 		it, ok := v.(item.Item)
 		if !ok {
 			continue
 		}
-		items[it.ID()] = append(items[it.ID()], it.Serial())
-		im.hud.Game().ActivePlayerChar().Inventory().RemoveItem(it)
+		items = append(items, it)
 	}
+	im.hud.Game().ActivePlayerChar().RemoveItems(items...)
 	s.Clear()
-	// Server request to remove items.
-	if im.hud.Game().Server() != nil {
-		pc := im.hud.Game().ActivePlayerChar()
-		throwItemsReq := request.ThrowItems{
-			ObjectID:     pc.ID(),
-			ObjectSerial: pc.Serial(),
-			Items:        items,
-		}
-		req := request.Request{ThrowItems: []request.ThrowItems{throwItemsReq}}
-		err := im.hud.Game().Server().Send(req)
-		if err != nil {
-			log.Err.Printf("HUD: Inventory Menu: unable to send throw items request: %v",
-				err)
-		}
-	}
 }
 
 // confirmRemove shows warning message and removes content

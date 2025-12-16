@@ -28,6 +28,7 @@ import (
 	"math"
 
 	"github.com/isangeles/flame/character"
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/effect"
 	"github.com/isangeles/flame/item"
@@ -317,6 +318,10 @@ func (c *Character) RemoveItems(items ...item.Item) {
 	}
 	// Server request to remove items.
 	if c.game.Server() == nil {
+		err := c.spawnLoot(items...)
+		if err != nil {
+			log.Err.Printf("Character: %s %s: unable to spawn loot object: %v", err)
+		}
 		return
 	}
 	throwItemsReq := request.ThrowItems{
@@ -401,6 +406,29 @@ func (c *Character) aiChar() *ai.Character {
 		if c.ID() == aiChar.ID() && c.Serial() == aiChar.Serial() {
 			return aiChar
 		}
+	}
+	return nil
+}
+
+// spawnLoot creates new loot area object on current
+// character position and transfers all items there.
+func (c *Character) spawnLoot(items ...item.Item) error {
+	lootData := flameres.Character("obLoot1", "")
+	if lootData == nil {
+		lootData = &flameres.CharacterData{ID: "obLoot1", Level: 1, OpenLoot: true}
+		flameres.Characters = append(flameres.Characters, *lootData)
+	}
+	loot := character.New(*lootData)
+	area := c.game.Chapter().ObjectArea(c)
+	if area == nil {
+		return fmt.Errorf("Object area not found: %s %s", c.ID(), c.Serial())
+	}
+	area.AddObject(loot)
+	posX, posY := c.Position()
+	loot.SetPosition(posX, posY)
+	loot.SetDestPoint(posX, posY)
+	for _, it := range items {
+		loot.Inventory().AddItem(it)
 	}
 	return nil
 }

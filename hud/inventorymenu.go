@@ -315,11 +315,11 @@ func (im *InventoryMenu) draggedSlot() *mtk.Slot {
 func (im *InventoryMenu) removeSlotItems(s *mtk.Slot) {
 	var items []item.Item
 	for _, v := range s.Values() {
-		it, ok := v.(item.Item)
+		it, ok := v.(*object.ItemGraphic)
 		if !ok {
 			continue
 		}
-		items = append(items, it)
+		items = append(items, it.Item)
 	}
 	im.hud.Game().ActivePlayerChar().RemoveItems(items...)
 	s.Clear()

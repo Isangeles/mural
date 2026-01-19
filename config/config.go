@@ -1,7 +1,7 @@
 /*
  * config.go
  *
- * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,8 +164,6 @@ func Load() error {
 	if len(conf["server-close"]) > 0 {
 		ServerClose = conf["server-close"][0] == "true"
 	}
-	// Debug.
-	log.Dbg.Print("Config file loaded")
 	return nil
 }
 
@@ -206,8 +204,6 @@ func Save() error {
 	w := bufio.NewWriter(file)
 	w.WriteString(confText)
 	w.Flush()
-	// Debug.
-	log.Dbg.Print("Config file saved")
 	return nil
 }
 

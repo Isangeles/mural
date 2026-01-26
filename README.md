@@ -136,6 +136,10 @@ button-click-sound:[file name]
 ```
 Name of audio file(located in audio archive) for button click sound.
 ```
+loot-despawn-time:[milliseconds]
+```
+The time in milliseconds after which the empty loot object should be despawned. 5 seconds by default.
+```
 server:[host];[port]
 ```
 Server host and port for remote game server.

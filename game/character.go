@@ -1,7 +1,7 @@
 /*
  * character.go
  *
- * Copyright 2020-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ import (
 
 	"github.com/isangeles/ignite/ai"
 
+	"github.com/isangeles/mural/config"
 	"github.com/isangeles/mural/log"
 )
 
@@ -419,6 +420,7 @@ func (c *Character) spawnLoot(items ...item.Item) error {
 		flameres.Characters = append(flameres.Characters, *lootData)
 	}
 	loot := character.New(*lootData)
+	loot.SetDespawn(config.LootDespawnTime)
 	area := c.game.Chapter().ObjectArea(c)
 	if area == nil {
 		return fmt.Errorf("Object area not found: %s %s", c.ID(), c.Serial())

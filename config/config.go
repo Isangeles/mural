@@ -62,6 +62,7 @@ var (
 	EffectsMute      = false
 	MusicVolume      = 0.0
 	MusicMute        = false
+	LootDespawnTime  = int64(5000)
 	ServerLogin      = ""
 	ServerPassword   = ""
 	ServerHost       = ""
@@ -152,6 +153,13 @@ func Load() error {
 	if len(conf["music-mute"]) > 0 {
 		MusicMute = conf["music-mute"][0] == "true"
 	}
+	// Loot despawn.
+	if len(conf["loot-despawn-time"]) > 0 {
+		despawnTime, err := strconv.Atoi(conf["loot-despawn-time"][0])
+		if err == nil {
+			LootDespawnTime = int64(despawnTime)
+		}
+	}
 	// Server.
 	if len(conf["server-user"]) > 1 {
 		ServerLogin = conf["server-user"][0]
@@ -196,6 +204,7 @@ func Save() error {
 	conf["effects-mute"] = []string{fmt.Sprintf("%v", EffectsMute)}
 	conf["music-volume"] = []string{fmt.Sprintf("%f", MusicVolume)}
 	conf["music-mute"] = []string{fmt.Sprintf("%v", MusicMute)}
+	conf["loot-despawn-time"] = []string{fmt.Sprintf("%d", LootDespawnTime)}
 	conf["server-user"] = []string{ServerLogin, ServerPassword}
 	conf["server"] = []string{ServerHost, ServerPort}
 	conf["server-close"] = []string{fmt.Sprintf("%v", ServerClose)}

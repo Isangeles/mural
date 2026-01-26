@@ -91,6 +91,12 @@ Specifies name of audio file(located in audio archive) for main menu music theme
 .br
 Specifies name of audio file(located in audio archive) for button click sound.
 .P
+* loot-despawn-time
+.br
+The time in milliseconds after which the empty loot object should be despawned.
+.br
+5 seconds by default.
+.P
 * server
 .br
 Specified server host and port for remote game server.

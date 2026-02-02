@@ -72,19 +72,19 @@ var (
 
 // Load loads configuration file.
 func Load() error {
+	// Read file
 	file, err := os.Open(ConfFileName)
 	if err != nil {
 		return fmt.Errorf("Unable to open config file: %v", err)
 	}
+	// Unmarshal config
 	conf, err := text.UnmarshalConfig(file)
 	if err != nil {
 		return fmt.Errorf("Unable to unmarshal config: %v", err)
 	}
-	// Language.
 	if len(conf["lang"]) > 0 {
 		Lang = conf["lang"][0]
 	}
-	// Module.
 	if len(conf["module"]) > 0 {
 		Module = conf["module"][0]
 		GUIPath = filepath.Join(ModulesPath, Module, "mural")
@@ -92,15 +92,12 @@ func Load() error {
 	if len(conf["gui-path"]) > 0 {
 		GUIPath = conf["gui-path"][0]
 	}
-	// Debug.
 	if len(conf["debug"]) > 0 {
 		Debug = conf["debug"][0] == "true"
 	}
-	// Fullscreen.
 	if len(conf["fullscreen"]) > 0 {
 		Fullscreen = conf["fullscreen"][0] == "true"
 	}
-	// Resolution.
 	if len(conf["resolution"]) > 1 {
 		Resolution.X, err = strconv.ParseFloat(conf["resolution"][0], 64)
 		if err != nil {
@@ -111,14 +108,12 @@ func Load() error {
 			log.Err.Printf("Config: Unable to set resolution y: %v", err)
 		}
 	}
-	// Max FPS.
 	if len(conf["max-fps"]) > 0 {
 		MaxFPS, err = strconv.Atoi(conf["max-fps"][0])
 		if err != nil {
 			log.Err.Printf("Config: Unable to set max FPS: %v", err)
 		}
 	}
-	// Graphic effects.
 	if len(conf["map-fow"]) > 0 {
 		MapFOW = conf["map-fow"][0] == "true"
 	}
@@ -128,7 +123,6 @@ func Load() error {
 	if len(conf["main-font"]) > 0 {
 		MainFont = conf["main-font"][0]
 	}
-	// Audio effects.
 	if len(conf["menu-music"]) > 0 {
 		MenuMusic = conf["menu-music"][0]
 	}
@@ -153,14 +147,12 @@ func Load() error {
 	if len(conf["music-mute"]) > 0 {
 		MusicMute = conf["music-mute"][0] == "true"
 	}
-	// Loot despawn.
 	if len(conf["loot-despawn-time"]) > 0 {
 		despawnTime, err := strconv.Atoi(conf["loot-despawn-time"][0])
 		if err == nil {
 			LootDespawnTime = int64(despawnTime)
 		}
 	}
-	// Server.
 	if len(conf["server-user"]) > 1 {
 		ServerLogin = conf["server-user"][0]
 		ServerPassword = conf["server-user"][1]
@@ -177,13 +169,13 @@ func Load() error {
 
 // Save saves current configuration to file.
 func Save() error {
-	// Create file.
+	// Create file
 	file, err := os.Create(ConfFileName)
 	if err != nil {
 		return fmt.Errorf("Unable to create config file: %v", err)
 	}
 	defer file.Close()
-	// Marshal config.
+	// Marshal config
 	conf := make(map[string][]string)
 	conf["lang"] = []string{Lang}
 	conf["module"] = []string{Module}
@@ -209,10 +201,10 @@ func Save() error {
 	conf["server"] = []string{ServerHost, ServerPort}
 	conf["server-close"] = []string{fmt.Sprintf("%v", ServerClose)}
 	confText := text.MarshalConfig(conf)
-	// Write config values.
-	w := bufio.NewWriter(file)
-	w.WriteString(confText)
-	w.Flush()
+	// Write config values
+	writer := bufio.NewWriter(file)
+	writer.WriteString(confText)
+	writer.Flush()
 	return nil
 }
 

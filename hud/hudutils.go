@@ -1,7 +1,7 @@
 /*
  * hudutils.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,9 +71,9 @@ func (hud *HUD) itemInfo(it item.Item) string {
 	info := ""
 	switch i := it.(type) {
 	case *item.Weapon:
-		infoForm := "%s\n%d-%d"
+		infoForm := "%s\n%s: %d-%d"
 		dmgMin, dmgMax := i.Damage()
-		info = fmt.Sprintf(infoForm, lang.Text(i.ID()),
+		info = fmt.Sprintf(infoForm, lang.Text(i.ID()), lang.Text("damageLabel"),
 			dmgMin, dmgMax)
 	case *item.Misc:
 		infoForm := "%s"

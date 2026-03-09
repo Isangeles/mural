@@ -1,7 +1,7 @@
 /*
  * loadgamemenu.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ func newLoadGameMenu(mainmenu *MainMenu) *LoadGameMenu {
 		MainColor:   mainColor,
 		SecColor:    secColor,
 		AccentColor: accentColor,
+		FontSize:    mtk.SizeMedium,
 	}
 	lgm.savesList = mtk.NewList(listParams)
 	// Buttons.

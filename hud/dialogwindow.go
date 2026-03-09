@@ -1,7 +1,7 @@
 /*
  * dialogwindow.go
  *
- * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ func newDialogWindow(hud *HUD) *DialogWindow {
 		MainColor:   mainColor,
 		SecColor:    secColor,
 		AccentColor: accentColor,
+		FontSize:    mtk.SizeMedium,
 	}
 	dw.answersList = mtk.NewList(answersParams)
 	upButtonBG := graphic.Textures["scrollup.png"]

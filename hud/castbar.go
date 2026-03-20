@@ -1,7 +1,7 @@
 /*
  * castbar.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ type CastBar struct {
 func newCastBar(hud *HUD) *CastBar {
 	cb := new(CastBar)
 	cb.hud = hud
-	cb.bar = mtk.NewProgressBar(mtk.SizeMedium, accentColor)
+	params := mtk.Params{Size: mtk.SizeMedium, MainColor: accentColor}
+	cb.bar = mtk.NewProgressBar(params)
 	return cb
 }
 

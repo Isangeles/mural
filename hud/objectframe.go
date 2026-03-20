@@ -1,7 +1,7 @@
 /*
  * objectframe.go
  *
- * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,8 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 		log.Err.Printf("hud object frame: bg texture not found")
 	}
 	// Bars.
-	of.hpBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
+	barParams := mtk.Params{Size: mtk.SizeMini, MainColor: accentColor}
+	of.hpBar = mtk.NewProgressBar(barParams)
 	of.hpBar.SetLabel(lang.Text("char_frame_hp_bar_label"))
 	hpBarPic := graphic.Textures["bar_red.png"]
 	if hpBarPic != nil {
@@ -82,7 +83,7 @@ func newObjectFrame(hud *HUD) *ObjectFrame {
 	} else {
 		log.Err.Printf("hud object frame: hp bar texture not found")
 	}
-	of.manaBar = mtk.NewProgressBar(mtk.SizeMini, accentColor)
+	of.manaBar = mtk.NewProgressBar(barParams)
 	of.manaBar.SetLabel(lang.Text("char_frame_mana_bar_label"))
 	manaBarPic := graphic.Textures["bar_blue.png"]
 	if manaBarPic != nil {

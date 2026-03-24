@@ -1,7 +1,7 @@
 /*
  * itemgraphic.go
  *
- * Copyright 2019-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ func ImportItemsGraphics(path string) ([]res.ItemGraphicData, error) {
 func ImportItemsGraphicsDir(dirPath string) ([]res.ItemGraphicData, error) {
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read dir:%v", err)
+		return nil, fmt.Errorf("unable to read dir: %v", err)
 	}
 	items := make([]res.ItemGraphicData, 0)
 	for _, fInfo := range files {

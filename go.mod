@@ -23,6 +23,7 @@ require (
 	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20250301202403-da16c1255728 // indirect
 	github.com/go-gl/mathgl v1.2.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/isangeles/tmx v0.0.0-20230925150339-5410bc1b891b // indirect
 	github.com/jfreymuth/oggvorbis v1.0.5 // indirect

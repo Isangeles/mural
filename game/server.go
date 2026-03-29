@@ -1,7 +1,7 @@
 /*
  * server.go
  *
- * Copyright 2020 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2020-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 package game
 
 import (
-	"bufio"
 	"fmt"
-	"net"
+
+	"github.com/gorilla/websocket"
 
 	"github.com/isangeles/fire/request"
 	"github.com/isangeles/fire/response"
@@ -34,13 +34,9 @@ import (
 	"github.com/isangeles/mural/log"
 )
 
-const (
-	responseBufferSize = 99999999
-)
-
 // Struct for server connection.
 type Server struct {
-	conn       net.Conn
+	conn       *websocket.Conn
 	authorized bool
 	onResponse func(r response.Response)
 }
@@ -49,8 +45,8 @@ type Server struct {
 // server with specified host and port number.
 func NewServer(host, port string) (*Server, error) {
 	s := new(Server)
-	address := fmt.Sprintf("%s:%s", host, port)
-	conn, err := net.Dial("tcp", address)
+	url := fmt.Sprintf("ws://%s:%s/", host, port)
+	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to dial server: %v", err)
 	}
@@ -80,8 +76,7 @@ func (s *Server) Send(req request.Request) error {
 	if err != nil {
 		return fmt.Errorf("Unable to marshal request: %v", err)
 	}
-	text = fmt.Sprintf("%s\r\n", text)
-	_, err = s.conn.Write([]byte(text))
+	err = s.conn.WriteMessage(websocket.TextMessage, []byte(text))
 	if err != nil {
 		return fmt.Errorf("Unable to write request: %v", err)
 	}
@@ -91,18 +86,16 @@ func (s *Server) Send(req request.Request) error {
 // handleResponses handles responses from the server connection and
 // calls onResponse function for each response.
 func (s *Server) handleResponses() {
-	out := bufio.NewScanner(s.conn)
-	outBuff := make([]byte, responseBufferSize)
-	out.Buffer(outBuff, len(outBuff))
-	for out.Scan() {
-		if out.Err() != nil {
-			log.Err.Printf("Server: %s: Unable to read from server: %v",
-				s.Address(), out.Err())
-			continue
-		}
-		resp, err := response.Unmarshal(out.Text())
+	for {
+		_, msg, err := s.conn.ReadMessage()
 		if err != nil {
-			log.Err.Printf("Server: %v: Unable to unmarshal server resonse: %v",
+			log.Err.Printf("Server response: %s: Unable to read from server: %v",
+				s.Address(), err)
+			return
+		}
+		resp, err := response.Unmarshal(string(msg))
+		if err != nil {
+			log.Err.Printf("Server response: %v: Unable to unmarshal server resonse: %v",
 				s.Address(), err)
 			continue
 		}

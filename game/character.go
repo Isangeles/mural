@@ -25,7 +25,6 @@ package game
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/isangeles/flame/character"
 	flameres "github.com/isangeles/flame/data/res"
@@ -81,13 +80,6 @@ func (c *Character) CombatLog() *objects.Log {
 // PrivateLog returns character private log.
 func (c *Character) PrivateLog() *objects.Log {
 	return c.privateLog
-}
-
-// InSight checks if specified XY position is in sight range
-// of the character.
-func (c *Character) InSight(x, y float64) bool {
-	charX, charY := c.Position()
-	return math.Hypot(charX-x, charY-y) <= c.SightRange()
 }
 
 // SetOnUseFunc sets function to trigger after using an object.

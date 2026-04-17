@@ -30,8 +30,8 @@ github.com/hajimehoshi/go-mp3 v0.3.4/go.mod h1:fRtZraRFcWb0pu7ok0LqyFhCUrPeMsGRS
 github.com/hajimehoshi/oto/v2 v2.3.1/go.mod h1:seWLbgHH7AyUMYKfKYT9pg7PhUu9/SisyJvNTT+ASQo=
 github.com/isangeles/burn v0.0.0-20260129151419-bab6be01e35e h1:uUSu4cC7Q56msAtDBk2jr9YsXpl/lQd4srqn1m+c/Jo=
 github.com/isangeles/burn v0.0.0-20260129151419-bab6be01e35e/go.mod h1:VjwxtB6rlQ9Abz+lEz/DGgncNYcm/5icR90n8wZh7o4=
-github.com/isangeles/fire v0.0.0-20260402185214-6df175d4c2cf h1:6uMatKZaJzzq3pevsORM8iL5zTwHgh3pPxkhhZrv0q0=
-github.com/isangeles/fire v0.0.0-20260402185214-6df175d4c2cf/go.mod h1:tar9MlQIyW1lI5qhIc6+U76Yr8rrS1YRywR6y4sSAkM=
+github.com/isangeles/fire v0.0.0-20260414171202-137f65b8021c h1:UmBGpziKNXBVrJwC+2lRbIh7f4r/lBJmifLBJU2vv+U=
+github.com/isangeles/fire v0.0.0-20260414171202-137f65b8021c/go.mod h1:WNoJwApF49HYtDH6O+l6lCVOhPmMi6NgZEKfIACQTMs=
 github.com/isangeles/flame v0.0.0-20260407181657-41ac1c3c8249 h1:1fUVSOjLLF4urNFsJ1vFq5uvGmuIq50QjSFt8KFS9NU=
 github.com/isangeles/flame v0.0.0-20260407181657-41ac1c3c8249/go.mod h1:LvI0xJLcFHGZkUeqKIqn1mpFxF28CZ4Vfn+UFjsAa2M=
 github.com/isangeles/ignite v0.0.0-20260326205259-4627ece58465 h1:v1ZtczLyKmlpgeMQ94DQaXQcDV6qRehyb35923nGhFo=
@@ -55,8 +55,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
-golang.org/x/image v0.38.0 h1:5l+q+Y9JDC7mBOMjo4/aPhMDcxEptsX+Tt3GgRQRPuE=
-golang.org/x/image v0.38.0/go.mod h1:/3f6vaXC+6CEanU4KJxbcUZyEePbyKbaLoDOe4ehFYY=
+golang.org/x/image v0.39.0 h1:skVYidAEVKgn8lZ602XO75asgXBgLj9G/FE3RbuPFww=
+golang.org/x/image v0.39.0/go.mod h1:sIbmppfU+xFLPIG0FoVUTvyBMmgng1/XAMhQ2ft0hpA=
 golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.43.0 h1:Rlag2XtaFTxp19wS8MXlJwTvoh8ArU6ezoyFsMyCTNI=
 golang.org/x/sys v0.43.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=

@@ -8,12 +8,12 @@ require (
 	github.com/gopxl/pixel v1.0.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/isangeles/burn v0.0.0-20260129151419-bab6be01e35e
-	github.com/isangeles/fire v0.0.0-20260402185214-6df175d4c2cf
+	github.com/isangeles/fire v0.0.0-20260414171202-137f65b8021c
 	github.com/isangeles/flame v0.0.0-20260407181657-41ac1c3c8249
 	github.com/isangeles/ignite v0.0.0-20260326205259-4627ece58465
 	github.com/isangeles/mtk v0.0.0-20260322084425-e6bc8dfac89c
 	github.com/isangeles/stone v0.1.3
-	golang.org/x/image v0.38.0
+	golang.org/x/image v0.39.0
 )
 
 require (

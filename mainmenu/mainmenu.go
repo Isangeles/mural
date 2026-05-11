@@ -1,7 +1,7 @@
 /*
  * mainmenu.go
  *
- * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +228,7 @@ func (mm *MainMenu) SetServer(server *game.Server) {
 func (mm *MainMenu) Open() {
 	// Connect to the game server(if configured)
 	if mm.server == nil && len(config.ServerHost+config.ServerPort) > 1 {
-		server, err := game.NewServer(config.ServerHost, config.ServerPort)
+		server, err := game.NewServer(config.ServerHost, config.ServerPort, config.ServerTLS)
 		if err != nil {
 			log.Err.Printf("Unable to connect to the game server: %v",
 				err)

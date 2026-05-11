@@ -67,6 +67,7 @@ var (
 	ServerPassword   = ""
 	ServerHost       = ""
 	ServerPort       = ""
+	ServerTLS        = false
 	ServerClose      = false
 )
 
@@ -161,6 +162,9 @@ func Load() error {
 		ServerHost = conf["server"][0]
 		ServerPort = conf["server"][1]
 	}
+	if len(conf["server-tls"]) > 0 {
+		ServerTLS = conf["server-tls"][0] == "true"
+	}
 	if len(conf["server-close"]) > 0 {
 		ServerClose = conf["server-close"][0] == "true"
 	}
@@ -199,6 +203,7 @@ func Save() error {
 	conf["loot-despawn-time"] = []string{fmt.Sprintf("%d", LootDespawnTime)}
 	conf["server-user"] = []string{ServerLogin, ServerPassword}
 	conf["server"] = []string{ServerHost, ServerPort}
+	conf["server-tls"] = []string{fmt.Sprintf("%v", ServerTLS)}
 	conf["server-close"] = []string{fmt.Sprintf("%v", ServerClose)}
 	confText := text.MarshalConfig(conf)
 	// Write config values

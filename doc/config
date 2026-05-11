@@ -109,6 +109,14 @@ Specifies user login and password for remote game server.
 .br
 First value is for login, second for password.
 .P
+* server-tls
+.br
+Enables TLS(wss://) for the remote game server connection.
+.br
+Required when connecting to servers with HTTPS endpoints such as Google Cloud Run.
+.br
+Value 'true' enables TLS, everything else uses plain WebSocket(ws://).
+.P
 * server-close
 .br
 Specifies if after closing the program the close request should be send to the game server(if connected).

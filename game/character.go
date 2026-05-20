@@ -24,6 +24,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/isangeles/flame/character"
@@ -232,7 +233,7 @@ func (c *Character) Use(ob useaction.Usable) {
 // compatible slots in active PC equipment.
 func (c *Character) Equip(it item.Equiper) error {
 	if !c.MeetReqs(it.EquipReqs()...) {
-		return fmt.Errorf(lang.Text("reqs_not_meet"))
+		return errors.New(lang.Text("reqs_not_meet"))
 	}
 	slots := make([]*character.EquipmentSlot, 0)
 	for _, itSlot := range it.Slots() {
@@ -250,11 +251,11 @@ func (c *Character) Equip(it item.Equiper) error {
 		}
 		if !equiped {
 			c.Equipment().Unequip(it)
-			return fmt.Errorf(lang.Text("equip_no_free_slot_error"))
+			return errors.New(lang.Text("equip_no_free_slot_error"))
 		}
 	}
 	if !c.Equipment().Equiped(it) {
-		return fmt.Errorf(lang.Text("equip_no_valid_slot_error"))
+		return errors.New(lang.Text("equip_no_valid_slot_error"))
 	}
 	if c.game.Server() == nil {
 		return nil
@@ -313,7 +314,8 @@ func (c *Character) RemoveItems(items ...item.Item) {
 	if c.game.Server() == nil {
 		err := c.spawnLoot(items...)
 		if err != nil {
-			log.Err.Printf("Character: %s %s: unable to spawn loot object: %v", err)
+			log.Err.Printf("Character: %s %s: unable to spawn loot object: %v",
+				c.ID(), c.Serial(), err)
 		}
 		return
 	}

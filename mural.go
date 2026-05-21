@@ -1,7 +1,7 @@
 /*
  * mural.go
  *
- * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,12 @@ func main() {
 		panic(fmt.Errorf("Unable to load GUI data: %v", err))
 	}
 	// Init audio and set global audio effects.
-	err = mtk.InitAudio(beep.Format{44100, 2, 2})
+	audioFormat := beep.Format{
+		SampleRate:  44100,
+		NumChannels: 2,
+		Precision:   2,
+	}
+	err = mtk.InitAudio(audioFormat)
 	if err != nil {
 		panic(fmt.Errorf("Unable to initialize the audio: %v", err))
 	}

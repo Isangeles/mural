@@ -1,7 +1,7 @@
 /*
  * response.go
  *
- * Copyright 2020-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ func (mm *MainMenu) handleUpdateResponse(resp response.Update) {
 	flameres.TranslationBases = res.TranslationBases
 	if mm.mod == nil {
 		serial.Reset()
-		mm.SetModule(flame.NewModule(resp.Module))
+		mm.setModule(flame.NewModule(resp.Module))
 		return
 	}
 	mm.mod.Apply(resp.Module)

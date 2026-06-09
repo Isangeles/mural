@@ -41,6 +41,7 @@ import (
 	"github.com/isangeles/flame/character"
 	flamedata "github.com/isangeles/flame/data"
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/burn"
 
@@ -134,8 +135,14 @@ func run() {
 	verInfo.SetText(fmt.Sprintf("%s(%s)@%s(%s)", config.Name, config.Version,
 		flame.Name, flame.Version))
 	verInfo.Align(mtk.AlignRight)
-	// Create main menu.
-	mainMenu = mainmenu.New()
+	// Import game module
+	modData, err := flamedata.ImportModuleDir(config.ModulePath())
+	if err != nil {
+		log.Err.Printf("Unable to import module: %v", err)
+		return
+	}
+	// Create main menu
+	mainMenu = mainmenu.New(modData)
 	mainMenu.SetOnGameCreatedFunc(enterGame)
 	ci.SetMainMenu(mainMenu)
 	go enterMainMenu()
@@ -174,8 +181,17 @@ func enterMainMenu() {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_menu_info"))
 	defer mainMenu.CloseLoadingScreen()
 	inGame = false
-	mainMenu.Open()
 	burn.Module = mainMenu.Module()
+	serial.Reset() // reset serial values after previous game
+	// Connect to the game server(if needed/configured)
+	if mainMenu.Server() == nil && len(config.ServerHost+config.ServerPort) > 1 {
+		server, err := game.NewServer(config.ServerHost, config.ServerPort, config.ServerTLS)
+		if err != nil {
+			log.Err.Printf("Unable to connect to the game server: %v",
+				err)
+		}
+		mainMenu.SetServer(server)
+	}
 }
 
 // enterGame creates HUD and enters game.

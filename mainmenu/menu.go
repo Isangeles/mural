@@ -1,7 +1,7 @@
 /*
  * menu.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ func newMenu(mainmenu *MainMenu) *Menu {
 		SizeRaw:  mtk.ConvVec(pixel.V(900, 0)),
 	}
 	m.title = mtk.NewText(titleParams)
+	m.title.SetText(lang.Text(m.mainmenu.mod.Conf().ID))
 	// Buttons.
 	buttonParams := mtk.Params{
 		Size:      mtk.SizeMedium,

@@ -37,7 +37,6 @@ import (
 
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/character"
-	flamedata "github.com/isangeles/flame/data"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/serial"
@@ -93,9 +92,15 @@ type PlayableCharData struct {
 }
 
 // New creates new main menu
-func New() *MainMenu {
+func New(modData flameres.ModuleData) *MainMenu {
 	mm := new(MainMenu)
 	mm.playableChars = new(sync.Map)
+	mm.mod = flame.NewModule(modData)
+	err := mm.ImportPlayableChars()
+	if err != nil {
+		log.Err.Printf("Main Menu: unable to import playable characters: %v",
+			err)
+	}
 	// Menus.
 	mm.menu = newMenu(mm)
 	mm.loginmenu = newLoginMenu(mm)
@@ -195,15 +200,9 @@ func (mm *MainMenu) Module() *flame.Module {
 	return mm.mod
 }
 
-// SetMod sets module for main menu.
-func (mm *MainMenu) SetModule(mod *flame.Module) {
-	mm.mod = mod
-	mm.menu.title.SetText(lang.Text(mod.Conf().ID))
-	err := mm.ImportPlayableChars()
-	if err != nil {
-		log.Err.Printf("Main menu: unable to import playable characters: %v",
-			err)
-	}
+// Server returns main menu game server or nil if not connected.
+func (mm *MainMenu) Server() *game.Server {
+	return mm.server
 }
 
 // SetServer sets game server for main menu.
@@ -222,30 +221,6 @@ func (mm *MainMenu) SetServer(server *game.Server) {
 			log.Err.Printf("Login menu: unable to send login request: %v", err)
 		}
 	}
-}
-
-// Open opens the main menu.
-func (mm *MainMenu) Open() {
-	// Connect to the game server(if configured)
-	if mm.server == nil && len(config.ServerHost+config.ServerPort) > 1 {
-		server, err := game.NewServer(config.ServerHost, config.ServerPort, config.ServerTLS)
-		if err != nil {
-			log.Err.Printf("Unable to connect to the game server: %v",
-				err)
-		}
-		mm.SetServer(server)
-	}
-	if mm.server != nil { // skip local module import if server present, server provides it's own module 
-		return
-	}
-	// Import module
-	modData, err := flamedata.ImportModuleDir(config.ModulePath())
-	if err != nil {
-		log.Err.Printf("Unable to import module: %v", err)
-		return
-	}
-	serial.Reset()
-	mm.SetModule(flame.NewModule(modData))
 }
 
 // Exit sends exit request to main menu.
@@ -397,6 +372,18 @@ func (mm *MainMenu) ImportPlayableChars() error {
 		}
 	}
 	return nil
+}
+
+// setMod sets module for main menu.
+func (mm *MainMenu) setModule(mod *flame.Module) {
+	mm.mod = mod
+	mm.menu.title.SetText(lang.Text(mod.Conf().ID))
+	err := mm.ImportPlayableChars()
+	if err != nil {
+		log.Err.Printf("Main menu: unable to import playable characters: %v",
+			err)
+	}
+	serial.Reset()
 }
 
 // continueGame creates game with continue characters and triggers

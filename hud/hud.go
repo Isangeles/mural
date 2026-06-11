@@ -1,7 +1,7 @@
 /*
  * hud.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,10 +214,13 @@ func (hud *HUD) Draw(win *mtk.Window) {
 func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
 	if hud.loading && hud.loaderr != nil { // on loading error
-		log.Err.Printf("hud loading fail: %v", hud.loaderr)
+		log.Err.Printf("HUD: loading failed: %v", hud.loaderr)
 		hud.Exit()
+		return
 	}
-	if hud.Game() == nil || hud.Game().ActivePlayerChar() == nil { // no game or active pc, don't update
+	if hud.Game() == nil || hud.Game().ActivePlayerChar() == nil { // no game or active pc, exit
+		log.Err.Printf("HUD: no player characters")
+		hud.Exit()
 		return
 	}
 	// Handle area change.

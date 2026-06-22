@@ -167,6 +167,8 @@ func (lgm *LoadGameMenu) loadSaves() error {
 
 // loadSavedGame creates game and HUD from saved data.
 func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
+	// Show loading screen.
+	lgm.mainmenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
 	// Handle game server.
 	if lgm.mainmenu.server != nil {
 		req := request.Request{Load: saveName}
@@ -177,6 +179,7 @@ func (lgm *LoadGameMenu) loadSavedGame(saveName string) error {
 		}
 		return nil
 	}
+	defer lgm.mainmenu.CloseLoadingScreen() // here since we don't want to close it if we waiting for server load response
 	// Import saved game.
 	savePath := filepath.Join(config.ModulesPath, saveName+flamedata.ModuleFileExt)
 	modData, err := flamedata.ImportModule(savePath)
@@ -228,9 +231,6 @@ func (lgm *LoadGameMenu) onLoadButtonClicked(b *mtk.Button) {
 		log.Err.Printf("main menu: load game: unable to retrieve save name from list value")
 		return
 	}
-	// Show loading screen.
-	lgm.mainmenu.OpenLoadingScreen(lang.Text("loadgame_load_game_info"))
-	defer lgm.mainmenu.CloseLoadingScreen()
 	// Load saved game.
 	saveName := strings.ReplaceAll(fileName, data.HUDFileExt, "")
 	err := lgm.loadSavedGame(saveName)

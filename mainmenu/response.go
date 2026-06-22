@@ -80,6 +80,7 @@ func (mm *MainMenu) handleCharacterResponse(resp response.Character) {
 
 // handleLoadResponse handles load response.
 func (mm *MainMenu) handleLoadResponse(resp response.Load) {
+	defer mm.CloseLoadingScreen() // close loading screen opened by load game menu earlier
 	// Recreate saved game.
 	flameres.Clear()
 	serial.Reset()

@@ -1,7 +1,7 @@
 /*
  * loadingscreen.go
  *
- * Copyright 2018-2019 Dariusz Sikora <dev@isangeles.pl>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,18 @@
 package hud
 
 import (
+	"sync"
+
 	"github.com/isangeles/mtk"
 )
 
 // Struct for HUD loading screen.
 type LoadingScreen struct {
-	hud  *HUD
-	info *mtk.Text
+	hud      *HUD
+	info     *mtk.Text
+	loadInfo string
+	infoText string
+	mutex    sync.Mutex
 }
 
 // newLoadingScreen returns new HUD loading
@@ -56,9 +61,19 @@ func (ls *LoadingScreen) Draw(win *mtk.Window) {
 
 // Update updates loading screen.
 func (ls *LoadingScreen) Update(win *mtk.Window) {
+	ls.mutex.Lock()
+	defer ls.mutex.Unlock()
+	if ls.infoText != ls.loadInfo {
+		ls.info.SetText(ls.loadInfo)
+		ls.infoText = ls.loadInfo
+	}
 }
 
 // SetLoadInfo sets specified text as current load info text.
+// Text is set on the info display during the next update,
+// so this function is safe to call outside the main thread.
 func (ls *LoadingScreen) SetLoadInfo(text string) {
-	ls.info.SetText(text)
+	ls.mutex.Lock()
+	defer ls.mutex.Unlock()
+	ls.loadInfo = text
 }

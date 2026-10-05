@@ -463,7 +463,7 @@ func (av *Avatar) onSkillActivated(s *skill.Skill) {
 		av.sprite.MeleeOnce()
 	}
 	// Audio effect.
-	if !av.Silenced() && mtk.Audio != nil && sg.ActivationAudio() != nil {
+	if !av.Silenced() && sg.ActivationAudio() != nil {
 		mtk.Audio().Play(sg.ActivationAudio())
 	}
 }

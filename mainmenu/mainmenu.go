@@ -31,6 +31,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"golang.org/x/image/colornames"
@@ -80,7 +81,7 @@ type MainMenu struct {
 	playableChars *sync.Map
 	continueChars []*character.Character
 	onGameCreated func(g *game.Game, h *res.HUDData)
-	loading       bool
+	loading       atomic.Bool
 	exiting       bool
 }
 
@@ -125,7 +126,7 @@ func New(modData flameres.ModuleData) *MainMenu {
 
 // Draw draws current menu screen.
 func (mm *MainMenu) Draw(win *mtk.Window) {
-	if mm.loading {
+	if mm.loading.Load() {
 		mm.loadscreen.Draw(win)
 		return
 	}
@@ -170,7 +171,7 @@ func (mm *MainMenu) Update(win *mtk.Window) {
 		win.SetClosed(true)
 		return
 	}
-	if mm.loading {
+	if mm.loading.Load() {
 		mm.loadscreen.Update(win)
 	}
 	if mm.menu.Opened() {
@@ -272,12 +273,12 @@ func (mm *MainMenu) OpenSettings() {
 // with specified loading information.
 func (mm *MainMenu) OpenLoadingScreen(loadInfo string) {
 	mm.loadscreen.SetLoadInfo(loadInfo)
-	mm.loading = true
+	mm.loading.Store(true)
 }
 
 // CloseLoadingScreen closes loading screen.
 func (mm *MainMenu) CloseLoadingScreen() {
-	mm.loading = false
+	mm.loading.Store(false)
 }
 
 // HideMenus hides all menus.

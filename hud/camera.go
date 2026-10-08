@@ -1,7 +1,7 @@
 /*
  * camera.go
  *
- * Copyright 2018-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"math"
 	"path/filepath"
+	"sync"
 
 	"github.com/gopxl/pixel"
 	"github.com/gopxl/pixel/pixelgl"
@@ -62,6 +63,7 @@ type Camera struct {
 	size     pixel.Vec
 	locked   bool
 	area     *object.Area
+	areaMux  sync.RWMutex
 	// Debug mode.
 	cameraInfo *mtk.Text
 	cursorInfo *mtk.Text
@@ -84,7 +86,11 @@ func newCamera(hud *HUD, size pixel.Vec) *Camera {
 
 // Draw draws camera on specified map.
 func (c *Camera) Draw(win *mtk.Window) {
-	c.area.Draw(win, mtk.Matrix().Moved(c.Position()), c.Size())
+	area := c.Area()
+	if area == nil { // no area to draw(yet)
+		return
+	}
+	area.Draw(win, mtk.Matrix().Moved(c.Position()), c.Size())
 	// Debug mode.
 	if config.Debug {
 		camInfoPos := mtk.DrawPosBR(win.Bounds(), c.cameraInfo.Size())
@@ -98,11 +104,12 @@ func (c *Camera) Draw(win *mtk.Window) {
 // Update updates camera.
 func (c *Camera) Update(win *mtk.Window) {
 	c.size = win.Bounds().Size()
+	area := c.Area()
 	// Key events.
-	if !c.locked && c.area != nil {
-		tileSize := c.area.Map().TileSize()
+	if !c.locked && area != nil {
+		tileSize := area.Map().TileSize()
 		offset := pixel.V(tileSize.X*16, tileSize.Y*16)
-		mapSize := c.area.Map().Size()
+		mapSize := area.Map().Size()
 		mapSize = pixel.V(mapSize.X+offset.X, mapSize.Y+offset.Y)
 		// Key events.
 		if c.position.Y < mapSize.Y && win.Pressed(pixelgl.KeyW) ||
@@ -123,16 +130,16 @@ func (c *Camera) Update(win *mtk.Window) {
 		}
 	}
 	//Area.
-	if c.area != nil {
-		c.area.Update(win)
+	if area != nil {
+		area.Update(win)
 	}
 	// Mouse events.
 	if config.Debug && win.JustPressed(pixelgl.MouseButtonLeft) && win.Pressed(debugMoveKey) {
 		c.onDebugMouseLeftPressed(win.MousePosition())
-	} else if !c.locked && win.JustPressed(pixelgl.MouseButtonLeft) {
+	} else if !c.locked && area != nil && win.JustPressed(pixelgl.MouseButtonLeft) {
 		c.onMouseLeftPressed(win.MousePosition())
 	}
-	if !c.locked && win.JustPressed(pixelgl.MouseButtonRight) {
+	if !c.locked && area != nil && win.JustPressed(pixelgl.MouseButtonRight) {
 		c.onMouseRightPressed(win.MousePosition())
 	}
 	// Debug.
@@ -150,7 +157,7 @@ func (c *Camera) SetPosition(pos pixel.Vec) {
 // SetArea sets area for camera to display.
 func (c *Camera) SetArea(a *area.Area) error {
 	if a == nil {
-		a = nil
+		c.setArea(nil)
 		return nil
 	}
 	// Set map.
@@ -161,7 +168,7 @@ func (c *Camera) SetArea(a *area.Area) error {
 	if err != nil {
 		return fmt.Errorf("unable to create pc area map: %v", err)
 	}
-	c.area = object.NewArea(c.hud.game, a, areaMap)
+	c.setArea(object.NewArea(c.hud.game, a, areaMap))
 	// Center camera at player
 	pcAvatar := c.hud.PCAvatar()
 	if pcAvatar != nil {
@@ -178,7 +185,18 @@ func (c *Camera) CenterAt(pos pixel.Vec) {
 
 // Area retuns current area.
 func (c *Camera) Area() *object.Area {
+	c.areaMux.RLock()
+	defer c.areaMux.RUnlock()
 	return c.area
+}
+
+// setArea sets current camera area, the area is set
+// outside the main thread, so the access needs to be
+// synchronized.
+func (c *Camera) setArea(a *object.Area) {
+	c.areaMux.Lock()
+	defer c.areaMux.Unlock()
+	c.area = a
 }
 
 // Position return camera position.
@@ -226,7 +244,7 @@ func (c *Camera) onMouseRightPressed(pos pixel.Vec) {
 	if c.hud.containsPos(pos) {
 		return
 	}
-	for _, av := range c.area.Avatars() {
+	for _, av := range c.Area().Avatars() {
 		if !av.DrawArea().Contains(pos) {
 			continue
 		}
@@ -243,8 +261,12 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		return
 	}
 	pc := c.hud.PCAvatar()
+	if pc == nil {
+		return
+	}
+	area := c.Area()
 	// Action.
-	for _, ob := range c.area.Avatars() {
+	for _, ob := range area.Avatars() {
 		if !ob.DrawArea().Contains(pos) || !ob.Live() || ob.UseAction() == nil {
 			continue
 		}
@@ -259,7 +281,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		return
 	}
 	// Loot.
-	for _, av := range c.area.Avatars() {
+	for _, av := range area.Avatars() {
 		if !av.DrawArea().Contains(pos) || (av.Live() && !av.OpenLoot()) || av == pc {
 			continue
 		}
@@ -276,7 +298,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 		return
 	}
 	// Dialog.
-	for _, av := range c.area.Avatars() {
+	for _, av := range area.Avatars() {
 		if !av.DrawArea().Contains(pos) || !av.Live() || av == pc ||
 			av.AttitudeFor(pc) == character.Hostile || len(av.Dialogs()) < 1 {
 			continue
@@ -295,7 +317,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Pause() && c.area.PassablePosition(destPos) {
+	if !c.hud.game.Pause() && area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

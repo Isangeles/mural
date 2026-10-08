@@ -29,6 +29,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
+	"sync/atomic"
 
 	"golang.org/x/image/colornames"
 
@@ -88,9 +90,11 @@ type HUD struct {
 	msgs          *mtk.MessageQueue
 	layouts       map[string]*Layout
 	defaultLayout *Layout
-	loading       bool
+	loading       atomic.Bool
+	changingArea  atomic.Bool
 	exiting       bool
 	loaderr       error
+	loaderrMux    sync.Mutex
 	onAreaChanged func(a *area.Area)
 	areaScripts   []*ash.Script
 }
@@ -134,7 +138,7 @@ func New(win *mtk.Window) *HUD {
 
 // Draw draws HUD elements.
 func (hud *HUD) Draw(win *mtk.Window) {
-	if hud.loading {
+	if hud.loading.Load() {
 		hud.loadScreen.Draw(win)
 		return
 	}
@@ -213,8 +217,8 @@ func (hud *HUD) Draw(win *mtk.Window) {
 // Update updated HUD elements.
 func (hud *HUD) Update(win *mtk.Window) {
 	// HUD state.
-	if hud.loading && hud.loaderr != nil { // on loading error
-		log.Err.Printf("HUD: loading failed: %v", hud.loaderr)
+	if err := hud.loadErr(); err != nil { // on loading error
+		log.Err.Printf("HUD: loading failed: %v", err)
 		hud.Exit()
 		return
 	}
@@ -225,16 +229,17 @@ func (hud *HUD) Update(win *mtk.Window) {
 	}
 	// Handle area change.
 	hud.updateCurrentArea()
+	area := hud.camera.Area()
 	// Toggle game pause.
 	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
 		hud.Game().SetPause(!hud.Game().Pause())
 	}
-	if hud.game.ActivePlayerChar() != nil && win.JustPressed(targetKey) {
+	if area != nil && win.JustPressed(targetKey) {
 		hud.targetNearObject()
 	}
 	// Put PC target into target frame.
-	if hud.camera.area != nil && len(hud.Game().ActivePlayerChar().Targets()) > 0 {
-		for _, av := range hud.camera.area.Avatars() {
+	if area != nil && len(hud.Game().ActivePlayerChar().Targets()) > 0 {
+		for _, av := range area.Avatars() {
 			if objects.Equals(hud.Game().ActivePlayerChar().Targets()[0], av.Character) {
 				hud.tarFrame.SetObject(av)
 			}
@@ -314,13 +319,28 @@ func (hud *HUD) ShowMessage(msg *mtk.MessageWindow) {
 // OpenLoadingScreen opens loading screen with
 // specified loading information.
 func (hud *HUD) OpenLoadingScreen(info string) {
-	hud.loading = true
+	hud.loading.Store(true)
 	hud.loadScreen.SetLoadInfo(info)
 }
 
 // Close loading screen closes loading screen.
 func (hud *HUD) CloseLoadingScreen() {
-	hud.loading = false
+	hud.loading.Store(false)
+}
+
+// setLoadErr sets HUD loading error.
+func (hud *HUD) setLoadErr(err error) {
+	hud.loaderrMux.Lock()
+	defer hud.loaderrMux.Unlock()
+	hud.loaderr = err
+}
+
+// loadErr returns HUD loading error, or nil if
+// loading was successful.
+func (hud *HUD) loadErr() error {
+	hud.loaderrMux.Lock()
+	defer hud.loaderrMux.Unlock()
+	return hud.loaderr
 }
 
 // Layout returns layout for player with specified ID
@@ -354,11 +374,15 @@ func (hud *HUD) SetGame(g *game.Game) {
 
 // PCAvatar return avatar for player current character.
 func (hud *HUD) PCAvatar() *object.Avatar {
-	if hud.camera.area == nil {
+	area := hud.camera.Area()
+	if area == nil {
 		return nil
 	}
 	pc := hud.game.ActivePlayerChar()
-	for _, av := range hud.camera.area.Avatars() {
+	if pc == nil {
+		return nil
+	}
+	for _, av := range area.Avatars() {
 		if av.ID() == pc.ID() && av.Serial() == pc.Serial() {
 			return av
 		}
@@ -368,6 +392,7 @@ func (hud *HUD) PCAvatar() *object.Avatar {
 
 // ChangeArea changes current HUD area.
 func (hud *HUD) ChangeArea(area *area.Area) error {
+	defer hud.changingArea.Store(false)
 	// Stop previous area scripts.
 	for _, s := range hud.areaScripts {
 		s.Stop(true)
@@ -378,9 +403,9 @@ func (hud *HUD) ChangeArea(area *area.Area) error {
 	defer hud.CloseLoadingScreen()
 	err := hud.camera.SetArea(area)
 	if err != nil {
-		hud.loaderr = fmt.Errorf("unable to set camera area: %v",
-			err)
-		return hud.loaderr
+		err = fmt.Errorf("unable to set camera area: %v", err)
+		hud.setLoadErr(err)
+		return err
 	}
 	pcAvatar := hud.PCAvatar()
 	if pcAvatar != nil {
@@ -455,8 +480,12 @@ func (hud *HUD) SetOnAreaChangedFunc(f func(a *area.Area)) {
 
 // targetNearObject sets the active player target to the nearest object.
 func (hud *HUD) targetNearObject() {
+	area := hud.camera.Area()
+	if area == nil {
+		return
+	}
 	pcX, pcY := hud.game.ActivePlayerChar().Position()
-	objects := hud.camera.area.NearObjects(pcX, pcY, hud.game.ActivePlayerChar().SightRange())
+	objects := area.NearObjects(pcX, pcY, hud.game.ActivePlayerChar().SightRange())
 	if len(objects) > 0 {
 		hud.game.ActivePlayerChar().SetTarget(hud.nearestObject(objects))
 	}
@@ -487,15 +516,20 @@ func (hud *HUD) runAreaScripts(a *area.Area) {
 
 // updateCurrentArea updates HUD area to active player area.
 func (hud *HUD) updateCurrentArea() {
-	chapter := hud.Game().Chapter()
-	pcArea := chapter.ObjectArea(hud.Game().ActivePlayerChar())
-	if hud.game == nil {
+	if hud.changingArea.Load() { // area change already in progress
 		return
 	}
+	chapter := hud.Game().Chapter()
+	pcArea := chapter.ObjectArea(hud.Game().ActivePlayerChar())
 	if pcArea == nil {
 		return
 	}
-	if hud.camera.Area() == nil || pcArea.ID() != hud.camera.Area().ID() {
+	area := hud.camera.Area()
+	if area == nil || pcArea.ID() != area.ID() {
+		// Open loading screen before the area change starts, to not
+		// draw the HUD without an area set.
+		hud.changingArea.Store(true)
+		hud.OpenLoadingScreen(lang.Text("load_map_info"))
 		go hud.ChangeArea(pcArea)
 	}
 }

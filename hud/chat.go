@@ -1,7 +1,7 @@
 /*
  * chat.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,10 +218,12 @@ func (c *Chat) Echo(text string) {
 // listenCharChat listens to avatars chat channels.
 func (c *Chat) listenCharsChat() {
 	for {
-		if c.hud.camera.area == nil {
+		time.Sleep(time.Millisecond * 16)
+		area := c.hud.camera.Area()
+		if area == nil {
 			continue
 		}
-		for _, a := range c.hud.camera.area.Avatars() {
+		for _, a := range area.Avatars() {
 			if !c.hud.game.VisibleForPlayer(a.Position().X, a.Position().Y) {
 				continue
 			}
@@ -257,7 +259,11 @@ func (c *Chat) addObjectMessage(objectID string, msg objects.Message) {
 // log for specified logger, or nil if such object
 // does not exists.
 func (c *Chat) combatLogger(l objects.Logger) CombatLogger {
-	for _, a := range c.hud.camera.area.Avatars() {
+	area := c.hud.camera.Area()
+	if area == nil {
+		return nil
+	}
+	for _, a := range area.Avatars() {
 		if a.ID() == l.ID() && a.Serial() == l.Serial() {
 			return a
 		}

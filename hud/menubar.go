@@ -1,7 +1,7 @@
 /*
  * menubar.go
  *
- * Copyright 2019-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2019-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,10 +327,10 @@ func (mb *MenuBar) setLayout(l *Layout) {
 // cooldown of currently active PC.
 func (mb *MenuBar) updateSlots(win *mtk.Window) {
 	for _, s := range mb.slots {
+		s.Update(win)
 		if len(s.Values()) < 1 {
 			continue
 		}
-		s.Update(win)
 		cooldown := mb.slotCooldown(s)
 		cooldown += mb.hud.Game().ActivePlayerChar().Cooldown()
 		if cooldown <= 0 {

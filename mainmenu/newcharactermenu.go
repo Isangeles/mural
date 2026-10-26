@@ -1,7 +1,7 @@
 /*
  * newcharactermenu.go
  *
- * Copyright 2018-2024 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2018-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +277,7 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.dexSwitch.Reset()
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
-	attrsMax := ncm.mainmenu.mod.Chapter().Conf().StartAttrs
+	attrsMax := ncm.mainmenu.mod.Chapter().Conf().StartAttrsMax
 	if attrsMax < 1 {
 		return
 	}

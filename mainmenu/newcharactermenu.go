@@ -25,16 +25,15 @@ package mainmenu
 
 import (
 	"fmt"
-	"math/rand"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/gopxl/pixel"
 
 	"github.com/isangeles/flame/character"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
+	"github.com/isangeles/flame/rng"
 
 	"github.com/isangeles/mtk"
 
@@ -69,7 +68,6 @@ type NewCharacterMenu struct {
 	backButton    *mtk.Button
 	rollButton    *mtk.Button
 	opened        bool
-	rng           *rand.Rand
 	attrPoints    int
 	attrPointsMax int
 }
@@ -78,8 +76,6 @@ type NewCharacterMenu struct {
 func newNewCharacterMenu(mainmenu *MainMenu) *NewCharacterMenu {
 	ncm := new(NewCharacterMenu)
 	ncm.mainmenu = mainmenu
-	rngSrc := rand.NewSource(time.Now().UnixNano())
-	ncm.rng = rand.New(rngSrc)
 	// Title.
 	titleParams := mtk.Params{
 		FontSize: mtk.SizeBig,
@@ -278,11 +274,8 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	ncm.intSwitch.Reset()
 	ncm.wisSwitch.Reset()
 	attrsMax := ncm.mainmenu.mod.Chapter().Conf().StartAttrsMax
-	if attrsMax < 1 {
-		return
-	}
-	ncm.attrPointsMax = ncm.rng.Intn(attrsMax-1) + 1
-	ncm.attrPoints = ncm.attrPointsMax
+	attrsMin := ncm.mainmenu.mod.Chapter().Conf().StartAttrsMin
+	ncm.attrPoints = rng.RollInt(attrsMin, attrsMax)
 	ncm.updatePoints()
 }
 
@@ -315,8 +308,8 @@ func (ncm *NewCharacterMenu) updatePoints() {
 // createChar creates new game character.
 func (ncm *NewCharacterMenu) createCharData() (flameres.CharacterData, error) {
 	charData := flameres.CharacterData{
-		Level:     1,
-		Attitude:  string(character.Friendly),
+		Level:    1,
+		Attitude: string(character.Friendly),
 	}
 	// ID.
 	name := ncm.nameEdit.Text()
@@ -377,8 +370,8 @@ func (ncm *NewCharacterMenu) createCharData() (flameres.CharacterData, error) {
 // createAvatarData Creates avatar data for specified character data.
 func (ncm *NewCharacterMenu) createAvatarData(charData flameres.CharacterData) (res.AvatarData, error) {
 	avData := res.AvatarData{
-		ID:       charData.ID,
-		Serial:   charData.Serial,
+		ID:     charData.ID,
+		Serial: charData.Serial,
 	}
 	avData.Head = "m-head-black-1222211-80x90.png"
 	avData.Torso = "m-cloth-1222211-80x90.png"

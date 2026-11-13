@@ -276,6 +276,7 @@ func (ncm *NewCharacterMenu) rollPoints() {
 	attrsMax := ncm.mainmenu.mod.Chapter().Conf().StartAttrsMax
 	attrsMin := ncm.mainmenu.mod.Chapter().Conf().StartAttrsMin
 	ncm.attrPoints = rng.RollInt(attrsMin, attrsMax)
+	ncm.attrPointsMax = ncm.attrPoints
 	ncm.updatePoints()
 }
 

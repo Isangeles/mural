@@ -1,7 +1,7 @@
 /*
  * game.go
  *
- * Copyright 2020-2025 Dariusz Sikora <ds@isangeles.dev>
+ * Copyright 2020-2026 Dariusz Sikora <ds@isangeles.dev>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package game
 
 import (
 	"fmt"
+	"sync/atomic"
 	"time"
 
 	"github.com/isangeles/flame"
@@ -53,9 +54,10 @@ type Game struct {
 	activePC           *Character
 	server             *Server
 	localAI            *ai.AI
-	closing            bool
+	closing            atomic.Bool
 	pause              bool
 	onPlayerCharChange func(c *Character)
+	done               chan struct{}
 }
 
 // New creates new wrapper for specified module.
@@ -63,6 +65,7 @@ func New(module *flame.Module) *Game {
 	g := Game{
 		Module: module,
 		chars:  make(map[string]*Character),
+		done:   make(chan struct{}),
 	}
 	g.localAI = ai.New(ai.NewGame(module))
 	return &g
@@ -70,9 +73,12 @@ func New(module *flame.Module) *Game {
 
 // Update updates game.
 // It executes game update loop until game is closed.
+// Should be started only once per game, it marks the game
+// update as done on return.
 func (g *Game) Update() {
+	defer close(g.done)
 	update := time.Now()
-	for !g.closing {
+	for !g.closing.Load() {
 		if g.pause {
 			continue
 		}
@@ -154,9 +160,17 @@ func (g *Game) Server() *Server {
 	return g.server
 }
 
+// Close stops the game update loop and waits until the last
+// update is done.
+// Should be called only after the game update was started.
+func (g *Game) Close() {
+	g.closing.Store(true)
+	<-g.done
+}
+
 // Closing checks if game should be closed.
 func (g *Game) Closing() bool {
-	return g.closing
+	return g.closing.Load()
 }
 
 // SetOnPlayerChangeFunc sets function triggered on active player change.

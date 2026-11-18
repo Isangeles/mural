@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 
 	"golang.org/x/image/colornames"
 
@@ -40,6 +41,7 @@ import (
 	"github.com/isangeles/flame"
 	"github.com/isangeles/flame/character"
 	flamedata "github.com/isangeles/flame/data"
+	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
 	"github.com/isangeles/flame/serial"
 
@@ -64,7 +66,7 @@ var (
 	mainMenu   *mainmenu.MainMenu
 	gameHUD    *hud.HUD
 	activeGame *game.Game
-	inGame     bool
+	inGame     atomic.Bool
 )
 
 // Main function.
@@ -150,7 +152,7 @@ func run() {
 	for !win.Closed() {
 		// Draw.
 		win.Clear(colornames.Black)
-		if inGame {
+		if inGame.Load() {
 			gameHUD.Draw(win)
 		} else {
 			mainMenu.Draw(win)
@@ -165,13 +167,14 @@ func run() {
 		}
 		// Update.
 		win.Update()
-		if !inGame {
+		if !inGame.Load() {
 			mainMenu.Update(win)
 			continue
 		}
 		gameHUD.Update(win)
 		if gameHUD.Exiting() || activeGame.Closing() {
-			go enterMainMenu()
+			inGame.Store(false)
+			go resetGame()
 		}
 	}
 }
@@ -180,9 +183,8 @@ func run() {
 func enterMainMenu() {
 	mainMenu.OpenLoadingScreen(lang.Text("enter_menu_info"))
 	defer mainMenu.CloseLoadingScreen()
-	inGame = false
+	inGame.Store(false)
 	burn.Module = mainMenu.Module()
-	serial.Reset() // reset serial values after previous game
 	// Connect to the game server(if needed/configured)
 	if mainMenu.Server() == nil && len(config.ServerHost+config.ServerPort) > 1 {
 		server, err := game.NewServer(config.ServerHost, config.ServerPort, config.ServerTLS)
@@ -224,7 +226,7 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 			log.Err.Printf("Enter game: Unable to load HUD layout: %v", err)
 		}
 	}
-	inGame = true
+	inGame.Store(true)
 	// Run module scripts.
 	err = runModuleScripts()
 	if err != nil {
@@ -232,6 +234,26 @@ func enterGame(g *game.Game, hudData *res.HUDData) {
 	}
 	// Run game update.
 	go activeGame.Update()
+}
+
+// resetGame closed the active game, rebuilds the module(if needed)
+// and opens the main menu.
+func resetGame() {
+	activeGame.Close()
+	if mainMenu.Server() == nil { // if no server, rebuild the module from local
+		mainMenu.OpenLoadingScreen(lang.Text("enter_menu_info"))
+		defer mainMenu.CloseLoadingScreen()
+		modData, err := flamedata.ImportModuleDir(config.ModulePath())
+		if err != nil {
+			log.Err.Printf("Unable to import module: %v", err)
+			return
+		}
+		flameres.Clear()
+		flameres.TranslationBases = res.TranslationBases
+		serial.Reset()
+		mainMenu.SetModule(flame.NewModule(modData))
+	}
+	enterMainMenu()
 }
 
 // changeChater handles chaper change event triggered by specified character.

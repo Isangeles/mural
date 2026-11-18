@@ -40,7 +40,6 @@ import (
 	"github.com/isangeles/flame/character"
 	flameres "github.com/isangeles/flame/data/res"
 	"github.com/isangeles/flame/data/res/lang"
-	"github.com/isangeles/flame/serial"
 
 	"github.com/isangeles/fire/request"
 
@@ -375,8 +374,8 @@ func (mm *MainMenu) ImportPlayableChars() error {
 	return nil
 }
 
-// setMod sets module for main menu.
-func (mm *MainMenu) setModule(mod *flame.Module) {
+// SetModule sets module for main menu.
+func (mm *MainMenu) SetModule(mod *flame.Module) {
 	mm.mod = mod
 	mm.menu.title.SetText(lang.Text(mod.Conf().ID))
 	err := mm.ImportPlayableChars()
@@ -384,7 +383,6 @@ func (mm *MainMenu) setModule(mod *flame.Module) {
 		log.Err.Printf("Main menu: unable to import playable characters: %v",
 			err)
 	}
-	serial.Reset()
 }
 
 // continueGame creates game with continue characters and triggers

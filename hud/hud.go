@@ -232,7 +232,7 @@ func (hud *HUD) Update(win *mtk.Window) {
 	area := hud.camera.Area()
 	// Toggle game pause.
 	if !hud.Chat().Activated() && win.JustPressed(pauseKey) {
-		hud.Game().SetPause(!hud.Game().Pause())
+		hud.Game().SetPause(!hud.Game().Paused())
 	}
 	if area != nil && win.JustPressed(targetKey) {
 		hud.targetNearObject()

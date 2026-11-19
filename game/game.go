@@ -55,7 +55,7 @@ type Game struct {
 	server             *Server
 	localAI            *ai.AI
 	closing            atomic.Bool
-	pause              bool
+	pause              atomic.Bool
 	onPlayerCharChange func(c *Character)
 	done               chan struct{}
 }
@@ -79,7 +79,8 @@ func (g *Game) Update() {
 	defer close(g.done)
 	update := time.Now()
 	for !g.closing.Load() {
-		if g.pause {
+		time.Sleep(time.Duration(16) * time.Millisecond)
+		if g.Paused() {
 			continue
 		}
 		delta := time.Since(update).Milliseconds()
@@ -90,7 +91,6 @@ func (g *Game) Update() {
 		}
 		g.updateChars()
 		update = time.Now()
-		time.Sleep(time.Duration(16) * time.Millisecond)
 	}
 }
 
@@ -124,9 +124,9 @@ func (g *Game) ActivePlayerChar() *Character {
 	return g.activePC
 }
 
-// Pause checks if the game pause is active.
-func (g *Game) Pause() bool {
-	return g.pause
+// Paused checks if the game pause is active.
+func (g *Game) Paused() bool {
+	return g.pause.Load()
 }
 
 // SetPause pauses/unpauses the game.
@@ -143,8 +143,8 @@ func (g *Game) SetPause(pause bool) {
 		}
 		return
 	}
-	g.pause = pause
-	log.Inf.Print(pauseMessage(g.pause))
+	g.pause.Store(pause)
+	log.Inf.Print(pauseMessage(g.pause.Load()))
 }
 
 // SetServer sets game server.

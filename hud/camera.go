@@ -317,7 +317,7 @@ func (c *Camera) onMouseLeftPressed(pos pixel.Vec) {
 	}
 	// Move active PC.
 	destPos := c.ConvCameraPos(pos)
-	if !c.hud.game.Pause() && area.PassablePosition(destPos) {
+	if !c.hud.game.Paused() && area.PassablePosition(destPos) {
 		c.hud.Game().ActivePlayerChar().SetDestPoint(destPos.X, destPos.Y)
 	}
 }

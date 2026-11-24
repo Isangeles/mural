@@ -30,6 +30,7 @@ MINOR:
 * Fix for the cast bar in server mode
 * Cast bar background
 * Reformant all lang labels IDs to camelcase
+* Handle close server response
 DONE:
 * Drawing tiled maps
 * Avatar: handling character equipment
